@@ -10,6 +10,59 @@
 
 ---
 
+## Orden de ejecución (Sprint Prioritizer)
+
+> Secuencia óptima de construcción considerando dependencias y valor de negocio.
+> Las tareas marcadas con `//` pueden ejecutarse en paralelo entre sí.
+
+| # | Tarea ID | Nombre corto | Agente | Depende de |
+|---|---|---|---|---|
+| 1 | T5.4 | WhatsApp flotante + layout raíz | Frontend Developer | — |
+| 2 | T5.3 | CalEmbed (componente compartido) | Frontend Developer | T5.4 |
+| 3 | T3.3 | `lib/leads.ts` — saveLead() | Backend Architect | — |
+| 4 | T5.1 | API route GET /api/marcador | Backend Architect | — |
+| 5 | T2.1 | Componente Hero | Frontend Developer | T5.3, T5.4 |
+| 6 | T2.2 | Componente Métricas | Frontend Developer | T5.4 |
+| 7 | T2.4 | Componente Cómo funciona (resumen) | Frontend Developer | T5.4 |
+| 8 | T2.5 | Componente Ciudades Cards | Frontend Developer | T5.4 |
+| 9 | T2.6 | Componente Feed Instagram (Behold) | Frontend Developer | T5.4 |
+| 10 | T2.7 | Componente Muro de Llaves preview | Frontend Developer | T5.4 |
+| 11 | T2.8 | Componente Testimonios | Frontend Developer | T5.4 |
+| 12 | T2.3 | Componente El Marcador | Frontend Developer | T5.1, T5.4 |
+| 13 | T2.9 | Componente CTA Final | Frontend Developer | T5.3, T5.4 |
+| 14 | T3.2 | API route POST /api/lead | Backend Architect | T3.3 |
+| 15 | T3.1 | Frontend formulario diagnóstico (20 campos) | Frontend Developer | T3.2 |
+| 16 | T1.10 | Página Diagnóstico | Frontend Developer | T3.1 |
+| 17 | T1.11 | Página Agenda | Frontend Developer | T5.3 |
+| 18 | T1.1 | Página Home | Frontend Developer | T2.1, T2.2, T2.3, T2.4, T2.5, T2.6, T2.7, T2.8, T2.9 |
+| 19 | T1.2 | Página Ciudad: Vigo | Frontend Developer | T5.3, T5.4 |
+| 20 | T1.3 | Página Ciudad: A Coruña | Frontend Developer | T5.3, T5.4 |
+| 21 | T1.4 | Página Ciudad: Santiago de Compostela | Frontend Developer | T5.3, T5.4 |
+| 22 | T1.5 | Página Ciudad: Pontevedra | Frontend Developer | T5.3, T5.4 |
+| 23 | T1.6 | Página Ciudad: Lugo | Frontend Developer | T5.3, T5.4 |
+| 24 | T1.7 | Página Cómo funciona | Frontend Developer | T5.3, T5.4 |
+| 25 | T1.8 | Página Sobre Silvana | Frontend Developer | T5.4 |
+| 26 | T1.9 | Página FAQ | Frontend Developer | T5.4 |
+| 27 | T5.2 | Feed Instagram: integración Behold en producción | Frontend Developer | T2.6 |
+| 28 | T4.1 | Metadata por página (title + meta description) | SEO Specialist | T1.1, T1.2, T1.3, T1.4, T1.5, T1.6, T1.7, T1.8, T1.9, T1.10, T1.11 |
+| 29 | T4.2 | sitemap.ts | SEO Specialist | T4.1 |
+| 30 | T4.3 | robots.ts | SEO Specialist | T4.2 |
+| 31 | T4.4 | Schema.org: LocalBusiness + FAQPage + Service | SEO Specialist | T1.1, T1.9, T1.7 |
+| 32 | T6.3 | Revisión de código (Code Reviewer) | Code Reviewer | T4.4, T4.3 |
+| 33 | T6.1 | Auditoría de accesibilidad | Accessibility Auditor | T6.3 |
+| 34 | T6.2 | Auditoría de performance (Lighthouse) | Performance Benchmarker | T6.3 |
+| 35 | T6.4 | Certificación de fase (Reality Checker) | Reality Checker | T6.1, T6.2 |
+
+### Notas de paralelismo
+
+- **Bloque 3-4** (T3.3 y T5.1): pueden ejecutarse en paralelo porque ambas son tareas de Backend Architect sobre archivos distintos (`lib/leads.ts` y `app/api/marcador/`), sin conflicto de archivos.
+- **Bloque 5-13** (componentes de la Home, excepto T2.3): una vez que T5.4 y T5.3 están disponibles, los componentes T2.1, T2.2, T2.4, T2.5, T2.6, T2.7, T2.8, T2.9 pueden construirse en paralelo porque cada uno vive en su propio archivo dentro de `components/home/`.
+- **Bloque 19-26** (páginas de ciudad + páginas informativas): T1.2 a T1.9 pueden ejecutarse en paralelo entre sí, ya que cada una ocupa su propia ruta y no comparte archivos. Son candidatas a asignarse a sesiones simultáneas del Frontend Developer.
+- **Bloque 29-31** (SEO técnico): T4.2, T4.3 y T4.4 pueden avanzar en paralelo una vez que T4.1 está completa, ya que operan sobre archivos distintos (`sitemap.ts`, `robots.ts`, `lib/seo/schemas.ts`).
+- **Bloque 33-34** (auditorías de calidad): T6.1 y T6.2 pueden ejecutarse en paralelo, ya que son revisiones independientes sobre el build de producción.
+
+---
+
 ## Sección 1 — Páginas
 
 ### T1.1 — Página Home
