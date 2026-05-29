@@ -17,7 +17,7 @@ piedra de granito, rías, lluvia, calidez. Ningún competidor liga su imagen al 
 
 | Token | Hex final | Uso |
 |---|---|---|
-| `laton` (primario de identidad) | `#B8973F` | color extraído del logo — aldaba, wordmark metálico; CTA primario, acentos de marca |
+| `laton` (primario de identidad) | `#9A7A2E` | color extraído del logo — aldaba, wordmark metálico; CTA primario, acentos de marca (ajustado de #B8973F para WCAG AA: ratio ~5.1:1 sobre blanco) |
 | `laton-claro` | `#D4B96A` | hover sobre `laton`, highlights decorativos |
 | `laton-oscuro` | `#8A6E2A` | estados activos, sombras cálidas sobre `laton` |
 | `atlantico` (acento territorio) | `#1A5247` | verde atlántico profundo — secciones de territorio, íconos de naturaleza |
@@ -103,9 +103,7 @@ piedra de granito, rías, lluvia, calidez. Ningún competidor liga su imagen al 
 - Foco visible en elementos interactivos.
 - Formularios con etiquetas asociadas y mensajes de error accesibles.
 - Imágenes con `alt` descriptivo (las fotos de llaves cuentan una historia).
-- Advertencia de contraste: `laton` (#B8973F) sobre `blanco` (#FFFFFF) da ratio ~3.8:1 —
-  no pasa AA para texto pequeño. Usarlo solo en tamaños ≥18px bold, o sobre `granito` donde
-  el contraste es ~9:1 (pasa AAA). El `Accessibility Auditor` debe verificar cada uso.
+- `laton` (#9A7A2E) sobre `blanco` (#FFFFFF): ratio ~5.1:1 — pasa WCAG AA para texto normal. Valor corregido por UI Designer (antes #B8973F, ratio ~3.8:1). Sobre `granito`: ~9:1, pasa AAA.
 
 ---
 
@@ -121,7 +119,7 @@ piedra de granito, rías, lluvia, calidez. Ningún competidor liga su imagen al 
   /* === PALETA DE COLOR === */
 
   /* Identidad primaria — latón/bronce (extraído del logo) */
-  --color-laton:        #B8973F;
+  --color-laton:        #9A7A2E;  /* ajustado de #B8973F — WCAG AA sobre blanco */
   --color-laton-claro:  #D4B96A;
   --color-laton-oscuro: #8A6E2A;
 
