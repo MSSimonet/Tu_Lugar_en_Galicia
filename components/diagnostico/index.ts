@@ -1,0 +1,1 @@
+export { FormularioDiagnostico } from './FormularioDiagnostico'
