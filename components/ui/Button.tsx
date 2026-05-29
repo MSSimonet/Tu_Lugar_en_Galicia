@@ -14,7 +14,7 @@ const variantClasses: Record<Variant, string> = {
     "bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] " +
     "tracking-[var(--tracking-ui)] uppercase",
   secundario:
-    "bg-[var(--color-coral)] text-white hover:brightness-90",
+    "bg-[#B8523A] text-white hover:bg-[#9E4632]",
   fantasma:
     "border border-[var(--color-laton)] text-[var(--color-laton)] " +
     "hover:bg-[var(--color-laton)] hover:text-white",

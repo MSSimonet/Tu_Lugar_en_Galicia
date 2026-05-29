@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Button } from '@/components/ui/Button'
 import { SITE_NAME } from '@/lib/config/site'
 
 const navLinks = [
@@ -23,6 +22,13 @@ export function Header() {
     href === '/' ? pathname === '/' : pathname.startsWith(href)
 
   return (
+    <>
+    <a
+      href="#main-content"
+      className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--color-laton)] focus:text-white focus:rounded-[var(--radius-card)] focus:font-[family-name:var(--font-ui)]"
+    >
+      Ir al contenido principal
+    </a>
     <header className="sticky top-0 z-40 bg-[var(--color-granito)]/95 backdrop-blur-sm text-[var(--color-niebla)]">
       <div className="max-w-7xl mx-auto px-[var(--space-6)] h-16 flex items-center justify-between">
         {/* Logo / nombre */}
@@ -51,10 +57,11 @@ export function Header() {
               {label}
             </Link>
           ))}
-          <Link href="/agenda" tabIndex={-1}>
-            <Button size="sm" variant="primario">
-              Agenda
-            </Button>
+          <Link
+            href="/agenda"
+            className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] text-white px-[var(--space-4)] py-[var(--space-2)] text-[var(--text-xs)] font-medium font-[family-name:var(--font-ui)] tracking-[var(--tracking-ui)] uppercase transition-all duration-200 hover:bg-[var(--color-laton-oscuro)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+          >
+            Agenda
           </Link>
         </nav>
 
@@ -111,13 +118,16 @@ export function Header() {
               {label}
             </Link>
           ))}
-          <Link href="/agenda" onClick={() => setMenuOpen(false)} tabIndex={-1}>
-            <Button size="md" variant="primario" className="w-full justify-center">
-              Agenda
-            </Button>
+          <Link
+            href="/agenda"
+            onClick={() => setMenuOpen(false)}
+            className="inline-flex items-center justify-center w-full rounded-[var(--radius-pill)] bg-[var(--color-laton)] text-white px-[var(--space-6)] py-[var(--space-3)] text-[var(--text-sm)] font-medium font-[family-name:var(--font-ui)] tracking-[var(--tracking-ui)] uppercase transition-all duration-200 hover:bg-[var(--color-laton-oscuro)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+          >
+            Agenda
           </Link>
         </nav>
       )}
     </header>
+    </>
   )
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { buildOpenGraph } from './og'
 
 const SITE_URL = 'https://tulugarengalicia.com'
 
@@ -164,5 +165,6 @@ export function getNextMetadata(page: keyof typeof PAGE_METADATA): Metadata {
     alternates: {
       canonical: meta.canonical,
     },
+    openGraph: buildOpenGraph(page),
   }
 }

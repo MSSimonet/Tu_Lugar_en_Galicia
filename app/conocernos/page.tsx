@@ -6,7 +6,7 @@ export const metadata: Metadata = getNextMetadata('conocernos')
 
 export default function ConocernosPage() {
   return (
-    <main className="min-h-screen bg-[var(--color-blanco)]">
+    <div className="min-h-screen bg-[var(--color-blanco)]">
       {/* Hero de la página */}
       <div className="bg-[var(--color-niebla)] border-b border-[var(--color-arena)]">
         <div className="max-w-2xl mx-auto px-[var(--space-6)] py-[var(--space-16)]">
@@ -26,6 +26,6 @@ export default function ConocernosPage() {
       <div className="max-w-2xl mx-auto px-[var(--space-6)] py-[var(--space-16)]">
         <FormularioDiagnostico />
       </div>
-    </main>
+    </div>
   )
 }

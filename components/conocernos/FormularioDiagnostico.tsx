@@ -180,16 +180,18 @@ function RadioGroup({
   value,
   onChange,
   error,
+  labelId,
 }: {
   name: string
   options: { value: string; label: string }[]
   value: string
   onChange: (val: string) => void
   error?: string
+  labelId?: string
 }) {
   return (
     <div>
-      <div className="flex flex-col gap-[var(--space-2)]" role="radiogroup">
+      <div className="flex flex-col gap-[var(--space-2)]" role="radiogroup" aria-labelledby={labelId}>
         {options.map((opt) => (
           <label
             key={opt.value}
@@ -338,7 +340,14 @@ export function FormularioDiagnostico() {
       noValidate
       className="flex flex-col gap-[var(--space-12)]"
       aria-label="Vamos a conocernos"
+      aria-busy={status === 'loading'}
     >
+      {/* Región aria-live para anuncios de estado a lectores de pantalla */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {status === 'loading' && 'Enviando tu consulta...'}
+        {status === 'error' && 'Hubo un error al enviar. Por favor intentá de nuevo.'}
+      </div>
+
       {/* Error banner */}
       {status === 'error' && (
         <div
@@ -433,7 +442,7 @@ export function FormularioDiagnostico() {
           {/* 6. Mascotas */}
           <div>
             <fieldset>
-              <legend className={`${labelClass} mb-[var(--space-2)]`}>
+              <legend id="rg-mascotas" className={`${labelClass} mb-[var(--space-2)]`}>
                 ¿Viajan con mascotas?
                 <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </legend>
@@ -446,6 +455,7 @@ export function FormularioDiagnostico() {
                 value={form.mascotas}
                 onChange={(v) => set('mascotas', v as 'si' | 'no')}
                 error={errors.mascotas}
+                labelId="rg-mascotas"
               />
             </fieldset>
 
@@ -618,7 +628,7 @@ export function FormularioDiagnostico() {
           {/* 12. Presupuesto mensual */}
           <div>
             <fieldset>
-              <legend className={`${labelClass} mb-[var(--space-2)]`}>
+              <legend id="rg-presupuestoMensual" className={`${labelClass} mb-[var(--space-2)]`}>
                 Presupuesto mensual de alquiler
                 <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </legend>
@@ -633,6 +643,7 @@ export function FormularioDiagnostico() {
                 value={form.presupuestoMensual}
                 onChange={(v) => set('presupuestoMensual', v as LeadData['presupuestoMensual'])}
                 error={errors.presupuestoMensual}
+                labelId="rg-presupuestoMensual"
               />
             </fieldset>
           </div>
@@ -640,7 +651,7 @@ export function FormularioDiagnostico() {
           {/* 13. Habitaciones mínimas */}
           <div>
             <fieldset>
-              <legend className={`${labelClass} mb-[var(--space-2)]`}>
+              <legend id="rg-habitacionesMinimas" className={`${labelClass} mb-[var(--space-2)]`}>
                 Habitaciones mínimas
                 <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </legend>
@@ -655,6 +666,7 @@ export function FormularioDiagnostico() {
                 value={form.habitacionesMinimas}
                 onChange={(v) => set('habitacionesMinimas', v as LeadData['habitacionesMinimas'])}
                 error={errors.habitacionesMinimas}
+                labelId="rg-habitacionesMinimas"
               />
             </fieldset>
           </div>
@@ -662,7 +674,7 @@ export function FormularioDiagnostico() {
           {/* 14. Amueblado */}
           <div>
             <fieldset>
-              <legend className={`${labelClass} mb-[var(--space-2)]`}>
+              <legend id="rg-amueblado" className={`${labelClass} mb-[var(--space-2)]`}>
                 ¿Necesitás la vivienda amueblada?
                 <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </legend>
@@ -676,6 +688,7 @@ export function FormularioDiagnostico() {
                 value={form.amueblado}
                 onChange={(v) => set('amueblado', v as LeadData['amueblado'])}
                 error={errors.amueblado}
+                labelId="rg-amueblado"
               />
             </fieldset>
           </div>
@@ -683,7 +696,7 @@ export function FormularioDiagnostico() {
           {/* 15. Estacionamiento */}
           <div>
             <fieldset>
-              <legend className={`${labelClass} mb-[var(--space-2)]`}>
+              <legend id="rg-estacionamiento" className={`${labelClass} mb-[var(--space-2)]`}>
                 ¿Necesitás estacionamiento?
                 <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </legend>
@@ -697,6 +710,7 @@ export function FormularioDiagnostico() {
                 value={form.estacionamiento}
                 onChange={(v) => set('estacionamiento', v as LeadData['estacionamiento'])}
                 error={errors.estacionamiento}
+                labelId="rg-estacionamiento"
               />
             </fieldset>
           </div>
@@ -738,7 +752,7 @@ export function FormularioDiagnostico() {
           {/* 18. Modalidad */}
           <div>
             <fieldset>
-              <legend className={`${labelClass} mb-[var(--space-2)]`}>
+              <legend id="rg-modalidad" className={`${labelClass} mb-[var(--space-2)]`}>
                 Modalidad de búsqueda
                 <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </legend>
@@ -751,6 +765,7 @@ export function FormularioDiagnostico() {
                 value={form.modalidad}
                 onChange={(v) => set('modalidad', v as LeadData['modalidad'])}
                 error={errors.modalidad}
+                labelId="rg-modalidad"
               />
             </fieldset>
           </div>

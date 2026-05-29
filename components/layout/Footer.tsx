@@ -50,7 +50,7 @@ export function Footer() {
         </nav>
 
         {/* Copyright */}
-        <p className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)] border-t border-[var(--color-pizarra)] pt-[var(--space-6)]">
+        <p className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-arena)] border-t border-[var(--color-pizarra)] pt-[var(--space-6)]">
           &copy; {year} {SITE_NAME}. Todos los derechos reservados.
         </p>
       </div>
