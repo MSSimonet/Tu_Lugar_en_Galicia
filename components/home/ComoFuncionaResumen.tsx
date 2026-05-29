@@ -3,7 +3,7 @@ import Link from "next/link";
 const pasos = [
   {
     numero: 1,
-    nombre: "Diagnóstico",
+    nombre: "Nos conocemos",
     descripcion:
       "Completás un formulario corto y evaluamos si podemos ayudarte hoy.",
   },

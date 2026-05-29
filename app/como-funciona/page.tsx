@@ -8,10 +8,10 @@ export const metadata = getNextMetadata('comoFunciona')
 const pasos = [
   {
     numero: '01',
-    nombre: 'Diagnóstico de viabilidad',
+    nombre: 'Vamos a conocernos',
     tiempo: '48 horas hábiles',
     descripcion:
-      'Completás el formulario de diagnóstico con tu situación real: dónde estás, cuándo pensás viajar, qué documentación tenés, cuántos son, qué presupuesto manejás. Silvana lee cada formulario personalmente y evalúa si puede ayudarte en este momento. No todos los casos son viables de entrada — y preferimos decirte la verdad desde el principio antes que prometerte algo que no podemos cumplir.',
+      'Completás el formulario con tu situación real: dónde estás, cuándo pensás viajar, qué documentación tenés, cuántos son, qué presupuesto manejás. Silvana lee cada formulario personalmente y evalúa si puede ayudarte en este momento. No todos los casos son viables de entrada — y preferimos decirte la verdad desde el principio antes que prometerte algo que no podemos cumplir.',
   },
   {
     numero: '02',
@@ -176,15 +176,15 @@ export default function ComoFuncionaPage() {
             ¿Tiene sentido para tu familia?
           </h2>
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-white/80 leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
-            Si leíste hasta acá y sentís que esto es lo que necesitás, el primer paso es el
-            formulario de diagnóstico. Es corto, gratuito y sin compromiso.
+            Si leíste hasta acá y sentís que esto es lo que necesitás, el primer paso es conocernos.
+            Es corto, gratuito y sin compromiso.
           </p>
           <div className="flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
             <Link
-              href="/diagnostico"
+              href="/conocernos"
               className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              Empezar el diagnóstico
+              Vamos a conocernos
             </Link>
             <a
               href={waUrl}

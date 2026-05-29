@@ -91,7 +91,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
   comoFunciona: {
     title: 'Cómo funciona el servicio de relocation en Galicia | Tu Lugar en Galicia',
     description:
-      'Conocé los 6 pasos de nuestro servicio de relocation: desde el diagnóstico hasta la entrega de llaves. Transparente, personal y sin sorpresas.',
+      'Conocé los 6 pasos de nuestro servicio de relocation: desde el primer contacto hasta la entrega de llaves. Transparente, personal y sin sorpresas.',
     keywords: [
       'cómo funciona relocation galicia',
       'proceso alquiler emigrantes españa',
@@ -127,18 +127,18 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
     ],
     canonical: `${SITE_URL}/faq`,
   },
-  diagnostico: {
-    title: 'Diagnóstico de viabilidad para tu mudanza a Galicia | Tu Lugar en Galicia',
+  conocernos: {
+    title: 'Vamos a conocernos — Contanos tu caso | Tu Lugar en Galicia',
     description:
-      'Completá el formulario de diagnóstico y evaluamos si podemos ayudarte a conseguir alquiler en Galicia. Respuesta en 48 horas hábiles. Sin compromiso.',
+      'Contanos sobre tu familia y tu situación. Evaluamos si podemos ayudarte a conseguir alquiler en Galicia. Respuesta en 48 horas hábiles. Sin compromiso.',
     keywords: [
-      'diagnóstico relocation galicia',
+      'consulta relocation galicia',
       'formulario alquiler emigrantes galicia',
       'consulta mudanza galicia',
       'viabilidad alquiler españa latinoamericanos',
       'contacto tu lugar en galicia',
     ],
-    canonical: `${SITE_URL}/diagnostico`,
+    canonical: `${SITE_URL}/conocernos`,
   },
   agenda: {
     title: 'Agendá tu videollamada gratuita sobre relocation en Galicia | Tu Lugar en Galicia',

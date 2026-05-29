@@ -23,7 +23,7 @@ const categorias = [
       {
         question: '¿Cómo funciona el cobro? ¿Cuánto cuesta?',
         answer:
-          'Cobramos honorarios por el servicio de búsqueda y acompañamiento, pagados por la familia que contrata el servicio. El propietario no paga nada. El monto específico depende del tipo de búsqueda y la ciudad — te lo explicamos en detalle en la videollamada inicial, sin sorpresas. El servicio no tiene costo de consulta: el formulario de diagnóstico y la primera videollamada son gratuitos.',
+          'Cobramos honorarios por el servicio de búsqueda y acompañamiento, pagados por la familia que contrata el servicio. El propietario no paga nada. El monto específico depende del tipo de búsqueda y la ciudad — te lo explicamos en detalle en la videollamada inicial, sin sorpresas. El servicio no tiene costo de consulta: el primer formulario y la primera videollamada son gratuitos.',
       },
       {
         question: '¿Qué garantías tienen de que van a encontrar algo?',
@@ -33,7 +33,7 @@ const categorias = [
       {
         question: '¿Trabajan solo con familias o también con personas solas?',
         answer:
-          'Trabajamos principalmente con familias y parejas. Si sos una persona sola con una situación clara y una búsqueda viable, también podemos ayudarte — evaluamos caso a caso en el formulario de diagnóstico.',
+          'Trabajamos principalmente con familias y parejas. Si sos una persona sola con una situación clara y una búsqueda viable, también podemos ayudarte — evaluamos caso a caso cuando nos contás tu situación.',
       },
     ],
   },
@@ -113,7 +113,7 @@ const categorias = [
       {
         question: '¿Pueden tener mascotas en un piso de alquiler?',
         answer:
-          'Depende del propietario. La ley no prohíbe las mascotas en alquiler, pero los propietarios pueden establecer restricciones en el contrato. Trabajamos buscando opciones que permitan mascotas si ese es tu caso — es un filtro que aplicamos desde el inicio de la búsqueda. Si tenés mascotas, indicalo en el formulario de diagnóstico con el detalle completo.',
+          'Depende del propietario. La ley no prohíbe las mascotas en alquiler, pero los propietarios pueden establecer restricciones en el contrato. Trabajamos buscando opciones que permitan mascotas si ese es tu caso — es un filtro que aplicamos desde el inicio de la búsqueda. Si tenés mascotas, indicalo cuando nos contás tu caso con el detalle completo.',
       },
       {
         question: '¿Los pisos suelen venir amueblados?',
@@ -206,15 +206,15 @@ export default function FAQPage() {
             ¿No encontraste tu respuesta?
           </h2>
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
-            Completá el formulario de diagnóstico o escribinos directamente por WhatsApp. Respondemos
+            Contanos tu caso o escribinos directamente por WhatsApp. Respondemos
             hoy.
           </p>
           <div className="flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
             <Link
-              href="/diagnostico"
+              href="/conocernos"
               className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
             >
-              Empezar el diagnóstico
+              Vamos a conocernos
             </Link>
             <a
               href={waUrl}

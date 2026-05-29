@@ -12,7 +12,7 @@ const navLinks = [
   { label: 'Ciudades', href: '/ciudades/vigo' },
   { label: 'Sobre Silvana', href: '/sobre-silvana' },
   { label: 'FAQ', href: '/faq' },
-  { label: 'Diagnóstico', href: '/diagnostico' },
+  { label: 'Vamos a conocernos', href: '/conocernos' },
 ]
 
 export function Header() {

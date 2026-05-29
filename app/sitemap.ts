@@ -61,7 +61,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${SITE_URL}/diagnostico`,
+      url: `${SITE_URL}/conocernos`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.5,

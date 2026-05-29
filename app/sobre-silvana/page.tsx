@@ -143,10 +143,10 @@ export default function SobreSilvanaPage() {
           </p>
           <div className="flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
             <Link
-              href="/diagnostico"
+              href="/conocernos"
               className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
             >
-              Empezar el diagnóstico
+              Vamos a conocernos
             </Link>
             <Link
               href="/agenda"

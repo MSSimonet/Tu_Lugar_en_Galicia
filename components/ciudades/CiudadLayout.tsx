@@ -203,9 +203,9 @@ export function CiudadLayout({
             que se adaptan a lo que necesitás. Sin costo, sin compromiso.
           </p>
           <div className="flex flex-col sm:flex-row gap-[var(--space-4)] justify-center">
-            <Link href="/diagnostico">
+            <Link href="/conocernos">
               <Button variant="primario" size="lg">
-                Completá el diagnóstico
+                Vamos a conocernos
               </Button>
             </Link>
             <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
@@ -258,12 +258,12 @@ export function CiudadLayout({
               mb-[var(--space-8)]
             "
           >
-            El primer paso es el diagnóstico de viabilidad. Tarda diez minutos y
+            El primer paso es conocernos. Tarda diez minutos y
             les damos una respuesta en 48 horas hábiles.
           </p>
-          <Link href="/diagnostico">
+          <Link href="/conocernos">
             <Button variant="primario" size="lg">
-              Completá el diagnóstico
+              Vamos a conocernos
             </Button>
           </Link>
         </div>

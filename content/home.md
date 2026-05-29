@@ -36,7 +36,7 @@ Escribinos por WhatsApp
 **Bajada de sección:**
 Sin vueltas. Así acompañamos a cada familia.
 
-**Paso 1 — Diagnóstico**
+**Paso 1 — Nos conocemos**
 Completás un formulario corto y evaluamos si podemos ayudarte hoy.
 
 **Paso 2 — Videollamada**
@@ -94,10 +94,10 @@ Texto: "Lo que más me sorprendió fue que Silvana entendía exactamente lo que 
 ¿Listo para encontrar tu lugar en Galicia?
 
 **Texto de apoyo:**
-Completá el formulario de diagnóstico y te contamos si podemos ayudarte. Sin compromiso, sin costo de consulta.
+Contanos tu situación y te decimos si podemos ayudarte. Sin compromiso, sin costo de consulta.
 
 **Botón:**
-Empezar el diagnóstico
+Vamos a conocernos
 
 **Texto secundario bajo el botón:**
 O si preferís, escribinos directamente por WhatsApp y respondemos hoy.

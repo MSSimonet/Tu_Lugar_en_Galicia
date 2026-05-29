@@ -6,7 +6,7 @@ const footerLinks = [
   { label: 'Cómo funciona', href: '/como-funciona' },
   { label: 'Ciudades', href: '/ciudades/vigo' },
   { label: 'FAQ', href: '/faq' },
-  { label: 'Diagnóstico', href: '/diagnostico' },
+  { label: 'Vamos a conocernos', href: '/conocernos' },
 ]
 
 export function Footer() {

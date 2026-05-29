@@ -18,12 +18,12 @@ No somos una inmobiliaria. Somos el intermediario que le faltaba al proceso de m
 
 ---
 
-### Paso 1 — Diagnóstico de viabilidad
+### Paso 1 — Vamos a conocernos
 **Tiempo estimado:** 48 horas hábiles
 
-Completás el formulario de diagnóstico en el sitio con tu situación real: dónde estás, cuándo pensás viajar, qué documentación tenés, cuántos son, qué presupuesto manejás. Silvana lee cada formulario personalmente y evalúa si puede ayudarte en este momento. No todos los casos son viables de entrada — y preferimos decirte la verdad desde el principio antes que prometerte algo que no podemos cumplir.
+Completás el formulario con tu situación real: dónde estás, cuándo pensás viajar, qué documentación tenés, cuántos son, qué presupuesto manejás. Silvana lee cada formulario personalmente y evalúa si puede ayudarte en este momento. No todos los casos son viables de entrada — y preferimos decirte la verdad desde el principio antes que prometerte algo que no podemos cumplir.
 
-Si tu situación es viable, recibís un mensaje en 48 horas hábiles para coordinar la videollamada. Si hay algo que aclarar primero, también te escribimos.
+Si tu situación es viable, te escribimos en 48 horas hábiles para coordinar la videollamada. Si hay algo que aclarar primero, también nos comunicamos.
 
 ---
 
@@ -89,8 +89,8 @@ Sí garantizamos la búsqueda, la presentación de opciones reales y el acompañ
 
 ¿Tiene sentido para tu familia?
 
-Si leíste hasta acá y sentís que esto es lo que necesitás, el primer paso es el formulario de diagnóstico. Es corto, gratuito y sin compromiso. A partir de ahí, vemos juntos si podemos ayudarte.
+Si leíste hasta acá y sentís que esto es lo que necesitás, el primer paso es conocernos. Es corto, gratuito y sin compromiso. A partir de ahí, vemos juntos si podemos ayudarte.
 
-**Botón:** Empezar el diagnóstico
+**Botón:** Vamos a conocernos
 
 **Texto secundario:** ¿Preferís hablar primero? Escribinos por WhatsApp y respondemos hoy.

@@ -17,14 +17,14 @@ export function CTAFinal() {
         </h2>
 
         <p className="mx-auto mt-[var(--space-6)] max-w-lg font-[family-name:var(--font-ui)] text-[var(--text-md)] leading-[var(--leading-cuerpo)] text-[var(--color-niebla)] opacity-80">
-          Completá el formulario de diagnóstico y te contamos si podemos
+          Contanos tu situación y te decimos si podemos
           ayudarte. Sin compromiso, sin costo de consulta.
         </p>
 
         <div className="mt-[var(--space-8)] flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
-          <Link href="/diagnostico">
+          <Link href="/conocernos">
             <Button variant="primario" size="lg">
-              Empezar el diagnóstico
+              Vamos a conocernos
             </Button>
           </Link>
 

@@ -337,7 +337,7 @@ export function FormularioDiagnostico() {
       onSubmit={handleSubmit}
       noValidate
       className="flex flex-col gap-[var(--space-12)]"
-      aria-label="Formulario de diagnóstico de viabilidad"
+      aria-label="Vamos a conocernos"
     >
       {/* Error banner */}
       {status === 'error' && (
@@ -847,7 +847,7 @@ export function FormularioDiagnostico() {
               Enviando...
             </span>
           ) : (
-            'Enviar mi diagnóstico'
+            'Enviar mi consulta'
           )}
         </Button>
         <p className="mt-[var(--space-3)] text-[var(--text-xs)] text-[var(--color-pizarra)] font-[family-name:var(--font-ui)]">
