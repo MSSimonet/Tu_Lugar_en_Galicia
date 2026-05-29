@@ -8,7 +8,7 @@ import type { LeadData } from '@/lib/leads'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type FormStatus = 'idle' | 'loading' | 'success' | 'error'
+type FormStatus = 'idle' | 'loading' | 'success' | 'partial' | 'error'
 
 type FormState = {
   nombreCompleto: string
@@ -134,7 +134,7 @@ const labelClass =
   'text-[var(--color-granito)] mb-1.5'
 
 const errorClass =
-  'mt-[var(--space-1)] text-[var(--text-xs)] text-[var(--color-coral)]'
+  'mt-[var(--space-1)] text-[var(--text-xs)] text-[#922B21]'
 
 const sectionTitleClass =
   'font-[family-name:var(--font-titular)] text-[var(--text-lg)] ' +
@@ -295,8 +295,10 @@ export function FormularioDiagnostico() {
         body: JSON.stringify(payload),
       })
 
-      if (res.ok || res.status === 503) {
+      if (res.ok) {
         setStatus('success')
+      } else if (res.status === 503) {
+        setStatus('partial')
       } else {
         setStatus('error')
       }
@@ -324,6 +326,42 @@ export function FormularioDiagnostico() {
         <Link
           href="/"
           className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] text-[var(--text-sm)]"
+        >
+          Volver al inicio
+        </Link>
+      </div>
+    )
+  }
+
+  // ── Partial state (503 — Airtable not configured) ─────────────────────────
+
+  if (status === 'partial') {
+    return (
+      <div
+        className="rounded-[var(--radius-card)] bg-[var(--color-niebla)] border border-[var(--color-arena)] p-[var(--space-12)] text-center flex flex-col items-center gap-[var(--space-6)]"
+        role="status"
+        aria-live="polite"
+      >
+        <div className="text-4xl" aria-hidden="true">🙏</div>
+        <h2 className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] font-semibold">
+          Recibimos tu consulta
+        </h2>
+        <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
+          Anotamos tus datos y Silvana se va a comunicar con vos a la brevedad.
+          Si no recibís noticias en <strong>48 horas hábiles</strong>, escribinos
+          directamente por WhatsApp — estamos acá para ayudarlos.
+        </p>
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] text-[var(--text-sm)]"
+        >
+          Escribinos por WhatsApp
+        </a>
+        <Link
+          href="/"
+          className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-mar)] underline-offset-4 hover:underline"
         >
           Volver al inicio
         </Link>
@@ -786,6 +824,8 @@ export function FormularioDiagnostico() {
               <input
                 id="comprendeServicio"
                 type="checkbox"
+                required
+                aria-required="true"
                 checked={form.comprendeServicio}
                 onChange={(e) => set('comprendeServicio', e.target.checked)}
                 className="accent-[var(--color-laton)] w-4 h-4 mt-[2px] cursor-pointer flex-shrink-0"
@@ -809,6 +849,8 @@ export function FormularioDiagnostico() {
               <input
                 id="consentimientoRGPD"
                 type="checkbox"
+                required
+                aria-required="true"
                 checked={form.consentimientoRGPD}
                 onChange={(e) => set('consentimientoRGPD', e.target.checked)}
                 className="accent-[var(--color-laton)] w-4 h-4 mt-[2px] cursor-pointer flex-shrink-0"

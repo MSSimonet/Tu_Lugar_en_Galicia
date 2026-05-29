@@ -154,6 +154,13 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
     ],
     canonical: `${SITE_URL}/agenda`,
   },
+  politicaPrivacidad: {
+    title: 'Política de Privacidad | Tu Lugar en Galicia',
+    description:
+      'Cómo tratamos tus datos personales. Responsable del tratamiento, finalidad, derechos ARCO y contacto.',
+    keywords: ['política de privacidad', 'RGPD', 'protección de datos'],
+    canonical: `${SITE_URL}/politica-de-privacidad`,
+  },
 }
 
 export function getNextMetadata(page: keyof typeof PAGE_METADATA): Metadata {

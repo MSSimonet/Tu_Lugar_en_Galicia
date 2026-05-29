@@ -1,7 +1,6 @@
 // TODO: reemplazar imágenes placeholder con fotos reales en /public
 
 import Image from "next/image";
-import Link from "next/link";
 
 const llaves = [
   { n: 1, alt: "Entrega de llaves — familia Rojas, Vigo" },
@@ -46,12 +45,10 @@ export function MuroLlavesPreview() {
         </ul>
 
         <div className="mt-[var(--space-8)] text-center">
-          <Link
-            href="/muro-de-llaves"
-            className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium text-[var(--color-mar)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-mar)]"
-          >
-            Ver todas las entregas →
-          </Link>
+          {/* TODO Fase 2: crear página /muro-de-llaves con galería completa */}
+          <span className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] cursor-default">
+            Más entregas próximamente
+          </span>
         </div>
       </div>
     </section>

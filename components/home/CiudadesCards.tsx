@@ -85,7 +85,7 @@ export function CiudadesCards() {
                   <p className="mt-[var(--space-2)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)] text-[var(--color-pizarra)]">
                     {descripcion}
                   </p>
-                  <span className="mt-[var(--space-4)] inline-block font-[family-name:var(--font-ui)] text-[var(--text-xs)] font-medium tracking-[var(--tracking-ui)] text-[var(--color-laton)] uppercase">
+                  <span className="mt-[var(--space-4)] inline-block font-[family-name:var(--font-ui)] text-[var(--text-xs)] font-medium tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] uppercase">
                     Conocé {nombre} →
                   </span>
                 </div>
