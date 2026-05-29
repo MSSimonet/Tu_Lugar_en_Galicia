@@ -156,3 +156,129 @@ en CLAUDE.md §3). No se crean carpetas vacías en el scaffold para no generar a
 - La estructura documentada en §2 es el destino final, no el estado inicial.
 - Un `create-next-app` posterior en la misma carpeta fallaría por nombre con mayúsculas; si se
   necesita reinicializar, hacerlo en una carpeta temporal y mover como se hizo en este scaffold.
+
+---
+
+## 6. Guía de despliegue: Cloudflare → Vercel
+
+Esta guía está pensada para alguien que sigue los pasos por primera vez y no tiene experiencia
+previa con Vercel o Cloudflare. Ejecutá cada sección en orden.
+
+---
+
+### A) Conectar el repositorio a Vercel
+
+1. Ir a [vercel.com/new](https://vercel.com/new) e iniciar sesión con la cuenta de GitHub del
+   proyecto.
+2. Hacer clic en **"Import Git Repository"** y seleccionar `Tu_Lugar_en_Galicia`.
+3. Vercel detecta automáticamente que es un proyecto Next.js. No cambiar nada en:
+   - **Framework Preset:** Next.js (auto-detectado)
+   - **Build Command:** `npm run build` (por defecto)
+   - **Output Directory:** `.next` (por defecto)
+   - **Install Command:** `npm install` (por defecto)
+4. Antes de hacer clic en **"Deploy"**, ir a la sección **"Environment Variables"** y agregar
+   las variables de entorno necesarias (solo los nombres — los valores reales los tenés en
+   `.env.local`):
+
+   | Variable | Fase | Descripción |
+   |---|---|---|
+   | `AIRTABLE_API_KEY` | 1 | Clave de Airtable para guardar leads |
+   | `GOOGLE_SHEETS_*` | 1 | Credenciales de Google Sheets (alternativa a Airtable) |
+   | `SHEET_MARCADOR_ID` | 1 | ID de la hoja de El Marcador |
+   | `OPENWEATHER_API_KEY` | 2 | Clima por ciudad |
+   | `ANTHROPIC_API_KEY` | 4 | API de Claude para Lar |
+   | `DATABASE_URL` | 5 | Conexión a base de datos |
+   | `STRIPE_SECRET_KEY` | 6 | Pagos con Stripe |
+
+   > Solo agregá las variables de la fase en la que estás. Las de fases futuras se agregan cuando
+   > llegue el momento.
+
+5. Hacer clic en **"Deploy"**. Vercel construye y despliega la app. Al terminar, te da una URL
+   temporal del tipo `tu-lugar-en-galicia.vercel.app` — usala para verificar que todo funciona
+   antes de conectar el dominio propio.
+
+---
+
+### B) Apuntar el dominio desde Cloudflare a Vercel
+
+> Requisito previo: el dominio (por ejemplo `tulugarengalicia.com`) ya está registrado y apuntado
+> a Cloudflare (sus nameservers son los activos).
+
+**En Vercel:**
+
+1. Ir a tu proyecto en vercel.com → **Settings** → **Domains**.
+2. Hacer clic en **"Add Domain"** y escribir el dominio (por ejemplo `tulugarengalicia.com`).
+3. Vercel te muestra los registros DNS que hay que agregar. Normalmente son dos:
+   - Un **registro A** apuntando a `76.76.21.21`
+   - Un **registro CNAME** de `www` apuntando a `cname.vercel-dns.com`
+4. Agregar también `www.tulugarengalicia.com` como segundo dominio en Vercel, y configurar
+   cuál es el canónico (generalmente el apex sin `www`).
+
+**En Cloudflare:**
+
+5. Ir a [dash.cloudflare.com](https://dash.cloudflare.com) → seleccionar el dominio → **DNS**.
+6. Agregar los dos registros que Vercel indicó en el paso 3:
+   - Tipo **A**, nombre `@` (o el dominio raíz), valor `76.76.21.21`
+   - Tipo **CNAME**, nombre `www`, valor `cname.vercel-dns.com`
+7. **Importante:** durante la verificación inicial, dejar el proxy de Cloudflare **desactivado
+   (nube gris / "DNS only")** en ambos registros. Si está activo (nube naranja), Vercel no puede
+   verificar la propiedad del dominio.
+8. Volver a Vercel → Settings → Domains y esperar a que aparezca el estado **"Valid
+   Configuration"** junto al dominio (puede tardar hasta 10 minutos).
+9. Una vez que Vercel confirma el dominio, volver a Cloudflare y activar el proxy (nube naranja)
+   en los dos registros. Esto habilita el CDN y la protección DDoS de Cloudflare.
+
+**Configurar SSL:**
+
+10. En Cloudflare → **SSL/TLS** → **Overview**: seleccionar el modo **"Full (strict)"**.
+    - Vercel provee automáticamente un certificado Let's Encrypt válido para tu dominio.
+    - "Full (strict)" significa que Cloudflare encripta tanto la conexión con el visitante como
+      la conexión con Vercel — es el modo más seguro.
+    - No usar "Flexible" (solo encripta hasta Cloudflare, no hasta Vercel) ni "Off".
+
+**Verificar redirección www → apex (o viceversa):**
+
+11. En Vercel → Settings → Domains: asegurarse de que el dominio sin `www` tiene la etiqueta
+    **"Primary"** y que `www` está configurado para redirigir al primary con un 301.
+    Vercel lo gestiona automáticamente cuando agregás ambas versiones del dominio.
+
+---
+
+### C) Configuración recomendada en Cloudflare
+
+Una vez que el dominio funciona correctamente, aplicar estas configuraciones en el panel de
+Cloudflare:
+
+**Speed → Optimization:**
+- **Auto Minify:** desactivar para JavaScript, CSS y HTML. Next.js ya minifica todo en el build;
+  si Cloudflare lo vuelve a procesar puede romper source maps y generar problemas.
+- **Rocket Loader:** desactivar. Interfiere con la hidratación de React.
+
+**Caching → Configuration:**
+- **Browser Cache TTL:** seleccionar **"Respect Existing Headers"**. Next.js ya envía headers de
+  caché correctos para sus assets estáticos (`/_next/static/`).
+
+**Rules (opcional pero recomendado):**
+- Si el apex (`tulugarengalicia.com`) es el dominio canónico y querés asegurarte de que `www`
+  siempre redirige, crear una Page Rule:
+  - URL: `www.tulugarengalicia.com/*`
+  - Configuración: **Forwarding URL** → 301 Permanent Redirect → `https://tulugarengalicia.com/$1`
+  - Nota: si ya configuraste esto en Vercel (paso 11), esta regla es redundante pero no hace daño.
+
+**Security:**
+- **Security Level:** Medium (por defecto, está bien para Fase 1).
+- Los headers de seguridad HTTP (`X-Frame-Options`, `X-Content-Type-Options`, etc.) ya están
+  configurados en `vercel.json` del repo — no hace falta duplicarlos en Cloudflare.
+
+---
+
+### D) Verificación final
+
+Una vez completados todos los pasos, verificar:
+
+- [ ] `https://tulugarengalicia.com` carga la app sin errores de SSL
+- [ ] `https://www.tulugarengalicia.com` redirige con 301 al apex
+- [ ] Los headers de seguridad están presentes (verificar con [securityheaders.com](https://securityheaders.com))
+- [ ] Cloudflare muestra el dominio como "Active" en el dashboard
+- [ ] Vercel muestra el dominio con "Valid Configuration"
+- [ ] Un push a `main` en GitHub dispara un deploy automático en Vercel
