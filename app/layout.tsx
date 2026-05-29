@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { Header, Footer } from "@/components/layout";
+import { WhatsAppFlotante } from "@/components/shared";
+import { getNextMetadata } from "@/lib/seo/metadata";
 
 const fraunces = Fraunces({
   subsets: ["latin", "latin-ext"],
@@ -16,10 +19,7 @@ const plusJakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Tu Lugar en Galicia",
-  description: "El primer servicio de relocation especializado en Galicia para familias latinoamericanas.",
-};
+export const metadata: Metadata = getNextMetadata("home");
 
 export default function RootLayout({
   children,
@@ -32,7 +32,10 @@ export default function RootLayout({
       className={`${fraunces.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-[family-name:var(--font-ui)]">
-        {children}
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+        <WhatsAppFlotante />
       </body>
     </html>
   );
