@@ -38,7 +38,7 @@ export function Button({
       {...props}
       className={[
         "inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium",
-        "rounded-[var(--radius-pill)] transition-all duration-150",
+        "rounded-[var(--radius-pill)] transition-all duration-200 ease-in-out active:scale-[0.98]",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]",
         "disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-none",
         variantClasses[variant],

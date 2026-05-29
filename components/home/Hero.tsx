@@ -7,7 +7,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative flex min-h-screen flex-col items-center justify-center bg-[var(--color-granito)] px-[var(--space-6)] py-[var(--space-24)] text-center"
+      className="relative flex min-h-screen flex-col items-center justify-center hero-gradient px-[var(--space-6)] py-[var(--space-24)] text-center"
       aria-labelledby="hero-heading"
     >
       {/* Degradado evocador del verde atlántico */}
@@ -20,7 +20,7 @@ export function Hero() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto max-w-3xl">
+      <div className="relative z-10 mx-auto max-w-3xl animate-fade-in-up">
         <h1
           id="hero-heading"
           className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-niebla)] md:text-[var(--text-3xl)]"
@@ -29,6 +29,9 @@ export function Hero() {
           <span className="text-[var(--color-laton-claro)]">Galicia</span> con
           casa esperándola
         </h1>
+
+        {/* Línea decorativa en latón bajo el titular */}
+        <div className="mx-auto mt-[var(--space-4)] h-0.5 w-16 rounded-full bg-[var(--color-laton)]" aria-hidden="true" />
 
         <p className="mx-auto mt-[var(--space-6)] max-w-2xl text-[var(--text-md)] leading-[var(--leading-cuerpo)] text-[var(--color-niebla)] opacity-90 md:text-[var(--text-lg)]">
           Somos el primer servicio de relocation especializado en Galicia.

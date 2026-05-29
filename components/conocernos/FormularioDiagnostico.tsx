@@ -131,7 +131,7 @@ const inputError =
 
 const labelClass =
   'block font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] ' +
-  'text-[var(--color-granito)] mb-[var(--space-2)]'
+  'text-[var(--color-granito)] mb-1.5'
 
 const errorClass =
   'mt-[var(--space-1)] text-[var(--text-xs)] text-[var(--color-coral)]'
@@ -470,7 +470,7 @@ export function FormularioDiagnostico() {
         </div>
       </section>
 
-      <hr className="border-[var(--color-arena)]" />
+      <hr className="border-[var(--color-arena)] my-[var(--space-4)]" />
 
       {/* ── Sección 2: Situación legal y económica ────────────────────────── */}
       <section aria-labelledby="seccion-legal">
@@ -582,7 +582,7 @@ export function FormularioDiagnostico() {
         </div>
       </section>
 
-      <hr className="border-[var(--color-arena)]" />
+      <hr className="border-[var(--color-arena)] my-[var(--space-4)]" />
 
       {/* ── Sección 3: La vivienda que buscás ────────────────────────────── */}
       <section aria-labelledby="seccion-vivienda">
@@ -704,7 +704,7 @@ export function FormularioDiagnostico() {
         </div>
       </section>
 
-      <hr className="border-[var(--color-arena)]" />
+      <hr className="border-[var(--color-arena)] my-[var(--space-4)]" />
 
       {/* ── Sección 4: Fechas y modalidad ─────────────────────────────────── */}
       <section aria-labelledby="seccion-fechas">
@@ -758,7 +758,7 @@ export function FormularioDiagnostico() {
         </div>
       </section>
 
-      <hr className="border-[var(--color-arena)]" />
+      <hr className="border-[var(--color-arena)] my-[var(--space-4)]" />
 
       {/* ── Sección 5: Para terminar ──────────────────────────────────────── */}
       <section aria-labelledby="seccion-final">

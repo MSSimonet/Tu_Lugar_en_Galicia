@@ -23,7 +23,7 @@ export function Header() {
     href === '/' ? pathname === '/' : pathname.startsWith(href)
 
   return (
-    <header className="bg-[var(--color-granito)] text-[var(--color-niebla)]">
+    <header className="sticky top-0 z-40 bg-[var(--color-granito)]/95 backdrop-blur-sm text-[var(--color-niebla)]">
       <div className="max-w-7xl mx-auto px-[var(--space-6)] h-16 flex items-center justify-between">
         {/* Logo / nombre */}
         <Link

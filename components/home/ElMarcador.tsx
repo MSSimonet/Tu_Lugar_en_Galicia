@@ -47,20 +47,20 @@ export function ElMarcador() {
 
   return (
     <section
-      className="bg-[var(--color-atlantico)] px-[var(--space-6)] py-[var(--space-16)]"
+      className="bg-[var(--color-atlantico)] px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
       aria-label="El marcador — cifras en tiempo real"
     >
       <div className="mx-auto max-w-4xl">
         <h2 className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] text-[var(--color-laton-claro)] uppercase">
           En tiempo real
         </h2>
-        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-blanco)]">
+        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-blanco)] md:text-[var(--text-2xl)]">
           El Marcador
         </p>
 
-        <ul className="grid grid-cols-2 gap-[var(--space-8)] md:grid-cols-4">
+        <ul className="grid grid-cols-2 gap-[var(--space-6)] md:grid-cols-4 md:gap-[var(--space-8)]">
           {cifras.map(({ key, etiqueta, unidad }) => (
-            <li key={key} className="text-center">
+            <li key={key} className="text-center rounded-[var(--radius-card)] bg-white/10 px-[var(--space-4)] py-[var(--space-6)]">
               {loading ? (
                 /* Skeleton */
                 <div

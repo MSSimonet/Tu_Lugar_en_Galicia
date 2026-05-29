@@ -32,7 +32,7 @@ const testimonios = [
 export function Testimonios() {
   return (
     <section
-      className="bg-[var(--color-niebla)] px-[var(--space-6)] py-[var(--space-16)]"
+      className="bg-[var(--color-niebla)] px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
       aria-labelledby="testimonios-heading"
     >
       <div className="mx-auto max-w-5xl">
@@ -42,7 +42,7 @@ export function Testimonios() {
         >
           Lo que dicen las familias
         </h2>
-        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)]">
+        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] md:text-[var(--text-2xl)]">
           Testimonios
         </p>
 
@@ -51,7 +51,7 @@ export function Testimonios() {
             ({ nombre, ciudadOrigen, ciudadGalicia, texto, avatar }) => (
               <li
                 key={nombre}
-                className="flex flex-col rounded-[var(--radius-card)] bg-[var(--color-blanco)] p-[var(--space-8)] shadow-sm"
+                className="flex flex-col rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-[var(--color-blanco)] p-[var(--space-8)] shadow-md transition-shadow duration-300 hover:shadow-lg"
               >
                 <div className="flex items-center gap-[var(--space-4)]">
                   <Image

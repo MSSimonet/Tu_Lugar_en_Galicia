@@ -13,7 +13,7 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-[var(--color-granito)] text-[var(--color-niebla)]">
+    <footer className="bg-[var(--color-granito)] text-[var(--color-niebla)] border-t border-[var(--color-pizarra)]/30">
       <div className="max-w-7xl mx-auto px-[var(--space-6)] py-[var(--space-12)] flex flex-col gap-[var(--space-8)]">
         {/* Marca y tagline */}
         <div className="flex flex-col gap-[var(--space-2)]">

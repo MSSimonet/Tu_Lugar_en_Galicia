@@ -5,7 +5,7 @@ export function FeedInstagram() {
 
   return (
     <section
-      className="bg-[var(--color-arena)] px-[var(--space-6)] py-[var(--space-16)]"
+      className="bg-[var(--color-arena)] px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
       aria-labelledby="instagram-heading"
     >
       <div className="mx-auto max-w-4xl">
@@ -15,7 +15,7 @@ export function FeedInstagram() {
         >
           Seguinos
         </h2>
-        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)]">
+        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] md:text-[var(--text-2xl)]">
           @tulugarengalicia en Instagram
         </p>
 

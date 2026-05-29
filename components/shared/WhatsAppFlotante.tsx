@@ -18,7 +18,7 @@ export function WhatsAppFlotante() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Escribinos por WhatsApp"
-        className="flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-transform duration-150 hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+        className="flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-transform duration-200 hover:scale-110 active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
         style={{ backgroundColor: '#25D366' }}
       >
         {/* WhatsApp SVG oficial */}

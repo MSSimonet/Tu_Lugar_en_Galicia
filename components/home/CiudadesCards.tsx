@@ -42,7 +42,7 @@ const ciudades = [
 export function CiudadesCards() {
   return (
     <section
-      className="bg-[var(--color-arena)] px-[var(--space-6)] py-[var(--space-16)]"
+      className="bg-[var(--color-arena)] px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
       aria-labelledby="ciudades-heading"
     >
       <div className="mx-auto max-w-5xl">
@@ -52,7 +52,7 @@ export function CiudadesCards() {
         >
           Destinos
         </h2>
-        <p className="mb-[var(--space-4)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)]">
+        <p className="mb-[var(--space-4)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] md:text-[var(--text-2xl)]">
           Las ciudades donde operamos
         </p>
         <p className="mb-[var(--space-12)] mx-auto max-w-2xl text-center font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)] text-[var(--color-pizarra)]">
@@ -67,7 +67,7 @@ export function CiudadesCards() {
             <li key={slug}>
               <Link
                 href={`/ciudades/${slug}`}
-                className="group block overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-blanco)] shadow-sm transition-shadow duration-200 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+                className="group block overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-[var(--color-blanco)] shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
               >
                 <div className="relative h-48 w-full overflow-hidden">
                   <Image

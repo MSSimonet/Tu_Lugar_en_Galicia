@@ -7,7 +7,7 @@ export function CTAFinal() {
       className="bg-[var(--color-granito)] px-[var(--space-6)] py-[var(--space-24)]"
       aria-labelledby="cta-final-heading"
     >
-      <div className="mx-auto max-w-2xl text-center">
+      <div className="mx-auto max-w-2xl text-center animate-fade-in-up">
         <h2
           id="cta-final-heading"
           className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-niebla)] md:text-[var(--text-3xl)]"

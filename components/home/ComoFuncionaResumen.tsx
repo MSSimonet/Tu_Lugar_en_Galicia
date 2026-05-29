@@ -42,17 +42,17 @@ const pasos = [
 export function ComoFuncionaResumen() {
   return (
     <section
-      className="bg-[var(--color-blanco)] px-[var(--space-6)] py-[var(--space-16)]"
+      className="bg-[var(--color-blanco)] px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
       aria-labelledby="como-funciona-heading"
     >
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-6xl px-[var(--space-4)] md:px-[var(--space-8)]">
         <h2
           id="como-funciona-heading"
           className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] uppercase"
         >
           El proceso
         </h2>
-        <p className="mb-[var(--space-3)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)]">
+        <p className="mb-[var(--space-3)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] md:text-[var(--text-2xl)]">
           Cómo funciona
         </p>
         <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-pizarra)]">
@@ -63,7 +63,7 @@ export function ComoFuncionaResumen() {
           {pasos.map(({ numero, nombre, descripcion }) => (
             <li key={numero} className="flex gap-[var(--space-4)]">
               <span
-                className="flex-shrink-0 font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-none text-[var(--color-laton)]"
+                className="flex-shrink-0 font-[family-name:var(--font-titular)] font-bold text-[var(--text-2xl)] md:text-[var(--text-3xl)] leading-none text-[var(--color-laton)]"
                 aria-hidden="true"
               >
                 {numero}

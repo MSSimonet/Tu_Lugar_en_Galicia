@@ -15,7 +15,7 @@ export function FAQAccordion({ faqs }: FAQAccordionProps) {
       {faqs.map((faq, index) => (
         <details
           key={index}
-          className="group border border-[var(--color-arena)] rounded-[var(--radius-card)] overflow-hidden"
+          className="group border border-[var(--color-arena)] rounded-[var(--radius-card)] overflow-hidden transition-brand open:border-[var(--color-laton)]/30 open:shadow-sm"
         >
           <summary
             className="

@@ -68,3 +68,35 @@ body {
   background-color: var(--color-blanco);
   color: var(--color-granito);
 }
+
+/* ── Utilidades del proyecto ─────────────────────────────────────────────── */
+
+/* Transición estándar del proyecto */
+.transition-brand {
+  transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Gradiente hero — fondo oscuro con profundidad */
+.hero-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--color-granito) 0%,
+    color-mix(in srgb, var(--color-granito) 85%, var(--color-atlantico)) 100%
+  );
+}
+
+/* Fade in suave para secciones */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Transición suave del accordion <details> */
+details > dd {
+  overflow: hidden;
+}

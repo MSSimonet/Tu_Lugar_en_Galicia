@@ -56,7 +56,7 @@ export function CiudadLayout({
             sizes="100vw"
           />
         </div>
-        <div className="relative z-10 max-w-5xl mx-auto px-[var(--space-6)] py-[var(--space-24)] text-center">
+        <div className="relative z-10 max-w-5xl mx-auto px-[var(--space-6)] py-20 md:py-28 text-center">
           <h1
             className="
               font-[family-name:var(--font-titular)]
@@ -71,7 +71,7 @@ export function CiudadLayout({
           <p
             className="
               font-[family-name:var(--font-ui)]
-              text-[var(--color-niebla)]
+              text-[var(--color-niebla)] opacity-90
               text-[var(--text-md)] md:text-[var(--text-lg)]
               leading-[var(--leading-cuerpo)]
               max-w-2xl mx-auto
@@ -83,7 +83,7 @@ export function CiudadLayout({
       </section>
 
       {/* ── 2. INTRODUCCIÓN ── */}
-      <section className="bg-[var(--color-blanco)] py-[var(--space-16)] px-[var(--space-6)]">
+      <section className="bg-[var(--color-blanco)] py-[var(--space-16)] md:py-[var(--space-24)] px-[var(--space-6)]">
         <div className="max-w-3xl mx-auto space-y-[var(--space-6)]">
           {descripcion.map((parrafo, i) => (
             <p
