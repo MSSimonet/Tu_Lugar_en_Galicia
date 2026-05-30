@@ -119,6 +119,7 @@ export function CiudadLayout({
           {/* Tabla — escritorio */}
           <div className="hidden sm:block overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-arena)]">
             <table className="w-full text-left font-[family-name:var(--font-ui)] text-[var(--text-sm)]">
+              <caption className="sr-only">Precios orientativos de alquiler en {nombre}</caption>
               <thead>
                 <tr className="bg-[var(--color-laton)] text-[var(--color-blanco)]">
                   <th className="px-[var(--space-6)] py-[var(--space-4)] font-medium tracking-[var(--tracking-ui)] uppercase text-[var(--text-xs)]">

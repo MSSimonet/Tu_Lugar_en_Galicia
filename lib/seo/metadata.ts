@@ -165,6 +165,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
 
 export function getNextMetadata(page: keyof typeof PAGE_METADATA): Metadata {
   const meta = PAGE_METADATA[page]
+  const og = buildOpenGraph(page)
   return {
     title: meta.title,
     description: meta.description,
@@ -172,6 +173,12 @@ export function getNextMetadata(page: keyof typeof PAGE_METADATA): Metadata {
     alternates: {
       canonical: meta.canonical,
     },
-    openGraph: buildOpenGraph(page),
+    openGraph: og,
+    twitter: {
+      card: 'summary_large_image',
+      title: meta.title,
+      description: meta.description,
+      images: og?.images as string[] | undefined,
+    },
   }
 }

@@ -11,7 +11,7 @@ interface FAQAccordionProps {
 
 export function FAQAccordion({ faqs }: FAQAccordionProps) {
   return (
-    <dl className="space-y-[var(--space-3)]">
+    <div className="space-y-[var(--space-3)]">
       {faqs.map((faq, index) => (
         <details
           key={index}
@@ -28,7 +28,7 @@ export function FAQAccordion({ faqs }: FAQAccordionProps) {
               focus-visible:outline-2 focus-visible:outline-[var(--color-laton)]
             "
           >
-            <dt>{faq.question}</dt>
+            <span>{faq.question}</span>
             <span
               aria-hidden="true"
               className="shrink-0 text-[var(--color-laton)] transition-transform duration-200 group-open:rotate-180"
@@ -36,7 +36,7 @@ export function FAQAccordion({ faqs }: FAQAccordionProps) {
               ▾
             </span>
           </summary>
-          <dd
+          <div
             className="
               px-[var(--space-6)] pb-[var(--space-4)]
               font-[family-name:var(--font-ui)] text-[var(--text-sm)]
@@ -46,9 +46,9 @@ export function FAQAccordion({ faqs }: FAQAccordionProps) {
             "
           >
             {faq.answer}
-          </dd>
+          </div>
         </details>
       ))}
-    </dl>
+    </div>
   )
 }

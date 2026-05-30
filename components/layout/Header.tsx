@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { SITE_NAME } from '@/lib/config/site'
 
 const navLinks = [
@@ -17,9 +17,22 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+  const hamburgerRef = useRef<HTMLButtonElement>(null)
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setMenuOpen(false)
+        hamburgerRef.current?.focus()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [menuOpen])
 
   return (
     <>
@@ -67,6 +80,7 @@ export function Header() {
 
         {/* Botón hamburguesa móvil */}
         <button
+          ref={hamburgerRef}
           type="button"
           onClick={() => setMenuOpen((prev) => !prev)}
           aria-expanded={menuOpen}
