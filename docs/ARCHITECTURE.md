@@ -23,7 +23,7 @@ Vercel  ──►  Next.js app
                 ├── páginas (SSR/SSG) ── SEO
                 └── /app/api/*  (backend)
                         ├── /lead  → Airtable/Sheets   (Fase 1)
-                        └── /lar   → API de Claude      (Fase 4)
+                        └── /avoa  → API de Claude      (Fase 4)
 Cloudflare Worker (cron 15 días) → precios → la web los lee   (Fase 3)
 ```
 
@@ -52,7 +52,7 @@ Cloudflare Worker (cron 15 días) → precios → la web los lee   (Fase 3)
 │   ├── robots.ts             # SEO Specialist
 │   └── api/                  # Backend Architect
 │       ├── lead/route.ts     # Fase 1
-│       └── lar/route.ts      # AI Engineer (Fase 4)
+│       └── avoa/route.ts     # AI Engineer (Fase 4)
 ├── components/               # Frontend Developer
 ├── content/                  # Content Creator (MDX del blog, Fase 2)
 ├── lib/                      # Backend Architect
@@ -88,8 +88,8 @@ Cron Trigger cada 15 días. Vercel sirve la app.
 **Consecuencia:** el scraping pesado no consume recursos de Vercel.
 
 ### ADR-004 — La clave de la API de Claude vive solo en el servidor
-**Contexto:** Lar usa la API de Claude.
-**Decisión:** las llamadas se hacen desde `/app/api/lar` (servidor). La clave está en variables
+**Contexto:** Avoa usa la API de Claude.
+**Decisión:** las llamadas se hacen desde `/app/api/avoa` (servidor). La clave está en variables
 de entorno de Vercel, nunca en el cliente ni en el repo.
 **Consecuencia:** seguridad de la clave; el widget de chat habla con nuestro endpoint, no con Anthropic directamente.
 
@@ -106,7 +106,7 @@ de entorno de Vercel, nunca en el cliente ni en el repo.
 | `AIRTABLE_API_KEY` / `GOOGLE_SHEETS_*` | 1 | guardar leads |
 | `SHEET_MARCADOR_ID` | 1 | leer El Marcador |
 | `OPENWEATHER_API_KEY` | 2 | clima por ciudad |
-| `ANTHROPIC_API_KEY` | 4 | Lar (API de Claude) |
+| `ANTHROPIC_API_KEY` | 4 | Avoa (API de Claude) |
 | `DATABASE_URL` | 5 | base de datos |
 | `STRIPE_SECRET_KEY` | 6 | pagos |
 
@@ -186,7 +186,7 @@ previa con Vercel o Cloudflare. Ejecutá cada sección en orden.
    | `GOOGLE_SHEETS_*` | 1 | Credenciales de Google Sheets (alternativa a Airtable) |
    | `SHEET_MARCADOR_ID` | 1 | ID de la hoja de El Marcador |
    | `OPENWEATHER_API_KEY` | 2 | Clima por ciudad |
-   | `ANTHROPIC_API_KEY` | 4 | API de Claude para Lar |
+   | `ANTHROPIC_API_KEY` | 4 | API de Claude para Avoa |
    | `DATABASE_URL` | 5 | Conexión a base de datos |
    | `STRIPE_SECRET_KEY` | 6 | Pagos con Stripe |
 

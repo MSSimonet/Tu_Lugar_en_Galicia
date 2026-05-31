@@ -61,7 +61,7 @@ base desplegándose sola.
 **Objetivo:** posicionar en Google y dar pruebas de confianza que se actualizan solas.
 
 **Qué se construye**
-- Blog en MDX (Lar redacta el borrador, Silvana afina y aprueba).
+- Blog en MDX (Avoa redacta el borrador, Silvana afina y aprueba).
 - Clima en vivo por ciudad (OpenWeatherMap).
 - Reseñas de Google embebidas.
 - Rangos de alquiler por zona.
@@ -92,17 +92,21 @@ base desplegándose sola.
 
 ---
 
-## Fase 4 — Capa de IA (Lar)
+## Fase 4 — Capa de IA (Avoa)
 
-**Objetivo:** Lar responde 24/7, cualifica leads y agenda, en web y WhatsApp.
+**Objetivo:** Avoa responde 24/7, cualifica leads y agenda, en web y WhatsApp.
+
+**Fuentes de verdad:**
+- `/docs/avoa-flujo.md` — flujo conversacional (el cuestionario por niveles manda sobre cualquier implementación)
+- `/docs/avoa-barandas.md` — reglas de control del system prompt y arquitectura del widget
 
 **Qué se construye**
-- Chat de Lar en la web (widget flotante) con el flujo de `lar_cuestionario`.
+- Widget de chat de Avoa en la web con el flujo definido en `avoa-flujo.md` (motor de estados JSON + API de Claude solo en pasos `llm`).
 - Traductor de contratos/anuncios (pega texto → explicación simple).
-- Integración con WhatsApp (Manychat → webhook → mismo endpoint).
+- Integración con WhatsApp (fase posterior; el flujo JSON y las barandas son portables sin rehacer).
 
 **Agentes, en orden**
-1. `AI Engineer` → endpoint en `/app/api/lar` + lógica del cuestionario por niveles.
+1. `AI Engineer` → endpoint en `/app/api/avoa` + motor de estados del cuestionario según `avoa-flujo.md` y `avoa-barandas.md`.
 2. `Security Engineer` → protección de la clave de API y de los datos del lead.
 3. `Frontend Developer` → widget de chat.
 4. `Reality Checker`.

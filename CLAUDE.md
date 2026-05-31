@@ -17,6 +17,8 @@ Contexto completo del negocio, marca, competencia y producto en:
 - `/docs/ARCHITECTURE.md` — stack y decisiones técnicas
 - `/docs/PRD-fase-1.md` — requisitos de la fase actual
 - `/docs/design-system.md` — identidad visual y componentes
+- `/docs/avoa-flujo.md` — flujo conversacional de Avoa (fuente de verdad del cuestionario)
+- `/docs/avoa-barandas.md` — reglas de control del system prompt y arquitectura del widget de Avoa
 
 ---
 
@@ -26,7 +28,7 @@ Contexto completo del negocio, marca, competencia y producto en:
 - **Deploy:** Vercel (auto-deploy desde GitHub `main`)
 - **DNS / SSL / CDN / cron del scraper:** Cloudflare (free)
 - **Leads / CRM (Fase 1):** Airtable o Google Sheets — NO base de datos todavía
-- **IA (Lar):** API de Claude llamada desde API routes de Next.js (clave solo en servidor)
+- **IA (Avoa):** API de Claude llamada desde API routes de Next.js (clave solo en servidor)
 - **Base de datos:** se introduce SOLO en Fase 5 (Vercel Postgres / Neon / Supabase)
 - **Agenda:** Cal.com embebido — **Pagos:** Stripe (Fase 6)
 
@@ -50,12 +52,12 @@ La colección instalada tiene +200 agentes genéricos. En este repo se usan úni
 | Marca | `Brand Guardian` | `/docs/design-system.md` |
 | Diseño UI | `UI Designer` | `/docs/design-system.md`, `tailwind.config.ts`, `app/globals.css` (solo tokens) |
 | Builder principal | `Frontend Developer` | `/app`, `/components` (excepto `/app/api`) |
-| IA | `AI Engineer` | `/app/api/lar`, `/lib/ai` |
+| IA | `AI Engineer` | `/app/api/avoa`, `/lib/ai` |
 | Scraping | `Data Engineer` | `/workers/scraper` |
 | Infra / deploy | `DevOps Automator` | `vercel.json`, `/.github`, config raíz, Cloudflare |
 | Git | `Git Workflow Master` | define convención de ramas (no toca features) |
 | SEO | `SEO Specialist` | `app/sitemap.ts`, `app/robots.ts`, `/lib/seo`, metadata |
-| Contenido (Lar redactor) | `Content Creator` | `/content` |
+| Contenido | `Content Creator` | `/content` |
 | Seguridad | `Security Engineer` | solo revisa — no tiene carril propio |
 | Legal / RGPD | `Legal Compliance Checker` | solo revisa — no tiene carril propio |
 | Calidad (puerta) | `Code Reviewer`, `Reality Checker`, `Accessibility Auditor`, `Performance Benchmarker` | solo revisan — no escriben features |

@@ -68,7 +68,7 @@ vía `POST /api/lead`. Mensaje de éxito: aviso de respuesta en 48 h hábiles.
 19. Comprensión del servicio (entiende que es personal shopper, no inmobiliaria)
 20. ☑ Consentimiento de tratamiento de datos + enlace a política de privacidad
 
-> El flujo conversacional de Lar (`lar_cuestionario`) es la versión chat de esto; se implementa
+> El flujo conversacional de Avoa (definido en `/docs/avoa-flujo.md`) es la versión chat de esto; se implementa
 > en Fase 4. En Fase 1 alcanza con el formulario web.
 
 ---
