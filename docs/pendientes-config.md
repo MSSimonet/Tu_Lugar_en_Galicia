@@ -3,7 +3,7 @@
 Lista de revisión para pasar del scaffold al sitio real en producción.
 Cada ítem tiene su estado actual, qué hay que hacer y dónde se hace.
 
-**Última actualización:** 2026-05-30
+**Última actualización:** 2026-05-31
 
 ---
 
@@ -101,21 +101,21 @@ Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
 
 | Campo | Detalle |
 |---|---|
-| **Estado actual** | Sin definir. `avoa-barandas.md` advierte que exigir "8–9 meses por adelantado" puede ser demasiado alto frente a lo habitual en España (fianza 1–2 meses + primer mes + acreditar ingresos ~3× la renta). |
-| **Qué decidir** | Confirmar con Silvana cuál es el umbral real de solvencia que Avoa usa para calificar un lead. ¿Se acepta a quien acredite ingresos 3× la renta? ¿Se requieren ahorros equivalentes a X meses? ¿Cambia según la ciudad? |
+| **Estado actual** | Cifra de mercado resuelta: lo habitual en España es fianza 1–2 meses + primer mes + acreditar ingresos ~3× la renta. Falta confirmar con Silvana cuáles son sus honorarios de servicio y si ese monto entra como criterio de calificación adicional. |
+| **Qué decidir** | Confirmar con Silvana el monto de sus honorarios y si Avoa los menciona explícitamente o los deriva a la videollamada. El umbral de solvencia de mercado ya está claro. |
 | **Impacto** | Define el texto de la Pregunta 10 del flujo y la lógica de la ruta de descalificación elegante (Ajuste B de `avoa-barandas.md`). Sin esto el `AI Engineer` no puede codificar el filtro. |
 | **Dónde registrar** | Actualizar `docs/avoa-flujo.md` (P10) una vez acordado con Silvana. |
 
 ---
 
-### A4-2. Hoja de Ruta de Integración — generación automática
+### A4-2. Plan Estratégico — generación automática
 
 | Campo | Detalle |
 |---|---|
-| **Estado actual** | El flujo promete al usuario una "Hoja de Ruta de Integración personalizada" al cerrar el cuestionario, pero la lógica de generación no está especificada. |
-| **Qué decidir** | Definir qué contiene la Hoja de Ruta (secciones, datos que la personalizan) y cómo se entrega (PDF generado, email con template, respuesta del propio chat). |
+| **Estado actual** | El flujo promete al usuario un "Plan Estratégico personalizado" al cerrar el cuestionario, pero la lógica de generación no está especificada. |
+| **Qué decidir** | Definir qué contiene el Plan Estratégico (secciones, datos que lo personalizan) y cómo se entrega (PDF generado, email con template, respuesta del propio chat). |
 | **Impacto** | Es una función a desarrollar dentro del bloque Avoa. Sin especificación el `AI Engineer` no puede construirla. Puede ser tan simple como un email template con los módulos relevantes según las respuestas, o tan complejo como un PDF generado en servidor. |
-| **Dónde registrar** | Crear `docs/avoa-hoja-de-ruta.md` cuando esté definido, y enlazarlo desde `docs/roadmap.md` Fase 4. |
+| **Dónde registrar** | Crear `docs/avoa-plan-estrategico.md` cuando esté definido, y enlazarlo desde `docs/roadmap.md` Fase 4. |
 
 ---
 
@@ -139,6 +139,28 @@ Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
 | **Criterios relevantes** | Costo por token, calidad en español, latencia, límites de rate, facilidad de integración con el stack Next.js existente. |
 | **Impacto** | Afecta la variable de entorno (`ANTHROPIC_API_KEY` vs. `GEMINI_API_KEY`), el cliente SDK en `lib/ai/` y el System Prompt (las barandas de `avoa-barandas.md` son agnósticas al modelo). |
 | **Dónde registrar** | Documentar la decisión como ADR-008 en `docs/ARCHITECTURE.md` antes de que el `AI Engineer` empiece. |
+
+---
+
+### A4-5. Documento legal — datos fiscales y objeto del sitio
+
+| Campo | Detalle |
+|---|---|
+| **Estado actual** | `docs/legal-terminos-privacidad.md` existe pero tiene dos problemas: (1) los datos fiscales del responsable (razón social, dirección, NIF/CIF, email DPO) figuran como `[COMPLETAR]`; (2) la descripción del "objeto del sitio" lo presenta como un directorio turístico genérico, no como un servicio de relocation. |
+| **Qué hacer** | (1) Silvana debe proveer sus datos fiscales reales. (2) Reescribir la sección "objeto del sitio" para describir correctamente el servicio de relocation personalizado. Validar con `Legal Compliance Checker` antes de publicar. |
+| **Dónde** | `docs/legal-terminos-privacidad.md` → luego volcar a `app/politica-de-privacidad/page.tsx`. |
+
+---
+
+### A4-6. Voz de marca — conversión de textos web a "tú" neutro
+
+| Campo | Detalle |
+|---|---|
+| **Estado actual** | Decisión tomada: la voz de toda la comunicación (web + Avoa) es "tú" neutro, español internacional. Sin "vos" ni "vosotros". Los textos actuales de la web (Fase 1) fueron escritos en "vos" rioplatense. |
+| **Qué hacer** | Revisar y convertir todos los textos de cara al usuario: "Agendá" → "Agenda", "Escribinos" → "Escríbenos", "Contanos" → "Cuéntanos", "Vos" → "Tú", etc. |
+| **Agente responsable** | `Content Creator` (revisa la voz y entrega lista de cambios) + `Frontend Developer` (actualiza los componentes). |
+| **Cuándo** | Antes del lanzamiento público. No bloquea Fase 2. |
+| **Dónde** | `/components/**/*.tsx`, `/content/**/*.md`, `/app/**/*.tsx` (solo copy de cara al usuario). |
 
 ---
 

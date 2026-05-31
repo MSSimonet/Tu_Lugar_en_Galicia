@@ -90,10 +90,14 @@ piedra de granito, rías, lluvia, calidez. Ningún competidor liga su imagen al 
 
 ## 5. Voz en la interfaz (microcopy)
 
-- Segunda persona del plural, cálida: "Les buscamos", "Están en el lugar correcto".
-- CTAs directos: "Agendá tu videollamada", "Escribinos por WhatsApp".
-- Nada de jerga ni tono frío. El emigrante no tiene tiempo para textos largos.
+- Voz unificada: "tú" neutro, español internacional. Nunca "vos", nunca "vosotros".
+  Esta voz aplica tanto a la web como al asistente Avoa.
+- Segunda persona singular, cálida y directa: "Te buscamos el hogar", "Estás en el lugar correcto".
+- CTAs directos: "Agenda tu videollamada", "Escríbenos por WhatsApp".
+- Nada de jerga ni tono frío. La persona que nos lee no tiene tiempo para textos largos.
 - Mensajes de error amables y claros, nunca técnicos.
+- **Nota de transición:** los textos existentes en la web (Fase 1) usan "vos" rioplatense y
+  están pendientes de conversión a "tú" neutro. Ver `pendientes-config.md` A4-6.
 
 ---
 

@@ -19,6 +19,10 @@ Contexto completo del negocio, marca, competencia y producto en:
 - `/docs/design-system.md` — identidad visual y componentes
 - `/docs/avoa-flujo.md` — flujo conversacional de Avoa (fuente de verdad del cuestionario)
 - `/docs/avoa-barandas.md` — reglas de control del system prompt y arquitectura del widget de Avoa
+- `/docs/contexto-estrategico.md` — contexto de negocio, marca y competencia
+  (nota: la voz de marca descrita en ese doc usaba "vos" rioplatense; la decisión vigente es "tú" neutro — ver §6)
+- `/docs/avoa-recursos-preparacion.md` — material de apoyo y recursos del asistente Avoa
+- `/docs/legal-terminos-privacidad.md` — fuente de la política de privacidad real (datos fiscales pendientes de completar)
 
 ---
 
@@ -101,7 +105,7 @@ Ejemplo real:
 - Estilos solo con clases de Tailwind y los tokens de `/docs/design-system.md`. Nada de CSS suelto.
 - Commits: Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`).
 - Idioma del sitio: español (futuro: + portugués + inglés en Fase 6). Tono de marca: cálido,
-  cercano, rioplatense ("vos", "ustedes"). Nunca corporativo ni frío.
+  cercano, en "tú" neutro (español internacional). Nunca "vos", nunca "vosotros", nunca corporativo ni frío.
 - Variables de entorno (claves) nunca en el código ni en el cliente: solo en `.env.local` y
   en las variables de entorno de Vercel.
 
