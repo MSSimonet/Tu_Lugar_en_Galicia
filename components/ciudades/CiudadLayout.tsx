@@ -200,8 +200,8 @@ export function CiudadLayout({
               max-w-xl mx-auto
             "
           >
-            Contanos tu situación y te ayudamos a encontrar el barrio y el piso
-            que se adaptan a lo que necesitás. Sin costo, sin compromiso.
+            Cuéntanos tu situación y te ayudamos a encontrar el barrio y el piso
+            que se adaptan a lo que necesitas. Sin costo, sin compromiso.
           </p>
           <div className="flex flex-col sm:flex-row gap-[var(--space-4)] justify-center">
             <Link href="/conocernos">
@@ -211,7 +211,7 @@ export function CiudadLayout({
             </Link>
             <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
               <Button variant="fantasma" size="lg" className="border-[var(--color-blanco)] text-[var(--color-blanco)] hover:bg-[var(--color-blanco)] hover:text-[var(--color-atlantico)]">
-                Escribinos por WhatsApp
+                Escríbenos por WhatsApp
               </Button>
             </a>
           </div>
@@ -260,7 +260,7 @@ export function CiudadLayout({
             "
           >
             El primer paso es conocernos. Tarda diez minutos y
-            les damos una respuesta en 48 horas hábiles.
+            te damos una respuesta en 48 horas hábiles.
           </p>
           <Link href="/conocernos">
             <Button variant="primario" size="lg">

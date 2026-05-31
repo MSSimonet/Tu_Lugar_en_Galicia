@@ -11,10 +11,10 @@ Tu familia merece llegar a Galicia con casa esperándola
 Somos el primer servicio de relocation especializado en Galicia. Buscamos tu vivienda antes de que viajes para que llegues tranquila, tranquilo, tranquilos — con las llaves en la mano.
 
 **CTA principal:**
-Agendá tu videollamada
+Agenda tu videollamada
 
 **CTA secundario:**
-Escribinos por WhatsApp
+Escríbenos por WhatsApp
 
 ---
 
@@ -43,7 +43,7 @@ Completás un formulario corto y evaluamos si podemos ayudarte hoy.
 Nos conocemos, te contamos cómo funciona todo y respondemos tus preguntas.
 
 **Paso 3 — Búsqueda activa**
-Salimos a buscar por vos: contactamos propietarios, filtramos anuncios y negociamos condiciones.
+Salimos a buscar por ti: contactamos propietarios, filtramos anuncios y negociamos condiciones.
 
 **Paso 4 — Selección**
 Te presentamos las opciones que cumplen tus requisitos con fotos, videos y toda la info.
@@ -52,7 +52,7 @@ Te presentamos las opciones que cumplen tus requisitos con fotos, videos y toda 
 Te guiamos en la firma del contrato y te explicamos cada cláusula en lenguaje claro.
 
 **Paso 6 — Llegada**
-Cuando aterrices en Galicia, ya tenés tu casa. Nosotros seguimos disponibles para lo que necesites.
+Cuando aterrices en Galicia, ya tienes tu casa. Nosotros seguimos disponibles para lo que necesites.
 
 **Enlace de sección:**
 Ver el proceso completo →
@@ -62,7 +62,7 @@ Ver el proceso completo →
 ## Sección Ciudades
 
 **Bajada introductoria:**
-Galicia tiene ciudades para todos los estilos de vida. ¿Preferís la energía portuaria de Vigo, la elegancia costera de A Coruña, la escala humana de Santiago o la tranquilidad de Pontevedra y Lugo? Conocé cada ciudad y encontrá dónde querés empezar tu nueva vida.
+Galicia tiene ciudades para todos los estilos de vida. ¿Prefieres la energía portuaria de Vigo, la elegancia costera de A Coruña, la escala humana de Santiago o la tranquilidad de Pontevedra y Lugo? Conoce cada ciudad y encuentra dónde quieres empezar tu nueva vida.
 
 ---
 
@@ -94,10 +94,10 @@ Texto: "Lo que más me sorprendió fue que Silvana entendía exactamente lo que 
 ¿Listo para encontrar tu lugar en Galicia?
 
 **Texto de apoyo:**
-Contanos tu situación y te decimos si podemos ayudarte. Sin compromiso, sin costo de consulta.
+Cuéntanos tu situación y te decimos si podemos ayudarte. Sin compromiso, sin costo de consulta.
 
 **Botón:**
 Vamos a conocernos
 
 **Texto secundario bajo el botón:**
-O si preferís, escribinos directamente por WhatsApp y respondemos hoy.
+O si prefieres, escríbenos directamente por WhatsApp y respondemos hoy.

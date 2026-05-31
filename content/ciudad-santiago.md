@@ -10,11 +10,11 @@ Vivir en Santiago de Compostela: una ciudad que el mundo ya conoce y que se conv
 
 ## Introducción local
 
-Santiago de Compostela tiene una ventaja que pocas ciudades del mundo pueden ofrecer: casi todo el mundo ya la conoce antes de llegar. Millones de peregrinos, turistas y visitantes pasaron por sus calles de piedra, por la Plaza del Obradoiro, por los bares del casco histórico. Eso significa que instalarse aquí tiene algo especial — llegás a una ciudad que ya existía en tu imaginación, y encontrás que la vida cotidiana es aún mejor que la postal.
+Santiago de Compostela tiene una ventaja que pocas ciudades del mundo pueden ofrecer: casi todo el mundo ya la conoce antes de llegar. Millones de peregrinos, turistas y visitantes pasaron por sus calles de piedra, por la Plaza del Obradoiro, por los bares del casco histórico. Eso significa que instalarse aquí tiene algo especial — llegas a una ciudad que ya existía en tu imaginación, y encuentras que la vida cotidiana es aún mejor que la postal.
 
 Es una ciudad universitaria de verdad. La Universidad de Santiago de Compostela, fundada en el siglo XV, le da a la ciudad una energía joven, intelectual y abierta que contrasta de manera muy linda con la antigüedad de la arquitectura. Hay mercados de productores, cafés con libros, festivales de música, exposiciones — una vida cultural activa para una ciudad de 100.000 habitantes.
 
-La escala es lo que más valoran las familias que eligen Santiago: más pequeña que Vigo o A Coruña, pero con todos los servicios necesarios. Podés ir al trabajo, al colegio y al supermercado caminando. El casco histórico declarado Patrimonio de la Humanidad por la UNESCO está literalmente a la vuelta de la esquina. Y el Hospital Clínico Universitario es un referente médico en Galicia.
+La escala es lo que más valoran las familias que eligen Santiago: más pequeña que Vigo o A Coruña, pero con todos los servicios necesarios. Puedes ir al trabajo, al colegio y al supermercado caminando. El casco histórico declarado Patrimonio de la Humanidad por la UNESCO está literalmente a la vuelta de la esquina. Y el Hospital Clínico Universitario es un referente médico en Galicia.
 
 El turismo internacional que pasa por Santiago también tiene un efecto positivo: los vecinos están acostumbrados a gente de todas partes del mundo. Nadie te va a mirar raro por tu acento. La adaptación social suele ser muy fluida.
 
@@ -41,7 +41,7 @@ Estos rangos son orientativos y varían según barrio y estado del inmueble.
 
 ## CTA al formulario de diagnóstico
 
-Si Santiago te llama — y a muchos les llama antes de que terminen de leer esta página — contanos tu situación. Te ayudamos a encontrar el barrio y el piso que se adaptan a tu familia y a tu presupuesto.
+Si Santiago te llama — y a muchos les llama antes de que terminen de leer esta página — cuéntanos tu situación. Te ayudamos a encontrar el barrio y el piso que se adaptan a tu familia y a tu presupuesto.
 
 **Botón:** Completá el diagnóstico para Santiago
 

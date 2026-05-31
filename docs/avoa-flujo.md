@@ -1,21 +1,25 @@
 # Avoa — Flujo Conversacional
-### Tu Lugar En Galicia
+### Tu Lugar En Galicia · Servicio de búsqueda de vivienda y relocation
 
-**Etiquetas de paso (para el JSON del flujo):** `[botones]`, `[input]`, `[llm]`. La IA (`[llm]`) solo se activa en texto libre; el resto es 0 tokens.
+**Etiquetas de paso (para el JSON del flujo):** `[botones]`, `[input]`, `[llm]`. La IA (`[llm]`) solo se activa en texto libre; el resto se resuelve con botones/validación (0 tokens).
 
 ---
 
-## Bienvenida y permiso `[botones]`
+## Bienvenida, naturaleza del servicio y permiso `[botones]`
 
-> "¡Hola! Qué alegría saludarte. Soy **Avoa**, la representante virtual del equipo de **Tu Lugar En Galicia**. Sé que mudarse o establecerse aquí es un paso enorme, lleno de ilusión y también de dudas, y mi trabajo es acompañarte para que te sientas con seguridad en cada decisión. Para cuidar tu tiempo y ver cómo podemos ayudarte hoy, ¿te parece bien si te hago unas preguntas breves sobre tu situación?"
+> "¡Hola! Qué alegría saludarte. Soy **Avoa**, del equipo de **Tu Lugar En Galicia**. Sé que buscar hogar y mudarse aquí es un paso enorme, lleno de ilusión y también de dudas, y mi trabajo es acompañarte para que llegues con seguridad y tu nuevo hogar te esté esperando.
+>
+> Antes de empezar, quiero ser transparente contigo: **no somos una inmobiliaria con pisos propios**. Somos tu **Personal Shopper inmobiliario**: buscamos, filtramos y visitamos las mejores opciones del mercado trabajando **solo para ti** y defendiendo tus intereses, incluso a distancia. Es un servicio profesional con honorarios propios, aparte del alquiler y de la fianza —te lo explicamos todo con claridad más adelante.
+>
+> Para ver cómo podemos ayudarte y cuidar tu tiempo, ¿te parece bien si te hago unas preguntas breves sobre tu situación?"
 
-`[Sí, empecemos]`  `[Tengo una duda primero]`
+`[Sí, empecemos]`
 
 ---
 
 ## Consentimiento de datos (RGPD) `[botones]`
 
-> "¡Genial! Antes de empezar: para preparar tu plan necesitaremos guardar tu nombre y datos de contacto. Al continuar, nos autorizas a tratarlos según nuestra Política de Privacidad, y podrás darte de baja cuando quieras."
+> "¡Genial! Antes de empezar: para preparar tu plan necesitaremos tu nombre y datos de contacto. Al continuar, nos autorizas a tratarlos según nuestra Política de Privacidad, y podrás darte de baja cuando quieras."
 
 `[Acepto y seguimos]`  `[Ver política de privacidad]`
 
@@ -23,7 +27,9 @@
 
 ---
 
-## NIVEL 1 — Calificación básica (todos)
+## NIVEL 1 — Viabilidad (todos)
+
+> *Objetivo del Nivel 1: confirmar si podemos ayudar a esta persona y si encaja con nuestro servicio. Es el filtro comercial.*
 
 **P1. Nombre** `[input]`
 > "Para empezar, ¿cómo te llamas? (nombre y apellido)"
@@ -37,168 +43,211 @@
 `[Ya vivo en España]`  `[Vengo de fuera]`
 
 - Si **Vengo de fuera** → "¿Desde qué país nos escribes?" `[input]`
-  - *(Si responde Argentina u otro país con fuerte vínculo gallego: "¡Qué lindo país! Casi cada familia gallega tiene raíces allí.")*
+  - *(Si responde un país con fuerte vínculo gallego, p. ej. Argentina: "¡Qué lindo país! Casi cada familia gallega tiene raíces allí.")*
 
 *(Esta respuesta marca la RAMA del Nivel 2: España o Fuera.)*
 
-**P4. Zona de destino** `[botones]`
-> "¿A qué ciudad o zona de Galicia te diriges?"
+**P4. Plazo / horizonte temporal** `[botones]` — *(pregunta filtro)*
+> "¿En qué plazo necesitas tener resuelta tu vivienda en Galicia?"
 
-`[Vigo]`  `[A Coruña]`  `[Santiago de Compostela]`  `[Otra zona]`  `[Aún no lo sé]`
+`[En menos de 1 mes]` *(plazo muy ajustado; se gestiona como urgencia)*
+`[En 1 a 3 meses]`
+`[En 3 a 6 meses]`
+`[En más de 6 meses]` *(aún no es accionable; etiqueta interna "seguimiento futuro")*
+`[Aún no tengo fecha]`
 
-**P5. Composición familiar** `[input]` `[llm]`
-> "¿Quiénes formarían parte de esta mudanza contigo?"
+> *(Ventana accionable ideal: 1 a 6 meses. "Menos de 1 mes" y "más de 6 meses" / "sin fecha" se gestionan con un mensaje y etiqueta de seguimiento, no se descartan.)*
 
-**P6. Mascotas** `[botones]` *(+`[llm]` en detalles)*
-> "Sabemos que los animales son de la familia, aunque aquí el alquiler suele poner restricciones. ¿Viajáis con alguna mascota?"
+**P5. Zona de destino** `[botones]`
+> "¿A qué ciudad de Galicia te diriges? Nuestro foco de búsqueda principal es Vigo y A Coruña."
 
-`[No]`  `[Sí]` → *(¿cuántas, de qué tipo, raza y tamaño aproximado?)*
+`[Vigo]`  `[A Coruña]`  `[Ambas / Indiferente]`  `[Otra zona de Galicia]`
 
-**P7. Tipo de vivienda** `[botones]`
-> "Vamos a perfilar el hogar que buscáis. ¿Qué tipo de vivienda tenéis en mente?"
+**P6. Composición del hogar** `[input]` `[llm]`
+> "¿Quiénes formarían parte de esta mudanza contigo? Cuéntame cuántos adultos y, si vienen niños, sus edades."
 
-`[Piso / apartamento]`  `[Casa]`  `[Indiferente]`
+**P7. Mascotas** `[botones]` *(+`[llm]` en detalles)*
+> "Te pregunto por las mascotas porque aquí marca mucho la búsqueda: cerca del 80% de los propietarios no las admite, así que necesitamos el dato real para filtrar bien por ti. ¿Viajas con alguna mascota?"
 
-**P8. Presupuesto** `[input]`
-> "¿Y cuál es vuestro presupuesto mensual real para el alquiler?"
+`[No]`  `[Sí]` → *(¿cuántas, de qué especie, raza y peso aproximado de cada una?)*
 
-> *(Micro-acuse de avance, antes del bloque práctico):*
-> "Vas muy bien, **[Nombre]**. Con esto ya tenemos clara la imagen de tu hogar ideal. Ahora unas pocas sobre la parte práctica, que es justo donde más os acompañamos."
+> *(Micro-acuse de avance, antes del bloque de viabilidad):*
+> "Vas muy bien, **[Nombre]**. Con esto ya tengo clara la imagen de tu hogar. Ahora unas pocas sobre la parte práctica —papeles y números—, que es justo donde nuestro equipo más te defiende ante los propietarios."
 
-**P9. Filtro legal** `[botones]`
-> "Para orientarte según tu caso, cuéntame cómo estás con los papeles, que para alquilar aquí piden bastante. ¿Cuentas con documentación para residir legalmente en España?"
+**P8. Situación legal** `[botones]`
+> "¿Cuál es tu situación para residir legalmente en España?"
 
-`[Sí, tengo todo]`  `[Tengo algunos documentos]`  `[Aún no tengo]`
+`[Pasaporte UE o doble nacionalidad]`
+`[Visado / TIE / NIE ya aprobado]`
+`[En trámite de visado]`
+`[Entraré como turista]` *(nota interna: limita opciones con algunos propietarios; se analiza el caso)*
 
-**P10. Ingresos / solvencia** `[botones]`
-> "Para preparar bien tu llegada y que no haya sorpresas al alquilar, me ayuda saber cómo está hoy tu situación de ingresos. Así el equipo te orienta a tu medida. ¿Cuál encaja mejor?"
+**P9. Situación laboral** `[botones]`
+> "¿Cómo será tu situación laboral al llegar (o ya estando) en España?"
 
-`[Sí, contrato de trabajo]` → *(¿indefinido, temporal o en periodo de prueba?)*
-`[Sí, soy autónomo]`
-`[Tengo avalista con contrato en Europa]`
-`[Por el momento no]`
+`[Cuenta ajena con nómina en España]`
+`[Autónomo registrado en España]`
+`[Teletrabajo para empresa extranjera]`
+`[Rentista / fondos propios]`
+`[Estudiante]`
+`[Otra / por el momento sin empleo]`
 
-- Si **Por el momento no**:
-  > "Gracias por la sinceridad, **[Nombre]**. Hoy el mercado en Galicia pide bastante respaldo para alquilar, así que conviene preparar bien ese punto antes de buscar. Podemos enviarte recursos para ir armándolo y, cuando lo tengas encaminado, retomamos encantados tu plan. ¿Te gustaría que el equipo te contacte igualmente para orientarte, sin compromiso?"
+**P10. Ingresos del hogar** `[botones]`
+> "Para defender bien tu candidatura ante los propietarios, me ayuda conocer de forma aproximada los ingresos mensuales de tu hogar. ¿En qué rango te ubicas?"
+
+`[Menos de 1.500 €]`
+`[1.500 – 2.500 €]`
+`[2.500 – 4.000 €]`
+`[Más de 4.000 €]`
+`[No tengo ingresos en España aún]`
+
+- Si elige un **rango en euros** → continúa a P11.
+- Si elige **No tengo ingresos en España aún** → mostrar este mensaje y continuar a P11:
+  > "Sin problema, **[Nombre]**: muchas familias llegan así y la solvencia se resuelve con otro tipo de respaldo (ahorros, aval o seguro). Lo vemos justo en la siguiente pregunta."
+  → continúa a **P11 (Garantías)**, donde se evalúan ahorros, aval y seguro. *(No se descarta aquí: la viabilidad se decide en P11 según el respaldo disponible.)*
+
+**P11. Garantías** `[botones]` *(multi)*
+> "En España es muy habitual pedir garantías extra a perfiles internacionales, para suplir la falta de historial laboral aquí. No hace falta tenerlas todas; marca las que sí podrías asumir si un propietario las pidiera:"
+
+`[Adelantar varios meses de alquiler (6–12)]`
+`[Aval bancario o avalista con ingresos en España]`
+`[Contratar un seguro de impago por mi cuenta]`
+`[Ninguna de las anteriores]`
+
+- Si marca **solo "Ninguna"** *(y además en P10 indicó "Menos de 1.500 €" o "No tengo ingresos en España aún")*:
+  > "Gracias por la sinceridad, **[Nombre]**. Hoy el mercado en Galicia pide bastante respaldo para alquilar, así que conviene preparar ese punto antes de iniciar la búsqueda. Podemos enviarte recursos para irlo armando y, en cuanto lo tengas encaminado, retomamos encantados tu plan."
   >
-  > `[Sí, que me contacten]`  `[Solo los recursos]` → etiqueta interna *"lead en preparación"*.
+  > `[Sí, gracias]` → etiqueta interna *"lead en preparación"*.
 
-**P11. Cuenta bancaria** `[botones]`
-> "¿Ya tienes cuenta bancaria en España?"
+*(Si marca "Ninguna" pero en P10 declaró ingresos suficientes, no se activa la etiqueta: continúa el flujo con normalidad.)*
+
+**P12. Presupuesto** `[botones]`
+> "¿Cuál es tu presupuesto **mensual máximo** para el alquiler? Como referencia honesta: un piso familiar adecuado en estas ciudades suele partir de 700–800 €, y los suministros (agua, luz, gas) van aparte."
+
+`[Menos de 700 €]` *(opciones muy limitadas para familias)*
+`[700 – 900 €]`
+`[900 – 1.200 €]`
+`[Más de 1.200 €]`
+
+**P13. Cuenta bancaria en España** `[botones]`
+> "¿Ya tienes cuenta bancaria operativa en España?"
 
 `[Sí]`  `[No]`
 
-**P12. Teléfono** `[input]`
-> "Ya tenemos lo esencial para saber cómo ayudarte, **[Nombre]**. Para que nuestro equipo analice tu caso y te prepare una **Hoja de Ruta de Integración** gratuita y a tu medida, ¿nos dejas un teléfono de contacto (con el prefijo de tu país)? Así avanzamos a la siguiente etapa de este camino a Galicia."
+**P14. Entendimiento del servicio** `[botones]`
+> "Una última importante para avanzar con total claridad, **[Nombre]**: ¿confirmas que entiendes que somos un servicio de consultoría y búsqueda personalizada de vivienda que trabaja en exclusiva para ti, con unos honorarios propios, aparte del alquiler y de la fianza?"
+
+`[Sí, lo entiendo perfectamente]`
+`[Me gustaría que me lo expliquen mejor]`
+
+- Si **Me gustaría que me lo expliquen mejor** → mostrar este texto fijo (no generado por IA):
+  > "Con gusto te lo explico, **[Nombre]**. Funcionamos como tu equipo de búsqueda de confianza: nos contratas para encontrar, filtrar y visitar por ti las mejores viviendas del mercado, y para negociar y defender tus intereses ante los propietarios, incluso si todavía estás fuera de España.
+  >
+  > Por eso tenemos honorarios propios, independientes del alquiler y de la fianza que pagarías de todos modos a cualquier arrendador. Ese pago cubre nuestro trabajo profesional buscando para ti; no es una comisión de intermediación inmobiliaria.
+  >
+  > ¿Qué ganas tú? Te ahorras semanas de búsqueda a distancia, evitas anuncios falsos y estafas habituales en el alquiler, llegas con un hogar ya resuelto y tienes a alguien que conoce el mercado gallego trabajando de tu lado.
+  >
+  > ¿Quieres que sigamos con las preguntas para preparar tu Plan Estratégico, o prefieres una videollamada con el equipo para verlo en detalle?"
+  >
+  > `[Continuar con las preguntas]`
+
+**P15. Teléfono** `[input]`
+> "Ya tengo lo esencial para saber cómo ayudarte, **[Nombre]**. Para que nuestro equipo analice tu viabilidad a fondo y te prepare un **Plan Estratégico** gratuito y a tu medida, ¿me dejas un teléfono de contacto (con el prefijo de tu país)? Así avanzamos a la siguiente etapa de este camino a Galicia."
 
 ---
 
 ## Transición al Nivel 2 `[botones]`
 
-> "¡Estupendo! Ya guardamos tus datos. Si tienes un par de minutos más, con unas preguntas extra nuestro equipo podrá incluir módulos totalmente personalizados en tu Hoja de Ruta. ¿Te animas a completarla ahora, **[Nombre]**?"
+> "¡Estupendo! Ya tenemos tus datos. Si tienes un par de minutos más, con unas preguntas extra el equipo podrá afinar tu Plan Estratégico y el encargo de búsqueda con detalle. ¿Te animas a completarlo ahora, **[Nombre]**?"
 
 `[Sí, continuemos]`  `[No, prefiero que me contacten]`
 
-- **No** → "Perfecto, **[Nombre]**, en breve el equipo se pondrá en contacto contigo. ¡Mucho ánimo con este gran paso!" *(salta al Cierre.)*
+- **No** → "Perfecto, **[Nombre]**. Si tu perfil encaja con lo que exige hoy el mercado, te contactaremos en un plazo máximo de 48 h hábiles para una videollamada inicial. ¡Mucho ánimo con este gran paso!" *(salta al Cierre.)*
 
 ---
 
-## NIVEL 2 — Plan personalizado (opcional)
+## NIVEL 2 — Encargo de búsqueda y Plan Estratégico (opcional)
 
-### Bloque A — Familia ampliada (todos)
+### Bloque A — Hogar y movilidad (todos)
 
-**P13. Hijos** `[input]` `[llm]`
-> "¿Tienes hijos? ¿Qué edades tienen?"
-
-**P14. Necesidades especiales / accesibilidad** `[input]` `[llm]`
+**P16. Necesidades especiales / accesibilidad** `[input]` `[llm]`
 > "¿Algún miembro del hogar tiene necesidades especiales o alguna discapacidad? Esto nos ayuda a buscar viviendas con las características adecuadas."
+
+**P17. Licencia de conducir** `[botones]`
+> "¿Tienes licencia de conducir? ¿De qué tipo?"
+`[Española]`  `[Europea]`  `[De mi país de origen]`  `[No tengo]`
+- Si **De mi país de origen** → "Existe la posibilidad de canjearla por una licencia española si tu país tiene convenio con España; te orientamos sobre los requisitos."
+- *(La licencia europea es válida para conducir en España.)*
 
 ---
 
 ### Bloque B · RAMA "Ya vive en España" *(según P3)*
 
-**P15. Ciudad/provincia actual** `[input]`
+**P18. Ciudad/provincia actual** `[input]`
 > "¿En qué ciudad o provincia vives actualmente?"
 
-**P16. Tiempo en España** `[botones]`
-> "¿Cuánto tiempo llevas viviendo en España?"
+**P19. Tiempo en España** `[botones]`
 `[Menos de 1 año]`  `[Entre 1 y 5 años]`  `[Más de 5 años]`
 
-**P17. Objetivo** `[botones]`
-> "¿Estás buscando vivienda en Galicia o ya tienes dónde vivir y necesitas orientación para integrarte mejor?"
-`[Busco vivienda]` → continúa  ·  `[Ya tengo vivienda, quiero integrarme]` → salta al **Bloque E**
-
-**P18. Plazo para la vivienda** `[botones]`
-> "¿Cuándo necesitarías tener la vivienda?"
-`[Menos de 3 meses]`  `[Entre 3 y 6 meses]`  `[Más de 6 meses]`
-
-**P19. Imprescindibles de la vivienda** `[botones]` *(multi)*
-`[Ascensor]`  `[Plaza de garaje]`  `[Calefacción central o gas]`  `[Amueblada y equipada]`  `[Sin amueblar]`
-
-**P20. Movilidad** `[botones]`
-> "¿Tienes coche?"
-`[Sí]` → *(incluir guía de canje de permiso en DGT)*
-`[Compraré uno allí]` → "¿Tienes permiso de conducir extranjero?" → *(guía de canje DGT si aplica)*
-`[No, usaré transporte público]`
-
-→ continúa al **Bloque E**
+**P20. Objetivo** `[botones]`
+> "¿Estás buscando vivienda en Galicia o ya tienes dónde vivir y buscas orientación para integrarte mejor?"
+`[Busco vivienda]` → continúa al Bloque D  ·  `[Ya tengo vivienda, quiero integrarme]` → salta al **Bloque F**
 
 ---
 
-### Bloque B · RAMA "Viene de fuera" *(según P3; el país ya se capturó en P3)*
+### Bloque C · RAMA "Viene de fuera" *(según P3; el país ya se capturó en P3)*
 
-**P15. Plazo para la vivienda** `[botones]`
-> "¿En qué plazo necesitas tener vivienda?"
-`[Menos de 3 meses]`  `[Entre 3 y 6 meses]`  `[Más de 6 meses]`
-
-**P16. Tiempo planificando** `[botones]`
-> "¿Cuánto tiempo llevas planificando esta mudanza?"
+**P18. Tiempo planificando la mudanza** `[botones]`
 `[Menos de 1 año]`  `[Entre 1 y 5 años]`  `[Más de 5 años]`
 
-**P17. Situación legal** `[botones]`
-> "¿Cuál es tu situación legal para residir en España?"
-`[Pasaporte de la UE]` → **Bloque C**
-`[Residencia o visado aprobado]` → **Bloque C**
-`[Tengo familiar español]` *(Reagrupación / TIE)* → **Bloque C**
-`[Extracomunitario, necesito visado]` → abre sub-rama
-`[Aún no lo sé]`
-
-**Sub-rama — Perfil de visado extracomunitario** `[botones]`
-> "¿Cuál será tu fuente de sustento en España?"
-`[Trabajo remoto para empresa de fuera]` *(Visado Nómada Digital)*
-`[Rentas, inversiones o jubilación]` *(Visado No Lucrativo)*
-`[Voy a emprender un negocio]` *(Visado Emprendedor)*
+**P19. Perfil de visado** `[botones]` *(solo si P8 = "En trámite" o "Turista")*
+> "¿Cuál será tu vía principal de estancia o tu fuente de sustento en España?"
+`[Teletrabajo para empresa de fuera]` *(Nómada Digital)*
+`[Rentas, inversiones o jubilación]` *(No Lucrativo)*
+`[Voy a emprender un negocio]` *(Emprendedor)*
 `[Voy a estudiar]` *(Estancia por Estudios)*
 
-**P18. Imprescindibles de la vivienda** `[botones]` *(multi)*
-`[Ascensor]`  `[Plaza de garaje]`  `[Calefacción central o gas]`  `[Amueblada y equipada]`  `[Sin amueblar]` *(traigo mudanza o compro en destino)*
-
----
-
-### Bloque C — Solvencia ampliada (viene de fuera) `[botones]`
-
-**P19.** "¿Cómo acreditarás tu solvencia ante el propietario?"
-`[Nómina]` → *(¿indefinido, temporal o en periodo de prueba?)*
-`[Autónomo con historial de facturación]`
-`[Fondos líquidos / aval bancario]` → *(¿podrías adelantar varios meses por adelantado si fuera necesario?)*
-`[Avalista con ingresos demostrables en España o la UE]`
-
----
-
-### Bloque D — Sanidad (viene de fuera) `[botones]`
-
-**P20.** "¿Cómo gestionarás tu cobertura médica?"
+**P20. Cobertura de salud** `[botones]`
+> "¿Cómo gestionarás tu cobertura médica?"
 `[Sistema público]` *(por contrato español o convenio bilateral)*
 `[Seguro médico privado]` → *(para visado debe ser sin copagos, sin carencias y con cobertura completa)*
 
+→ continúa al Bloque D
+
 ---
 
-### Bloque E — Perfil profesional (todos)
+### Bloque D — Encargo de búsqueda: la vivienda (quienes buscan vivienda)
 
-**P21. Profesión** `[input]` `[llm]`
+**P21. Tipo de vivienda** `[botones]`
+`[Piso / apartamento]`  `[Casa]`  `[Indiferente]`
+
+**P22. Habitaciones mínimas** `[botones]`
+`[1]`  `[2]`  `[3]`  `[4 o más]`
+
+**P23. Amueblada** `[botones]`
+`[Sí, completamente amueblada]`  `[Sin muebles]`  `[Indiferente]`
+
+**P24. Imprescindibles** `[botones]` *(multi)*
+`[Ascensor]`  `[Plaza de garaje]`  `[Calefacción central o gas]`  `[Terraza / exterior]`  `[Ninguno en particular]`
+> *(Nota: la plaza de garaje es muy recomendable en el centro de A Coruña y en las zonas con cuestas de Vigo.)*
+
+---
+
+### Bloque E — Logística (quienes buscan vivienda)
+
+**P25. Modo de gestión** `[botones]`
+> "¿Cómo prefieres que gestionemos la búsqueda?"
+`[Dejar el piso alquilado antes de viajar]` *(100% a distancia, con videovisitas e informes)*
+`[Llegar primero a un alojamiento temporal y buscar el definitivo allí]` *(con apoyo presencial)*
+
+---
+
+### Bloque F — Perfil profesional (todos)
+
+**P26. Profesión** `[input]` `[llm]`
 > "Para completar tu perfil, ¿a qué te dedicas o cuál es tu profesión?"
 
-**P22. Nivel de estudios** `[botones]`
+**P27. Nivel de estudios** `[botones]`
 `[Sin estudios superiores]`
 `[Bachillerato o equivalente]` *(orientar sobre homologación)*
 `[Técnico / FP]` *(orientar sobre homologación)*
@@ -209,13 +258,28 @@
 
 ## Cierre y entrega
 
-**Canal de entrega** `[botones]`
-> "Con todo lo que me has contado, **[Nombre]**, puedo preparar tu **Hoja de Ruta de Integración** personalizada. ¿Prefieres recibirla por email o por WhatsApp?"
-`[Email]` *(ya registrado en P2)*  ·  `[WhatsApp]` *(ya registrado en P12)*
+**Entrega del Plan Estratégico**
+> "Con todo lo que me has contado, **[Nombre]**, puedo preparar tu **Plan Estratégico** personalizado. Te lo enviaremos por correo electrónico a la brevedad."
 
 **Atribución** `[botones]`
 > "Y una última muy rápida que nos ayuda a mejorar: ¿cómo nos conociste?"
-`[Redes sociales]`  `[Recomendación]`  `[Búsqueda en Google]`  `[Otro]`
+`[Redes sociales]` → *(¿cuál?)*
+`[Recomendación]` → *(¿de quién?)*
+`[Búsqueda en Google]`
+`[Otro]` → *(¿cuál?)*
 
 **Despedida**
-> "¡Perfecto, **[Nombre]**! En breve recibirás tu Hoja de Ruta, y el equipo queda disponible para cualquier consulta. ¡Mucho ánimo, este es un gran paso hacia Galicia!"
+> "¡Perfecto, **[Nombre]**! Revisaremos tu caso con cuidado y, si tu perfil encaja con lo que exige hoy el mercado gallego, te contactaremos en un máximo de 48 h hábiles para una videollamada inicial. El equipo queda disponible para cualquier consulta. ¡Mucho ánimo, este es un gran paso hacia Galicia!"
+
+---
+
+## Notas para la implementación
+
+- **Plan Estratégico:** nombre único del documento entregable (unifica las antiguas "Hoja de Ruta" y "Plan Migratorio"). Su contenido varía según las respuestas, pero el nombre es siempre el mismo.
+- **Pregunta filtro de plazo (P4):** colocada al inicio a propósito. Plazo de 1 a 6 meses = accionable; menos de 1 mes = urgencia; más de 6 meses o sin fecha = seguimiento futuro (no se descarta).
+- **Transparencia del modelo de pago:** se anuncia en la bienvenida y se confirma en P14 antes de pedir el teléfono. La explicación ampliada (botón "Me gustaría que me lo expliquen mejor") es un texto fijo, no generado por IA.
+- **Bloque de viabilidad (P8–P14):** preguntas sensibles seguidas. Mantener las justificaciones y el micro-acuse previo; suavizan la sensación de "control bancario".
+- **Teléfono al final (P15):** se pide tras aportar valor; no adelantarlo.
+- **Ruta "lead en preparación":** quien no califica no se descarta en frío, pasa a seguimiento.
+- **Eficiencia de tokens:** la IA solo interviene en pasos `[llm]`; el resto son botones, selectores y validación por regex.
+- **Tono:** tuteo en español neutro, sin modismos regionales ni formas de "vosotros".

@@ -14,7 +14,7 @@ export default function ConocernosPage() {
             Vamos a conocernos
           </h1>
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] md:text-[var(--text-md)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-4)]">
-            Contanos sobre tu familia y tu situación para que Silvana pueda entender tu caso y ver cómo puede acompañarlos. No es un formulario de contacto genérico: cada campo importa para armar tu historia.
+            Cuéntanos sobre tu familia y tu situación para que Silvana pueda entender tu caso y ver cómo puede acompañarte. No es un formulario de contacto genérico: cada campo importa para armar tu historia.
           </p>
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)] opacity-80">
             Tus datos se usan solo para evaluar tu caso. No los compartimos con nadie.

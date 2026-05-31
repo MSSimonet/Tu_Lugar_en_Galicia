@@ -17,7 +17,7 @@ export function CTAFinal() {
         </h2>
 
         <p className="mx-auto mt-[var(--space-6)] max-w-lg font-[family-name:var(--font-ui)] text-[var(--text-md)] leading-[var(--leading-cuerpo)] text-[var(--color-niebla)] opacity-80">
-          Contanos tu situación y te decimos si podemos
+          Cuéntanos tu situación y te decimos si podemos
           ayudarte. Sin compromiso, sin costo de consulta.
         </p>
 
@@ -30,13 +30,13 @@ export function CTAFinal() {
 
           <Link href="/agenda">
             <Button variant="fantasma" size="lg" className="border-[var(--color-niebla)] text-[var(--color-niebla)] hover:bg-[var(--color-niebla)] hover:text-[var(--color-granito)]">
-              Agendá tu videollamada
+              Agenda tu videollamada
             </Button>
           </Link>
         </div>
 
         <p className="mt-[var(--space-6)] font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-niebla)] opacity-60">
-          O si preferís, escribinos directamente por WhatsApp y respondemos hoy.
+          O si prefieres, escríbenos directamente por WhatsApp y respondemos hoy.
         </p>
       </div>
     </section>

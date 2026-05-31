@@ -10,17 +10,17 @@ Preguntas frecuentes
 
 ## Bajada
 
-Reunimos las preguntas que nos hacen todas las familias antes de arrancar. Si la tuya no está acá, escribinos — respondemos hoy.
+Reunimos las preguntas que nos hacen todas las familias antes de arrancar. Si la tuya no está acá, escríbenos — respondemos hoy.
 
 ---
 
 ## Categoría 1: El servicio
 
 **¿Qué es Tu Lugar en Galicia exactamente?**
-Somos un servicio de relocation especializado: buscamos vivienda de alquiler en Galicia por vos, antes de que viajes. No somos una inmobiliaria ni un portal de anuncios. Somos el intermediario que faltaba — alguien que conoce el mercado desde adentro, habla tu idioma (literalmente y culturalmente) y trabaja exclusivamente para la familia que quiere mudarse.
+Somos un servicio de relocation especializado: buscamos vivienda de alquiler en Galicia por ti, antes de que viajes. No somos una inmobiliaria ni un portal de anuncios. Somos el intermediario que faltaba — alguien que conoce el mercado desde adentro, habla tu idioma (literalmente y culturalmente) y trabaja exclusivamente para la familia que quiere mudarse.
 
 **¿Qué NO son ustedes?**
-No somos una inmobiliaria. No tenemos carteras de pisos propias ni cobramos comisión al propietario. No somos una gestoría ni hacemos trámites migratorios. No somos un portal de anuncios donde buscás solo. Somos un servicio personalizado de búsqueda y acompañamiento — trabajamos para vos.
+No somos una inmobiliaria. No tenemos carteras de pisos propias ni cobramos comisión al propietario. No somos una gestoría ni hacemos trámites migratorios. No somos un portal de anuncios donde buscas solo. Somos un servicio personalizado de búsqueda y acompañamiento — trabajamos para ti.
 
 **¿Cómo funciona el cobro? ¿Cuánto cuesta?**
 Cobramos honorarios por el servicio de búsqueda y acompañamiento, pagados por la familia que contrata el servicio. El propietario no paga nada. El monto específico depende del tipo de búsqueda y la ciudad — te lo explicamos en detalle en la videollamada inicial, sin sorpresas. El servicio no tiene costo de consulta: el formulario de diagnóstico y la primera videollamada son gratuitos.
@@ -29,7 +29,7 @@ Cobramos honorarios por el servicio de búsqueda y acompañamiento, pagados por 
 No garantizamos un resultado específico en un tiempo determinado — el mercado de alquiler tiene sus propias variables. Lo que sí garantizamos es una búsqueda activa, real y personalizada, con presentación de opciones que realmente cumplen tus criterios. Si en algún momento la situación cambia y no podemos continuar, te lo decimos claramente. Nuestra reputación se basa en más de 200 familias reubicadas — eso no se construye prometiendo lo que no se puede cumplir.
 
 **¿Trabajan solo con familias o también con personas solas?**
-Trabajamos principalmente con familias y parejas. Si sos una persona sola con una situación clara y una búsqueda viable, también podemos ayudarte — evaluamos caso a caso en el formulario de diagnóstico.
+Trabajamos principalmente con familias y parejas. Si eres una persona sola con una situación clara y una búsqueda viable, también podemos ayudarte — evaluamos caso a caso en el formulario de diagnóstico.
 
 ---
 
@@ -39,10 +39,10 @@ Trabajamos principalmente con familias y parejas. Si sos una persona sola con un
 Depende de la ciudad, la época del año y qué tan específicos sean tus requisitos. En promedio, entre el inicio de la búsqueda activa y la firma del contrato suelen pasar entre 2 y 6 semanas. Ciudades como Vigo y A Coruña tienen más competencia; Lugo y Pontevedra suelen resolverse más rápido. Te damos una estimación más concreta en la videollamada.
 
 **¿Qué documentación necesito tener lista para buscar piso?**
-Como mínimo: pasaporte vigente, prueba de ingresos (contrato de trabajo, extracto bancario de los últimos 3 meses, o declaración de renta del país de origen), y si ya tenés NIE o TIE, mejor. Si tu documentación migratoria está en trámite, también podemos buscar — hay propietarios que aceptan esa situación con garantías adicionales. Te orientamos según tu caso específico.
+Como mínimo: pasaporte vigente, prueba de ingresos (contrato de trabajo, extracto bancario de los últimos 3 meses, o declaración de renta del país de origen), y si ya tienes NIE o TIE, mejor. Si tu documentación migratoria está en trámite, también podemos buscar — hay propietarios que aceptan esa situación con garantías adicionales. Te orientamos según tu caso específico.
 
 **¿Pueden alquilar un piso antes de llegar a España?**
-Sí. Eso es exactamente lo que hacemos en la mayoría de los casos. El contrato de arrendamiento se puede firmar de forma telemática con firma electrónica o con poder notarial. La fianza y el primer mes se transfieren por banco. Cuando llegás, el piso está disponible. Es legal, es seguro y es lo que diferencia nuestro servicio.
+Sí. Eso es exactamente lo que hacemos en la mayoría de los casos. El contrato de arrendamiento se puede firmar de forma telemática con firma electrónica o con poder notarial. La fianza y el primer mes se transfieren por banco. Cuando llegas, el piso está disponible. Es legal, es seguro y es lo que diferencia nuestro servicio.
 
 **¿Con cuánta antelación tengo que contactarlos antes de viajar?**
 Cuanto antes, mejor. Idealmente con 2-3 meses de antelación respecto a tu fecha de llegada. Menos de 6 semanas hace que la búsqueda sea muy ajustada, aunque en algunos casos se puede resolver. Más de 4 meses puede ser demasiado temprano para que los propietarios comprometan el piso. El punto dulce es 8-10 semanas antes de la fecha de llegada.
@@ -61,10 +61,10 @@ Madrid y Barcelona están saturadas de demanda, tienen alquileres muy altos y un
 Galicia tiene clima oceánico: lluvias frecuentes (especialmente en otoño e invierno), veranos suaves y luminosos, inviernos frescos pero sin fríos extremos. No hay nieve en las ciudades costeras. No hay calores de 40 grados en verano. Es un clima de los que "dejan vivir", aunque la lluvia es real y hay que acostumbrarse. Vigo tiene más horas de sol que el resto de Galicia por su posición geográfica.
 
 **¿Cuánto cuesta vivir en Galicia comparado con mi país?**
-Para familias que vienen de Argentina, Uruguay o Venezuela, Galicia es accesible una vez que conseguís ingresos en euros. Los alquileres van desde 400 € en Lugo hasta 1.500 € o más en zonas premium de A Coruña. La comida, el transporte y los servicios básicos son razonables para estándares europeos. Una familia de tres personas puede vivir bien con 2.000-2.500 € netos mensuales, dependiendo del estilo de vida y la ciudad.
+Para familias que vienen de Argentina, Uruguay o Venezuela, Galicia es accesible una vez que consigues ingresos en euros. Los alquileres van desde 400 € en Lugo hasta 1.500 € o más en zonas premium de A Coruña. La comida, el transporte y los servicios básicos son razonables para estándares europeos. Una familia de tres personas puede vivir bien con 2.000-2.500 € netos mensuales, dependiendo del estilo de vida y la ciudad.
 
 **¿Hay comunidad latinoamericana en Galicia?**
-Sí, y bastante consolidada, especialmente en Vigo y A Coruña. Hay asociaciones culturales, comercios latinoamericanos, grupos de WhatsApp de apoyo mutuo y redes informales que facilitan mucho la llegada. No llegás a un lugar donde sos el único — llegás a una comunidad que ya tiene experiencia en hacer ese camino.
+Sí, y bastante consolidada, especialmente en Vigo y A Coruña. Hay asociaciones culturales, comercios latinoamericanos, grupos de WhatsApp de apoyo mutuo y redes informales que facilitan mucho la llegada. No llegas a un lugar donde eres el único — llegas a una comunidad que ya tiene experiencia en hacer ese camino.
 
 **¿Es Galicia segura?**
 Galicia es una de las regiones más seguras de España, que ya es uno de los países más seguros de Europa. Los índices de criminalidad son bajos en todas las ciudades que trabajamos. Para familias que vienen de contextos urbanos difíciles, el contraste en seguridad cotidiana es muy notable.
@@ -80,7 +80,7 @@ La Ley de Arrendamientos Urbanos (LAU) regula los alquileres en España. Los con
 Típicamente: pasaporte o TIE/NIE, últimas nóminas o prueba de ingresos, extracto bancario, y en muchos casos una garantía adicional (adelanto de varios meses de alquiler, seguro de impago o aval bancario). Los requisitos varían por propietario. Nosotros preparamos tu dossier y te orientamos para que tu candidatura sea lo más sólida posible.
 
 **¿Pueden tener mascotas en un piso de alquiler?**
-Depende del propietario. La ley no prohíbe las mascotas en alquiler, pero los propietarios pueden establecer restricciones en el contrato. Trabajamos buscando opciones que permitan mascotas si ese es tu caso — es un filtro que aplicamos desde el inicio de la búsqueda. Si tenés mascotas, indicalo en el formulario de diagnóstico con el detalle completo.
+Depende del propietario. La ley no prohíbe las mascotas en alquiler, pero los propietarios pueden establecer restricciones en el contrato. Trabajamos buscando opciones que permitan mascotas si ese es tu caso — es un filtro que aplicamos desde el inicio de la búsqueda. Si tienes mascotas, indícalo en el formulario de diagnóstico con el detalle completo.
 
 **¿Los pisos suelen venir amueblados?**
 En España es común alquilar tanto amueblado como sin amueblar. En las ciudades gallegas hay buena oferta de las dos opciones. Para familias que llegan desde otro país, los pisos amueblados son más cómodos inicialmente. Los sin amueblar suelen tener contratos más estables a largo plazo. Te asesoramos según tu situación y preferencia.
@@ -93,10 +93,10 @@ En España es común alquilar tanto amueblado como sin amueblar. En las ciudades
 Depende de tu nacionalidad. Los ciudadanos de la Unión Europea (incluidos los que tienen pasaporte de un país UE aunque vivan en América) pueden residir en España sin visado especial — solo necesitan registrarse. Los ciudadanos latinoamericanos sin pasaporte europeo necesitan un visado de residencia o de trabajo. El más común para familias es el visado por reagrupación familiar o el de residencia no lucrativa. Recomendamos siempre consultar con un gestor o abogado de extranjería.
 
 **¿Qué es el NIE y para qué sirve?**
-El NIE (Número de Identificación de Extranjero) es el número fiscal que necesitás para casi cualquier trámite en España: abrir cuenta bancaria, firmar un contrato, trabajar, pagar impuestos. Se tramita en la policía o en el consulado español en tu país de origen. Es uno de los primeros trámites que hay que resolver. Nosotros te orientamos sobre el proceso, aunque el trámite en sí lo hacés vos.
+El NIE (Número de Identificación de Extranjero) es el número fiscal que necesitas para casi cualquier trámite en España: abrir cuenta bancaria, firmar un contrato, trabajar, pagar impuestos. Se tramita en la policía o en el consulado español en tu país de origen. Es uno de los primeros trámites que hay que resolver. Nosotros te orientamos sobre el proceso, aunque el trámite en sí lo haces tú.
 
 **¿Puedo trabajar en España con el NIE?**
-El NIE por sí solo no habilita a trabajar. Para trabajar legalmente en España, necesitás autorización de residencia y trabajo (si sos de fuera de la UE) o simplemente el registro como ciudadano europeo (si tenés pasaporte de la UE). Las condiciones exactas dependen de tu situación migratoria. Te recomendamos consultar con un gestor de extranjería antes de viajar — y nosotros te podemos recomendar contactos de confianza.
+El NIE por sí solo no habilita a trabajar. Para trabajar legalmente en España, necesitas autorización de residencia y trabajo (si eres de fuera de la UE) o simplemente el registro como ciudadano europeo (si tienes pasaporte de la UE). Las condiciones exactas dependen de tu situación migratoria. Te recomendamos consultar con un gestor de extranjería antes de viajar — y nosotros te podemos recomendar contactos de confianza.
 
 **¿Puedo llevar a mis hijos al colegio público en España?**
-Sí. En España todos los niños en edad escolar tienen derecho a educación pública independientemente de su situación migratoria. La matrícula se hace en el colegio correspondiente al domicilio. Tener la vivienda cerrada antes de llegar facilita enormemente la matriculación, porque necesitás el empadronamiento (registro en el domicilio) para acceder a la plaza escolar. Nosotros coordinamos los tiempos para que llegues con la vivienda lista y puedas empadronarte de inmediato.
+Sí. En España todos los niños en edad escolar tienen derecho a educación pública independientemente de su situación migratoria. La matrícula se hace en el colegio correspondiente al domicilio. Tener la vivienda cerrada antes de llegar facilita enormemente la matriculación, porque necesitas el empadronamiento (registro en el domicilio) para acceder a la plaza escolar. Nosotros coordinamos los tiempos para que llegues con la vivienda lista y puedas empadronarte de inmediato.

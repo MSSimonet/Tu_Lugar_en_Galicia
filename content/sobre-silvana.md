@@ -12,7 +12,7 @@ Hola, soy Silvana. Y yo también hice este camino.
 
 Nací en Argentina y crecí sabiendo que en algún momento iba a cruzar el Atlántico. Mi familia tiene raíces gallegas — como tantas familias latinoamericanas — y Galicia siempre fue algo más que un lugar en el mapa. Era una historia que me habían contado desde chica, con nombres de pueblos, recetas y un idioma que sonaba familiar aunque yo no lo hablara. Cuando decidí venirme, sentí que no estaba yendo a un lugar desconocido: estaba volviendo a algo.
 
-Pero la realidad del proceso migratorio no se parece a esa historia romántica. Encontrar vivienda desde el otro lado del Atlántico es una de las partes más duras. Los propietarios no confían en alguien que no pueden ver, los portales de alquiler están llenos de opciones que no corresponden a lo que describen, y nadie te explica qué documentación necesitás, cómo funciona un contrato de arrendamiento en España o qué es eso de la fianza legal. Yo lo viví en carne propia. Tardé mucho más de lo que debería haber tardado, y llegué a Galicia con más incertidumbre de la necesaria.
+Pero la realidad del proceso migratorio no se parece a esa historia romántica. Encontrar vivienda desde el otro lado del Atlántico es una de las partes más duras. Los propietarios no confían en alguien que no pueden ver, los portales de alquiler están llenos de opciones que no corresponden a lo que describen, y nadie te explica qué documentación necesitas, cómo funciona un contrato de arrendamiento en España o qué es eso de la fianza legal. Yo lo viví en carne propia. Tardé mucho más de lo que debería haber tardado, y llegué a Galicia con más incertidumbre de la necesaria.
 
 Cuando me instalé y empecé a conocer la realidad del mercado desde adentro, entendí que podía hacer algo concreto con eso. Empecé a ayudar a algunas familias del entorno — amigos de amigos, conocidos de conocidos — que estaban pasando por lo mismo que yo había pasado. Lo hacía porque podía, porque conocía el territorio y porque recordaba exactamente cómo se sentía esa incertidumbre. En algún momento dejó de ser un favor ocasional y se convirtió en un servicio real.
 
@@ -40,10 +40,10 @@ Propietarios particulares que confían en mí, agencias con las que tengo relaci
 
 ## Cierre
 
-Si llegaste hasta acá, ya sabés quién soy y por qué hago esto. Ahora lo que me gustaría es conocerte a vos, escuchar tu historia y ver si puedo ayudarte.
+Si llegaste hasta acá, ya sabes quién soy y por qué hago esto. Ahora lo que me gustaría es conocerte, escuchar tu historia y ver si puedo ayudarte.
 
 El primer paso es el formulario de diagnóstico. Es corto, es gratuito y no te compromete a nada. A partir de ahí, coordinamos una videollamada y hablamos.
 
 **Botón:** Empezar el diagnóstico
 
-**Texto secundario:** O si preferís escribirme directamente, estoy en WhatsApp. Respondo personalmente.
+**Texto secundario:** O si prefieres escribirme directamente, estoy en WhatsApp. Respondo personalmente.

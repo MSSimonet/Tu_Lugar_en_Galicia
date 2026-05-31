@@ -70,7 +70,7 @@ function validate(form: FormState): FormErrors {
   const errors: FormErrors = {}
 
   if (!form.nombreCompleto.trim())
-    errors.nombreCompleto = 'Necesitamos tu nombre para poder dirigirnos a vos'
+    errors.nombreCompleto = 'Necesitamos tu nombre para poder dirigirnos a ti'
   if (!form.email.trim())
     errors.email = 'Necesitamos tu email para poder contactarte'
   else if (!isValidEmail(form.email))
@@ -78,13 +78,13 @@ function validate(form: FormState): FormErrors {
   if (!form.telefono.trim())
     errors.telefono = 'Incluí tu teléfono con el código de país para poder llamarte'
   if (!form.paisResidencia.trim())
-    errors.paisResidencia = 'Contanos desde qué país nos escribís'
+    errors.paisResidencia = 'Cuéntanos desde qué país nos escribes'
   if (!form.personas.trim())
-    errors.personas = 'Contanos quiénes van a vivir en la vivienda'
+    errors.personas = 'Cuéntanos quiénes van a vivir en la vivienda'
   if (!form.mascotas)
     errors.mascotas = 'Indicanos si van a viajar con mascotas'
   if (form.mascotas === 'si' && !form.detalleMascotas.trim())
-    errors.detalleMascotas = 'Contanos un poco más sobre tus mascotas'
+    errors.detalleMascotas = 'Cuéntanos un poco más sobre tus mascotas'
   if (!form.documentacion)
     errors.documentacion = 'Seleccioná cuál es tu situación de documentación'
   if (!form.situacionLaboral)
@@ -98,17 +98,17 @@ function validate(form: FormState): FormErrors {
   if (!form.presupuestoMensual)
     errors.presupuestoMensual = 'Indicanos tu presupuesto mensual de alquiler'
   if (!form.habitacionesMinimas)
-    errors.habitacionesMinimas = 'Indicanos cuántas habitaciones necesitás'
+    errors.habitacionesMinimas = 'Indícanos cuántas habitaciones necesitas'
   if (!form.amueblado)
-    errors.amueblado = 'Indicanos si necesitás la vivienda amueblada'
+    errors.amueblado = 'Indícanos si necesitas la vivienda amueblada'
   if (!form.estacionamiento)
-    errors.estacionamiento = 'Indicanos si necesitás estacionamiento'
+    errors.estacionamiento = 'Indícanos si necesitas estacionamiento'
   if (!form.fechaLlegada)
     errors.fechaLlegada = 'Indicanos cuándo estimás llegar a Galicia'
   if (!form.inicioContrato)
-    errors.inicioContrato = 'Indicanos cuándo querés empezar el contrato'
+    errors.inicioContrato = 'Indícanos cuándo quieres empezar el contrato'
   if (!form.modalidad)
-    errors.modalidad = 'Contanos cómo preferís organizar la búsqueda'
+    errors.modalidad = 'Cuéntanos cómo prefieres organizar la búsqueda'
   if (!form.comprendeServicio)
     errors.comprendeServicio = 'Es importante que entiendas cómo funciona el servicio antes de continuar'
   if (!form.consentimientoRGPD)
@@ -321,7 +321,7 @@ export function FormularioDiagnostico() {
           ¡Recibimos tu consulta!
         </h2>
         <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
-          Te respondemos en <strong>48 horas hábiles</strong>. Pronto vas a tener noticias nuestras.
+          Te respondemos en <strong>48 horas hábiles</strong>. Pronto tendrás noticias nuestras.
         </p>
         <Link
           href="/"
@@ -347,9 +347,9 @@ export function FormularioDiagnostico() {
           Recibimos tu consulta
         </h2>
         <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
-          Anotamos tus datos y Silvana se va a comunicar con vos a la brevedad.
-          Si no recibís noticias en <strong>48 horas hábiles</strong>, escribinos
-          directamente por WhatsApp — estamos acá para ayudarlos.
+          Anotamos tus datos y Silvana se va a comunicar contigo a la brevedad.
+          Si no recibes noticias en <strong>48 horas hábiles</strong>, escríbenos
+          directamente por WhatsApp — estamos aquí para ayudarte.
         </p>
         <a
           href={whatsappUrl}
@@ -357,7 +357,7 @@ export function FormularioDiagnostico() {
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] text-[var(--text-sm)]"
         >
-          Escribinos por WhatsApp
+          Escríbenos por WhatsApp
         </a>
         <Link
           href="/"
@@ -383,7 +383,7 @@ export function FormularioDiagnostico() {
       {/* Región aria-live para anuncios de estado a lectores de pantalla */}
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {status === 'loading' && 'Enviando tu consulta...'}
-        {status === 'error' && 'Hubo un error al enviar. Por favor intentá de nuevo.'}
+        {status === 'error' && 'Hubo un error al enviar. Por favor intenta de nuevo.'}
       </div>
 
       {/* Error banner */}
@@ -393,14 +393,14 @@ export function FormularioDiagnostico() {
           role="alert"
           aria-live="assertive"
         >
-          <strong>Algo salió mal al enviar tu consulta.</strong> Por favor intentá de nuevo o{' '}
+          <strong>Algo salió mal al enviar tu consulta.</strong> Por favor intenta de nuevo o{' '}
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:no-underline"
           >
-            escribinos por WhatsApp
+            escríbenos por WhatsApp
           </a>
           .
         </div>
@@ -500,7 +500,7 @@ export function FormularioDiagnostico() {
             {/* 6b. Detalle mascotas (condicional) */}
             {form.mascotas === 'si' && (
               <div className="mt-[var(--space-4)]">
-                <FieldWrapper id="detalleMascotas" label="Contanos sobre tus mascotas" required error={errors.detalleMascotas}>
+                <FieldWrapper id="detalleMascotas" label="Cuéntanos sobre tus mascotas" required error={errors.detalleMascotas}>
                   <textarea
                     id="detalleMascotas"
                     value={form.detalleMascotas}
@@ -632,9 +632,9 @@ export function FormularioDiagnostico() {
 
       <hr className="border-[var(--color-arena)] my-[var(--space-4)]" />
 
-      {/* ── Sección 3: La vivienda que buscás ────────────────────────────── */}
+      {/* ── Sección 3: La vivienda que buscas ────────────────────────────── */}
       <section aria-labelledby="seccion-vivienda">
-        <h2 id="seccion-vivienda" className={sectionTitleClass}>La vivienda que buscás</h2>
+        <h2 id="seccion-vivienda" className={sectionTitleClass}>La vivienda que buscas</h2>
         <div className={sectionClass}>
 
           {/* 11. Ciudad destino */}
@@ -713,7 +713,7 @@ export function FormularioDiagnostico() {
           <div>
             <fieldset>
               <legend id="rg-amueblado" className={`${labelClass} mb-[var(--space-2)]`}>
-                ¿Necesitás la vivienda amueblada?
+                ¿Necesitas la vivienda amueblada?
                 <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </legend>
               <RadioGroup
@@ -735,7 +735,7 @@ export function FormularioDiagnostico() {
           <div>
             <fieldset>
               <legend id="rg-estacionamiento" className={`${labelClass} mb-[var(--space-2)]`}>
-                ¿Necesitás estacionamiento?
+                ¿Necesitas estacionamiento?
                 <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </legend>
               <RadioGroup

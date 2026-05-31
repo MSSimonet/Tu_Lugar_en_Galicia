@@ -13,10 +13,10 @@ export default function AgendaPage() {
       <section className="bg-[var(--color-granito)] py-[var(--space-16)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl">
           <h1 className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-niebla)] md:text-[var(--text-3xl)]">
-            Agendá tu videollamada
+            Agenda tu videollamada
           </h1>
           <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
-            Gratuita, sin compromiso. Silvana te va a escuchar y decirte si puede ayudarlos.
+            Gratuita, sin compromiso. Silvana te va a escuchar y decirte si puede ayudarte.
           </p>
         </div>
       </section>
@@ -27,7 +27,7 @@ export default function AgendaPage() {
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-granito)] leading-[var(--leading-cuerpo)]">
             La videollamada dura aproximadamente 30 minutos. En esa charla, Silvana escucha tu
             situación, responde tus dudas sobre el proceso de búsqueda de vivienda en Galicia, y
-            evalúa con vos si el servicio es el indicado para tu caso. Sin presión, sin compromiso de
+            evalúa si el servicio es el indicado para tu caso. Sin presión, sin compromiso de
             contratación. Es simplemente una conversación para conocernos.
           </p>
         </div>
@@ -39,7 +39,7 @@ export default function AgendaPage() {
           <CalEmbed className="rounded-[var(--radius-card)]" />
           {/* Fallback textual */}
           <p className="mt-[var(--space-6)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
-            Si el calendario no carga, podés escribirnos directamente por{' '}
+            Si el calendario no carga, puedes escribirnos directamente por{' '}
             <a
               href={waUrl}
               target="_blank"

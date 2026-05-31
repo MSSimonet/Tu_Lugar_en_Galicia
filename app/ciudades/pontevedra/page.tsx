@@ -7,7 +7,7 @@ const descripcion = [
   'Pontevedra es una ciudad que se hizo famosa en el mundo entero por una razón concreta: sacó los autos del centro y se los devolvió a las personas. Hoy su casco histórico es completamente peatonal, los niños juegan en la calle, los vecinos se conocen y la vida transcurre a una escala humana que muy pocas ciudades europeas pueden ofrecer. Ganó premios internacionales de urbanismo que la pusieron en el mapa, y quien la visita entiende inmediatamente por qué.',
   'Para familias con niños, Pontevedra es difícil de superar. No hay autos en el centro, hay parques por todas partes, las distancias son caminables y el ambiente es tranquilo sin ser aburrido. El Lérez, el río que abraza la ciudad, tiene un paseo fluvial precioso donde familias enteras salen a caminar, andar en bici o simplemente estar.',
   'La ciudad tiene todos los servicios necesarios — hospital, colegios de calidad, comercio, gastronomía excelente — con un tamaño que la hace manejable. Con unos 85.000 habitantes, Pontevedra tiene la ventaja de que en poco tiempo ya conocés tu barrio, tus vecinos, tu panadería, tu bar. Para muchas familias latinoamericanas que vienen de metrópolis enormes, eso es un alivio genuino.',
-  'Y está a media hora de Vigo en tren, lo que significa que si necesitás aeropuerto, grandes superficies comerciales o trámites en organismos importantes, los tenés cerca. Lo mejor de los dos mundos: ciudad tranquila con acceso rápido a ciudad grande.',
+  'Y está a media hora de Vigo en tren, lo que significa que si necesitas aeropuerto, grandes superficies comerciales o trámites en organismos importantes, los tienes cerca. Lo mejor de los dos mundos: ciudad tranquila con acceso rápido a ciudad grande.',
 ]
 
 const precios = [

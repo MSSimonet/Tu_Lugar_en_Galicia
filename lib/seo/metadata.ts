@@ -14,7 +14,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
   home: {
     title: 'Relocation en Galicia para familias latinoamericanas | Tu Lugar en Galicia',
     description:
-      'Ayudamos a familias emigrantes a encontrar alquiler en Galicia antes de llegar. Más de 200 familias reubicadas. Agendá tu videollamada gratuita hoy.',
+      'Ayudamos a familias emigrantes a encontrar alquiler en Galicia antes de llegar. Más de 200 familias reubicadas. Agenda tu videollamada gratuita hoy.',
     keywords: [
       'relocation galicia',
       'mudarse a galicia desde argentina',
@@ -118,7 +118,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
   faq: {
     title: 'Preguntas frecuentes sobre relocation en Galicia | Tu Lugar en Galicia',
     description:
-      'Respondemos las dudas más comunes sobre alquiler en Galicia para emigrantes: documentación, garantías, tiempos y costos. Todo lo que necesitás saber.',
+      'Respondemos las dudas más comunes sobre alquiler en Galicia para emigrantes: documentación, garantías, tiempos y costos. Todo lo que necesitas saber.',
     keywords: [
       'preguntas frecuentes relocation galicia',
       'alquiler galicia emigrantes dudas',
@@ -129,9 +129,9 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
     canonical: `${SITE_URL}/faq`,
   },
   conocernos: {
-    title: 'Vamos a conocernos — Contanos tu caso | Tu Lugar en Galicia',
+    title: 'Vamos a conocernos — Cuéntanos tu caso | Tu Lugar en Galicia',
     description:
-      'Contanos sobre tu familia y tu situación. Evaluamos si podemos ayudarte a conseguir alquiler en Galicia. Respuesta en 48 horas hábiles. Sin compromiso.',
+      'Cuéntanos sobre tu familia y tu situación. Evaluamos si podemos ayudarte a conseguir alquiler en Galicia. Respuesta en 48 horas hábiles. Sin compromiso.',
     keywords: [
       'consulta relocation galicia',
       'formulario alquiler emigrantes galicia',
@@ -142,9 +142,9 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
     canonical: `${SITE_URL}/conocernos`,
   },
   agenda: {
-    title: 'Agendá tu videollamada gratuita sobre relocation en Galicia | Tu Lugar en Galicia',
+    title: 'Agenda tu videollamada gratuita sobre relocation en Galicia | Tu Lugar en Galicia',
     description:
-      'Reservá una videollamada gratuita con Silvana. Contanos tu caso y evaluamos juntos si podemos ayudarte a encontrar alquiler en Galicia.',
+      'Reserva una videollamada gratuita con Silvana. Cuéntanos tu caso y evaluamos juntos si podemos ayudarte a encontrar alquiler en Galicia.',
     keywords: [
       'agendar videollamada relocation galicia',
       'consulta gratuita alquiler galicia',

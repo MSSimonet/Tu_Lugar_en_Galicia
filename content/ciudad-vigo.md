@@ -12,7 +12,7 @@ Vivir en Vigo: la ciudad que te recibe con el mar en la puerta
 
 Vigo es la ciudad más grande de Galicia y la que más latinoamericanos elige como primer destino. No es casualidad: tiene una energía que mezcla lo urbano con lo atlántico de una manera difícil de encontrar en otra parte de España. Las rías, el puerto, el mercado de A Pedra con el marisco más fresco de Europa — y al mismo tiempo supermercados, hospitales, transporte y todo lo que una familia necesita para instalarse bien desde el primer día.
 
-La comunidad latinoamericana en Vigo es real y consolidada. Hay asociaciones, negocios, iglesias y redes informales que hacen que el proceso de adaptación sea mucho más llevadero. No llegás a un lugar donde sos el único — llegás a una ciudad donde muchos ya hicieron el mismo camino antes que vos.
+La comunidad latinoamericana en Vigo es real y consolidada. Hay asociaciones, negocios, iglesias y redes informales que hacen que el proceso de adaptación sea mucho más llevadero. No llegas a un lugar donde eres el único — llegas a una ciudad donde muchos ya hicieron el mismo camino antes que tú.
 
 El clima es lo que más sorprende a quienes vienen de zonas cálidas: llueve, sí, pero Vigo tiene más horas de sol que otras ciudades gallegas gracias a su posición en la Ría. Los veranos son suaves y luminosos, los inviernos son frescos pero raramente fríos de verdad. Nada de nieve en la ciudad, nada de calores extremos. Un clima de los que te dejan vivir afuera.
 
@@ -41,7 +41,7 @@ Estos rangos son orientativos y varían según barrio y estado del inmueble.
 
 ## CTA al formulario de diagnóstico
 
-¿Vigo es tu destino? Contanos tu situación y te ayudamos a encontrar el barrio y el piso que se adaptan a lo que necesitás. El primer paso es el formulario de diagnóstico — sin costo, sin compromiso.
+¿Vigo es tu destino? Cuéntanos tu situación y te ayudamos a encontrar el barrio y el piso que se adaptan a lo que necesitas. El primer paso es el formulario de diagnóstico — sin costo, sin compromiso.
 
 **Botón:** Completá el diagnóstico para Vigo
 

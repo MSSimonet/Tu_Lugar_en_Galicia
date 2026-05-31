@@ -14,9 +14,9 @@ Pontevedra es una ciudad que se hizo famosa en el mundo entero por una razón co
 
 Para familias con niños, Pontevedra es difícil de superar. No hay autos en el centro, hay parques por todas partes, las distancias son caminables y el ambiente es tranquilo sin ser aburrido. El Lérez, el río que abraza la ciudad, tiene un paseo fluvial precioso donde familias enteras salen a caminar, andar en bici o simplemente estar.
 
-La ciudad tiene todos los servicios necesarios — hospital, colegios de calidad, comercio, gastronomía excelente — con un tamaño que la hace manejable. Con unos 85.000 habitantes, Pontevedra tiene la ventaja de que en poco tiempo ya conocés tu barrio, tus vecinos, tu panadería, tu bar. Para muchas familias latinoamericanas que vienen de metrópolis enormes, eso es un alivio genuino.
+La ciudad tiene todos los servicios necesarios — hospital, colegios de calidad, comercio, gastronomía excelente — con un tamaño que la hace manejable. Con unos 85.000 habitantes, Pontevedra tiene la ventaja de que en poco tiempo ya conoces tu barrio, tus vecinos, tu panadería, tu bar. Para muchas familias latinoamericanas que vienen de metrópolis enormes, eso es un alivio genuino.
 
-Y está a media hora de Vigo en tren, lo que significa que si necesitás aeropuerto, grandes superficies comerciales o trámites en organismos importantes, los tenés cerca. Lo mejor de los dos mundos: ciudad tranquila con acceso rápido a ciudad grande.
+Y está a media hora de Vigo en tren, lo que significa que si necesitas aeropuerto, grandes superficies comerciales o trámites en organismos importantes, los tienes cerca. Lo mejor de los dos mundos: ciudad tranquila con acceso rápido a ciudad grande.
 
 ---
 
@@ -41,7 +41,7 @@ Estos rangos son orientativos y varían según barrio y estado del inmueble.
 
 ## CTA al formulario de diagnóstico
 
-Pontevedra es una de las ciudades más elegidas por familias que buscan calidad de vida sin complicaciones. Si te llama, contanos tu situación y te ayudamos a encontrar el lugar ideal.
+Pontevedra es una de las ciudades más elegidas por familias que buscan calidad de vida sin complicaciones. Si te llama, cuéntanos tu situación y te ayudamos a encontrar el lugar ideal.
 
 **Botón:** Completá el diagnóstico para Pontevedra
 

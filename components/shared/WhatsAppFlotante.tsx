@@ -10,14 +10,14 @@ export function WhatsAppFlotante() {
         aria-hidden="true"
         className="absolute right-16 bottom-1/2 translate-y-1/2 whitespace-nowrap bg-[var(--color-granito)] text-[var(--color-niebla)] text-[var(--text-xs)] font-[family-name:var(--font-ui)] px-[var(--space-3)] py-[var(--space-2)] rounded-[var(--radius-card)] shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200"
       >
-        Escribinos por WhatsApp
+        Escríbenos por WhatsApp
       </span>
 
       <a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Escribinos por WhatsApp"
+        aria-label="Escríbenos por WhatsApp"
         className="flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-transform duration-200 hover:scale-110 active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
         style={{ backgroundColor: '#25D366' }}
       >

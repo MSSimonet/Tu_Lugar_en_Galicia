@@ -4,7 +4,7 @@ import { CiudadLayout } from '@/components/ciudades'
 export const metadata = getNextMetadata('lugo')
 
 const descripcion = [
-  'Lugo tiene algo que ninguna otra ciudad del mundo puede decir: está completamente rodeada por una muralla romana del siglo II declarada Patrimonio de la Humanidad. Podés caminar los dos kilómetros y medio del adarve con vistas a la ciudad y a la campiña gallega. Es un paseo cotidiano que en otro lugar sería una atracción turística de primer nivel — aquí es simplemente donde los vecinos van a dar una vuelta.',
+  'Lugo tiene algo que ninguna otra ciudad del mundo puede decir: está completamente rodeada por una muralla romana del siglo II declarada Patrimonio de la Humanidad. Puedes caminar los dos kilómetros y medio del adarve con vistas a la ciudad y a la campiña gallega. Es un paseo cotidiano que en otro lugar sería una atracción turística de primer nivel — aquí es simplemente donde los vecinos van a dar una vuelta.',
   'Para familias que necesitan encontrar un equilibrio entre calidad de vida y presupuesto disponible, Lugo es la respuesta en Galicia. Los alquileres son notablemente más bajos que en Vigo o A Coruña, los servicios son completos y el ritmo de vida es el más tranquilo de las cinco ciudades gallegas que trabajamos. No hay tráfico enloquecedor, no hay largas filas, no hay la presión de las grandes ciudades.',
   'Lugo es una ciudad de provincia con orgullo propio. Su gastronomía es extraordinaria: tiene más bares de pinchos per cápita que San Sebastián, y el tapeo es una institución social que facilita mucho la integración. Hay una vida social activa, ferias, mercados y eventos culturales durante todo el año.',
   'El Hospital Universitario Lucus Augusti (HULA) es uno de los hospitales más modernos de Galicia, inaugurado en 2011. Los colegios públicos tienen buena reputación. Y para las familias que trabajan en el sector primario, la agroindustria o la administración pública gallega, Lugo tiene oportunidades laborales concretas. Para trabajo remoto es una opción excelente: calidad de vida alta a un costo muy razonable.',
@@ -26,7 +26,7 @@ const faqs = [
   {
     question: '¿Por qué los alquileres son más bajos en Lugo?',
     answer:
-      'Principalmente por la demografía: Lugo ha perdido población en las últimas décadas y hay más oferta relativa de vivienda. Eso es una ventaja real para las familias que llegan: podés acceder a pisos más grandes y mejor ubicados con el mismo presupuesto que en Vigo o A Coruña. El mercado es menos competitivo y los propietarios suelen ser más flexibles.',
+      'Principalmente por la demografía: Lugo ha perdido población en las últimas décadas y hay más oferta relativa de vivienda. Eso es una ventaja real para las familias que llegan: puedes acceder a pisos más grandes y mejor ubicados con el mismo presupuesto que en Vigo o A Coruña. El mercado es menos competitivo y los propietarios suelen ser más flexibles.',
   },
   {
     question: '¿Hay comunidad latinoamericana en Lugo?',

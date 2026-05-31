@@ -10,7 +10,7 @@ Vivir en A Coruña: la ciudad que tiene el mar en todas partes y una luz que no 
 
 ## Introducción local
 
-A Coruña tiene algo que pocas ciudades en España pueden decir: una playa urbana en el centro mismo. El Paseo Marítimo más largo de Europa bordea la ciudad, y desde cualquier punto del centro podés llegar caminando al mar en menos de veinte minutos. Para muchas familias latinoamericanas que vienen de ciudades costeras, eso no es un detalle — es una forma de vida.
+A Coruña tiene algo que pocas ciudades en España pueden decir: una playa urbana en el centro mismo. El Paseo Marítimo más largo de Europa bordea la ciudad, y desde cualquier punto del centro puedes llegar caminando al mar en menos de veinte minutos. Para muchas familias latinoamericanas que vienen de ciudades costeras, eso no es un detalle — es una forma de vida.
 
 Es también la ciudad gallega más cosmopolita. Sede de grandes empresas (Inditex nació aquí), con una clase media consolidada, una oferta cultural activa y una vida nocturna y gastronómica que sorprende a quienes vienen esperando una ciudad pequeña. A Coruña tiene el tamaño justo: lo suficientemente grande para que no te falte nada, lo suficientemente manejable para que no te pierda.
 
@@ -41,7 +41,7 @@ Estos rangos son orientativos y varían según barrio y estado del inmueble.
 
 ## CTA al formulario de diagnóstico
 
-A Coruña te está esperando. Si ya sabés que esta es tu ciudad — o si todavía estás evaluando — contanos tu situación y te ayudamos a encontrar el barrio y el piso que encajan con tu vida.
+A Coruña te está esperando. Si ya sabes que esta es tu ciudad — o si todavía estás evaluando — cuéntanos tu situación y te ayudamos a encontrar el barrio y el piso que encajan con tu vida.
 
 **Botón:** Completá el diagnóstico para A Coruña
 

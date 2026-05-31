@@ -1,12 +1,12 @@
-# Avoa — Barandas reforzadas y ajustes al cuestionario
+# Avoa — Barandas, arquitectura y salvaguardas
 ### Tu Lugar En Galicia · Construcción propia (widget web)
 
 **Decisión de partida:** el chatbot se construye a medida como widget de chat en la web. WhatsApp y otros canales quedan para una fase posterior. Por eso el documento mantiene todo **portable**: las reglas de control y el flujo no dependen de ninguna plataforma concreta, así que migrar a WhatsApp más adelante no obliga a rehacer el trabajo.
 
-Tres partes:
+Este documento es la capa de control y construcción que envuelve a **avoa-flujo.md** (el guion conversacional). Tres partes:
 **Parte 1** — bloque de control para el System Prompt (instrucciones ocultas del bot). Es independiente de la plataforma.
 **Parte 2** — arquitectura mínima para construirlo vosotros.
-**Parte 3** — ajustes al cuestionario.
+**Parte 3** — salvaguardas del cuestionario (ya integradas en avoa-flujo.md).
 
 ---
 
@@ -15,14 +15,14 @@ Tres partes:
 > 🛑 **REGLAS CRÍTICAS DE CONTROL DE CONVERSACIÓN**
 
 **1. Identidad y Foco Absoluto.**
-Eres Avoa, representante virtual del equipo de "Tu Lugar En Galicia". Tu único propósito es guiar al usuario por el proceso de calificación, reubicación y vivienda en Galicia. Mantienes siempre tuteo profesional, tono cálido y plural de equipo ("nosotros", "nuestro equipo").
+Eres Avoa, representante virtual del equipo de "Tu Lugar En Galicia". Tu único propósito es guiar al usuario por el proceso de calificación, reubicación y vivienda en Galicia. Mantienes siempre tuteo en español neutro, tono cálido y plural de equipo ("nosotros", "nuestro equipo").
 
 **2. Clasificación previa de todo texto libre.**
 Antes de responder a cualquier mensaje escrito, clasifícalo en UNA de estas tres categorías y actúa según corresponda:
 
 - **(A) Respuesta válida a la pregunta pendiente** → extrae la información, confírmala con empatía en una sola frase y formula de inmediato la siguiente pregunta del cuestionario.
 - **(B) Pregunta relacionada pero fuera de guion** (precios de alquiler, visados, trámites, zonas, sanidad, bancos, etc.) → NO inventes datos ni cifras concretas. Valida la pregunta en una frase y devuélvela al equipo y al flujo:
-  *"Es justo uno de los puntos que nuestro equipo analiza a fondo en tu Hoja de Ruta personalizada. Para llegar ahí, retomemos: [pregunta pendiente]."*
+  *"Es justo uno de los puntos que nuestro equipo analiza a fondo en tu Plan Estratégico personalizado. Para llegar ahí, retomemos: [pregunta pendiente]."*
 - **(C) Tema totalmente externo** (clima en otra ciudad, recetas, deporte, política, pedirte código, poemas, etc.) → ignora la petición y responde únicamente con el Mensaje de Redirección Único (regla 3).
 
 **3. Mensaje de Redirección Único (solo para categoría C).**
@@ -38,8 +38,8 @@ Lleva la cuenta de desvíos consecutivos (categoría C o intentos de la regla 4)
 **6. Respuestas vacías o ininteligibles.**
 Si la respuesta a una pregunta de texto libre no aporta información utilizable ("no sé", un emoji, texto sin sentido), repregunta **una sola vez** de forma breve y concreta antes de volver a analizar. No gastes varios turnos interpretando ruido.
 
-**7. Brevedad extrema.**
-En los turnos que pasen por ti, no des explicaciones largas. Analiza, confirma en una frase y haz la siguiente pregunta de inmediato.
+**7. Brevedad extrema (solo en los turnos que pasan por la IA).**
+En los turnos `llm` (texto libre), no des explicaciones largas: analiza, confirma en una frase y haz la siguiente pregunta de inmediato. Esta regla NO recorta los textos fijos del guion (bienvenida, explicación del servicio, mensajes de cada paso), que se envían tal cual desde la plataforma y son deliberadamente cálidos.
 
 ---
 
@@ -52,11 +52,11 @@ Define el cuestionario como una lista de pasos. Cada paso lleva: `id`, `tipo` (`
 
 ```json
 {
-  "id": "p7_zona",
+  "id": "p5_zona",
   "tipo": "botones",
-  "texto": "¿Tienes en mente alguna zona o prefieres explorar opciones abiertas?",
-  "opciones": ["Vigo", "A Coruña", "Santiago de Compostela", "Otra zona", "Opciones abiertas"],
-  "siguiente": "p8_familia"
+  "texto": "¿A qué ciudad de Galicia te diriges? Nuestro foco de búsqueda principal es Vigo y A Coruña.",
+  "opciones": ["Vigo", "A Coruña", "Ambas / Indiferente", "Otra zona de Galicia"],
+  "siguiente": "p6_hogar"
 }
 ```
 
@@ -70,51 +70,54 @@ Componente (p. ej. React) que renderiza burbujas, botones e inputs. Al pulsar un
 Un endpoint (vale una función serverless) que recibe la respuesta, consulta el estado de sesión, decide el siguiente paso y **solo llama a la API de IA cuando el paso es de tipo `llm`** (texto libre), inyectando las Reglas de Control de la Parte 1 como System Prompt.
 
 **5. Persistencia / CRM.**
-Al cerrar, vuelca los datos capturados a Google Sheets o a vuestro CRM vía API. Es buen momento para aplicar las etiquetas de calificación (p. ej. "califica" / "lead en preparación").
+Al cerrar, vuelca los datos capturados a Google Sheets o a vuestro CRM vía API. Es buen momento para aplicar las etiquetas de calificación (p. ej. "califica", "lead en preparación", "seguimiento futuro").
 
 **Stack mínimo sugerido:** widget en React + backend serverless + la API de Anthropic para los pasos `llm`. Las validaciones de formato (email, teléfono) se resuelven en cliente o backend, sin gastar tokens.
 
-> **Nota de portabilidad a WhatsApp (fase futura):** el flujo en JSON y las reglas de control se reutilizan tal cual. Lo único que cambia es el canal y sus límites de interfaz: WhatsApp permite máximo **3 botones de respuesta rápida** o una **lista de hasta 10 opciones**. La Pregunta 7 (5 opciones) iría como lista, no como botones. Tenedlo presente al diseñar el JSON para no rehacerlo luego.
+> **Nota de portabilidad a WhatsApp (fase futura):** el flujo en JSON y las reglas de control se reutilizan tal cual. Lo único que cambia es el canal y sus límites de interfaz: WhatsApp permite máximo **3 botones de respuesta rápida** o una **lista de hasta 10 opciones**. Las preguntas con más de 3 opciones (p. ej. P4 plazo con 5, o P9 situación laboral con 6) irían como lista, no como botones. Tenedlo presente al diseñar el JSON para no rehacerlo luego.
 
 ---
 
-## PARTE 3 — Ajustes al cuestionario
+## PARTE 3 — Salvaguardas del cuestionario (ya integradas en avoa-flujo.md)
 
-### Ajuste A — Consentimiento de datos (RGPD) en la Pregunta 1
-Capturáis nombre, email y teléfono de personas en la UE, así que el consentimiento explícito es obligatorio. Resuélvelo con un **botón en vuestro widget (0 tokens)** justo antes de pedir el mail. Texto sugerido:
+Las salvaguardas que antes figuraban como "ajustes pendientes" ya están aplicadas en el flujo. Se documentan aquí para que no se pierdan en la implementación.
 
-> *(Tras el "Sí" del cliente)* → ¡Excelente! Una última cosa antes de empezar: para preparar tu Hoja de Ruta necesitamos guardar tu nombre y datos de contacto. Al continuar, nos autorizas a tratarlos según nuestra Política de Privacidad y podrás pedir la baja cuando quieras.
+### A — Consentimiento de datos (RGPD)
+Capturáis nombre, email y teléfono de personas en la UE, así que el consentimiento explícito es obligatorio. En el flujo es un **paso de botones propio (0 tokens)**, justo después de la bienvenida y **antes** de pedir cualquier dato:
+
+> "¡Genial! Antes de empezar: para preparar tu plan necesitaremos tu nombre y datos de contacto. Al continuar, nos autorizas a tratarlos según nuestra Política de Privacidad, y podrás darte de baja cuando quieras."
 >
 > **Botones:** `[Acepto y seguimos]`  `[Ver política de privacidad]`
 
-Solo tras pulsar **`[Acepto y seguimos]`** se piden nombre + email, validando el formato del email en el cliente/backend (regex), sin IA.
+Solo tras `Acepto y seguimos` se piden nombre (P1) y email (P2), validando el formato del email por regex, sin IA. *(Pendiente operativo: insertar el enlace real a la política.)*
 
-### Ajuste B — Ruta de descalificación elegante en la Pregunta 5
-Hoy el filtro económico no define qué hacer con quien no califica. En lugar de cortar en frío, deriva a un flujo de seguimiento (nurturing) para no perder el lead:
+### B — Ruta de descalificación elegante (P10 + P11)
+El filtro económico no descarta en frío: combina ingresos (P10) y garantías (P11) y deriva a seguimiento a quien aún no califica.
 
-> *(Si el usuario indica que no podría cubrir el respaldo económico requerido):*
-> "Gracias por la sinceridad, **[Nombre]**. Hoy el mercado en Galicia pide bastante respaldo por adelantado, así que conviene preparar bien ese punto antes de iniciar la búsqueda. Podemos enviarte algunos recursos para ir armándolo y, en cuanto lo tengas encaminado, retomamos encantados tu plan. ¿Te gustaría que el equipo te contacte igualmente para orientarte, sin compromiso?"
->
-> **Botones:** `[Sí, que me contacten]`  `[Solo envíenme los recursos]`
+- **P10 (ingresos)** se pregunta por rango, no por cifra exacta, e incluye la opción `[No tengo ingresos en España aún]`, que NO descarta: continúa a P11.
+- **P11 (garantías)** evalúa el respaldo real (adelanto de meses, aval, seguro de impago).
+- La etiqueta interna **"lead en preparación"** se activa solo si en P11 marca `[Ninguna de las anteriores]` **y** en P10 indicó "Menos de 1.500 €" o "No tengo ingresos en España aún". En ese caso el mensaje es de preparación, con un único botón `[Sí, gracias]`. Si declaró ingresos suficientes, "Ninguna" no descalifica.
 
-Esto mantiene la relación y la base de datos limpia con una etiqueta tipo "lead en preparación".
-
-### Ajuste C — Revisar la cifra de la Pregunta 5
-La pregunta menciona *"8 o 9 meses de alquiler por adelantado"*. En España lo habitual es fianza de 1–2 meses + primer mes + acreditar ingresos de aproximadamente 3 veces la renta. Pedir 8–9 meses por adelantado suena muy alto y puede descalificar a personas que sí cumplirían. Si la cifra es intencional de vuestro negocio, ignóralo; si no, conviene reformularla, por ejemplo: *"ahorros equivalentes a varios meses de alquiler más ingresos demostrables"*.
+### C — Cifras de mercado (resuelto)
+La antigua referencia a "8 o 9 meses de alquiler por adelantado" ya no existe. El flujo usa: presupuesto por tramos con ancla real de mercado (P12: "desde 700–800 €, suministros aparte") y el adelanto figura solo como garantía **opcional** ("adelantar varios meses, 6–12", en P11), no como requisito. Mantener estas anclas: preeducan expectativas y forman parte del filtro.
 
 ---
 
-## Mapa de pasos (dónde actúa cada baranda y qué tipo de paso es)
+## Mapa de pasos (dónde actúa cada baranda y qué pasos llaman a la IA)
 
-| Pregunta | Tipo de paso | Mecanismo | ¿Llama a la IA? |
-|---|---|---|---|
-| 1. Consentimiento + datos | `botones` + `input` | Botón RGPD + validación email por regex | No |
-| 2. País de origen | `botones` | Países frecuentes + "Otro" | Solo si "Otro" en texto |
-| 3. Mes/año de llegada | `input` | Selector de fecha en el widget | No |
-| 4. Filtro legal | `botones` (+`llm`) | Botones; texto libre solo en "Otro caso" | Solo en texto libre |
-| 5. Filtro económico | `botones` (+`llm`) | Botones de tramos + ruta de descalificación | Solo en texto libre |
-| 6. Teléfono | `input` | Validación de teléfono por regex | No |
-| 7–12. Zona, familia, mascotas, vivienda, banco, logística | `botones` (+`input`) | Botones + campos numéricos donde aplique | Solo para extraer detalles libres (nº, edades, peso) |
-| 13. Profesión + estudios | `llm` + `botones` | Texto libre (profesión) + botones (estudios) | Solo en la profesión |
+| Paso | Tipo | ¿Llama a la IA? |
+|---|---|---|
+| Bienvenida + Consentimiento RGPD | `botones` | No |
+| P1 Nombre · P2 Email | `input` (regex) | No |
+| P3 Origen (+ país si viene de fuera) | `botones` (+`input`) | No |
+| P4 Plazo · P5 Zona | `botones` | No |
+| **P6 Composición del hogar** | `input` `llm` | **Sí** |
+| P7 Mascotas | `botones` (+`llm` en detalles) | Solo si "Sí" y describe |
+| P8 Legal · P9 Laboral · P10 Ingresos · P11 Garantías · P12 Presupuesto · P13 Banco | `botones` | No |
+| P14 Entendimiento del servicio (texto fijo) · P15 Teléfono | `botones` / `input` | No |
+| **P16 Necesidades especiales / accesibilidad** | `input` `llm` | **Sí** |
+| P17 Licencia · P18–P20 (ramas) · P21–P24 vivienda · P25 gestión | `botones` (+`input`) | No |
+| **P26 Profesión** | `input` `llm` | **Sí** |
+| P27 Nivel de estudios | `botones` | No |
 
-Con esto, la IA solo se activa en pasos `llm` puntuales: el ahorro real puede superar el 70% estimado.
+La IA solo se activa de forma sistemática en **P6, P16 y P26** (y en P7 cuando hay mascotas que describir), más los turnos de texto libre que el usuario inicie y que gestiona la Parte 1. El resto es botones, selectores y validación por regex: el ahorro real puede superar el 70%.

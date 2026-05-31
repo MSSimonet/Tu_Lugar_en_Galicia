@@ -56,10 +56,10 @@ export function CiudadesCards() {
           Las ciudades donde operamos
         </p>
         <p className="mb-[var(--space-12)] mx-auto max-w-2xl text-center font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)] text-[var(--color-pizarra)]">
-          Galicia tiene ciudades para todos los estilos de vida. ¿Preferís la
+          Galicia tiene ciudades para todos los estilos de vida. ¿Prefieres la
           energía portuaria de Vigo, la elegancia costera de A Coruña, la
           escala humana de Santiago o la tranquilidad de Pontevedra y Lugo?
-          Conocé cada ciudad y encontrá dónde querés empezar tu nueva vida.
+          Conoce cada ciudad y encuentra dónde quieres empezar tu nueva vida.
         </p>
 
         <ul className="grid grid-cols-1 gap-[var(--space-6)] md:grid-cols-2 lg:grid-cols-3 [&>li:last-child:nth-child(odd)]:md:col-span-2 [&>li:last-child:nth-child(odd)]:lg:col-span-1 [&>li:last-child]:lg:col-start-2">
@@ -86,7 +86,7 @@ export function CiudadesCards() {
                     {descripcion}
                   </p>
                   <span className="mt-[var(--space-4)] inline-block font-[family-name:var(--font-ui)] text-[var(--text-xs)] font-medium tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] uppercase">
-                    Conocé {nombre} →
+                    Conoce {nombre} →
                   </span>
                 </div>
               </Link>

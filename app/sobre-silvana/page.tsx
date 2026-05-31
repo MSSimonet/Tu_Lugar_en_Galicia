@@ -78,7 +78,7 @@ export default function SobreSilvanaPage() {
             Pero la realidad del proceso migratorio no se parece a esa historia romántica. Encontrar
             vivienda desde el otro lado del Atlántico es una de las partes más duras. Los propietarios
             no confían en alguien que no pueden ver, los portales de alquiler están llenos de opciones
-            que no corresponden a lo que describen, y nadie te explica qué documentación necesitás,
+            que no corresponden a lo que describen, y nadie te explica qué documentación necesitas,
             cómo funciona un contrato de arrendamiento en España o qué es eso de la fianza legal. Yo
             lo viví en carne propia. Tardé mucho más de lo que debería haber tardado, y llegué a
             Galicia con más incertidumbre de la necesaria.
@@ -138,8 +138,8 @@ export default function SobreSilvanaPage() {
       <section className="bg-[var(--color-blanco)] py-[var(--space-16)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl text-center">
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
-            Si llegaste hasta acá, ya sabés quién soy y por qué hago esto. Ahora lo que me gustaría
-            es conocerte a vos, escuchar tu historia y ver si puedo ayudarte.
+            Si llegaste hasta acá, ya sabes quién soy y por qué hago esto. Ahora lo que me gustaría
+            es conocerte, escuchar tu historia y ver si puedo ayudarte.
           </p>
           <div className="flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
             <Link
@@ -152,11 +152,11 @@ export default function SobreSilvanaPage() {
               href="/agenda"
               className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-[var(--color-laton)] tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton)] hover:text-white transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
             >
-              Agendá una videollamada
+              Agenda una videollamada
             </Link>
           </div>
           <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)]">
-            O si preferís escribirme directamente,{' '}
+            O si prefieres escribirme directamente,{' '}
             <a
               href={waUrl}
               target="_blank"

@@ -42,13 +42,13 @@ export function Hero() {
         <div className="mt-[var(--space-8)] flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
           <Link href="/agenda">
             <Button variant="primario" size="lg">
-              Agendá tu videollamada
+              Agenda tu videollamada
             </Button>
           </Link>
 
           <a href={waUrl} target="_blank" rel="noopener noreferrer">
             <Button variant="secundario" size="lg">
-              Escribinos por WhatsApp
+              Escríbenos por WhatsApp
             </Button>
           </a>
         </div>

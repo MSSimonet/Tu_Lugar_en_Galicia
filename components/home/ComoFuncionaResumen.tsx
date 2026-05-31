@@ -17,7 +17,7 @@ const pasos = [
     numero: 3,
     nombre: "Búsqueda activa",
     descripcion:
-      "Salimos a buscar por vos: contactamos propietarios, filtramos anuncios y negociamos condiciones.",
+      "Salimos a buscar por ti: contactamos propietarios, filtramos anuncios y negociamos condiciones.",
   },
   {
     numero: 4,
@@ -35,7 +35,7 @@ const pasos = [
     numero: 6,
     nombre: "Llegada",
     descripcion:
-      "Cuando aterrices en Galicia, ya tenés tu casa. Nosotros seguimos disponibles para lo que necesites.",
+      "Cuando aterrices en Galicia, ya tienes tu casa. Nosotros seguimos disponibles para lo que necesites.",
   },
 ];
 

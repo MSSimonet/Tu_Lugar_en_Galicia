@@ -13,12 +13,12 @@ const categorias = [
       {
         question: '¿Qué es Tu Lugar en Galicia exactamente?',
         answer:
-          'Somos un servicio de relocation especializado: buscamos vivienda de alquiler en Galicia por vos, antes de que viajes. No somos una inmobiliaria ni un portal de anuncios. Somos el intermediario que faltaba — alguien que conoce el mercado desde adentro, habla tu idioma (literalmente y culturalmente) y trabaja exclusivamente para la familia que quiere mudarse.',
+          'Somos un servicio de relocation especializado: buscamos vivienda de alquiler en Galicia por ti, antes de que viajes. No somos una inmobiliaria ni un portal de anuncios. Somos el intermediario que faltaba — alguien que conoce el mercado desde adentro, habla tu idioma (literalmente y culturalmente) y trabaja exclusivamente para la familia que quiere mudarse.',
       },
       {
         question: '¿Qué NO son ustedes?',
         answer:
-          'No somos una inmobiliaria. No tenemos carteras de pisos propias ni cobramos comisión al propietario. No somos una gestoría ni hacemos trámites migratorios. No somos un portal de anuncios donde buscás solo. Somos un servicio personalizado de búsqueda y acompañamiento — trabajamos para vos.',
+          'No somos una inmobiliaria. No tenemos carteras de pisos propias ni cobramos comisión al propietario. No somos una gestoría ni hacemos trámites migratorios. No somos un portal de anuncios donde buscas solo. Somos un servicio personalizado de búsqueda y acompañamiento — trabajamos para ti.',
       },
       {
         question: '¿Cómo funciona el cobro? ¿Cuánto cuesta?',
@@ -33,7 +33,7 @@ const categorias = [
       {
         question: '¿Trabajan solo con familias o también con personas solas?',
         answer:
-          'Trabajamos principalmente con familias y parejas. Si sos una persona sola con una situación clara y una búsqueda viable, también podemos ayudarte — evaluamos caso a caso cuando nos contás tu situación.',
+          'Trabajamos principalmente con familias y parejas. Si eres una persona sola con una situación clara y una búsqueda viable, también podemos ayudarte — evaluamos caso a caso cuando nos cuentas tu situación.',
       },
     ],
   },
@@ -48,12 +48,12 @@ const categorias = [
       {
         question: '¿Qué documentación necesito tener lista para buscar piso?',
         answer:
-          'Como mínimo: pasaporte vigente, prueba de ingresos (contrato de trabajo, extracto bancario de los últimos 3 meses, o declaración de renta del país de origen), y si ya tenés NIE o TIE, mejor. Si tu documentación migratoria está en trámite, también podemos buscar — hay propietarios que aceptan esa situación con garantías adicionales. Te orientamos según tu caso específico.',
+          'Como mínimo: pasaporte vigente, prueba de ingresos (contrato de trabajo, extracto bancario de los últimos 3 meses, o declaración de renta del país de origen), y si ya tienes NIE o TIE, mejor. Si tu documentación migratoria está en trámite, también podemos buscar — hay propietarios que aceptan esa situación con garantías adicionales. Te orientamos según tu caso específico.',
       },
       {
         question: '¿Pueden alquilar un piso antes de llegar a España?',
         answer:
-          'Sí. Eso es exactamente lo que hacemos en la mayoría de los casos. El contrato de arrendamiento se puede firmar de forma telemática con firma electrónica o con poder notarial. La fianza y el primer mes se transfieren por banco. Cuando llegás, el piso está disponible. Es legal, es seguro y es lo que diferencia nuestro servicio.',
+          'Sí. Eso es exactamente lo que hacemos en la mayoría de los casos. El contrato de arrendamiento se puede firmar de forma telemática con firma electrónica o con poder notarial. La fianza y el primer mes se transfieren por banco. Cuando llegas, el piso está disponible. Es legal, es seguro y es lo que diferencia nuestro servicio.',
       },
       {
         question: '¿Con cuánta antelación tengo que contactarlos antes de viajar?',
@@ -83,12 +83,12 @@ const categorias = [
       {
         question: '¿Cuánto cuesta vivir en Galicia comparado con mi país?',
         answer:
-          'Para familias que vienen de Argentina, Uruguay o Venezuela, Galicia es accesible una vez que conseguís ingresos en euros. Los alquileres van desde 400 € en Lugo hasta 1.500 € o más en zonas premium de A Coruña. La comida, el transporte y los servicios básicos son razonables para estándares europeos. Una familia de tres personas puede vivir bien con 2.000-2.500 € netos mensuales, dependiendo del estilo de vida y la ciudad.',
+          'Para familias que vienen de Argentina, Uruguay o Venezuela, Galicia es accesible una vez que consigues ingresos en euros. Los alquileres van desde 400 € en Lugo hasta 1.500 € o más en zonas premium de A Coruña. La comida, el transporte y los servicios básicos son razonables para estándares europeos. Una familia de tres personas puede vivir bien con 2.000-2.500 € netos mensuales, dependiendo del estilo de vida y la ciudad.',
       },
       {
         question: '¿Hay comunidad latinoamericana en Galicia?',
         answer:
-          'Sí, y bastante consolidada, especialmente en Vigo y A Coruña. Hay asociaciones culturales, comercios latinoamericanos, grupos de WhatsApp de apoyo mutuo y redes informales que facilitan mucho la llegada. No llegás a un lugar donde sos el único — llegás a una comunidad que ya tiene experiencia en hacer ese camino.',
+          'Sí, y bastante consolidada, especialmente en Vigo y A Coruña. Hay asociaciones culturales, comercios latinoamericanos, grupos de WhatsApp de apoyo mutuo y redes informales que facilitan mucho la llegada. No llegas a un lugar donde eres el único — llegas a una comunidad que ya tiene experiencia en hacer ese camino.',
       },
       {
         question: '¿Es Galicia segura?',
@@ -113,7 +113,7 @@ const categorias = [
       {
         question: '¿Pueden tener mascotas en un piso de alquiler?',
         answer:
-          'Depende del propietario. La ley no prohíbe las mascotas en alquiler, pero los propietarios pueden establecer restricciones en el contrato. Trabajamos buscando opciones que permitan mascotas si ese es tu caso — es un filtro que aplicamos desde el inicio de la búsqueda. Si tenés mascotas, indicalo cuando nos contás tu caso con el detalle completo.',
+          'Depende del propietario. La ley no prohíbe las mascotas en alquiler, pero los propietarios pueden establecer restricciones en el contrato. Trabajamos buscando opciones que permitan mascotas si ese es tu caso — es un filtro que aplicamos desde el inicio de la búsqueda. Si tienes mascotas, indícalo cuando nos cuentas tu caso con el detalle completo.',
       },
       {
         question: '¿Los pisos suelen venir amueblados?',
@@ -133,17 +133,17 @@ const categorias = [
       {
         question: '¿Qué es el NIE y para qué sirve?',
         answer:
-          'El NIE (Número de Identificación de Extranjero) es el número fiscal que necesitás para casi cualquier trámite en España: abrir cuenta bancaria, firmar un contrato, trabajar, pagar impuestos. Se tramita en la policía o en el consulado español en tu país de origen. Es uno de los primeros trámites que hay que resolver. Nosotros te orientamos sobre el proceso, aunque el trámite en sí lo hacés vos.',
+          'El NIE (Número de Identificación de Extranjero) es el número fiscal que necesitas para casi cualquier trámite en España: abrir cuenta bancaria, firmar un contrato, trabajar, pagar impuestos. Se tramita en la policía o en el consulado español en tu país de origen. Es uno de los primeros trámites que hay que resolver. Nosotros te orientamos sobre el proceso, aunque el trámite en sí lo haces tú.',
       },
       {
         question: '¿Puedo trabajar en España con el NIE?',
         answer:
-          'El NIE por sí solo no habilita a trabajar. Para trabajar legalmente en España, necesitás autorización de residencia y trabajo (si sos de fuera de la UE) o simplemente el registro como ciudadano europeo (si tenés pasaporte de la UE). Las condiciones exactas dependen de tu situación migratoria. Te recomendamos consultar con un gestor de extranjería antes de viajar.',
+          'El NIE por sí solo no habilita a trabajar. Para trabajar legalmente en España, necesitas autorización de residencia y trabajo (si eres de fuera de la UE) o simplemente el registro como ciudadano europeo (si tienes pasaporte de la UE). Las condiciones exactas dependen de tu situación migratoria. Te recomendamos consultar con un gestor de extranjería antes de viajar.',
       },
       {
         question: '¿Puedo llevar a mis hijos al colegio público en España?',
         answer:
-          'Sí. En España todos los niños en edad escolar tienen derecho a educación pública independientemente de su situación migratoria. La matrícula se hace en el colegio correspondiente al domicilio. Tener la vivienda cerrada antes de llegar facilita enormemente la matriculación, porque necesitás el empadronamiento (registro en el domicilio) para acceder a la plaza escolar. Nosotros coordinamos los tiempos para que llegués con la vivienda lista y puedas empadronarte de inmediato.',
+          'Sí. En España todos los niños en edad escolar tienen derecho a educación pública independientemente de su situación migratoria. La matrícula se hace en el colegio correspondiente al domicilio. Tener la vivienda cerrada antes de llegar facilita enormemente la matriculación, porque necesitas el empadronamiento (registro en el domicilio) para acceder a la plaza escolar. Nosotros coordinamos los tiempos para que llegues con la vivienda lista y puedas empadronarte de inmediato.',
       },
     ],
   },
@@ -180,7 +180,7 @@ export default function FAQPage() {
         <div className="mx-auto max-w-3xl">
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
             Reunimos las preguntas que nos hacen todas las familias antes de arrancar. Si la tuya no
-            está acá, escribinos — respondemos hoy.
+            está acá, escríbenos — respondemos hoy.
           </p>
         </div>
       </section>
@@ -206,7 +206,7 @@ export default function FAQPage() {
             ¿No encontraste tu respuesta?
           </h2>
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
-            Contanos tu caso o escribinos directamente por WhatsApp. Respondemos
+            Cuéntanos tu caso o escríbenos directamente por WhatsApp. Respondemos
             hoy.
           </p>
           <div className="flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
@@ -222,7 +222,7 @@ export default function FAQPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-[var(--color-laton)] tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton)] hover:text-white transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
             >
-              Escribinos por WhatsApp
+              Escríbenos por WhatsApp
             </a>
           </div>
         </div>
