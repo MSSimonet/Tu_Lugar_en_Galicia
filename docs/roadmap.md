@@ -78,16 +78,21 @@ base desplegándose sola.
 
 **Objetivo:** el módulo "¿Cuánto cuesta vivir en Galicia?" que ningún competidor tiene.
 
+**Fuente de verdad:** `/docs/briefing-simulador-compra-galicia.md` — arquitectura del simulador,
+modelo de datos y acuerdos con cadenas.
+
 **Qué se construye**
-- Simulador de compra de supermercado (primero con datos cargados a mano).
+- Simulador de compra de supermercado con precios de Gadis y Froiz vía **feed oficial directo**
+  (no scraping — requiere acuerdo con cada cadena; gestión de Silvana).
+- Los precios se actualizan mediante **GitHub Actions + almacenamiento en Cloudflare R2**.
 - Calculadora de costo de vida (suma alquiler + súper + transporte + colegios).
-- Agente de precios: Cloudflare Worker con cron cada 15 días que alimenta lo anterior.
+- MVP posible con una sola cadena o con datos cargados manualmente mientras se negocia el feed.
 
 **Agentes, en orden**
 1. `Frontend Developer` → calculadoras del lado cliente (sin DB).
-2. `Data Engineer` → Worker scraper en `/workers/scraper` + cron.
-3. `Backend Architect` → cómo la web consume esos precios.
-4. `Legal Compliance Checker` → revisar términos de uso de cada supermercado ANTES de activar.
+2. `Data Engineer` → pipeline GitHub Actions → Cloudflare R2 + integración del feed oficial.
+3. `Backend Architect` → cómo la web consume los precios desde R2.
+4. `Legal Compliance Checker` → revisar acuerdos de feed y condiciones de uso antes de activar.
 5. `Reality Checker`.
 
 ---
@@ -144,6 +149,16 @@ base desplegándose sola.
 1. `Backend Architect` + `Security Engineer` → flujo de pagos.
 2. `Frontend Developer` → internacionalización (i18n).
 3. `Reality Checker`.
+
+---
+
+## Fecha objetivo de lanzamiento
+
+**Julio 2026.**
+
+El objetivo es lanzar con **Avoa incluida (Fase 4)**. Si Avoa no está lista a tiempo:
+- Se lanza con el formulario de diagnóstico como captación principal (ya construido en Fase 1).
+- Avoa pasa a mejora inmediata post-lanzamiento, sin bloquear la apertura al público.
 
 ---
 

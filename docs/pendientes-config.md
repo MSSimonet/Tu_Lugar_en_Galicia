@@ -108,14 +108,16 @@ Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
 
 ---
 
-### A4-2. Plan Estratégico — generación automática
+### A4-2. Plan Estratégico — definición funcional
 
 | Campo | Detalle |
 |---|---|
-| **Estado actual** | El flujo promete al usuario un "Plan Estratégico personalizado" al cerrar el cuestionario, pero la lógica de generación no está especificada. |
-| **Qué decidir** | Definir qué contiene el Plan Estratégico (secciones, datos que lo personalizan) y cómo se entrega (PDF generado, email con template, respuesta del propio chat). |
-| **Impacto** | Es una función a desarrollar dentro del bloque Avoa. Sin especificación el `AI Engineer` no puede construirla. Puede ser tan simple como un email template con los módulos relevantes según las respuestas, o tan complejo como un PDF generado en servidor. |
-| **Dónde registrar** | Crear `docs/avoa-plan-estrategico.md` cuando esté definido, y enlazarlo desde `docs/roadmap.md` Fase 4. |
+| **Decisión tomada** | El Plan Estratégico es una hoja de ruta de pasos personalizados según los pendientes que deja la charla con Avoa. Ejemplos: si el usuario no tiene NIE → bloque "Cómo obtener el NIE"; si no tiene garantías → bloque "Opciones de aval y seguro de alquiler". Los bloques son condicionales y reutilizables. |
+| **A quién se entrega** | A **todos** los usuarios, califiquen o no. A quien sí califica: hoja de ruta para avanzar con Silvana. A quien no califica: el plan muestra sus puntos pendientes como oportunidades de mejora, nunca como rechazo. |
+| **Tono para no calificados** | Aplicar principios de Dale Carnegie ("Cómo ganar amigos e influir sobre las personas"): reconocer primero lo positivo del perfil, enmarcar cada pendiente como un paso concreto hacia el objetivo, redactar con calidez y empatía. El usuario debe sentir que recibe ayuda, no una negativa. |
+| **Implementación recomendada** | Plantilla con bloques condicionales activados por las respuestas del cuestionario. IA mínima (solo para personalizar el texto del encabezado si hace falta). Briefing detallado a desarrollar por el equipo antes de que el `AI Engineer` empiece. |
+| **Estado** | ⚠️ Cuello de botella principal de Avoa. Sin el briefing de bloques, el `AI Engineer` no puede construirlo. |
+| **Próximo paso** | Silvana y el equipo definen los bloques y condiciones → crear `docs/avoa-plan-estrategico.md` → enlazar desde `docs/roadmap.md` Fase 4. |
 
 ---
 
@@ -130,15 +132,13 @@ Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
 
 ---
 
-### A4-4. Modelo de IA — Claude vs. Gemini (sin decidir)
+### A4-4. Modelo de IA — ✅ DECIDIDO: Gemini
 
 | Campo | Detalle |
 |---|---|
-| **Estado actual** | La documentación asume Claude (Anthropic API), pero la elección no está confirmada. |
-| **Qué decidir** | Evaluar costo a escala antes de elegir. Los pasos `[llm]` del flujo son los únicos que consumen tokens; el resto son botones (0 tokens). Estimar el volumen de leads mensual esperado y calcular costo por conversación en Claude Haiku vs. Gemini Flash. |
-| **Criterios relevantes** | Costo por token, calidad en español, latencia, límites de rate, facilidad de integración con el stack Next.js existente. |
-| **Impacto** | Afecta la variable de entorno (`ANTHROPIC_API_KEY` vs. `GEMINI_API_KEY`), el cliente SDK en `lib/ai/` y el System Prompt (las barandas de `avoa-barandas.md` son agnósticas al modelo). |
-| **Dónde registrar** | Documentar la decisión como ADR-008 en `docs/ARCHITECTURE.md` antes de que el `AI Engineer` empiece. |
+| **Decisión** | **Gemini** (Google), por costo a escala. Las barandas de `avoa-barandas.md` son agnósticas al modelo y se reutilizan sin cambios como System Prompt. |
+| **Impacto técnico** | Variable de entorno: `GEMINI_API_KEY`. Cliente SDK en `lib/ai/`. Documentado como **ADR-008** en `docs/ARCHITECTURE.md`. |
+| **Estado** | ✅ Cerrado. |
 
 ---
 
@@ -152,15 +152,53 @@ Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
 
 ---
 
-### A4-6. Voz de marca — conversión de textos web a "tú" neutro
+### A4-6. Voz de marca — conversión de textos web a "tú" neutro — ✅ RESUELTO
 
 | Campo | Detalle |
 |---|---|
-| **Estado actual** | Decisión tomada: la voz de toda la comunicación (web + Avoa) es "tú" neutro, español internacional. Sin "vos" ni "vosotros". Los textos actuales de la web (Fase 1) fueron escritos en "vos" rioplatense. |
-| **Qué hacer** | Revisar y convertir todos los textos de cara al usuario: "Agendá" → "Agenda", "Escribinos" → "Escríbenos", "Contanos" → "Cuéntanos", "Vos" → "Tú", etc. |
-| **Agente responsable** | `Content Creator` (revisa la voz y entrega lista de cambios) + `Frontend Developer` (actualiza los componentes). |
-| **Cuándo** | Antes del lanzamiento público. No bloquea Fase 2. |
-| **Dónde** | `/components/**/*.tsx`, `/content/**/*.md`, `/app/**/*.tsx` (solo copy de cara al usuario). |
+| **Estado** | ✅ Resuelto en commit `ad78c00`. Todos los textos de cara al usuario en `/components`, `/content`, `/app` y `/lib/seo/metadata.ts` convertidos a "tú" neutro. |
+
+---
+
+### A4-7. Honorarios de Silvana en el flujo de Avoa — ✅ DECIDIDO
+
+| Campo | Detalle |
+|---|---|
+| **Decisión** | Avoa **no menciona el precio** del servicio. Todo lo relativo a honorarios se deriva a la videollamada con Silvana. |
+| **Impacto en el flujo** | El cuestionario no incluye ninguna pregunta ni mención de precio. El cierre de Avoa invita a agendar la videollamada sin condicionar el costo. |
+| **Estado** | ✅ Cerrado. Reflejar en `docs/avoa-flujo.md` sección Cierre cuando se revise ese doc. |
+
+---
+
+### A4-8. Formulario web — respaldo permanente de Avoa — ✅ DECIDIDO
+
+| Campo | Detalle |
+|---|---|
+| **Decisión** | El formulario de diagnóstico (Fase 1) se mantiene como canal de captación secundario **permanente**, no temporal. Avoa es el canal principal; el formulario es el respaldo para quienes prefieran no usar el chat. |
+| **Impacto** | No hay trabajo adicional de código. Al lanzar Avoa, asegurarse de que ambos canales queden visibles en la UI. |
+| **Estado** | ✅ Cerrado. |
+
+---
+
+### A4-9. Preguntas filtro de Avoa — lógica de etiquetado interno — ✅ DECIDIDO
+
+| Campo | Detalle |
+|---|---|
+| **Decisión** | Avoa **NO corta la conversación** a quien no califica. Completa el cuestionario completo con todos los usuarios para capturar el máximo de datos. La calificación opera a nivel de **etiqueta interna** en Airtable ("califica" / "no califica"), no de corte de la charla. |
+| **Beneficio** | Silvana puede priorizar su atención hacia los leads calificados; los no calificados quedan en la base de datos para nurturing futuro y reciben el Plan Estratégico con pasos de mejora (ver A4-2). |
+| **Instrucción para el AI Engineer** | Las preguntas P9 y P10 del flujo determinan la etiqueta interna. El flujo no tiene ramas de "cierre prematuro" salvo el límite de 3 desvíos consecutivos ya definido en `avoa-barandas.md`. |
+| **Estado** | ✅ Cerrado. Documentar las condiciones exactas de etiquetado en `docs/avoa-flujo.md` (P9, P10) antes de construir. |
+
+---
+
+### F3-1. Fase 3 — acuerdo de feed con Gadis/Froiz
+
+| Campo | Detalle |
+|---|---|
+| **Estado actual** | El simulador requiere feed oficial directo de precios de Gadis y Froiz (no scraping). El acuerdo con cada cadena es gestión de Silvana. |
+| **MVP posible** | Arrancar con una sola cadena, o con datos cargados manualmente, mientras se negocia el feed completo. |
+| **Impacto** | Sin acuerdo de feed, la Fase 3 no puede activarse en producción con datos reales. El código del simulador puede construirse antes con datos de prueba. |
+| **Estado** | ⏳ Pendiente de gestión comercial con las cadenas. |
 
 ---
 

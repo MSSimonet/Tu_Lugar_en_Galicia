@@ -94,8 +94,8 @@ de entorno de Vercel, nunca en el cliente ni en el repo.
 **Consecuencia:** seguridad de la clave; el widget de chat habla con nuestro endpoint, no con Anthropic directamente.
 
 ### ADR-005 — Idioma y tono
-**Decisión:** sitio en español primero (multiidioma en Fase 6). Tono cálido, rioplatense, cercano.
-**Consecuencia:** el copy lo produce `Content Creator` siguiendo la voz de marca.
+**Decisión:** sitio en español primero (multiidioma en Fase 6). Tono cálido, "tú" neutro (español internacional), cercano.
+**Consecuencia:** el copy lo produce `Content Creator` siguiendo la voz de marca definida en `docs/design-system.md` §5.
 
 ---
 
@@ -106,7 +106,7 @@ de entorno de Vercel, nunca en el cliente ni en el repo.
 | `AIRTABLE_API_KEY` / `GOOGLE_SHEETS_*` | 1 | guardar leads |
 | `SHEET_MARCADOR_ID` | 1 | leer El Marcador |
 | `OPENWEATHER_API_KEY` | 2 | clima por ciudad |
-| `ANTHROPIC_API_KEY` | 4 | Avoa (API de Claude) |
+| `GEMINI_API_KEY` | 4 | Avoa (Gemini) |
 | `DATABASE_URL` | 5 | base de datos |
 | `STRIPE_SECRET_KEY` | 6 | pagos |
 
@@ -157,6 +157,26 @@ en CLAUDE.md §3). No se crean carpetas vacías en el scaffold para no generar a
 - Un `create-next-app` posterior en la misma carpeta fallaría por nombre con mayúsculas; si se
   necesita reinicializar, hacerlo en una carpeta temporal y mover como se hizo en este scaffold.
 
+### ADR-008 — Modelo de IA para Avoa: Gemini en lugar de Claude
+
+**Status:** Accepted — 2026-05-31
+
+**Contexto:** Avoa necesita un modelo de lenguaje para los pasos `[llm]` del cuestionario
+(texto libre). El stack inicial asumía Claude (Anthropic), ya integrado en el proyecto.
+Se evaluaron Claude Haiku y Gemini Flash en términos de costo a escala.
+
+**Decisión:** Se usa **Gemini** (Google) como modelo de IA para Avoa, por costo a escala.
+Las barandas definidas en `docs/avoa-barandas.md` son agnósticas al modelo y se aplican
+sin cambios como System Prompt independientemente del proveedor.
+
+**Consecuencias:**
+- Variable de entorno: `GEMINI_API_KEY` (en lugar de `ANTHROPIC_API_KEY` para Avoa).
+- El cliente SDK en `lib/ai/` usará el SDK de Google Generative AI.
+- `ANTHROPIC_API_KEY` queda disponible para otros usos futuros si se incorpora Claude
+  en otra parte del stack.
+- La tabla de variables de entorno en §4 se actualiza: la entrada de Fase 4 pasa de
+  `ANTHROPIC_API_KEY` a `GEMINI_API_KEY`.
+
 ---
 
 ## 6. Guía de despliegue: Cloudflare → Vercel
@@ -186,7 +206,7 @@ previa con Vercel o Cloudflare. Ejecutá cada sección en orden.
    | `GOOGLE_SHEETS_*` | 1 | Credenciales de Google Sheets (alternativa a Airtable) |
    | `SHEET_MARCADOR_ID` | 1 | ID de la hoja de El Marcador |
    | `OPENWEATHER_API_KEY` | 2 | Clima por ciudad |
-   | `ANTHROPIC_API_KEY` | 4 | API de Claude para Avoa |
+   | `GEMINI_API_KEY` | 4 | API de Gemini para Avoa |
    | `DATABASE_URL` | 5 | Conexión a base de datos |
    | `STRIPE_SECRET_KEY` | 6 | Pagos con Stripe |
 
