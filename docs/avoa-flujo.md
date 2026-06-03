@@ -77,7 +77,8 @@
 **P8. Situación legal** `[botones]`
 > "¿Cuál es tu situación para residir legalmente en España?"
 
-`[Pasaporte UE o doble nacionalidad]`
+`[Soy español/a (tengo pasaporte español)]` *(vía DNI; no necesita NIE/TIE ni visado)*
+`[Soy de otro país de la UE / EEE / Suiza]` *(vía CUE)*
 `[Visado / TIE / NIE ya aprobado]`
 `[En trámite de visado]`
 `[Entraré como turista]` *(nota interna: limita opciones con algunos propietarios; se analiza el caso)*
