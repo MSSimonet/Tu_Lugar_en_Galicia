@@ -192,7 +192,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
 
       // Cualquier otro error de Airtable o de red
-      console.error('[api/lead] Error al guardar lead —', new Date().toISOString())
+      console.error('[api/lead] Error al guardar lead —', new Date().toISOString(), '—', errorMessage)
       return errorResponse('Error al guardar tu consulta. Por favor intentá de nuevo.', 500)
     }
 
