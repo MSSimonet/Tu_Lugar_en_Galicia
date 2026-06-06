@@ -470,6 +470,77 @@
 - **Tiempo de obtención:** Entre 1 y 2 meses. La normativa fija un plazo máximo de un mes para resolver, aunque los tiempos reales varían según el volumen de la oficina.
 - **¿Dónde y cómo?** En tu país de origen, con cita previa en el Consulado de España de tu demarcación. Dentro de España (en los primeros 60 días de tu ingreso como turista), de forma telemática a través de la plataforma oficial del Ministerio (Mercurio), con certificado digital.
 
+## Fase 0 bis: Traslado de mascotas (preparación en el país de origen)
+
+> Esta sección aplica a perros, gatos y hurones que viajan desde un país de fuera de la UE.
+> Los pasos son genéricos (válidos para cualquier país de origen). Donde corresponde, se añade una
+> nota **"Detalle para Argentina"**, por ser uno de los orígenes más frecuentes.
+
+### 49. Implantación de microchip
+- **¿Se puede iniciar en el país de origen?** ✅ Sí, debe colocarse en origen **antes** de aplicar la vacuna antirrábica y antes del viaje.
+- **¿Qué es?** Un dispositivo electrónico de identificación subcutáneo, compatible con las normas internacionales ISO 11784 u 11785.
+- **¿Para qué sirve?** Es el primer paso obligatorio: identifica al animal de forma única y permite vincularlo con su información sanitaria para el ingreso a la Unión Europea.
+- **Requisitos:** Aplicado por un veterinario matriculado, que emite un certificado de implantación con los datos del animal y el número de chip.
+- **Tasa:** Consultá a tu veterinario de confianza.
+- **Tiempo de obtención:** Inmediato. Se recomienda hacerlo con varios meses de anticipación; el chip no vence.
+- **¿Dónde y cómo?** Presencial, en una clínica veterinaria privada.
+
+### 50. Vacuna antirrábica
+- **¿Se puede iniciar en el país de origen?** ✅ Sí, se aplica en origen con fecha **posterior o igual** a la del microchip.
+- **¿Qué es?** La inoculación de una vacuna antirrábica aprobada por la autoridad sanitaria de tu país.
+- **¿Para qué sirve?** Es exigencia sanitaria fundamental para autorizar la entrada de la mascota a la Unión Europea.
+- **Requisitos:** El animal debe tener al menos 12 semanas (3 meses) de edad al recibir la dosis.
+- **Tasa:** Consultá a tu veterinario de confianza.
+- **Tiempo de obtención:** La aplicación es rápida, pero para viajar debe transcurrir un período de espera de al menos **21 días** desde la primovacunación.
+- **¿Dónde y cómo?** Presencial, con un veterinario privado.
+
+### 51. Certificado de salud y desparasitación
+- **¿Se puede iniciar en el país de origen?** ✅ Sí, se expide en origen en los días inmediatamente previos al vuelo.
+- **¿Qué es?** Documento original de un veterinario que acredita que el animal está clínicamente sano, sin parásitos y apto para viajar.
+- **¿Para qué sirve?** Es requisito para gestionar y obtener el certificado oficial de exportación (ver trámite 52).
+- **Requisitos:** Chequeo clínico integral y tratamiento antiparasitario (interno y externo), registrado en la libreta sanitaria.
+- **Tasa:** Consultá a tu veterinario de confianza.
+- **Tiempo de obtención:** Se emite en el momento de la consulta; suele exigirse dentro de los **10 días** previos a la emisión del certificado oficial o del embarque.
+- **¿Dónde y cómo?** Presencial, en un consultorio veterinario autorizado.
+
+### 52. Certificado sanitario oficial de exportación
+- **¿Se puede iniciar en el país de origen?** ✅ Sí, lo emite la autoridad sanitaria de tu país, antes de viajar.
+- **¿Qué es?** Documento oficial, con mecanismos de autenticidad, emitido por el organismo sanitario nacional para presentar en puestos fronterizos.
+- **¿Para qué sirve?** Es obligatorio para trasladar perros, gatos y hurones al exterior, acreditando que cumplen las exigencias sanitarias del país de destino.
+- **Requisitos:** Microchip, vacuna antirrábica vigente, certificado de salud, declaración escrita y copia del documento de identidad o pasaporte del responsable.
+- **Tasa:** Variable según el país y la modalidad. Consultá las tarifas vigentes con la autoridad sanitaria de tu país.
+- **Tiempo de obtención:** Según la modalidad (normal, urgente o digital). Conviene gestionarlo en los últimos 10 días antes del viaje.
+- **¿Dónde y cómo?** Ante la autoridad sanitaria de tu país, online (sistema autogestionado) o presencial con turno.
+- **Detalle para Argentina:** Lo emite **SENASA** y se llama **Certificado Veterinario Internacional (CVI)**. Se tramita por el Sistema de Mascotas de SENASA o presencialmente. Modalidades: normal (hasta 72 h hábiles), urgente (24 h) o digital (hasta 96 h). Tarifas en argentina.gob.ar/senasa/costo-del-tramite.
+
+### 53. Reserva de vuelo y transporte en la aerolínea
+- **¿Se puede iniciar en el país de origen?** ✅ Sí, se gestiona al planificar el viaje, con la aerolínea elegida.
+- **¿Qué es?** La confirmación y autorización de la aerolínea para que la mascota viaje en cabina (PETC) o en bodega (AVIH).
+- **¿Para qué sirve?** Asegura el lugar del animal: los vuelos tienen un cupo estricto de mascotas por trayecto.
+- **Requisitos:** Transportín homologado según las medidas de la aerolínea. Para cabina, el peso máximo suele ser 8–10 kg con el contenedor incluido. Suele haber restricciones para razas braquicéfalas.
+- **Tasa:** Consultá las tarifas en la web oficial de tu aerolínea.
+- **Tiempo de obtención:** Inmediato al reservar, pero la autorización se solicita con antelación (al menos 48 h antes del vuelo).
+- **¿Dónde y cómo?** Directamente con la aerolínea, online o por teléfono, sin intermediarios.
+
+### 54. Permiso de embarque en el aeropuerto
+- **¿Se puede iniciar en el país de origen?** ✅ Sí, se emite el mismo día de la partida, en el aeropuerto de origen.
+- **¿Qué es?** Documento que otorga un inspector veterinario oficial en la terminal, tras constatar físicamente al animal y su documentación.
+- **¿Para qué sirve?** Es indispensable para que la aerolínea autorice el embarque y despache a la mascota.
+- **Requisitos:** Presentarse con la mascota, el certificado oficial de exportación original, copias y toda la documentación sanitaria del país de destino.
+- **Tasa:** Variable. Consultá con la autoridad sanitaria de tu país.
+- **Tiempo de obtención:** En el momento, tras la inspección.
+- **¿Dónde y cómo?** Presencial, en las oficinas de la autoridad sanitaria en el aeropuerto de partida, al menos 4 horas antes del vuelo.
+- **Detalle para Argentina:** Lo emite **SENASA** en el aeropuerto (p. ej. Ezeiza). Presentarse 4 h antes con el CVI original.
+
+### 55. Licencia para perros potencialmente peligrosos (PPP) — si aplica
+- **¿Se puede iniciar en el país de origen?** ❌ No, se gestiona en el ayuntamiento español, pero debe obtenerse antes de la tenencia del animal en España.
+- **¿Qué es?** Licencia municipal, personal e intransferible, obligatoria para dueños de razas consideradas potencialmente peligrosas o con ciertas características morfológicas.
+- **¿Para qué sirve?** Es indispensable para cumplir la ley española y evitar sanciones graves, decomiso o el sacrificio del animal.
+- **Requisitos:** Ser mayor de edad, certificado de aptitud física y psicológica, no tener antecedentes penales y un seguro de responsabilidad civil con cobertura mínima de 120.000 €.
+- **Tasa:** Consultá en la web del ayuntamiento de tu lugar de residencia y en las aseguradoras.
+- **Tiempo de obtención:** Variable según el ayuntamiento; la licencia vale 5 años renovables.
+- **¿Dónde y cómo?** Presencial o telemático en el ayuntamiento del municipio donde residirá el perro, con inscripción posterior en el Registro Municipal.
+
 ---
 
 ## Resumen de correcciones aplicadas respecto a la versión anterior

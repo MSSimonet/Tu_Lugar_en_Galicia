@@ -98,6 +98,13 @@ Este plan lo armamos a tu medida, con todo lo que nos contaste. Piénsalo como e
 | **Universitario / Grado** o **Posgrado** | `[40]` Homologación (si profesión regulada) · `[41]` Declaración de equivalencia (si no regulada) · `[42]` Reconocimiento profesional directo (si título UE/EEE/Suiza). |
 | **Sin estudios superiores** | Ninguno. |
 
+### P7 · Mascotas
+
+| Respuesta | Trámites que se activan |
+|---|---|
+| **Sí, viajo con mascota** | `[49]` Microchip · `[50]` Vacuna antirrábica · `[51]` Certificado de salud · `[52]` Certificado oficial de exportación · `[53]` Reserva de vuelo · `[54]` Permiso de embarque · y `[55]` Licencia PPP **solo si es raza potencialmente peligrosa**. |
+| **No** | Ninguno. |
+
 ### P6 · Composición del hogar (si hay menores)
 
 | Respuesta | Trámites que se activan |
@@ -116,6 +123,7 @@ aquel del que depende.
 2. `[2]` Apostilla → **se aplica sobre** `[1]` y sobre títulos académicos.
 3. `[3]` Traducción oficial (jurada) → **después de** apostillar.
 4. `[4]` Cuenta bancaria de no residente *(si P13 = No)*.
+4b. `[49]`→`[54]` Traslado de la mascota *(si P7 = Sí)* → empezar 3–4 meses antes por la secuencia microchip → vacuna → 21 días de espera → certificados. La licencia PPP `[55]` se tramita ya en España.
 5. `[5]` Visado tipo D *(si aplica por P8)* → **requiere** `[1]`+`[2]`+`[3]`.
 6. *(Iniciables ya desde origen si hay certificado digital: `[38]`/`[40]`/`[41]` homologaciones, porque tardan meses.)*
 

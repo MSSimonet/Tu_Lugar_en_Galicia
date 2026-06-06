@@ -75,3 +75,12 @@
 
 ## Trámite adicional
 48. Como vienes a formarte, esta es la vía que te permite estudiar y residir con tranquilidad:
+
+## Mascotas (si viaja con mascota)
+49. Como viajas con tu mascota, conviene empezar pronto: su preparación es de las cosas que más se demoran. El primer paso es identificarla:
+50. Con el microchip puesto, el siguiente paso es su vacuna antirrábica:
+51. Cerca del viaje, necesitarás un certificado veterinario que la declare sana y apta:
+52. Y el documento oficial que autoriza su salida del país:
+53. No olvides reservar su lugar en el vuelo con tiempo, porque los cupos son limitados:
+54. El mismo día del viaje, el último paso antes de volar:
+55. Y como tu perro es de una raza considerada potencialmente peligrosa, ya en España necesitarás una licencia especial:
