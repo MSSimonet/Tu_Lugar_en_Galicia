@@ -5,7 +5,7 @@ export const WHATSAPP_NUMBER = "34605421661"
 // Mensaje predefinido que se abre al hacer clic en el botón de WhatsApp.
 // Editar el texto según el copy de marca. Se codificará automáticamente en la URL.
 export const WHATSAPP_MESSAGE =
-  "Hola, me llegó Tu Lugar en Galicia y me gustaría saber más sobre el servicio de relocation."
+  "Hola, me llegó Tu Lugar en Galicia y me gustaría saber más sobre el servicio de relocalización."
 
 // URL del calendario de Cal.com para agendar videollamadas.
 // Reemplazar con la URL real del calendario de Silvana en Cal.com.

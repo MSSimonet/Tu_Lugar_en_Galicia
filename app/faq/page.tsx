@@ -13,7 +13,7 @@ const categorias = [
       {
         question: '¿Qué es Tu Lugar en Galicia exactamente?',
         answer:
-          'Somos un servicio de relocation especializado: buscamos vivienda de alquiler en Galicia por ti, antes de que viajes. No somos una inmobiliaria ni un portal de anuncios. Somos el intermediario que faltaba — alguien que conoce el mercado desde adentro, habla tu idioma (literalmente y culturalmente) y trabaja exclusivamente para la familia que quiere mudarse.',
+          'Somos un servicio de relocalización especializado: buscamos vivienda de alquiler en Galicia por ti, antes de que viajes. No somos una inmobiliaria ni un portal de anuncios. Somos el intermediario que faltaba — alguien que conoce el mercado desde adentro, habla tu idioma (literalmente y culturalmente) y trabaja exclusivamente para la familia que quiere mudarse.',
       },
       {
         question: '¿Qué NO son ustedes?',

@@ -1,0 +1,509 @@
+[
+  {
+    "id": "bienvenida",
+    "tipo": "botones",
+    "texto": "¡Hola! Soy Avoa, tu asistente virtual del equipo de Tu Lugar en Galicia.\n\nEn unos minutos te hago unas preguntas para entender tu situación y saber si podemos ayudarte a encontrar vivienda antes de llegar. Nada de formularios aburridos: esto es una conversación.\n\n¿Empezamos?",
+    "opciones": [
+      { "label": "Sí, empecemos", "value": "empecemos" }
+    ],
+    "siguiente": "rgpd"
+  },
+  {
+    "id": "rgpd",
+    "tipo": "botones",
+    "texto": "Antes de continuar, quiero ser transparente contigo desde el principio: para poder ayudarte, voy a guardar las respuestas que me des (como tu nombre, tu contacto y lo que me cuentes de tu situación). Las usamos solo para preparar tu plan y para que el equipo de Tu Lugar en Galicia pueda contactarte. No se las damos a nadie más, y puedes pedirnos ver o borrar tus datos cuando quieras. ¿Te parece bien?",
+    "opciones": [
+      { "label": "Sí, me parece bien", "value": "acepto" },
+      { "label": "Ver más detalles", "value": "ver_politica" }
+    ],
+    "ramas": {
+      "acepto": "p1_nombre",
+      "ver_politica": "rgpd_politica"
+    }
+  },
+  {
+    "id": "rgpd_politica",
+    "tipo": "botones",
+    "texto": "Puedes leer nuestra política en tulugarengalicia.com/privacidad. Cuando quieras, seguimos.",
+    "opciones": [
+      { "label": "Volver y continuar", "value": "volver" }
+    ],
+    "siguiente": "p1_nombre"
+  },
+  {
+    "id": "p1_nombre",
+    "tipo": "input",
+    "campo": "nombreCompleto",
+    "texto": "Para empezar, ¿cómo te llamas? (nombre y apellido)",
+    "validacion": "texto",
+    "siguiente": "p2_email"
+  },
+  {
+    "id": "p2_email",
+    "tipo": "input",
+    "campo": "email",
+    "texto": "Encantada, {{nombre}}. ¿Me dejas un email que uses a menudo?",
+    "validacion": "email",
+    "siguiente": "p3_origen"
+  },
+  {
+    "id": "p3_origen",
+    "tipo": "botones",
+    "campo": "paisResidencia",
+    "texto": "Para darte la guía adecuada, ¿ya vives en España, o estás planificando tu llegada desde otro país?",
+    "opciones": [
+      { "label": "Ya vivo en España", "value": "en_espana" },
+      { "label": "Vengo de fuera", "value": "fuera" }
+    ],
+    "ramas": {
+      "en_espana": "p4_plazo",
+      "fuera": "p3b_pais"
+    }
+  },
+  {
+    "id": "p3b_pais",
+    "tipo": "input",
+    "campo": "paisResidencia",
+    "texto": "¿Desde qué país nos escribes?",
+    "validacion": "texto",
+    "siguiente": "p4_plazo"
+  },
+  {
+    "id": "p4_plazo",
+    "tipo": "botones",
+    "campo": "fechaLlegada",
+    "texto": "¿En qué plazo necesitas tener resuelta tu vivienda en Galicia?",
+    "opciones": [
+      { "label": "En menos de 1 mes", "value": "menos-1-mes" },
+      { "label": "En 1 a 3 meses", "value": "1-3-meses" },
+      { "label": "En 3 a 6 meses", "value": "3-6-meses" },
+      { "label": "En más de 6 meses", "value": "mas-6-meses" },
+      { "label": "Aún no tengo fecha", "value": "sin-fecha" }
+    ],
+    "siguiente": "p5_ciudad"
+  },
+  {
+    "id": "p5_ciudad",
+    "tipo": "botones",
+    "campo": "ciudadDestino",
+    "texto": "¿A qué ciudad de Galicia te diriges? Nuestro foco principal es Vigo y A Coruña.",
+    "opciones": [
+      { "label": "Vigo", "value": "vigo" },
+      { "label": "A Coruña", "value": "a-coruna" },
+      { "label": "Santiago", "value": "santiago" },
+      { "label": "Pontevedra", "value": "pontevedra" },
+      { "label": "Lugo", "value": "lugo" },
+      { "label": "Indiferente", "value": "indiferente" }
+    ],
+    "siguiente": "p6_hogar"
+  },
+  {
+    "id": "p6_hogar",
+    "tipo": "llm",
+    "campo": "personas",
+    "texto": "¿Quiénes formarían parte de esta mudanza contigo? Cuéntame cuántos adultos y, si vienen niños, sus edades.",
+    "validacion": "texto",
+    "siguiente": "p7_mascotas"
+  },
+  {
+    "id": "p7_mascotas",
+    "tipo": "botones",
+    "campo": "mascotas",
+    "texto": "Te pregunto por las mascotas porque cerca del 80% de los propietarios no las admite. ¿Viajas con alguna mascota?",
+    "opciones": [
+      { "label": "No", "value": "no" },
+      { "label": "Sí", "value": "si" }
+    ],
+    "ramas": {
+      "no": "p8_documentacion",
+      "si": "p7b_detalle"
+    }
+  },
+  {
+    "id": "p7b_detalle",
+    "tipo": "llm",
+    "campo": "detalleMascotas",
+    "texto": "¿Cuántas mascotas, de qué especie, raza y peso aproximado?",
+    "validacion": "texto",
+    "siguiente": "p8_documentacion"
+  },
+  {
+    "id": "p8_documentacion",
+    "tipo": "botones",
+    "campo": "documentacion",
+    "texto": "¿Cuál es tu situación para residir legalmente en España?",
+    "opciones": [
+      { "label": "Soy español/a (pasaporte español)", "value": "espanol" },
+      { "label": "Soy de otro país de la UE / EEE / Suiza", "value": "ue-otro" },
+      { "label": "Residencia / TIE / NIE ya aprobado", "value": "residencia-aprobada" },
+      { "label": "En trámite de visado o residencia", "value": "en-tramite" },
+      { "label": "Tengo o estoy tramitando la nacionalidad española", "value": "nacionalidad-en-tramite" },
+      { "label": "Entraré como turista", "value": "turista" }
+    ],
+    "siguiente": "p9_laboral"
+  },
+  {
+    "id": "p9_laboral",
+    "tipo": "botones",
+    "campo": "situacionLaboral",
+    "texto": "¿Cuál es o será tu situación laboral en España?",
+    "opciones": [
+      { "label": "Cuenta ajena con nómina en España", "value": "cuenta-ajena" },
+      { "label": "Autónomo registrado en España", "value": "autonomo" },
+      { "label": "Teletrabajo para empresa extranjera", "value": "teletrabajo-extranjero" },
+      { "label": "Rentista / fondos propios", "value": "rentista" },
+      { "label": "Jubilado/a", "value": "jubilado" },
+      { "label": "Estudiante", "value": "estudiante" },
+      { "label": "Otra / por el momento sin empleo", "value": "busca-empleo" }
+    ],
+    "siguiente": "p10_ingresos"
+  },
+  {
+    "id": "p10_ingresos",
+    "tipo": "botones",
+    "campo": "ingresosMensuales",
+    "texto": "Para orientarte mejor y proponerte opciones realistas para tu búsqueda, ¿en qué rango de ingresos mensuales del hogar te ubicas?",
+    "opciones": [
+      { "label": "Menos de 1.500 €", "value": "menos-1500" },
+      { "label": "1.500 – 2.500 €", "value": "1500-2500" },
+      { "label": "2.500 – 4.000 €", "value": "2500-4000" },
+      { "label": "Más de 4.000 €", "value": "mas-4000" },
+      { "label": "No tengo ingresos en España aún", "value": "sin-ingresos" }
+    ],
+    "ramas": {
+      "sin-ingresos": "p10_sin_ingresos_msg",
+      "menos-1500": "p11_garantias",
+      "1500-2500": "p11_garantias",
+      "2500-4000": "p11_garantias",
+      "mas-4000": "p11_garantias"
+    }
+  },
+  {
+    "id": "p10_sin_ingresos_msg",
+    "tipo": "botones",
+    "texto": "Sin problema, {{nombre}}: muchas familias llegan así y la solvencia se resuelve con otro tipo de respaldo (ahorros, aval o seguro). Lo vemos en la siguiente pregunta.",
+    "opciones": [
+      { "label": "Continuar", "value": "continuar" }
+    ],
+    "siguiente": "p11_garantias"
+  },
+  {
+    "id": "p11_garantias",
+    "tipo": "botones",
+    "campo": "garantias",
+    "multiselect": true,
+    "texto": "En España es habitual pedir garantías extra a perfiles internacionales. Marca las que podrías asumir:",
+    "opciones": [
+      { "label": "Adelantar varios meses de alquiler (6–12)", "value": "adelanto-6-12" },
+      { "label": "Aval bancario o avalista con ingresos en España", "value": "aval" },
+      { "label": "Contratar un seguro de impago", "value": "seguro-impago" },
+      { "label": "Ninguna de las anteriores", "value": "ninguna" }
+    ],
+    "siguiente": "p11_check"
+  },
+  {
+    "id": "p11_check",
+    "tipo": "botones",
+    "texto": "",
+    "opciones": []
+  },
+  {
+    "id": "p11_lead_preparacion",
+    "tipo": "botones",
+    "etiqueta": "lead-en-preparacion",
+    "texto": "Gracias por la sinceridad, {{nombre}}. Hoy el mercado en Galicia pide bastante respaldo para alquilar. Podemos enviarte recursos para irlo armando y, en cuanto lo tengas encaminado, retomamos encantados tu plan.",
+    "opciones": [
+      { "label": "Sí, gracias", "value": "gracias" }
+    ],
+    "accion": "guardar_lead_parcial",
+    "siguiente": "despedida_preparacion"
+  },
+  {
+    "id": "despedida_preparacion",
+    "tipo": "botones",
+    "texto": "¡Un saludo, {{nombre}}! Cuando estés listo/a, aquí estaremos.",
+    "opciones": [
+      { "label": "Cerrar", "value": "cerrar" }
+    ],
+    "accion": "fin"
+  },
+  {
+    "id": "p12_presupuesto",
+    "tipo": "botones",
+    "campo": "presupuestoMensual",
+    "texto": "¿Cuál es tu presupuesto mensual máximo para el alquiler? Como referencia: un piso familiar adecuado suele partir de 700–800 €, suministros aparte.",
+    "opciones": [
+      { "label": "Menos de 700 €", "value": "menos-700" },
+      { "label": "700 – 1.000 €", "value": "700-1000" },
+      { "label": "1.000 – 1.400 €", "value": "1000-1400" },
+      { "label": "Más de 1.400 €", "value": "mas-1400" }
+    ],
+    "siguiente": "p13_banco"
+  },
+  {
+    "id": "p13_banco",
+    "tipo": "botones",
+    "texto": "¿Ya tienes cuenta bancaria operativa en España?",
+    "opciones": [
+      { "label": "Sí", "value": "si" },
+      { "label": "No", "value": "no" }
+    ],
+    "siguiente": "p14_servicio"
+  },
+  {
+    "id": "p14_servicio",
+    "tipo": "botones",
+    "texto": "¿Entiendes que somos un servicio de consultoría y búsqueda personalizada, con honorarios propios, aparte del alquiler y la fianza?",
+    "opciones": [
+      { "label": "Sí, lo entiendo perfectamente", "value": "si" },
+      { "label": "Me gustaría que me lo expliquen mejor", "value": "explicar" }
+    ],
+    "ramas": {
+      "si": "p15_telefono",
+      "explicar": "p14_explicacion"
+    }
+  },
+  {
+    "id": "p14_explicacion",
+    "tipo": "botones",
+    "texto": "Claro, con gusto te explico. Somos una agencia de relocalización: nuestro trabajo es encontrar la vivienda adecuada para ti, gestionar la comunicación con propietarios, preparar tu candidatura y acompañarte en todo el proceso. Cobramos honorarios por ese servicio —separados del alquiler y la fianza—, igual que cualquier profesional. ¿Seguimos?",
+    "opciones": [
+      { "label": "Continuar con las preguntas", "value": "continuar" }
+    ],
+    "siguiente": "p15_telefono"
+  },
+  {
+    "id": "p15_telefono",
+    "tipo": "input",
+    "campo": "telefono",
+    "texto": "Ya tengo lo esencial para saber cómo ayudarte, {{nombre}}. ¿Me dejas un teléfono de contacto (con prefijo de tu país)?",
+    "validacion": "telefono",
+    "accion": "guardar_nivel1",
+    "siguiente": "transicion_nivel2"
+  },
+  {
+    "id": "transicion_nivel2",
+    "tipo": "botones",
+    "texto": "¡Estupendo! Si tienes un par de minutos más, con unas preguntas extra el equipo podrá afinar tu Plan Estratégico. ¿Te animas?",
+    "opciones": [
+      { "label": "Sí, continuemos", "value": "si" },
+      { "label": "No, prefiero que me contacten", "value": "no" }
+    ],
+    "ramas": {
+      "si": "p16_accesibilidad",
+      "no": "despedida"
+    }
+  },
+  {
+    "id": "p16_accesibilidad",
+    "tipo": "llm",
+    "campo": "necesidadesEspeciales",
+    "texto": "¿Algún miembro del hogar tiene necesidades especiales o alguna discapacidad? Esto nos ayuda a buscar viviendas adecuadas.",
+    "validacion": "texto",
+    "siguiente": "p17_licencia"
+  },
+  {
+    "id": "p17_licencia",
+    "tipo": "botones",
+    "texto": "¿Tienes licencia de conducir? ¿De qué tipo?",
+    "opciones": [
+      { "label": "Española", "value": "espanola" },
+      { "label": "Europea", "value": "europea" },
+      { "label": "De mi país de origen", "value": "extranjera" },
+      { "label": "No tengo", "value": "no" }
+    ],
+    "ramas": {
+      "espanola": "p18_check_origen",
+      "europea": "p18_check_origen",
+      "extranjera": "p17b_canje",
+      "no": "p18_check_origen"
+    }
+  },
+  {
+    "id": "p17b_canje",
+    "tipo": "botones",
+    "texto": "Si tu país tiene convenio con España, puedes canjear tu licencia. Te orientamos sobre los requisitos.",
+    "opciones": [
+      { "label": "Entendido, seguimos", "value": "entendido" }
+    ],
+    "siguiente": "p18_check_origen"
+  },
+  {
+    "id": "p18_check_origen",
+    "tipo": "botones",
+    "texto": "",
+    "opciones": []
+  },
+  {
+    "id": "p18a_ciudad",
+    "tipo": "input",
+    "texto": "¿En qué ciudad o provincia vives actualmente?",
+    "validacion": "texto",
+    "siguiente": "p19a_tiempo"
+  },
+  {
+    "id": "p19a_tiempo",
+    "tipo": "botones",
+    "texto": "¿Cuánto tiempo llevas viviendo en España?",
+    "opciones": [
+      { "label": "Menos de 1 año", "value": "menos-1" },
+      { "label": "Entre 1 y 5 años", "value": "1-5" },
+      { "label": "Más de 5 años", "value": "mas-5" }
+    ],
+    "siguiente": "p20a_objetivo"
+  },
+  {
+    "id": "p20a_objetivo",
+    "tipo": "botones",
+    "texto": "¿Estás buscando vivienda en Galicia, o ya tienes dónde vivir y buscas orientación para integrarte?",
+    "opciones": [
+      { "label": "Busco vivienda", "value": "busco" },
+      { "label": "Ya tengo vivienda, quiero integrarme", "value": "integrar" }
+    ],
+    "ramas": {
+      "busco": "p21_tipo_inmueble",
+      "integrar": "p26_profesion"
+    }
+  },
+  {
+    "id": "p18b_tiempo",
+    "tipo": "botones",
+    "texto": "¿Cuánto tiempo llevas planificando la mudanza?",
+    "opciones": [
+      { "label": "Menos de 1 año", "value": "menos-1" },
+      { "label": "Entre 1 y 5 años", "value": "1-5" },
+      { "label": "Más de 5 años", "value": "mas-5" }
+    ],
+    "siguiente": "p21_tipo_inmueble"
+  },
+  {
+    "id": "p21_tipo_inmueble",
+    "tipo": "botones",
+    "campo": "tipoInmueble",
+    "texto": "¿Qué tipo de vivienda buscas?",
+    "opciones": [
+      { "label": "Habitación en piso compartido", "value": "habitacion" },
+      { "label": "Estudio / Loft", "value": "estudio" },
+      { "label": "Piso / Apartamento", "value": "piso" },
+      { "label": "Casa", "value": "casa" },
+      { "label": "Co-living", "value": "co-living" }
+    ],
+    "siguiente": "p22_habitaciones"
+  },
+  {
+    "id": "p22_habitaciones",
+    "tipo": "botones",
+    "campo": "habitacionesMinimas",
+    "texto": "¿Cuántas habitaciones mínimas necesitas?",
+    "opciones": [
+      { "label": "1", "value": "1" },
+      { "label": "2", "value": "2" },
+      { "label": "3", "value": "3" },
+      { "label": "4 o más", "value": "4+" }
+    ],
+    "siguiente": "p23_amueblado"
+  },
+  {
+    "id": "p23_amueblado",
+    "tipo": "botones",
+    "campo": "amueblado",
+    "texto": "¿Prefieres la vivienda amueblada?",
+    "opciones": [
+      { "label": "Sí, completamente amueblada", "value": "si" },
+      { "label": "Sin muebles", "value": "no" },
+      { "label": "Indiferente", "value": "indiferente" }
+    ],
+    "siguiente": "p24_imprescindibles"
+  },
+  {
+    "id": "p24_imprescindibles",
+    "tipo": "botones",
+    "campo": "imprescindibles",
+    "multiselect": true,
+    "texto": "¿Hay algo que sea imprescindible para la vivienda?",
+    "opciones": [
+      { "label": "Ascensor", "value": "ascensor" },
+      { "label": "Plaza de garaje", "value": "garaje" },
+      { "label": "Calefacción central o gas", "value": "calefaccion" },
+      { "label": "Terraza / exterior", "value": "terraza" },
+      { "label": "Ninguno en particular", "value": "no" }
+    ],
+    "siguiente": "p24b_comodidades"
+  },
+  {
+    "id": "p24b_comodidades",
+    "tipo": "botones",
+    "campo": "comodidades",
+    "multiselect": true,
+    "texto": "¿Hay alguna comodidad que sea imprescindible para tu día a día?",
+    "opciones": [
+      { "label": "Cerca del transporte público", "value": "transporte" },
+      { "label": "Zona tranquila / residencial", "value": "zona-tranquila" },
+      { "label": "Cerca de colegios", "value": "cerca-colegios" },
+      { "label": "Fibra óptica / buen internet", "value": "internet" },
+      { "label": "Ninguna en particular", "value": "ninguna" }
+    ],
+    "siguiente": "p25_modalidad"
+  },
+  {
+    "id": "p25_modalidad",
+    "tipo": "botones",
+    "campo": "modalidad",
+    "texto": "¿Cómo prefieres que gestionemos la búsqueda?",
+    "opciones": [
+      { "label": "Dejar el piso alquilado antes de viajar (100% a distancia)", "value": "antes-de-viajar" },
+      { "label": "Llegar primero a un alojamiento temporal y buscar allí", "value": "ya-estando" }
+    ],
+    "siguiente": "p26_profesion"
+  },
+  {
+    "id": "p26_profesion",
+    "tipo": "llm",
+    "campo": "profesion",
+    "texto": "Para completar tu perfil, ¿a qué te dedicas o cuál es tu profesión?",
+    "validacion": "texto",
+    "siguiente": "p27_estudios"
+  },
+  {
+    "id": "p27_estudios",
+    "tipo": "botones",
+    "texto": "¿Cuál es tu nivel de estudios?",
+    "opciones": [
+      { "label": "Sin estudios superiores", "value": "sin-superiores" },
+      { "label": "Bachillerato o equivalente", "value": "bachillerato" },
+      { "label": "Técnico / FP", "value": "fp" },
+      { "label": "Universitario / Grado", "value": "universitario" },
+      { "label": "Posgrado / Máster / Doctorado", "value": "posgrado" }
+    ],
+    "siguiente": "atribucion"
+  },
+  {
+    "id": "atribucion",
+    "tipo": "botones",
+    "campo": "comoNosConociste",
+    "texto": "Una última, muy rápida, que nos ayuda a mejorar: ¿cómo nos conociste?",
+    "opciones": [
+      { "label": "Instagram / TikTok", "value": "redes-sociales" },
+      { "label": "Recomendación", "value": "recomendacion" },
+      { "label": "Google", "value": "google" },
+      { "label": "Facebook", "value": "facebook" },
+      { "label": "Otro", "value": "otro" }
+    ],
+    "accion": "guardar_lead_completo",
+    "siguiente": "despedida"
+  },
+  {
+    "id": "despedida",
+    "tipo": "botones",
+
+    "_nota_activacion": "TEXTO FUTURO (ETAPA 3 — envío por email): cuando el sistema de envío de Plan Estratégico por correo esté construido, reemplazá 'texto' por el valor de '_texto_futuro_email' y eliminá este bloque de campos prefijados con '_'. El texto activo se mueve a '_texto_actual_sin_email' para referencia.",
+
+    "_texto_futuro_email": "¡Perfecto, {{nombre}}! Acabamos de enviar tu Plan Estratégico personalizado a tu correo ({{email}}). Te recomendamos revisarlo con calma — ahí encontrarás, paso a paso, todo lo que necesitas para tu mudanza a Galicia. Nuestro equipo queda a tu disposición para cualquier duda, y también puedes visitar nuestra sección de ¿Tienes dudas? para más información. ¡Mucho ánimo, que este ya es un gran paso hacia Galicia!",
+
+    "texto": "¡Perfecto, {{nombre}}! En los próximos 2 días hábiles revisaremos tu caso con atención y nos pondremos en contacto contigo. ¡Mucho ánimo, que este ya es un gran paso hacia Galicia!",
+    "opciones": [
+      { "label": "Cerrar", "value": "cerrar" }
+    ],
+    "accion": "fin"
+  }
+]

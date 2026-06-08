@@ -41,7 +41,7 @@ export default function PoliticaDePrivacidadPage() {
             <div className="flex flex-col gap-[var(--space-3)]">
               <p>
                 <strong>Nombre / Razón social:</strong>{' '}
-                <TodoBlock>TODO: completar razón social (ej: "Silvana Lorenzo Lorenzo" o nombre comercial registrado)</TodoBlock>
+                <TodoBlock>{'TODO: completar razón social (ej: "Silvana Lorenzo Lorenzo" o nombre comercial registrado)'}</TodoBlock>
               </p>
               <p>
                 <strong>Dirección:</strong>{' '}
@@ -52,7 +52,7 @@ export default function PoliticaDePrivacidadPage() {
                 <TodoBlock>TODO: completar email dedicado a consultas de protección de datos</TodoBlock>
               </p>
               <p>
-                <strong>Actividad:</strong> Servicio de relocation residencial especializado en
+                <strong>Actividad:</strong> Servicio de relocalización residencial especializado en
                 Galicia, España, orientado a familias emigrantes latinoamericanas.
               </p>
             </div>
@@ -73,10 +73,10 @@ export default function PoliticaDePrivacidadPage() {
             </p>
             <ul className="list-disc pl-[var(--space-6)] flex flex-col gap-[var(--space-2)]">
               <li>
-                Gestión de consultas y solicitudes de información sobre el servicio de relocation.
+                Gestión de consultas y solicitudes de información sobre el servicio de relocalización.
               </li>
               <li>
-                Evaluación de la viabilidad del proceso de relocation según tu situación personal,
+                Evaluación de la viabilidad del proceso de relocalización según tu situación personal,
                 económica y documental.
               </li>
               <li>
@@ -172,7 +172,7 @@ export default function PoliticaDePrivacidadPage() {
             <ul className="list-disc pl-[var(--space-6)] flex flex-col gap-[var(--space-2)] mb-[var(--space-4)]">
               <li><strong>Acceso:</strong> conocer qué datos tuyos tenemos.</li>
               <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos.</li>
-              <li><strong>Supresión:</strong> solicitar que eliminemos tus datos ("derecho al olvido").</li>
+              <li><strong>Supresión:</strong> solicitar que eliminemos tus datos (&quot;derecho al olvido&quot;).</li>
               <li><strong>Oposición:</strong> oponerte al tratamiento de tus datos.</li>
               <li><strong>Limitación:</strong> solicitar que restrinjamos el uso de tus datos.</li>
               <li><strong>Portabilidad:</strong> recibir tus datos en un formato estructurado y legible.</li>
@@ -180,7 +180,7 @@ export default function PoliticaDePrivacidadPage() {
             <p className="mb-[var(--space-3)]">
               Para ejercer cualquiera de estos derechos, enviá un email a{' '}
               <TodoBlock>TODO: completar email de protección de datos</TodoBlock>{' '}
-              con el asunto <strong>"Protección de datos"</strong> e indicando el derecho que
+              con el asunto <strong>&quot;Protección de datos&quot;</strong> e indicando el derecho que
               querés ejercer y tus datos de identificación.
             </p>
             <p>

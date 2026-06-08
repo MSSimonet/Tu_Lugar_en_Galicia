@@ -34,7 +34,7 @@ export function Hero() {
         <div className="mx-auto mt-[var(--space-4)] h-0.5 w-16 rounded-full bg-[var(--color-laton)]" aria-hidden="true" />
 
         <p className="mx-auto mt-[var(--space-6)] max-w-2xl text-[var(--text-md)] leading-[var(--leading-cuerpo)] text-[var(--color-niebla)] opacity-90 md:text-[var(--text-lg)]">
-          Somos el primer servicio de relocation especializado en Galicia.
+          Somos el primer servicio de relocalización especializado en Galicia.
           Buscamos tu vivienda antes de que viajes para que llegues tranquila,
           tranquilo, tranquilos — con las llaves en la mano.
         </p>

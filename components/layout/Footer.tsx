@@ -21,7 +21,7 @@ export function Footer() {
             {SITE_NAME}
           </span>
           <span className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-arena)]">
-            El primer servicio de relocation especializado en Galicia
+            El primer servicio de relocalización especializado en Galicia
           </span>
         </div>
 

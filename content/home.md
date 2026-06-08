@@ -8,7 +8,7 @@
 Tu familia merece llegar a Galicia con casa esperándola
 
 **Subtítulo:**
-Somos el primer servicio de relocation especializado en Galicia. Buscamos tu vivienda antes de que viajes para que llegues tranquila, tranquilo, tranquilos — con las llaves en la mano.
+Somos el primer servicio de relocalización especializado en Galicia. Buscamos tu vivienda antes de que viajes para que llegues tranquila, tranquilo, tranquilos — con las llaves en la mano.
 
 **CTA principal:**
 Agenda tu videollamada
