@@ -10,7 +10,7 @@ const navLinks = [
   { label: 'Cómo funciona', href: '/como-funciona' },
   { label: 'Ciudades', href: '/ciudades/vigo' },
   { label: 'Sobre Silvana', href: '/sobre-silvana' },
-  { label: 'FAQ', href: '/faq' },
+  { label: '¿Tienes dudas?', href: '/faq' },
   { label: 'Vamos a conocernos', href: '/conocernos' },
 ]
 

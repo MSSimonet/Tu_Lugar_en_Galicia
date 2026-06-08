@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
-import { WhatsAppFlotante } from "@/components/shared";
+import { AvoaWidget } from "@/components/avoa/AvoaWidget";
 
 const fraunces = Fraunces({
   subsets: ["latin", "latin-ext"],
@@ -41,7 +41,7 @@ export default function RootLayout({
         <Header />
         <main id="main-content" className="flex-1">{children}</main>
         <Footer />
-        <WhatsAppFlotante />
+        <AvoaWidget />
       </body>
     </html>
   );

@@ -167,7 +167,7 @@ export default function FAQPage() {
       <section className="bg-[var(--color-granito)] py-[var(--space-16)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl">
           <h1 className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-niebla)] md:text-[var(--text-3xl)]">
-            Preguntas frecuentes
+            ¿Tienes dudas?
           </h1>
           <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
             Respondemos las preguntas que más nos hacen
