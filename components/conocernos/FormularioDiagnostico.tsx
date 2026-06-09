@@ -540,9 +540,11 @@ export function FormularioDiagnostico() {
                 aria-describedby={errors.documentacion ? 'documentacion-error' : undefined}
               >
                 <option value="" disabled>Seleccioná una opción</option>
-                <option value="pasaporte-ue">Pasaporte o ciudadanía de la UE</option>
-                <option value="visado-tie-nie">Tengo visado, TIE o NIE</option>
-                <option value="en-tramite">Trámite en proceso</option>
+                <option value="espanol">Soy español/a (pasaporte o DNI español)</option>
+                <option value="ue-otro">Soy ciudadano/a de la UE, EEE o Suiza</option>
+                <option value="residencia-aprobada">Tengo residencia, TIE o NIE aprobado</option>
+                <option value="en-tramite">Mi visado o residencia está en trámite</option>
+                <option value="nacionalidad-en-tramite">Tengo o estoy tramitando la nacionalidad española</option>
                 <option value="turista">Viajaría como turista</option>
               </select>
               {errors.documentacion && (
@@ -565,12 +567,13 @@ export function FormularioDiagnostico() {
               aria-describedby={errors.situacionLaboral ? 'situacionLaboral-error' : undefined}
             >
               <option value="" disabled>Seleccioná una opción</option>
-              <option value="empleado-remoto">Trabajo remoto / ya tengo empleo</option>
-              <option value="busca-empleo">Busco empleo en Galicia</option>
+              <option value="cuenta-ajena">Trabajo por cuenta ajena con nómina en España</option>
+              <option value="teletrabajo-extranjero">Teletrabajo para empresa extranjera</option>
               <option value="autonomo">Trabajo por cuenta propia / autónomo</option>
+              <option value="rentista">Rentista / fondos propios</option>
               <option value="jubilado">Jubilado / pensionado</option>
               <option value="estudiante">Estudiante</option>
-              <option value="otro">Otra situación</option>
+              <option value="busca-empleo">Busco empleo en Galicia</option>
             </select>
             {errors.situacionLaboral && (
               <p id="situacionLaboral-error" className={errorClass} role="alert">{errors.situacionLaboral}</p>
@@ -745,7 +748,7 @@ export function FormularioDiagnostico() {
                   { value: 'deseable', label: 'Deseable' },
                   { value: 'no', label: 'No necesito' },
                 ]}
-                value={form.estacionamiento}
+                value={form.estacionamiento ?? ''}
                 onChange={(v) => set('estacionamiento', v as LeadData['estacionamiento'])}
                 error={errors.estacionamiento}
                 labelId="rg-estacionamiento"

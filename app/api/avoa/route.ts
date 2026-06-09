@@ -36,6 +36,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'sesion inválida' }, { status: 400 })
   }
 
+  // Límite de tamaño en campos de texto libre — evita payloads abusivos
+  if (typeof respuesta === 'string' && respuesta.length > 2000) {
+    return NextResponse.json(
+      { error: 'Respuesta demasiado larga (máx. 2000 caracteres)' },
+      { status: 400 },
+    )
+  }
+
   // Obtener definición del paso actual
   let paso
   try {

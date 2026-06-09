@@ -13,7 +13,7 @@ import { useState, useEffect, useRef, useCallback, useId } from 'react'
 import { AvoaMessages, type Mensaje } from './AvoaMessages'
 import { AvoaInput } from './AvoaInput'
 import { crearSesion, type AvoaSession } from '@/lib/avoa/session'
-import { obtenerPaso, personalizarTexto, type Paso } from '@/lib/avoa/flowEngine'
+import { obtenerPaso, personalizarTexto, INGRESOS_RIESGO, type Paso, type Opcion } from '@/lib/avoa/flowEngine'
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -27,6 +27,24 @@ function obtenerPrimerPaso(): Paso {
 }
 
 /**
+ * Convierte una respuesta de value interno al texto legible que ve el usuario.
+ * - Pasos de botones: busca el label en las opciones del paso (ej. "a-coruna" → "A Coruña").
+ * - Multiselect: lista los labels separados por comas.
+ * - Texto libre (input/llm): devuelve el texto tal cual lo escribió el usuario.
+ */
+function resolverTextoUsuario(respuesta: string | string[], opciones?: Opcion[]): string {
+  if (!opciones || opciones.length === 0) {
+    return Array.isArray(respuesta) ? respuesta.join(', ') : respuesta
+  }
+  const labelPorValue: Record<string, string> = {}
+  for (const o of opciones) labelPorValue[o.value] = o.label
+  if (Array.isArray(respuesta)) {
+    return respuesta.map((v) => labelPorValue[v] ?? v).join(', ')
+  }
+  return labelPorValue[respuesta] ?? respuesta
+}
+
+/**
  * Retardo de escritura natural antes de mostrar cada mensaje de Avoa.
  * Proporcional al largo del texto: 8 ms por carácter, mínimo 500 ms, máximo 1 200 ms.
  * Durante este tiempo `cargando` sigue en true, manteniendo el indicador de puntitos.
@@ -34,6 +52,88 @@ function obtenerPrimerPaso(): Paso {
 function typingDelay(texto: string): Promise<void> {
   const ms = Math.min(1200, Math.max(500, texto.length * 8))
   return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+// ── Edición de respuestas ──────────────────────────────────────────────────
+
+type ConfirmEdicion = {
+  pasoId: string
+  /** Número de respuestas posteriores que se perderían al editar */
+  posterioresCount: number
+}
+
+/**
+ * Trunca el historial de mensajes y la sesión al punto de edición.
+ *
+ * Elimina el mensaje de usuario para `pasoId` y todos los posteriores.
+ * Re-deriva todos los campos computados de la sesión (nombre, origenResidencia,
+ * etiqueta, completado) a partir de las respuestas que sobreviven al truncado.
+ *
+ * Campos computados cubiertos (todos los de AvoaSession en Fase 1):
+ *   • nombre           ← respuestas['nombreCompleto'] (p1_nombre)
+ *   • origenResidencia ← respuestas['paisResidencia'] (p3_origen)
+ *   • etiqueta         ← respuestas['garantias'] + respuestas['ingresosMensuales'] (p11_garantias)
+ *   • completado       ← siempre false al editar
+ */
+function truncarHastaEdicion(
+  mensajes: Mensaje[],
+  pasoId: string,
+  sesion: AvoaSession,
+): { nuevosMensajes: Mensaje[]; nuevaSesion: AvoaSession } {
+  const idxRespuesta = mensajes.findIndex((m) => m.de === 'usuario' && m.pasoId === pasoId)
+  if (idxRespuesta === -1) return { nuevosMensajes: mensajes, nuevaSesion: sesion }
+
+  const mensajesRestantes = mensajes.slice(0, idxRespuesta)
+  const mensajesEliminados = mensajes.slice(idxRespuesta)
+
+  // Limpiar campos de sesion.respuestas correspondientes a los mensajes eliminados
+  const nuevasRespuestas = { ...sesion.respuestas }
+  for (const m of mensajesEliminados) {
+    if (m.de === 'usuario' && m.campo) {
+      delete nuevasRespuestas[m.campo]
+    }
+  }
+
+  // ── Re-derivar campos computados ─────────────────────────────────────────
+
+  // 1. nombre — primer token del nombre completo
+  const nombreCompleto =
+    typeof nuevasRespuestas['nombreCompleto'] === 'string'
+      ? nuevasRespuestas['nombreCompleto']
+      : ''
+  const nombre = nombreCompleto.trim().split(/\s+/)[0] ?? ''
+
+  // 2. origenResidencia — value de p3_origen almacenado como paisResidencia
+  const paisResidencia = nuevasRespuestas['paisResidencia']
+  let origenResidencia: AvoaSession['origenResidencia'] = null
+  if (typeof paisResidencia === 'string' && paisResidencia !== '') {
+    origenResidencia = paisResidencia === 'en_espana' ? 'en_espana' : 'fuera'
+  }
+
+  // 3. etiqueta — único valor posible en Fase 1: 'lead-en-preparacion'
+  //    Solo se re-aplica si AMBOS campos fuente siguen presentes tras el truncado.
+  let etiqueta: AvoaSession['etiqueta'] = undefined
+  const garantias = nuevasRespuestas['garantias']
+  const ingresos = nuevasRespuestas['ingresosMensuales']
+  if (Array.isArray(garantias) && typeof ingresos === 'string') {
+    const sinGarantias = (garantias as string[]).includes('ninguna')
+    if (sinGarantias && INGRESOS_RIESGO.has(ingresos)) {
+      etiqueta = 'lead-en-preparacion'
+    }
+  }
+
+  // 4. completado — siempre false al retomar la edición
+  const nuevaSesion: AvoaSession = {
+    ...sesion,
+    respuestas: nuevasRespuestas,
+    pasoActual: pasoId,
+    nombre,
+    origenResidencia,
+    etiqueta,
+    completado: false,
+  }
+
+  return { nuevosMensajes: mensajesRestantes, nuevaSesion }
 }
 
 // ── Componente ─────────────────────────────────────────────────────────────
@@ -51,11 +151,13 @@ export function AvoaWidget() {
         id: generarId(),
         de: 'avoa' as const,
         texto: personalizarTexto(primerPaso.texto, ''),
+        pasoId: primerPaso.id,
       },
     ]
   })
   const [cargando, setCargando] = useState(false)
   const [inputDeshabilitado, setInputDeshabilitado] = useState(false)
+  const [confirmEdicion, setConfirmEdicion] = useState<ConfirmEdicion | null>(null)
 
   const botonAbrirRef = useRef<HTMLButtonElement>(null)
   const botonCerrarRef = useRef<HTMLButtonElement>(null)
@@ -113,7 +215,7 @@ export function AvoaWidget() {
           await typingDelay(textoAvoa)
           setMensajes((prev) => [
             ...prev,
-            { id: generarId(), de: 'avoa', texto: textoAvoa },
+            { id: generarId(), de: 'avoa', texto: textoAvoa, pasoId: data.siguientePaso.id },
           ])
         }
 
@@ -135,15 +237,19 @@ export function AvoaWidget() {
     async (respuesta: string | string[]) => {
       if (cargando || inputDeshabilitado) return
 
-      // Texto legible para la burbuja del usuario
-      const textoUsuario = Array.isArray(respuesta)
-        ? respuesta.join(', ')
-        : respuesta
+      // Texto legible para la burbuja: label humano en botones, texto crudo en campos libres
+      const textoUsuario = resolverTextoUsuario(respuesta, pasoActual.opciones)
 
-      // Añadir burbuja del usuario
+      // Añadir burbuja del usuario — taggeada con pasoId y campo para poder truncar al editar
       setMensajes((prev) => [
         ...prev,
-        { id: generarId(), de: 'usuario', texto: textoUsuario },
+        {
+          id: generarId(),
+          de: 'usuario',
+          texto: textoUsuario,
+          pasoId: pasoActual.id,
+          campo: pasoActual.campo,
+        },
       ])
       setCargando(true)
       setInputDeshabilitado(true)
@@ -187,7 +293,7 @@ export function AvoaWidget() {
         await typingDelay(textoAvoa)
         setMensajes((prev) => [
           ...prev,
-          { id: generarId(), de: 'avoa', texto: textoAvoa },
+          { id: generarId(), de: 'avoa', texto: textoAvoa, pasoId: siguientePaso.id },
         ])
 
         // Si la sesión terminó, deshabilitar permanentemente
@@ -211,8 +317,48 @@ export function AvoaWidget() {
         setCargando(false)
       }
     },
-    [sesion, cargando, inputDeshabilitado, avanzarPasoVirtual],
+    [sesion, pasoActual, cargando, inputDeshabilitado, avanzarPasoVirtual],
   )
+
+  // ── Edición de respuestas anteriores ──
+
+  /**
+   * Ejecuta la edición: trunca el historial, reconstruye la sesión y re-muestra
+   * el mensaje de Avoa para que el usuario vuelva a responder ese paso.
+   */
+  function ejecutarEdicion(pasoId: string) {
+    const { nuevosMensajes, nuevaSesion } = truncarHastaEdicion(mensajes, pasoId, sesion)
+    // nuevosMensajes ya contiene el mensaje de Avoa que hizo la pregunta (es el elemento
+    // inmediatamente anterior a la respuesta del usuario). No se agrega de nuevo: hacerlo
+    // causaría que la misma pregunta apareciera duplicada en el historial.
+    setMensajes(nuevosMensajes)
+    setSesion(nuevaSesion)
+    setPasoActual(obtenerPaso(pasoId))
+    setInputDeshabilitado(false)
+    setCargando(false)
+    setConfirmEdicion(null)
+  }
+
+  /**
+   * Inicia el proceso de edición:
+   * - Si no hay respuestas posteriores: edita directamente (sin aviso).
+   * - Si las hay: muestra confirmación antes de truncar.
+   */
+  function iniciarEdicion(pasoId: string) {
+    const idxRespuesta = mensajes.findIndex((m) => m.de === 'usuario' && m.pasoId === pasoId)
+    if (idxRespuesta === -1) return
+
+    const posterioresCount = mensajes
+      .slice(idxRespuesta + 1)
+      .filter((m) => m.de === 'usuario')
+      .length
+
+    if (posterioresCount === 0) {
+      ejecutarEdicion(pasoId)
+    } else {
+      setConfirmEdicion({ pasoId, posterioresCount })
+    }
+  }
 
   // ── Manejar botón "Cerrar" en paso final ──
 
@@ -378,7 +524,59 @@ export function AvoaWidget() {
           multiselect={pasoActual.multiselect}
           deshabilitadoBotones={cargando}
           onSeleccion={onOpcionSeleccionada}
+          onEditarRespuesta={iniciarEdicion}
+          editarDeshabilitado={cargando || sesion.completado || confirmEdicion !== null}
         />
+
+        {/* Aviso de confirmación de edición — aparece entre mensajes e input */}
+        {confirmEdicion !== null && (
+          <div
+            role="alertdialog"
+            aria-labelledby="avoa-confirm-titulo"
+            className="shrink-0 px-4 py-3 border-t"
+            style={{
+              borderColor: 'var(--color-laton)',
+              backgroundColor: 'var(--color-niebla)',
+            }}
+          >
+            <p
+              id="avoa-confirm-titulo"
+              className="text-xs leading-snug mb-3"
+              style={{ color: 'var(--color-granito)' }}
+            >
+              Si cambias esto, tendrás que responder de nuevo{' '}
+              {confirmEdicion.posterioresCount === 1
+                ? 'la pregunta siguiente'
+                : `las ${confirmEdicion.posterioresCount} preguntas siguientes`
+              }.
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmEdicion(null)}
+                className="flex-1 py-2 rounded-xl text-xs font-medium border transition-brand cursor-pointer"
+                style={{
+                  borderColor: 'var(--color-laton)',
+                  color: 'var(--color-granito)',
+                  backgroundColor: '#FFFFFF',
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => ejecutarEdicion(confirmEdicion.pasoId)}
+                className="flex-1 py-2 rounded-xl text-xs font-semibold transition-brand cursor-pointer"
+                style={{
+                  backgroundColor: 'var(--color-laton)',
+                  color: '#FFFFFF',
+                }}
+              >
+                Sí, editar →
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Campo de texto — siempre visible; deshabilitado en pasos de botones */}
         <div

@@ -27,9 +27,9 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
     script.onload = () => {
       // @ts-expect-error — Cal global inyectado por el script de embed
       if (window.Cal) {
-        // @ts-expect-error
+        // @ts-expect-error — Cal global sin tipos: método init no tipado
         window.Cal('init', { origin: 'https://cal.com' })
-        // @ts-expect-error
+        // @ts-expect-error — Cal global sin tipos: método inline no tipado
         window.Cal('inline', {
           elementOrSelector: '#cal-inline-embed',
           calLink,

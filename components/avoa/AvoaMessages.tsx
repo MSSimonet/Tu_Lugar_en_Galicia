@@ -19,6 +19,10 @@ export type Mensaje = {
   id: string
   de: 'avoa' | 'usuario'
   texto: string
+  /** ID del paso al que pertenece este mensaje — permite truncar el historial al editar */
+  pasoId?: string
+  /** Solo en mensajes de usuario: clave de sesion.respuestas que seteó este paso */
+  campo?: string
 }
 
 type Props = {
@@ -29,6 +33,10 @@ type Props = {
   multiselect?: boolean
   deshabilitadoBotones?: boolean
   onSeleccion?: (valor: string | string[]) => void
+  /** Callback para editar una respuesta anterior. Si no se provee, no aparece el botón. */
+  onEditarRespuesta?: (pasoId: string) => void
+  /** Cuando true, oculta todos los botones de editar (durante carga o sesión completada) */
+  editarDeshabilitado?: boolean
 }
 
 /** Sparkles inline — mismo path en header y avatar de burbuja */
@@ -59,6 +67,8 @@ export function AvoaMessages({
   multiselect,
   deshabilitadoBotones,
   onSeleccion,
+  onEditarRespuesta,
+  editarDeshabilitado,
 }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -96,7 +106,7 @@ export function AvoaMessages({
 
           {/* Burbuja */}
           <div
-            className={`max-w-[80%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap ${
+            className={`max-w-[75%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap ${
               msg.de === 'avoa'
                 ? 'rounded-2xl rounded-tl-none'   // ángulo superior-izq apunta al avatar
                 : 'rounded-2xl rounded-br-none'   // ángulo inferior-der apunta al usuario
@@ -116,6 +126,41 @@ export function AvoaMessages({
           >
             {msg.texto}
           </div>
+
+          {/* Botón de editar — solo en burbujas de usuario, cuando la función está habilitada */}
+          {msg.de === 'usuario' &&
+            !editarDeshabilitado &&
+            onEditarRespuesta &&
+            msg.pasoId && (
+              <button
+                type="button"
+                onClick={() => onEditarRespuesta(msg.pasoId!)}
+                aria-label="Editar esta respuesta"
+                title="Editar respuesta"
+                className="
+                  shrink-0 self-center p-1.5 rounded-lg
+                  opacity-30 hover:opacity-90
+                  transition-opacity cursor-pointer
+                "
+                style={{ color: 'var(--color-granito)' }}
+              >
+                {/* Ícono lápiz */}
+                <svg
+                  className="w-3.5 h-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"
+                  />
+                </svg>
+              </button>
+            )}
         </div>
       ))}
 

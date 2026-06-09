@@ -46,8 +46,11 @@ export function obtenerPaso(id: string): Paso {
 
 // ── Constantes de lógica de negocio ───────────────────────────────────────
 
-/** Ingresos que activan el camino "lead en preparación" cuando no hay garantías */
-const INGRESOS_RIESGO = new Set(['menos-1500', 'sin-ingresos'])
+/**
+ * Ingresos que activan el camino "lead en preparación" cuando no hay garantías.
+ * Exportado para que el widget pueda re-derivar `etiqueta` al truncar la sesión en edición.
+ */
+export const INGRESOS_RIESGO = new Set(['menos-1500', 'sin-ingresos'])
 
 // ── Motor principal ────────────────────────────────────────────────────────
 
@@ -137,19 +140,15 @@ function resolverSiguiente(
     return nextId
   }
 
-  // Paso virtual: p18_check_origen — rama según origen de residencia
+  // Paso virtual: p18_check_origen — rama según origen de residencia.
+  // Si el siguiente calculado sería p18_check_origen (paso vacío sin texto),
+  // lo resolvemos directamente aquí según origenResidencia capturado en p3_origen.
   if (paso.id === 'p18_check_origen' || paso.id === 'p17_licencia' || paso.id === 'p17b_canje') {
-    // Si el siguiente calculado es p18_check_origen, lo resolvemos aquí
     const rawNext = resolverRama(paso, valorSimple)
     if (rawNext === 'p18_check_origen') {
       return sesion.origenResidencia === 'en_espana' ? 'p18a_ciudad' : 'p18b_tiempo'
     }
     return rawNext
-  }
-
-  // Paso virtual interno p18_check_origen (cuando es el paso actual)
-  if (paso.id === 'p18_check_origen') {
-    return sesion.origenResidencia === 'en_espana' ? 'p18a_ciudad' : 'p18b_tiempo'
   }
 
   return resolverRama(paso, valorSimple)

@@ -1,19 +1,42 @@
 /**
- * lib/leads.ts — Integración con Airtable para guardar leads del formulario de diagnóstico.
+ * lib/leads.ts — Integración con Airtable para guardar leads del formulario de diagnóstico
+ * y del cuestionario de Avoa.
  *
- * IMPORTANTE: Las columnas en Airtable deben crearse manualmente con los nombres exactos
- * de las keys del tipo LeadData (camelCase). Por ejemplo: "nombreCompleto", "email",
- * "telefono", "paisResidencia", "personas", "mascotas", "detalleMascotas",
- * "documentacion", "situacionLaboral", "ingresosMensuales", "garantias",
- * "ciudadDestino", "presupuestoMensual", "habitacionesMinimas", "amueblado",
- * "estacionamiento", "fechaLlegada", "inicioContrato", "modalidad",
- * "comprendeServicio", "consentimientoRGPD".
+ * IMPORTANTE: Las columnas en Airtable deben existir con los nombres exactos
+ * de las keys del tipo LeadData (camelCase). Columnas y tipos:
  *
- * La tabla debe configurarse en Airtable con los tipos apropiados:
- *   - Campos de texto largo: "personas", "detalleMascotas", "ingresosMensuales"
- *   - Campo de múltiple selección: "garantias"
- *   - Campos de casilla (checkbox): "comprendeServicio", "consentimientoRGPD"
- *   - El resto pueden ser texto de línea simple o selección única
+ *   Texto corto (Single line):
+ *     nombreCompleto, email, telefono, paisResidencia, ingresosMensuales,
+ *     fechaLlegada, inicioContrato
+ *
+ *   Texto largo (Long text):
+ *     personas, detalleMascotas, necesidadesEspeciales, profesion
+ *
+ *   Selección única (Single select):
+ *     mascotas           → si | no
+ *     documentacion      → espanol | ue-otro | residencia-aprobada | en-tramite |
+ *                          nacionalidad-en-tramite | turista
+ *     situacionLaboral   → cuenta-ajena | autonomo | teletrabajo-extranjero |
+ *                          rentista | jubilado | estudiante | busca-empleo
+ *     ciudadDestino      → vigo | a-coruna | santiago | pontevedra | lugo | indiferente
+ *     tipoInmueble       → habitacion | estudio | piso | casa | co-living
+ *     presupuestoMensual → menos-700 | 700-1000 | 1000-1400 | mas-1400
+ *     habitacionesMinimas → 1 | 2 | 3 | 4+
+ *     amueblado          → si | no | indiferente
+ *     estacionamiento    → indispensable | deseable | no
+ *     modalidad          → antes-de-viajar | ya-estando
+ *     comoNosConociste   → redes-sociales | recomendacion | google | facebook | otro
+ *
+ *   Selección múltiple (Multiple select):
+ *     garantias      → adelanto-6-12 | aval | seguro-impago | ninguna
+ *     imprescindibles → ascensor | garaje | calefaccion | terraza | no   ← NUEVO (Avoa p24)
+ *     comodidades    → transporte | zona-tranquila | cerca-colegios | internet | ninguna
+ *
+ *   Casilla (Checkbox):
+ *     comprendeServicio, consentimientoRGPD
+ *
+ * Fuente del canal del lead (campo interno de Airtable, no viene del formulario):
+ *   Se puede distinguir formulario web vs. Avoa via el campo "fuenteLead" si se añade.
  */
 
 export type LeadData = {
@@ -29,41 +52,49 @@ export type LeadData = {
   detalleMascotas?: string
 
   // Situación legal y laboral
-  documentacion: 'pasaporte-ue' | 'visado-tie-nie' | 'en-tramite' | 'turista'
+  documentacion:
+    | 'espanol'
+    | 'ue-otro'
+    | 'residencia-aprobada'
+    | 'en-tramite'
+    | 'nacionalidad-en-tramite'
+    | 'turista'
   situacionLaboral:
-    | 'empleado-remoto'
-    | 'busca-empleo'
+    | 'cuenta-ajena'
     | 'autonomo'
+    | 'teletrabajo-extranjero'
+    | 'rentista'
     | 'jubilado'
     | 'estudiante'
-    | 'otro'
+    | 'busca-empleo'
   ingresosMensuales: string
 
-  // Capacidad de garantías
-  garantias: (
-    | 'adelanto-6-12'
-    | 'aval'
-    | 'seguro-impago'
-    | 'ninguna'
-  )[]
+  // Capacidad de garantías (selección múltiple)
+  garantias: ('adelanto-6-12' | 'aval' | 'seguro-impago' | 'ninguna')[]
 
   // Preferencias de vivienda
-  ciudadDestino:
-    | 'vigo'
-    | 'a-coruna'
-    | 'santiago'
-    | 'pontevedra'
-    | 'lugo'
-    | 'indiferente'
+  ciudadDestino: 'vigo' | 'a-coruna' | 'santiago' | 'pontevedra' | 'lugo' | 'indiferente'
+  tipoInmueble?: 'habitacion' | 'estudio' | 'piso' | 'casa' | 'co-living'
   presupuestoMensual: 'menos-700' | '700-1000' | '1000-1400' | 'mas-1400'
   habitacionesMinimas: '1' | '2' | '3' | '4+'
   amueblado: 'si' | 'no' | 'indiferente'
-  estacionamiento: 'indispensable' | 'no' | 'deseable'
+  estacionamiento?: 'indispensable' | 'deseable' | 'no'   // opcional: Avoa no pregunta por esto
+  comodidades?: ('transporte' | 'zona-tranquila' | 'cerca-colegios' | 'internet' | 'ninguna')[]
 
-  // Plazos
+  // Perfil adicional (Nivel 2 de Avoa)
+  necesidadesEspeciales?: string
+  profesion?: string
+
+  // Características físicas del inmueble (selección múltiple — Avoa p24)
+  imprescindibles?: ('ascensor' | 'garaje' | 'calefaccion' | 'terraza' | 'no')[]
+
+  // Plazos y modalidad
   fechaLlegada: string
-  inicioContrato: string
+  inicioContrato?: string   // obligatorio en el formulario web, omitido por Avoa
   modalidad: 'antes-de-viajar' | 'ya-estando'
+
+  // Atribución
+  comoNosConociste?: 'redes-sociales' | 'recomendacion' | 'google' | 'facebook' | 'otro'
 
   // Consentimientos
   comprendeServicio: boolean
@@ -74,9 +105,9 @@ export type LeadData = {
  * Guarda un lead en Airtable.
  *
  * Requiere las variables de entorno:
- *   AIRTABLE_API_KEY   — Personal access token de Airtable
- *   AIRTABLE_BASE_ID   — ID de la base (de la URL: airtable.com/[ID]/...)
- *   AIRTABLE_TABLE_NAME — Nombre exacto de la tabla (ej: "Leads Fase 1")
+ *   AIRTABLE_API_KEY    — Personal access token de Airtable
+ *   AIRTABLE_BASE_ID    — ID de la base (de la URL: airtable.com/[ID]/...)
+ *   AIRTABLE_TABLE_NAME — Nombre exacto de la tabla (ej: "Leads")
  *
  * Lanza Error si las variables no están configuradas o si Airtable devuelve error.
  * No loguea datos personales del usuario.
@@ -87,19 +118,13 @@ export async function saveLead(data: LeadData): Promise<void> {
   const tableName = process.env.AIRTABLE_TABLE_NAME
 
   if (!apiKey) {
-    throw new Error(
-      'Airtable no configurado: falta AIRTABLE_API_KEY. Ver .env.local.example'
-    )
+    throw new Error('Airtable no configurado: falta AIRTABLE_API_KEY. Ver .env.local.example')
   }
   if (!baseId) {
-    throw new Error(
-      'Airtable no configurado: falta AIRTABLE_BASE_ID. Ver .env.local.example'
-    )
+    throw new Error('Airtable no configurado: falta AIRTABLE_BASE_ID. Ver .env.local.example')
   }
   if (!tableName) {
-    throw new Error(
-      'Airtable no configurado: falta AIRTABLE_TABLE_NAME. Ver .env.local.example'
-    )
+    throw new Error('Airtable no configurado: falta AIRTABLE_TABLE_NAME. Ver .env.local.example')
   }
 
   const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`
@@ -116,7 +141,7 @@ export async function saveLead(data: LeadData): Promise<void> {
   if (!response.ok) {
     let airtableMessage = `HTTP ${response.status}`
     try {
-      const errorBody = await response.json() as { error?: { message?: string } }
+      const errorBody = (await response.json()) as { error?: { message?: string } }
       if (errorBody?.error?.message) {
         airtableMessage += `: ${errorBody.error.message}`
       }
@@ -125,6 +150,4 @@ export async function saveLead(data: LeadData): Promise<void> {
     }
     throw new Error(`Error al guardar en Airtable — ${airtableMessage}`)
   }
-
-  console.log('Lead guardado OK')
 }

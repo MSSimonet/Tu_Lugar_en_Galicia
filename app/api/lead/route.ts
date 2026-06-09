@@ -17,22 +17,88 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { saveLead, type LeadData } from '@/lib/leads'
 
-// Valores permitidos para los campos enum
-const VALID_DOCUMENTACION = ['pasaporte-ue', 'visado-tie-nie', 'en-tramite', 'turista'] as const
-const VALID_SITUACION_LABORAL = ['empleado-remoto', 'busca-empleo', 'autonomo', 'jubilado', 'estudiante', 'otro'] as const
-const VALID_CIUDAD_DESTINO = ['vigo', 'a-coruna', 'santiago', 'pontevedra', 'lugo', 'indiferente'] as const
+// ---------------------------------------------------------------------------
+// Valores permitidos — fuente de verdad alineada con Airtable
+// ---------------------------------------------------------------------------
+const VALID_DOCUMENTACION = [
+  'espanol',
+  'ue-otro',
+  'residencia-aprobada',
+  'en-tramite',
+  'nacionalidad-en-tramite',
+  'turista',
+] as const
+
+const VALID_SITUACION_LABORAL = [
+  'cuenta-ajena',
+  'autonomo',
+  'teletrabajo-extranjero',
+  'rentista',
+  'jubilado',
+  'estudiante',
+  'busca-empleo',
+] as const
+
+const VALID_CIUDAD_DESTINO = [
+  'vigo',
+  'a-coruna',
+  'santiago',
+  'pontevedra',
+  'lugo',
+  'indiferente',
+] as const
+
+const VALID_TIPO_INMUEBLE = [
+  'habitacion',
+  'estudio',
+  'piso',
+  'casa',
+  'co-living',
+] as const
+
 const VALID_PRESUPUESTO = ['menos-700', '700-1000', '1000-1400', 'mas-1400'] as const
+
 const VALID_HABITACIONES = ['1', '2', '3', '4+'] as const
+
 const VALID_AMUEBLADO = ['si', 'no', 'indiferente'] as const
-const VALID_ESTACIONAMIENTO = ['indispensable', 'no', 'deseable'] as const
+
+const VALID_ESTACIONAMIENTO = ['indispensable', 'deseable', 'no'] as const
+
 const VALID_MODALIDAD = ['antes-de-viajar', 'ya-estando'] as const
+
+const VALID_GARANTIAS = ['adelanto-6-12', 'aval', 'seguro-impago', 'ninguna'] as const
+
+const VALID_IMPRESCINDIBLES = [
+  'ascensor',
+  'garaje',
+  'calefaccion',
+  'terraza',
+  'no',
+] as const
+
+const VALID_COMODIDADES = [
+  'transporte',
+  'zona-tranquila',
+  'cerca-colegios',
+  'internet',
+  'ninguna',
+] as const
+
+const VALID_COMO_NOS_CONOCISTE = [
+  'redes-sociales',
+  'recomendacion',
+  'google',
+  'facebook',
+  'otro',
+] as const
 
 const EMAIL_REGEX = /.+@.+\..+/
 
-/** Cabeceras comunes a todas las respuestas de este endpoint */
-const COMMON_HEADERS = {
-  'X-RateLimit-Policy': '1 req/s per IP',
-}
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+const COMMON_HEADERS = { 'X-RateLimit-Policy': '1 req/s per IP' }
 
 function errorResponse(message: string, status: number): NextResponse {
   return NextResponse.json({ error: message }, { status, headers: COMMON_HEADERS })
@@ -45,6 +111,10 @@ function successResponse(): NextResponse {
   )
 }
 
+// ---------------------------------------------------------------------------
+// Handler
+// ---------------------------------------------------------------------------
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // 1. Parsear body JSON
@@ -56,7 +126,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Cuerpo de la petición inválido', 400)
     }
 
-    // 2. Validación de campos obligatorios en servidor
+    // 2. Validación de campos obligatorios
 
     // --- Strings simples no vacíos ---
     const stringFields = [
@@ -66,7 +136,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       'paisResidencia',
       'personas',
       'fechaLlegada',
-      'inicioContrato',
+      // inicioContrato: opcional — obligatorio en el formulario web, omitido por Avoa
     ] as const
 
     for (const field of stringFields) {
@@ -116,9 +186,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Campo requerido faltante o inválido: amueblado', 400)
     }
 
-    // --- estacionamiento ---
-    if (!VALID_ESTACIONAMIENTO.includes(body.estacionamiento)) {
-      return errorResponse('Campo requerido faltante o inválido: estacionamiento', 400)
+    // --- estacionamiento (opcional — Avoa no pregunta; el formulario web puede incluirlo) ---
+    if (body.estacionamiento !== undefined && !VALID_ESTACIONAMIENTO.includes(body.estacionamiento)) {
+      return errorResponse('Valor inválido: estacionamiento', 400)
     }
 
     // --- modalidad ---
@@ -126,12 +196,69 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Campo requerido faltante o inválido: modalidad', 400)
     }
 
+    // --- garantias (array, puede ser vacío) ---
+    if (!Array.isArray(body.garantias)) {
+      return errorResponse('Campo requerido faltante o inválido: garantias', 400)
+    }
+    const invalidGarantia = (body.garantias as string[]).find(
+      (g) => !VALID_GARANTIAS.includes(g as (typeof VALID_GARANTIAS)[number])
+    )
+    if (invalidGarantia) {
+      return errorResponse(`Valor inválido en garantias: ${invalidGarantia}`, 400)
+    }
+
+    // --- tipoInmueble (opcional) ---
+    if (body.tipoInmueble !== undefined && !VALID_TIPO_INMUEBLE.includes(body.tipoInmueble)) {
+      return errorResponse('Valor inválido: tipoInmueble', 400)
+    }
+
+    // --- comodidades (opcional, array) ---
+    if (body.comodidades !== undefined) {
+      if (!Array.isArray(body.comodidades)) {
+        return errorResponse('Campo inválido: comodidades debe ser un array', 400)
+      }
+      const invalidComodidad = (body.comodidades as string[]).find(
+        (c) => !VALID_COMODIDADES.includes(c as (typeof VALID_COMODIDADES)[number])
+      )
+      if (invalidComodidad) {
+        return errorResponse(`Valor inválido en comodidades: ${invalidComodidad}`, 400)
+      }
+    }
+
+    // --- inicioContrato (opcional — presente en formulario web, ausente en Avoa) ---
+    if (body.inicioContrato !== undefined) {
+      if (typeof body.inicioContrato !== 'string' || body.inicioContrato.trim() === '') {
+        return errorResponse('Valor inválido: inicioContrato', 400)
+      }
+    }
+
+    // --- imprescindibles (opcional, array) ---
+    if (body.imprescindibles !== undefined) {
+      if (!Array.isArray(body.imprescindibles)) {
+        return errorResponse('Campo inválido: imprescindibles debe ser un array', 400)
+      }
+      const invalidImprescindible = (body.imprescindibles as string[]).find(
+        (v) => !VALID_IMPRESCINDIBLES.includes(v as (typeof VALID_IMPRESCINDIBLES)[number])
+      )
+      if (invalidImprescindible) {
+        return errorResponse(`Valor inválido en imprescindibles: ${invalidImprescindible}`, 400)
+      }
+    }
+
+    // --- comoNosConociste (opcional) ---
+    if (
+      body.comoNosConociste !== undefined &&
+      !VALID_COMO_NOS_CONOCISTE.includes(body.comoNosConociste)
+    ) {
+      return errorResponse('Valor inválido: comoNosConociste', 400)
+    }
+
     // --- comprendeServicio ---
     if (body.comprendeServicio !== true) {
       return errorResponse('Campo requerido faltante o inválido: comprendeServicio', 400)
     }
 
-    // --- consentimientoRGPD (mensaje específico exigido) ---
+    // --- consentimientoRGPD ---
     if (body.consentimientoRGPD !== true) {
       return errorResponse('Se requiere el consentimiento de tratamiento de datos', 400)
     }
@@ -156,20 +283,42 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       situacionLaboral: body.situacionLaboral as LeadData['situacionLaboral'],
       ingresosMensuales: typeof body.ingresosMensuales === 'string' ? body.ingresosMensuales.trim() : '',
 
-      // Garantías — array opcional; se acepta array vacío
-      garantias: Array.isArray(body.garantias) ? body.garantias : [],
+      // Garantías
+      garantias: body.garantias as LeadData['garantias'],
 
       // Preferencias de vivienda
       ciudadDestino: body.ciudadDestino as LeadData['ciudadDestino'],
+      ...(body.tipoInmueble ? { tipoInmueble: body.tipoInmueble as LeadData['tipoInmueble'] } : {}),
       presupuestoMensual: body.presupuestoMensual as LeadData['presupuestoMensual'],
       habitacionesMinimas: body.habitacionesMinimas as LeadData['habitacionesMinimas'],
       amueblado: body.amueblado as LeadData['amueblado'],
-      estacionamiento: body.estacionamiento as LeadData['estacionamiento'],
+      ...(body.estacionamiento ? { estacionamiento: body.estacionamiento as LeadData['estacionamiento'] } : {}),
+      ...(Array.isArray(body.imprescindibles) && body.imprescindibles.length > 0
+        ? { imprescindibles: body.imprescindibles as LeadData['imprescindibles'] }
+        : {}),
+      ...(Array.isArray(body.comodidades) && body.comodidades.length > 0
+        ? { comodidades: body.comodidades as LeadData['comodidades'] }
+        : {}),
+
+      // Perfil adicional
+      ...(typeof body.necesidadesEspeciales === 'string' && body.necesidadesEspeciales.trim()
+        ? { necesidadesEspeciales: body.necesidadesEspeciales.trim() }
+        : {}),
+      ...(typeof body.profesion === 'string' && body.profesion.trim()
+        ? { profesion: body.profesion.trim() }
+        : {}),
 
       // Plazos
       fechaLlegada: (body.fechaLlegada as string).trim(),
-      inicioContrato: (body.inicioContrato as string).trim(),
+      ...(typeof body.inicioContrato === 'string' && body.inicioContrato.trim()
+        ? { inicioContrato: body.inicioContrato.trim() }
+        : {}),
       modalidad: body.modalidad as LeadData['modalidad'],
+
+      // Atribución
+      ...(body.comoNosConociste
+        ? { comoNosConociste: body.comoNosConociste as LeadData['comoNosConociste'] }
+        : {}),
 
       // Consentimientos
       comprendeServicio: true,
@@ -182,24 +331,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err)
 
-      // Caso esperado: Airtable aún no está configurado en este entorno
       if (errorMessage.startsWith('Airtable no configurado')) {
         console.error('[api/lead] Integración no configurada —', new Date().toISOString())
         return errorResponse(
-          'El sistema de registro no está configurado aún. Tu consulta fue recibida y la contactaremos por email.',
+          'El sistema de registro no está configurado aún. Tu consulta fue recibida y te contactaremos por email.',
           503
         )
       }
 
-      // Cualquier otro error de Airtable o de red
       console.error('[api/lead] Error al guardar lead —', new Date().toISOString())
       return errorResponse('Error al guardar tu consulta. Por favor intentá de nuevo.', 500)
     }
 
     // 5. Éxito
     return successResponse()
-  } catch (err) {
-    // Última línea de defensa — error completamente inesperado
+  } catch {
     console.error('[api/lead] Error inesperado —', new Date().toISOString())
     return errorResponse('Error interno del servidor. Por favor intentá de nuevo.', 500)
   }
