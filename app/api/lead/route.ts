@@ -85,10 +85,11 @@ const VALID_COMODIDADES = [
 ] as const
 
 const VALID_COMO_NOS_CONOCISTE = [
-  'redes-sociales',
-  'recomendacion',
-  'google',
+  'instagram',
   'facebook',
+  'tiktok',
+  'google',
+  'recomendacion',
   'otro',
 ] as const
 

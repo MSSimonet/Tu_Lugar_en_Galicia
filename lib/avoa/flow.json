@@ -44,7 +44,7 @@
     "campo": "email",
     "texto": "Encantada, {{nombre}}. ¿Me dejas un email que uses a menudo?",
     "validacion": "email",
-    "siguiente": "p3_origen"
+    "siguiente": "p15_telefono"
   },
   {
     "id": "p3_origen",
@@ -95,14 +95,58 @@
       { "label": "Lugo", "value": "lugo" },
       { "label": "Indiferente", "value": "indiferente" }
     ],
-    "siguiente": "p6_hogar"
+    "siguiente": "p6a_adultos"
   },
   {
-    "id": "p6_hogar",
-    "tipo": "llm",
-    "campo": "personas",
-    "texto": "¿Quiénes formarían parte de esta mudanza contigo? Cuéntame cuántos adultos y, si vienen niños, sus edades.",
-    "validacion": "texto",
+    "id": "p6a_adultos",
+    "tipo": "botones",
+    "campo": "adultos",
+    "texto": "¿Cuántos adultos se mudan? (incluyéndote)",
+    "opciones": [
+      { "label": "1", "value": "1" },
+      { "label": "2", "value": "2" },
+      { "label": "3", "value": "3" },
+      { "label": "4 o más", "value": "4+" }
+    ],
+    "siguiente": "p6b_menores"
+  },
+  {
+    "id": "p6b_menores",
+    "tipo": "botones",
+    "texto": "¿Viajan menores de edad contigo?",
+    "opciones": [
+      { "label": "No", "value": "no" },
+      { "label": "Sí", "value": "si" }
+    ],
+    "ramas": {
+      "no": "p7_mascotas",
+      "si": "p6c_ninos"
+    }
+  },
+  {
+    "id": "p6c_ninos",
+    "tipo": "botones",
+    "campo": "ninos",
+    "texto": "¿Cuántos niños de 0 a 12 años?",
+    "opciones": [
+      { "label": "0", "value": "0" },
+      { "label": "1", "value": "1" },
+      { "label": "2", "value": "2" },
+      { "label": "3 o más", "value": "3+" }
+    ],
+    "siguiente": "p6d_adolescentes"
+  },
+  {
+    "id": "p6d_adolescentes",
+    "tipo": "botones",
+    "campo": "adolescentes",
+    "texto": "¿Y adolescentes de 13 a 17 años?",
+    "opciones": [
+      { "label": "0", "value": "0" },
+      { "label": "1", "value": "1" },
+      { "label": "2", "value": "2" },
+      { "label": "3 o más", "value": "3+" }
+    ],
     "siguiente": "p7_mascotas"
   },
   {
@@ -116,15 +160,32 @@
     ],
     "ramas": {
       "no": "p8_documentacion",
-      "si": "p7b_detalle"
+      "si": "p7b_tipo"
     }
   },
   {
-    "id": "p7b_detalle",
-    "tipo": "llm",
-    "campo": "detalleMascotas",
-    "texto": "¿Cuántas mascotas, de qué especie, raza y peso aproximado?",
-    "validacion": "texto",
+    "id": "p7b_tipo",
+    "tipo": "botones",
+    "campo": "mascotaTipo",
+    "multiselect": true,
+    "texto": "¿Qué tipo de mascota tienes? Puedes marcar más de una.",
+    "opciones": [
+      { "label": "Perro", "value": "perro" },
+      { "label": "Gato", "value": "gato" },
+      { "label": "Otro", "value": "otro" }
+    ],
+    "siguiente": "p7b_peso"
+  },
+  {
+    "id": "p7b_peso",
+    "tipo": "botones",
+    "campo": "mascotaPeso",
+    "texto": "¿Cuánto pesa aproximadamente tu perro?",
+    "opciones": [
+      { "label": "Menos de 5 kg", "value": "0-5 kg" },
+      { "label": "Entre 5 y 10 kg", "value": "5-10 kg" },
+      { "label": "Más de 10 kg", "value": "+10 kg" }
+    ],
     "siguiente": "p8_documentacion"
   },
   {
@@ -192,6 +253,7 @@
     "tipo": "botones",
     "campo": "garantias",
     "multiselect": true,
+    "exclusivaValue": "ninguna",
     "texto": "En España es habitual pedir garantías extra a perfiles internacionales. Marca las que podrías asumir:",
     "opciones": [
       { "label": "Adelantar varios meses de alquiler (6–12)", "value": "adelanto-6-12" },
@@ -260,7 +322,7 @@
       { "label": "Me gustaría que me lo expliquen mejor", "value": "explicar" }
     ],
     "ramas": {
-      "si": "p15_telefono",
+      "si": "transicion_nivel2",
       "explicar": "p14_explicacion"
     }
   },
@@ -271,16 +333,16 @@
     "opciones": [
       { "label": "Continuar con las preguntas", "value": "continuar" }
     ],
-    "siguiente": "p15_telefono"
+    "siguiente": "transicion_nivel2"
   },
   {
     "id": "p15_telefono",
     "tipo": "input",
     "campo": "telefono",
-    "texto": "Ya tengo lo esencial para saber cómo ayudarte, {{nombre}}. ¿Me dejas un teléfono de contacto (con prefijo de tu país)?",
+    "texto": "Perfecto, {{nombre}}. ¿Me dejas también un teléfono de contacto con el prefijo de tu país?",
     "validacion": "telefono",
     "accion": "guardar_nivel1",
-    "siguiente": "transicion_nivel2"
+    "siguiente": "p3_origen"
   },
   {
     "id": "transicion_nivel2",
@@ -297,16 +359,19 @@
   },
   {
     "id": "p16_accesibilidad",
-    "tipo": "llm",
+    "tipo": "botones",
     "campo": "necesidadesEspeciales",
-    "texto": "¿Algún miembro del hogar tiene necesidades especiales o alguna discapacidad? Esto nos ayuda a buscar viviendas adecuadas.",
-    "validacion": "texto",
+    "texto": "¿Algún miembro del hogar tiene necesidades especiales o alguna discapacidad? (Lo veremos en detalle más adelante.)",
+    "opciones": [
+      { "label": "No", "value": "no" },
+      { "label": "Sí", "value": "si" }
+    ],
     "siguiente": "p17_licencia"
   },
   {
     "id": "p17_licencia",
     "tipo": "botones",
-    "texto": "¿Tienes licencia de conducir? ¿De qué tipo?",
+    "texto": "¿Tienes licencia de conducir?",
     "opciones": [
       { "label": "Española", "value": "espanola" },
       { "label": "Europea", "value": "europea" },
@@ -388,6 +453,9 @@
       { "label": "Piso / Apartamento", "value": "piso" },
       { "label": "Casa", "value": "casa" }
     ],
+    "ramas": {
+      "estudio": "p23_amueblado"
+    },
     "siguiente": "p22_habitaciones"
   },
   {
@@ -420,6 +488,7 @@
     "tipo": "botones",
     "campo": "imprescindibles",
     "multiselect": true,
+    "exclusivaValue": "no",
     "texto": "¿Hay algo que sea imprescindible para la vivienda?",
     "opciones": [
       { "label": "Ascensor", "value": "ascensor" },
@@ -435,6 +504,7 @@
     "tipo": "botones",
     "campo": "comodidades",
     "multiselect": true,
+    "exclusivaValue": "ninguna",
     "texto": "¿Hay alguna comodidad que sea imprescindible para tu día a día?",
     "opciones": [
       { "label": "Cerca del transporte público", "value": "transporte" },
@@ -483,10 +553,11 @@
     "campo": "comoNosConociste",
     "texto": "Una última, muy rápida, que nos ayuda a mejorar: ¿cómo nos conociste?",
     "opciones": [
-      { "label": "Instagram / TikTok", "value": "redes-sociales" },
-      { "label": "Recomendación", "value": "recomendacion" },
-      { "label": "Google", "value": "google" },
+      { "label": "Instagram", "value": "instagram" },
       { "label": "Facebook", "value": "facebook" },
+      { "label": "TikTok", "value": "tiktok" },
+      { "label": "Google", "value": "google" },
+      { "label": "Recomendación", "value": "recomendacion" },
       { "label": "Otro", "value": "otro" }
     ],
     "accion": "guardar_lead_completo",

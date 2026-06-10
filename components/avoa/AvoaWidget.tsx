@@ -522,6 +522,7 @@ export function AvoaWidget() {
           cargando={cargando}
           opciones={esPasoBotones ? pasoActual.opciones : undefined}
           multiselect={pasoActual.multiselect}
+          exclusivaValue={pasoActual.exclusivaValue}
           deshabilitadoBotones={cargando}
           onSeleccion={onOpcionSeleccionada}
           onEditarRespuesta={iniciarEdicion}

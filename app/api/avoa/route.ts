@@ -73,39 +73,50 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // Disparar guardado en Airtable según la acción del paso que se acaba de procesar
-  if (paso.accion === 'guardar_nivel1' || paso.accion === 'guardar_lead_completo' || paso.accion === 'guardar_lead_parcial') {
-    // No bloqueamos la respuesta al cliente — guardamos en background (fire and forget)
+  // Guardado en Airtable según la acción del paso que se acaba de procesar.
+  // nivel1 es blocking para capturar el record ID y devolverlo al cliente.
+  // parcial/completo son fire-and-forget; usan el record ID ya almacenado para hacer PATCH.
+  let sesionParaDevolver = sesionActualizada
+
+  if (paso.accion === 'guardar_nivel1') {
+    try {
+      const recordId = await guardarEnAirtable(sesionActualizada)
+      sesionParaDevolver = { ...sesionActualizada, airtableRecordId: recordId }
+    } catch (err) {
+      console.error('[avoa] Error al guardar nivel1:', (err as Error).message)
+      // Sin record ID: el guardado final hará POST como fallback, no se pierde el lead
+    }
+  } else if (paso.accion === 'guardar_lead_completo' || paso.accion === 'guardar_lead_parcial') {
     guardarEnAirtable(sesionActualizada).catch((err) => {
-      // Solo log interno, nunca datos personales
       console.error('[avoa] Error al guardar lead:', (err as Error).message)
     })
   }
 
   return NextResponse.json({
-    sesionActualizada,
+    sesionActualizada: sesionParaDevolver,
     siguientePaso,
   })
 }
 
 /**
  * Mapea las respuestas de la sesión al tipo LeadData y llama a saveLead.
- * Los campos opcionales que no se hayan completado se omiten.
+ * Pasa sesion.airtableRecordId a saveLead: si existe hace PATCH, si no hace POST.
+ * Devuelve el record ID resultante (nuevo en POST, el mismo en PATCH).
  */
-async function guardarEnAirtable(sesion: AvoaSession): Promise<void> {
+async function guardarEnAirtable(sesion: AvoaSession): Promise<string> {
   const r = sesion.respuestas
 
-  // Construir payload con los campos disponibles
-  // Los campos obligatorios en LeadData pueden estar vacíos si el usuario
-  // abandonó antes de completarlos; usamos defaults seguros.
   const lead: Partial<LeadData> & Pick<LeadData, 'nombreCompleto' | 'email' | 'consentimientoRGPD'> = {
     nombreCompleto: String(r['nombreCompleto'] ?? ''),
     email: String(r['email'] ?? ''),
     telefono: String(r['telefono'] ?? ''),
     paisResidencia: String(r['paisResidencia'] ?? ''),
-    personas: String(r['personas'] ?? ''),
+    adultos: r['adultos'] as LeadData['adultos'] ?? undefined,
+    ninos: r['ninos'] as LeadData['ninos'] ?? undefined,
+    adolescentes: r['adolescentes'] as LeadData['adolescentes'] ?? undefined,
     mascotas: (r['mascotas'] as 'si' | 'no') ?? 'no',
-    detalleMascotas: r['detalleMascotas'] ? String(r['detalleMascotas']) : undefined,
+    mascotaTipo: r['mascotaTipo'] as LeadData['mascotaTipo'] ?? undefined,
+    mascotaPeso: r['mascotaPeso'] as LeadData['mascotaPeso'] ?? undefined,
     documentacion: (r['documentacion'] as LeadData['documentacion']) ?? 'turista',
     situacionLaboral: (r['situacionLaboral'] as LeadData['situacionLaboral']) ?? 'busca-empleo',
     ingresosMensuales: String(r['ingresosMensuales'] ?? ''),
@@ -115,8 +126,6 @@ async function guardarEnAirtable(sesion: AvoaSession): Promise<void> {
     presupuestoMensual: (r['presupuestoMensual'] as LeadData['presupuestoMensual']) ?? 'menos-700',
     habitacionesMinimas: (r['habitacionesMinimas'] as LeadData['habitacionesMinimas']) ?? '1',
     amueblado: (r['amueblado'] as LeadData['amueblado']) ?? 'indiferente',
-    // imprescindibles: características físicas del inmueble (ascensor/garaje/calefaccion/terraza/no)
-    // El formulario web captura estacionamiento por separado; Avoa usa imprescindibles (multiselect)
     ...(Array.isArray(r['imprescindibles']) && (r['imprescindibles'] as string[]).length > 0
       ? { imprescindibles: r['imprescindibles'] as LeadData['imprescindibles'] }
       : {}),
@@ -124,12 +133,11 @@ async function guardarEnAirtable(sesion: AvoaSession): Promise<void> {
     necesidadesEspeciales: r['necesidadesEspeciales'] ? String(r['necesidadesEspeciales']) : undefined,
     profesion: r['profesion'] ? String(r['profesion']) : undefined,
     fechaLlegada: String(r['fechaLlegada'] ?? ''),
-    // inicioContrato: no se pregunta en el cuestionario Avoa → se omite (campo opcional)
     modalidad: (r['modalidad'] as LeadData['modalidad']) ?? 'ya-estando',
     comoNosConociste: r['comoNosConociste'] as LeadData['comoNosConociste'] ?? undefined,
     comprendeServicio: true,
     consentimientoRGPD: true,
   }
 
-  await saveLead(lead as LeadData)
+  return saveLead(lead as LeadData, sesion.airtableRecordId)
 }

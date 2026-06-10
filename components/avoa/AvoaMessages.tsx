@@ -11,7 +11,7 @@
  * no en la barra inferior.
  */
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useMemo } from 'react'
 import { AvoaButtons } from './AvoaButtons'
 import type { Opcion } from '@/lib/avoa/flowEngine'
 
@@ -31,6 +31,7 @@ type Props = {
   /** Opciones del paso actual — presentes solo cuando el paso es tipo "botones" */
   opciones?: Opcion[]
   multiselect?: boolean
+  exclusivaValue?: string
   deshabilitadoBotones?: boolean
   onSeleccion?: (valor: string | string[]) => void
   /** Callback para editar una respuesta anterior. Si no se provee, no aparece el botón. */
@@ -65,16 +66,31 @@ export function AvoaMessages({
   cargando,
   opciones,
   multiselect,
+  exclusivaValue,
   deshabilitadoBotones,
   onSeleccion,
   onEditarRespuesta,
   editarDeshabilitado,
 }: Props) {
+  const containerRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const lastAvoaMsgRef = useRef<HTMLDivElement>(null)
 
-  // Auto-scroll al agregar mensajes o cuando aparecen los botones (cargando → false)
+  const lastAvoaIdx = useMemo(
+    () => mensajes.reduce<number>((acc, m, i) => (m.de === 'avoa' ? i : acc), -1),
+    [mensajes],
+  )
+
+  // Auto-scroll:
+  // - cargando: scroll al fondo para mostrar el indicador de escritura
+  // - nuevo mensaje Avoa: scroll al INICIO del último mensaje para evitar que
+  //   textos largos queden cortados por arriba (era el bug con la 2ª pregunta)
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (cargando) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      lastAvoaMsgRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
   }, [mensajes, cargando])
 
   const mostrarBotones =
@@ -82,15 +98,17 @@ export function AvoaMessages({
 
   return (
     <div
+      ref={containerRef}
       className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3"
       role="log"
       aria-live="polite"
       aria-label="Conversación con Avoa"
       style={{ backgroundColor: 'var(--color-niebla)' }}
     >
-      {mensajes.map((msg) => (
+      {mensajes.map((msg, i) => (
         <div
           key={msg.id}
+          ref={i === lastAvoaIdx ? lastAvoaMsgRef : undefined}
           className={`flex items-end gap-2 ${msg.de === 'usuario' ? 'flex-row-reverse' : 'flex-row'}`}
         >
           {/* Avatar de Avoa — cuadrado redondeado con sparkles */}
@@ -209,6 +227,7 @@ export function AvoaMessages({
             inline
             opciones={opciones!}
             multiselect={multiselect}
+            exclusivaValue={exclusivaValue}
             deshabilitado={deshabilitadoBotones}
             onSeleccion={onSeleccion!}
           />

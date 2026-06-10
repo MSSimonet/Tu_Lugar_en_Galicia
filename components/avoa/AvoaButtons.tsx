@@ -17,20 +17,32 @@ import type { Opcion } from '@/lib/avoa/flowEngine'
 type Props = {
   opciones: Opcion[]
   multiselect?: boolean
+  /** Value de la opción que actúa como excluyente ("ninguna"). Si está seleccionada,
+   *  deshabilita las demás; si hay otra seleccionada, deshabilita esta. */
+  exclusivaValue?: string
   deshabilitado?: boolean
   /** Cuando true, elimina el padding px-4 pb-4 del contenedor (para uso inline en el chat) */
   inline?: boolean
   onSeleccion: (valor: string | string[]) => void
 }
 
-export function AvoaButtons({ opciones, multiselect, deshabilitado, inline, onSeleccion }: Props) {
+export function AvoaButtons({ opciones, multiselect, exclusivaValue, deshabilitado, inline, onSeleccion }: Props) {
   const [seleccionados, setSeleccionados] = useState<string[]>([])
 
   function toggleOpcion(value: string) {
     if (!multiselect) return
-    setSeleccionados((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
-    )
+    if (exclusivaValue && value === exclusivaValue) {
+      // Clic en la opción excluyente: seleccionarla sola (o deseleccionarla si ya estaba)
+      setSeleccionados((prev) => (prev.includes(value) ? [] : [value]))
+    } else {
+      // Clic en opción normal: alternar y quitar la excluyente si estaba activa
+      setSeleccionados((prev) => {
+        const sinExclusiva = exclusivaValue ? prev.filter((v) => v !== exclusivaValue) : prev
+        return sinExclusiva.includes(value)
+          ? sinExclusiva.filter((v) => v !== value)
+          : [...sinExclusiva, value]
+      })
+    }
   }
 
   function confirmarMultiselect() {
@@ -40,6 +52,9 @@ export function AvoaButtons({ opciones, multiselect, deshabilitado, inline, onSe
   }
 
   if (multiselect) {
+    const exclusivaActiva = !!exclusivaValue && seleccionados.includes(exclusivaValue)
+    const hayNoExclusiva = !!exclusivaValue && seleccionados.some((v) => v !== exclusivaValue)
+
     return (
       <div className={inline ? 'space-y-2' : 'px-4 pb-4 space-y-2'}>
         <p
@@ -51,11 +66,15 @@ export function AvoaButtons({ opciones, multiselect, deshabilitado, inline, onSe
         <div className="flex flex-col gap-2">
           {opciones.map((op) => {
             const activo = seleccionados.includes(op.value)
+            const bloqueado =
+              deshabilitado ||
+              (exclusivaActiva && op.value !== exclusivaValue) ||
+              (hayNoExclusiva && op.value === exclusivaValue)
             return (
               <button
                 key={op.value}
                 type="button"
-                disabled={deshabilitado}
+                disabled={bloqueado}
                 onClick={() => toggleOpcion(op.value)}
                 aria-pressed={activo}
                 className="
@@ -77,13 +96,13 @@ export function AvoaButtons({ opciones, multiselect, deshabilitado, inline, onSe
                       }
                 }
                 onMouseEnter={(e) => {
-                  if (!activo && !deshabilitado) {
+                  if (!activo && !bloqueado) {
                     e.currentTarget.style.backgroundColor = 'var(--color-arena)'
                     e.currentTarget.style.color = 'var(--color-laton-oscuro)'
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!activo && !deshabilitado) {
+                  if (!activo && !bloqueado) {
                     e.currentTarget.style.backgroundColor = '#FFFFFF'
                     e.currentTarget.style.color = 'var(--color-granito)'
                   }

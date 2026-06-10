@@ -23,6 +23,8 @@ export type AvoaSession = {
   etiqueta?: AvoaEtiqueta
   /** true cuando se llega a un paso con accion:"fin" */
   completado: boolean
+  /** Record ID de Airtable creado en guardar_nivel1 — usado para PATCH en guardados posteriores */
+  airtableRecordId?: string
 }
 
 /** Crea una sesión inicial antes de mostrar el primer paso */

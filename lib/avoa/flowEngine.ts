@@ -24,6 +24,7 @@ export type Paso = {
   texto: string
   opciones?: Opcion[]
   multiselect?: boolean
+  exclusivaValue?: string
   validacion?: 'email' | 'telefono' | 'texto'
   siguiente?: string
   ramas?: Record<string, string>
@@ -131,6 +132,12 @@ function resolverSiguiente(
   respuesta: string | string[],
 ): string {
   const valorSimple = Array.isArray(respuesta) ? respuesta[0] : respuesta
+
+  // p7b_tipo — mostrar peso solo si hay perro en la selección
+  if (paso.id === 'p7b_tipo') {
+    const tipos = Array.isArray(respuesta) ? respuesta : [respuesta]
+    return tipos.includes('perro') ? 'p7b_peso' : 'p8_documentacion'
+  }
 
   // Paso virtual: p11_check — lógica post-garantías
   if (paso.id === 'p11_garantias') {
