@@ -1,286 +1,794 @@
-# Avoa — Flujo Conversacional
-### Tu Lugar En Galicia · Servicio de búsqueda de vivienda y relocation
+# Avoa — Flujo conversacional (fuente de verdad)
 
-**Etiquetas de paso (para el JSON del flujo):** `[botones]`, `[input]`, `[llm]`. La IA (`[llm]`) solo se activa en texto libre; el resto se resuelve con botones/validación (0 tokens).
+> **Este documento refleja el `flow.json` y `flowEngine.ts` actuales.**
+> Actualizar cada vez que se modifique el flujo. En caso de conflicto, el código manda.
 
 ---
 
-## Bienvenida, naturaleza del servicio y permiso `[botones]`
+## Arquitectura general
 
-> "¡Hola! Qué alegría saludarte. Soy **Avoa**, del equipo de **Tu Lugar En Galicia**. Sé que buscar hogar y mudarse aquí es un paso enorme, lleno de ilusión y también de dudas, y mi trabajo es acompañarte para que llegues con seguridad y tu nuevo hogar te esté esperando.
+| Elemento | Detalle |
+|---|---|
+| Motor | `lib/avoa/flowEngine.ts` — puro, sin side effects |
+| Flujo | `lib/avoa/flow.json` — array de pasos en JSON |
+| API | `app/api/avoa/route.ts` — procesa respuesta, decide guardado |
+| Widget | `components/avoa/AvoaWidget.tsx` — gestiona estado y mensajes |
+| CRM | Airtable — tabla `Leads` |
+
+**Tipos de paso:**
+- `botones` — opciones fijas (puede ser multiselect, puede tener excluyente)
+- `input` — texto libre con validación por regex (`texto`, `email`, `telefono`)
+- `llm` — texto libre; en Etapa 1 se procesa igual que `input` (0 llamadas a IA)
+
+**Pasos virtuales:** pasos con `texto: ""` y `opciones: []`. El widget los detecta y llama a `avanzarPasoVirtual` automáticamente. El motor resuelve su transición dentro del `flowEngine` sin mostrarlos al usuario.
+
+---
+
+## Guardado en Airtable
+
+| Evento | Acción | Cuándo | Qué guarda |
+|---|---|---|---|
+| `guardar_nivel1` | **POST** — crea fila nueva | Al procesar `p15_telefono` | `nombreCompleto`, `email`, `telefono` |
+| `guardar_lead_parcial` | **PATCH** — actualiza la misma fila | Al procesar `p11_lead_preparacion` | Todo lo capturado hasta ese punto (sin campos de nivel 2) |
+| `guardar_lead_completo` | **PATCH** — actualiza la misma fila | Al procesar `atribucion` | Todos los campos del flujo completo |
+
+- `guardar_nivel1` es **bloqueante** (await): la respuesta de Airtable devuelve el `recordId` que se almacena en la sesión.
+- Los dos PATCH posteriores usan ese `recordId` para actualizar la misma fila.
+- Si `guardar_nivel1` falla (red, etc.), el PATCH final hace **POST** como fallback — el lead no se pierde.
+- `comprendeServicio: true` y `consentimientoRGPD: true` se añaden automáticamente en el mapper de `route.ts`; no hay paso que los pregunte.
+
+---
+
+## Flujo completo — paso a paso
+
+### Bienvenida y consentimiento
+
+---
+
+#### `bienvenida` · `botones` · sin campo Airtable
+
+> "¡Hola! Soy Avoa, tu asistente virtual del equipo de Tu Lugar en Galicia.
 >
-> Antes de empezar, quiero ser transparente contigo: **no somos una inmobiliaria con pisos propios**. Somos tu **Personal Shopper inmobiliario**: buscamos, filtramos y visitamos las mejores opciones del mercado trabajando **solo para ti** y defendiendo tus intereses, incluso a distancia. Es un servicio profesional con honorarios propios, aparte del alquiler y de la fianza —te lo explicamos todo con claridad más adelante.
+> En unos minutos te hago unas preguntas para entender tu situación y saber si podemos ayudarte a encontrar vivienda antes de llegar. Nada de formularios aburridos: esto es una conversación.
 >
-> Para ver cómo podemos ayudarte y cuidar tu tiempo, ¿te parece bien si te hago unas preguntas breves sobre tu situación?"
+> ¿Empezamos?"
 
-`[Sí, empecemos]`
-
----
-
-## Consentimiento de datos (RGPD) `[botones]`
-
-> "¡Genial! Antes de empezar: para preparar tu plan necesitaremos tu nombre y datos de contacto. Al continuar, nos autorizas a tratarlos según nuestra Política de Privacidad, y podrás darte de baja cuando quieras."
-
-`[Acepto y seguimos]`  `[Ver política de privacidad]`
-
-*(Insertar aquí el enlace real a la política. Solo tras `Acepto y seguimos` se piden datos.)*
+| Label | Value | Siguiente |
+|---|---|---|
+| Sí, empecemos | `empecemos` | → `rgpd` |
 
 ---
 
-## NIVEL 1 — Viabilidad (todos)
+#### `rgpd` · `botones` · sin campo Airtable
 
-> *Objetivo del Nivel 1: confirmar si podemos ayudar a esta persona y si encaja con nuestro servicio. Es el filtro comercial.*
+> "Antes de continuar, quiero ser transparente contigo desde el principio: para poder ayudarte, voy a guardar las respuestas que me des (como tu nombre, tu contacto y lo que me cuentes de tu situación). Las usamos solo para preparar tu plan y para que el equipo de Tu Lugar en Galicia pueda contactarte. No se las damos a nadie más, y puedes pedirnos ver o borrar tus datos cuando quieras. ¿Te parece bien?"
 
-**P1. Nombre** `[input]`
+| Label | Value | Siguiente |
+|---|---|---|
+| Sí, me parece bien | `acepto` | → `p1_nombre` |
+| Ver más detalles | `ver_politica` | → `rgpd_politica` |
+
+---
+
+#### `rgpd_politica` · `botones` · sin campo Airtable
+
+> "Puedes leer nuestra política en tulugarengalicia.com/privacidad. Cuando quieras, seguimos."
+
+| Label | Value | Siguiente |
+|---|---|---|
+| Volver y continuar | `volver` | → `p1_nombre` |
+
+---
+
+### Nivel 1 — Datos básicos de contacto
+
+---
+
+#### `p1_nombre` · `input` · Airtable: `nombreCompleto`
+
 > "Para empezar, ¿cómo te llamas? (nombre y apellido)"
 
-**P2. Email** `[input]`
-> "Encantada, **[Nombre]**. ¿Me dejas un email que uses a menudo? Te prometemos no enviarte nada que no hayas solicitado."
+- Validación: `texto`
+- Efecto especial: extrae el primer token como `sesion.nombre` para personalizar `{{nombre}}` en pasos siguientes
+- → `p2_email`
 
-**P3. Origen** `[botones]` *(+`[input]` si viene de fuera)*
-> "Galicia es una tierra preciosa para recibirte, **[Nombre]**. Para darte la guía adecuada, ¿ya vives en España o estás planificando tu llegada desde otro país?"
+---
 
-`[Ya vivo en España]`  `[Vengo de fuera]`
+#### `p2_email` · `input` · Airtable: `email`
 
-- Si **Vengo de fuera** → "¿Desde qué país nos escribes?" `[input]`
-  - *(Si responde un país con fuerte vínculo gallego, p. ej. Argentina: "¡Qué lindo país! Casi cada familia gallega tiene raíces allí.")*
+> "Encantada, {{nombre}}. ¿Me dejas un email que uses a menudo?"
 
-*(Esta respuesta marca la RAMA del Nivel 2: España o Fuera.)*
+- Validación: `email`
+- → `p15_telefono`
 
-**P4. Plazo / horizonte temporal** `[botones]` — *(pregunta filtro)*
+---
+
+#### `p15_telefono` · `input` · Airtable: `telefono` · **`guardar_nivel1` ← PRIMER GUARDADO**
+
+> "Perfecto, {{nombre}}. ¿Me dejas también un teléfono de contacto con el prefijo de tu país?"
+
+- Validación: `telefono`
+- Al procesar esta respuesta: **POST a Airtable** (crea fila con `nombreCompleto`, `email`, `telefono`). Guarda `airtableRecordId` en sesión.
+- → `p3_origen`
+
+---
+
+### Nivel 1 — Diagnóstico (todos los usuarios)
+
+---
+
+#### `p3_origen` · `botones` · Airtable: `paisResidencia` (guarda el value)
+
+> "Para darte la guía adecuada, ¿ya vives en España, o estás planificando tu llegada desde otro país?"
+
+| Label | Value | Siguiente |
+|---|---|---|
+| Ya vivo en España | `en_espana` | → `p4_plazo` |
+| Vengo de fuera | `fuera` | → `p3b_pais` |
+
+- Efecto especial: establece `sesion.origenResidencia` (`en_espana` o `fuera`) para la rama del Nivel 2.
+
+---
+
+#### `p3b_pais` · `input` · Airtable: `paisResidencia` *(solo si eligió "Vengo de fuera")*
+
+> "¿Desde qué país nos escribes?"
+
+- Validación: `texto`
+- Sobreescribe `paisResidencia` con el texto del país
+- → `p4_plazo`
+
+---
+
+#### `p4_plazo` · `botones` · Airtable: `fechaLlegada`
+
 > "¿En qué plazo necesitas tener resuelta tu vivienda en Galicia?"
 
-`[En menos de 1 mes]` *(plazo muy ajustado; se gestiona como urgencia)*
-`[En 1 a 3 meses]`
-`[En 3 a 6 meses]`
-`[En más de 6 meses]` *(aún no es accionable; etiqueta interna "seguimiento futuro")*
-`[Aún no tengo fecha]`
+| Label | Value |
+|---|---|
+| En menos de 1 mes | `menos-1-mes` |
+| En 1 a 3 meses | `1-3-meses` |
+| En 3 a 6 meses | `3-6-meses` |
+| En más de 6 meses | `mas-6-meses` |
+| Aún no tengo fecha | `sin-fecha` |
 
-> *(Ventana accionable ideal: 1 a 6 meses. "Menos de 1 mes" y "más de 6 meses" / "sin fecha" se gestionan con un mensaje y etiqueta de seguimiento, no se descartan.)*
+- → `p5_ciudad`
 
-**P5. Zona de destino** `[botones]`
-> "¿A qué ciudad de Galicia te diriges? Nuestro foco de búsqueda principal es Vigo y A Coruña."
+---
 
-`[Vigo]`  `[A Coruña]`  `[Ambas / Indiferente]`  `[Otra zona de Galicia]`
+#### `p5_ciudad` · `botones` · Airtable: `ciudadDestino`
 
-**P6. Composición del hogar** `[input]` `[llm]`
-> "¿Quiénes formarían parte de esta mudanza contigo? Cuéntame cuántos adultos y, si vienen niños, sus edades."
+> "¿A qué ciudad de Galicia te diriges? Nuestro foco principal es Vigo y A Coruña."
 
-**P7. Mascotas** `[botones]` *(+`[llm]` en detalles)*
-> "Te pregunto por las mascotas porque aquí marca mucho la búsqueda: cerca del 80% de los propietarios no las admite, así que necesitamos el dato real para filtrar bien por ti. ¿Viajas con alguna mascota?"
+| Label | Value |
+|---|---|
+| Vigo | `vigo` |
+| A Coruña | `a-coruna` |
+| Santiago | `santiago` |
+| Pontevedra | `pontevedra` |
+| Lugo | `lugo` |
+| Indiferente | `indiferente` |
 
-`[No]`  `[Sí]` → *(¿cuántas, de qué especie, raza y peso aproximado de cada una?)*
+- → `p6a_adultos`
 
-> *(Micro-acuse de avance, antes del bloque de viabilidad):*
-> "Vas muy bien, **[Nombre]**. Con esto ya tengo clara la imagen de tu hogar. Ahora unas pocas sobre la parte práctica —papeles y números—, que es justo donde nuestro equipo más te defiende ante los propietarios."
+---
 
-**P8. Situación legal** `[botones]`
+#### `p6a_adultos` · `botones` · Airtable: `adultos`
+
+> "¿Cuántos adultos se mudan? (incluyéndote)"
+
+| Label | Value |
+|---|---|
+| 1 | `1` |
+| 2 | `2` |
+| 3 | `3` |
+| 4 o más | `4+` |
+
+- → `p6b_menores`
+
+---
+
+#### `p6b_menores` · `botones` · **sin campo Airtable** (solo enrutamiento)
+
+> "¿Viajan menores de edad contigo?"
+
+| Label | Value | Siguiente |
+|---|---|---|
+| No | `no` | → `p7_mascotas` |
+| Sí | `si` | → `p6c_ninos` |
+
+---
+
+#### `p6c_ninos` · `botones` · Airtable: `ninos` *(solo si hay menores)*
+
+> "¿Cuántos niños de 0 a 12 años?"
+
+| Label | Value |
+|---|---|
+| 0 | `0` |
+| 1 | `1` |
+| 2 | `2` |
+| 3 o más | `3+` |
+
+- → `p6d_adolescentes`
+
+---
+
+#### `p6d_adolescentes` · `botones` · Airtable: `adolescentes` *(solo si hay menores)*
+
+> "¿Y adolescentes de 13 a 17 años?"
+
+| Label | Value |
+|---|---|
+| 0 | `0` |
+| 1 | `1` |
+| 2 | `2` |
+| 3 o más | `3+` |
+
+- → `p7_mascotas`
+
+---
+
+#### `p7_mascotas` · `botones` · Airtable: `mascotas`
+
+> "Te pregunto por las mascotas porque cerca del 80% de los propietarios no las admite. ¿Viajas con alguna mascota?"
+
+| Label | Value | Siguiente |
+|---|---|---|
+| No | `no` | → `p8_documentacion` |
+| Sí | `si` | → `p7b_tipo` |
+
+---
+
+#### `p7b_tipo` · `botones` · **multiselect** · Airtable: `mascotaTipo` *(solo si hay mascotas)*
+
+> "¿Qué tipo de mascota tienes? Puedes marcar más de una."
+
+| Label | Value |
+|---|---|
+| Perro | `perro` |
+| Gato | `gato` |
+| Otro | `otro` |
+
+- Condicional en `flowEngine`: si la selección **incluye `perro`** → `p7b_peso`; si no → `p8_documentacion`
+
+---
+
+#### `p7b_peso` · `botones` · Airtable: `mascotaPeso` *(solo si mascotaTipo incluye "perro")*
+
+> "¿Cuánto pesa aproximadamente tu perro?"
+
+| Label | Value |
+|---|---|
+| Menos de 5 kg | `0-5 kg` |
+| Entre 5 y 10 kg | `5-10 kg` |
+| Más de 10 kg | `+10 kg` |
+
+- → `p8_documentacion`
+
+---
+
+#### `p8_documentacion` · `botones` · Airtable: `documentacion`
+
 > "¿Cuál es tu situación para residir legalmente en España?"
 
-`[Soy español/a (tengo pasaporte español)]` *(vía DNI; no necesita NIE/TIE ni visado)*
-`[Soy de otro país de la UE / EEE / Suiza]` *(vía CUE)*
-`[Visado / TIE / NIE ya aprobado]`
-`[En trámite de visado]`
-`[Entraré como turista]` *(nota interna: limita opciones con algunos propietarios; se analiza el caso)*
+| Label | Value |
+|---|---|
+| Soy español/a (pasaporte español) | `espanol` |
+| Soy de otro país de la UE / EEE / Suiza | `ue-otro` |
+| Residencia / TIE / NIE ya aprobado | `residencia-aprobada` |
+| En trámite de visado o residencia | `en-tramite` |
+| Tengo o estoy tramitando la nacionalidad española | `nacionalidad-en-tramite` |
+| Entraré como turista | `turista` |
 
-**P9. Situación laboral** `[botones]`
-> "¿Cómo será tu situación laboral al llegar (o ya estando) en España?"
+- → `p9_laboral`
 
-`[Cuenta ajena con nómina en España]`
-`[Autónomo registrado en España]`
-`[Teletrabajo para empresa extranjera]`
-`[Rentista / fondos propios]`
-`[Estudiante]`
-`[Otra / por el momento sin empleo]`
+---
 
-**P10. Ingresos del hogar** `[botones]`
-> "Para defender bien tu candidatura ante los propietarios, me ayuda conocer de forma aproximada los ingresos mensuales de tu hogar. ¿En qué rango te ubicas?"
+#### `p9_laboral` · `botones` · Airtable: `situacionLaboral`
 
-`[Menos de 1.500 €]`
-`[1.500 – 2.500 €]`
-`[2.500 – 4.000 €]`
-`[Más de 4.000 €]`
-`[No tengo ingresos en España aún]`
+> "¿Cuál es o será tu situación laboral en España?"
 
-- Si elige un **rango en euros** → continúa a P11.
-- Si elige **No tengo ingresos en España aún** → mostrar este mensaje y continuar a P11:
-  > "Sin problema, **[Nombre]**: muchas familias llegan así y la solvencia se resuelve con otro tipo de respaldo (ahorros, aval o seguro). Lo vemos justo en la siguiente pregunta."
-  → continúa a **P11 (Garantías)**, donde se evalúan ahorros, aval y seguro. *(No se descarta aquí: la viabilidad se decide en P11 según el respaldo disponible.)*
+| Label | Value |
+|---|---|
+| Cuenta ajena con nómina en España | `cuenta-ajena` |
+| Autónomo registrado en España | `autonomo` |
+| Teletrabajo para empresa extranjera | `teletrabajo-extranjero` |
+| Rentista / fondos propios | `rentista` |
+| Jubilado/a | `jubilado` |
+| Estudiante | `estudiante` |
+| Otra / por el momento sin empleo | `busca-empleo` |
 
-**P11. Garantías** `[botones]` *(multi)*
-> "En España es muy habitual pedir garantías extra a perfiles internacionales, para suplir la falta de historial laboral aquí. No hace falta tenerlas todas; marca las que sí podrías asumir si un propietario las pidiera:"
+- → `p10_ingresos`
 
-`[Adelantar varios meses de alquiler (6–12)]`
-`[Aval bancario o avalista con ingresos en España]`
-`[Contratar un seguro de impago por mi cuenta]`
-`[Ninguna de las anteriores]`
+---
 
-- Si marca **solo "Ninguna"** *(y además en P10 indicó "Menos de 1.500 €" o "No tengo ingresos en España aún")*:
-  > "Gracias por la sinceridad, **[Nombre]**. Hoy el mercado en Galicia pide bastante respaldo para alquilar, así que conviene preparar ese punto antes de iniciar la búsqueda. Podemos enviarte recursos para irlo armando y, en cuanto lo tengas encaminado, retomamos encantados tu plan."
-  >
-  > `[Sí, gracias]` → etiqueta interna *"lead en preparación"*.
+#### `p10_ingresos` · `botones` · Airtable: `ingresosMensuales`
 
-*(Si marca "Ninguna" pero en P10 declaró ingresos suficientes, no se activa la etiqueta: continúa el flujo con normalidad.)*
+> "Para orientarte mejor y proponerte opciones realistas para tu búsqueda, ¿en qué rango de ingresos mensuales del hogar te ubicas?"
 
-**P12. Presupuesto** `[botones]`
-> "¿Cuál es tu presupuesto **mensual máximo** para el alquiler? Como referencia honesta: un piso familiar adecuado en estas ciudades suele partir de 700–800 €, y los suministros (agua, luz, gas) van aparte."
+| Label | Value | Siguiente |
+|---|---|---|
+| Menos de 1.500 € | `menos-1500` | → `p11_garantias` |
+| 1.500 – 2.500 € | `1500-2500` | → `p11_garantias` |
+| 2.500 – 4.000 € | `2500-4000` | → `p11_garantias` |
+| Más de 4.000 € | `mas-4000` | → `p11_garantias` |
+| No tengo ingresos en España aún | `sin-ingresos` | → `p10_sin_ingresos_msg` |
 
-`[Menos de 700 €]` *(opciones muy limitadas para familias)*
-`[700 – 900 €]`
-`[900 – 1.200 €]`
-`[Más de 1.200 €]`
+---
 
-**P13. Cuenta bancaria en España** `[botones]`
+#### `p10_sin_ingresos_msg` · `botones` · **sin campo Airtable** *(solo si eligió `sin-ingresos`)*
+
+> "Sin problema, {{nombre}}: muchas familias llegan así y la solvencia se resuelve con otro tipo de respaldo (ahorros, aval o seguro). Lo vemos en la siguiente pregunta."
+
+| Label | Value | Siguiente |
+|---|---|---|
+| Continuar | `continuar` | → `p11_garantias` |
+
+---
+
+#### `p11_garantias` · `botones` · **multiselect** · exclusivo: `ninguna` · Airtable: `garantias`
+
+> "En España es habitual pedir garantías extra a perfiles internacionales. Marca las que podrías asumir:"
+
+| Label | Value |
+|---|---|
+| Adelantar varios meses de alquiler (6–12) | `adelanto-6-12` |
+| Aval bancario o avalista con ingresos en España | `aval` |
+| Contratar un seguro de impago | `seguro-impago` |
+| Ninguna de las anteriores *(excluyente)* | `ninguna` |
+
+**Lógica de descalificación** (resuelta en `flowEngine`):
+
+| Condición | Siguiente |
+|---|---|
+| `garantias` incluye `ninguna` **Y** `ingresosMensuales` es `menos-1500` o `sin-ingresos` | → `p11_lead_preparacion` |
+| Cualquier otra combinación | → `p12_presupuesto` |
+
+> *Nota técnica:* El flow.json define `"siguiente": "p11_check"` pero ese paso es **virtual** (texto vacío, sin opciones). El motor `flowEngine.ts` lo cortocircuita: la transición real se resuelve directamente en `procesarRespuesta` al procesar `p11_garantias`, sin pasar por `p11_check`.
+
+---
+
+#### `p11_lead_preparacion` · `botones` · etiqueta: `lead-en-preparacion` · **`guardar_lead_parcial`** *(rama de descalificación)*
+
+> "Gracias por la sinceridad, {{nombre}}. Hoy el mercado en Galicia pide bastante respaldo para alquilar. Podemos enviarte recursos para irlo armando y, en cuanto lo tengas encaminado, retomamos encantados tu plan."
+
+| Label | Value | Siguiente |
+|---|---|---|
+| Sí, gracias | `gracias` | → `despedida_preparacion` |
+
+- **PATCH a Airtable** con todo lo capturado hasta aquí.
+- Etiqueta CRM: `lead-en-preparacion`
+
+---
+
+#### `despedida_preparacion` · `botones` · **`fin`** *(rama de descalificación)*
+
+> "¡Un saludo, {{nombre}}! Cuando estés listo/a, aquí estaremos."
+
+| Label | Value |
+|---|---|
+| Cerrar | `cerrar` |
+
+- Cierra el widget. Fin del flujo.
+
+---
+
+#### `p12_presupuesto` · `botones` · Airtable: `presupuestoMensual`
+
+> "¿Cuál es tu presupuesto mensual máximo para el alquiler? Como referencia: un piso familiar adecuado suele partir de 700–800 €, suministros aparte."
+
+| Label | Value |
+|---|---|
+| Menos de 700 € | `menos-700` |
+| 700 – 1.000 € | `700-1000` |
+| 1.000 – 1.400 € | `1000-1400` |
+| Más de 1.400 € | `mas-1400` |
+
+- → `p13_banco`
+
+---
+
+#### `p13_banco` · `botones` · **sin campo Airtable**
+
 > "¿Ya tienes cuenta bancaria operativa en España?"
 
-`[Sí]`  `[No]`
-
-**P14. Entendimiento del servicio** `[botones]`
-> "Una última importante para avanzar con total claridad, **[Nombre]**: ¿confirmas que entiendes que somos un servicio de consultoría y búsqueda personalizada de vivienda que trabaja en exclusiva para ti, con unos honorarios propios, aparte del alquiler y de la fianza?"
-
-`[Sí, lo entiendo perfectamente]`
-`[Me gustaría que me lo expliquen mejor]`
-
-- Si **Me gustaría que me lo expliquen mejor** → mostrar este texto fijo (no generado por IA):
-  > "Con gusto te lo explico, **[Nombre]**. Funcionamos como tu equipo de búsqueda de confianza: nos contratas para encontrar, filtrar y visitar por ti las mejores viviendas del mercado, y para negociar y defender tus intereses ante los propietarios, incluso si todavía estás fuera de España.
-  >
-  > Por eso tenemos honorarios propios, independientes del alquiler y de la fianza que pagarías de todos modos a cualquier arrendador. Ese pago cubre nuestro trabajo profesional buscando para ti; no es una comisión de intermediación inmobiliaria.
-  >
-  > ¿Qué ganas tú? Te ahorras semanas de búsqueda a distancia, evitas anuncios falsos y estafas habituales en el alquiler, llegas con un hogar ya resuelto y tienes a alguien que conoce el mercado gallego trabajando de tu lado.
-  >
-  > ¿Quieres que sigamos con las preguntas para preparar tu Plan Estratégico, o prefieres una videollamada con el equipo para verlo en detalle?"
-  >
-  > `[Continuar con las preguntas]`
-
-**P15. Teléfono** `[input]`
-> "Ya tengo lo esencial para saber cómo ayudarte, **[Nombre]**. Para que nuestro equipo analice tu viabilidad a fondo y te prepare un **Plan Estratégico** gratuito y a tu medida, ¿me dejas un teléfono de contacto (con el prefijo de tu país)? Así avanzamos a la siguiente etapa de este camino a Galicia."
+| Label | Value | Siguiente |
+|---|---|---|
+| Sí | `si` | → `p14_servicio` |
+| No | `no` | → `p14_servicio` |
 
 ---
 
-## Transición al Nivel 2 `[botones]`
+#### `p14_servicio` · `botones` · **sin campo Airtable**
 
-> "¡Estupendo! Ya tenemos tus datos. Si tienes un par de minutos más, con unas preguntas extra el equipo podrá afinar tu Plan Estratégico y el encargo de búsqueda con detalle. ¿Te animas a completarlo ahora, **[Nombre]**?"
+> "¿Entiendes que somos un servicio de consultoría y búsqueda personalizada, con honorarios propios, aparte del alquiler y la fianza?"
 
-`[Sí, continuemos]`  `[No, prefiero que me contacten]`
-
-- **No** → "Perfecto, **[Nombre]**. Si tu perfil encaja con lo que exige hoy el mercado, te contactaremos en un plazo máximo de 48 h hábiles para una videollamada inicial. ¡Mucho ánimo con este gran paso!" *(salta al Cierre.)*
-
----
-
-## NIVEL 2 — Encargo de búsqueda y Plan Estratégico (opcional)
-
-### Bloque A — Hogar y movilidad (todos)
-
-**P16. Necesidades especiales / accesibilidad** `[input]` `[llm]`
-> "¿Algún miembro del hogar tiene necesidades especiales o alguna discapacidad? Esto nos ayuda a buscar viviendas con las características adecuadas."
-
-**P17. Licencia de conducir** `[botones]`
-> "¿Tienes licencia de conducir? ¿De qué tipo?"
-`[Española]`  `[Europea]`  `[De mi país de origen]`  `[No tengo]`
-- Si **De mi país de origen** → "Existe la posibilidad de canjearla por una licencia española si tu país tiene convenio con España; te orientamos sobre los requisitos."
-- *(La licencia europea es válida para conducir en España.)*
+| Label | Value | Siguiente |
+|---|---|---|
+| Sí, lo entiendo perfectamente | `si` | → `transicion_nivel2` |
+| Me gustaría que me lo expliquen mejor | `explicar` | → `p14_explicacion` |
 
 ---
 
-### Bloque B · RAMA "Ya vive en España" *(según P3)*
+#### `p14_explicacion` · `botones` · **sin campo Airtable** *(solo si eligió "explicar")*
 
-**P18. Ciudad/provincia actual** `[input]`
+> "Claro, con gusto te explico. Somos una agencia de relocalización: nuestro trabajo es encontrar la vivienda adecuada para ti, gestionar la comunicación con propietarios, preparar tu candidatura y acompañarte en todo el proceso. Cobramos honorarios por ese servicio —separados del alquiler y la fianza—, igual que cualquier profesional. ¿Seguimos?"
+
+| Label | Value | Siguiente |
+|---|---|---|
+| Continuar con las preguntas | `continuar` | → `transicion_nivel2` |
+
+---
+
+#### `transicion_nivel2` · `botones` · **sin campo Airtable**
+
+> "¡Estupendo! Si tienes un par de minutos más, con unas preguntas extra el equipo podrá afinar tu Plan Estratégico. ¿Te animas?"
+
+| Label | Value | Siguiente |
+|---|---|---|
+| Sí, continuemos | `si` | → `p16_accesibilidad` (Nivel 2) |
+| No deseo continuar | `no` | → `despedida` |
+
+---
+
+### Nivel 2 — Perfil de búsqueda (opcional)
+
+---
+
+#### `p16_accesibilidad` · `botones` · Airtable: `necesidadesEspeciales`
+
+> "¿Algún miembro del hogar tiene necesidades especiales o alguna discapacidad? (Lo veremos en detalle más adelante.)"
+
+| Label | Value |
+|---|---|
+| No | `no` |
+| Sí | `si` |
+
+- → `p17_licencia`
+
+---
+
+#### `p17_licencia` · `botones` · **sin campo Airtable**
+
+> "¿Tienes licencia de conducir?"
+
+| Label | Value | Siguiente (resuelto en flowEngine) |
+|---|---|---|
+| Española | `espanola` | → `p18a_ciudad` (en España) / `p18b_tiempo` (fuera) |
+| Europea | `europea` | → `p18a_ciudad` (en España) / `p18b_tiempo` (fuera) |
+| De mi país de origen | `extranjera` | → `p17b_canje` |
+| No tengo | `no` | → `p18a_ciudad` (en España) / `p18b_tiempo` (fuera) |
+
+> *Nota técnica:* El flow.json apunta a `p18_check_origen` (paso virtual). El motor lo cortocircuita directamente al procesar `p17_licencia`: si `sesion.origenResidencia === 'en_espana'` → `p18a_ciudad`; si no → `p18b_tiempo`.
+
+---
+
+#### `p17b_canje` · `botones` · **sin campo Airtable** *(solo si eligió "extranjera")*
+
+> "Si tu país tiene convenio con España, puedes canjear tu licencia. Te orientamos sobre los requisitos."
+
+| Label | Value | Siguiente |
+|---|---|---|
+| Entendido, seguimos | `entendido` | → `p18a_ciudad` / `p18b_tiempo` (mismo cortocircuito) |
+
+---
+
+### Rama según origen de residencia (`sesion.origenResidencia`)
+
+---
+
+#### **Rama "ya vive en España"** (`origenResidencia === 'en_espana'`)
+
+##### `p18a_ciudad` · `input` · **sin campo Airtable**
+
 > "¿En qué ciudad o provincia vives actualmente?"
 
-**P19. Tiempo en España** `[botones]`
-`[Menos de 1 año]`  `[Entre 1 y 5 años]`  `[Más de 5 años]`
-
-**P20. Objetivo** `[botones]`
-> "¿Estás buscando vivienda en Galicia o ya tienes dónde vivir y buscas orientación para integrarte mejor?"
-`[Busco vivienda]` → continúa al Bloque D  ·  `[Ya tengo vivienda, quiero integrarme]` → salta al **Bloque F**
+- Validación: `texto`
+- → `p19a_tiempo`
 
 ---
 
-### Bloque C · RAMA "Viene de fuera" *(según P3; el país ya se capturó en P3)*
+##### `p19a_tiempo` · `botones` · **sin campo Airtable**
 
-**P18. Tiempo planificando la mudanza** `[botones]`
-`[Menos de 1 año]`  `[Entre 1 y 5 años]`  `[Más de 5 años]`
+> "¿Cuánto tiempo llevas viviendo en España?"
 
-**P19. Perfil de visado** `[botones]` *(solo si P8 = "En trámite" o "Turista")*
-> "¿Cuál será tu vía principal de estancia o tu fuente de sustento en España?"
-`[Teletrabajo para empresa de fuera]` *(Nómada Digital)*
-`[Rentas, inversiones o jubilación]` *(No Lucrativo)*
-`[Voy a emprender un negocio]` *(Emprendedor)*
-`[Voy a estudiar]` *(Estancia por Estudios)*
+| Label | Value |
+|---|---|
+| Menos de 1 año | `menos-1` |
+| Entre 1 y 5 años | `1-5` |
+| Más de 5 años | `mas-5` |
 
-**P20. Cobertura de salud** `[botones]`
-> "¿Cómo gestionarás tu cobertura médica?"
-`[Sistema público]` *(por contrato español o convenio bilateral)*
-`[Seguro médico privado]` → *(para visado debe ser sin copagos, sin carencias y con cobertura completa)*
-
-→ continúa al Bloque D
+- → `p20a_objetivo`
 
 ---
 
-### Bloque D — Encargo de búsqueda: la vivienda (quienes buscan vivienda)
+##### `p20a_objetivo` · `botones` · **sin campo Airtable**
 
-**P21. Tipo de vivienda** `[botones]`
-`[Piso / apartamento]`  `[Casa]`  `[Indiferente]`
+> "¿Estás buscando vivienda en Galicia, o ya tienes dónde vivir y buscas orientación para integrarte?"
 
-**P22. Habitaciones mínimas** `[botones]`
-`[1]`  `[2]`  `[3]`  `[4 o más]`
-
-**P23. Amueblada** `[botones]`
-`[Sí, completamente amueblada]`  `[Sin muebles]`  `[Indiferente]`
-
-**P24. Imprescindibles** `[botones]` *(multi)*
-`[Ascensor]`  `[Plaza de garaje]`  `[Calefacción central o gas]`  `[Terraza / exterior]`  `[Ninguno en particular]`
-> *(Nota: la plaza de garaje es muy recomendable en el centro de A Coruña y en las zonas con cuestas de Vigo.)*
+| Label | Value | Siguiente |
+|---|---|---|
+| Busco vivienda | `busco` | → `p21_tipo_inmueble` |
+| Ya tengo vivienda, quiero integrarme | `integrar` | → `p26_profesion` (salta vivienda) |
 
 ---
 
-### Bloque E — Logística (quienes buscan vivienda)
+#### **Rama "viene de fuera"** (`origenResidencia === 'fuera'`)
 
-**P25. Modo de gestión** `[botones]`
+##### `p18b_tiempo` · `botones` · **sin campo Airtable**
+
+> "¿Cuánto tiempo llevas planificando la mudanza?"
+
+| Label | Value |
+|---|---|
+| Menos de 1 año | `menos-1` |
+| Entre 1 y 5 años | `1-5` |
+| Más de 5 años | `mas-5` |
+
+- → `p21_tipo_inmueble`
+
+---
+
+### Vivienda (quienes buscan; se salta si eligió "integrar" en p20a)
+
+---
+
+#### `p21_tipo_inmueble` · `botones` · Airtable: `tipoInmueble`
+
+> "¿Qué tipo de vivienda buscas?"
+
+| Label | Value | Siguiente |
+|---|---|---|
+| Habitación en piso compartido | `habitacion` | → `p22_habitaciones` |
+| Estudio / Loft | `estudio` | → `p23_amueblado` *(salta habitaciones)* |
+| Piso / Apartamento | `piso` | → `p22_habitaciones` |
+| Casa | `casa` | → `p22_habitaciones` |
+
+> *Nota:* `co-living` existe en `LeadData` y en el formulario web pero **no está en Avoa** en este flujo.
+
+---
+
+#### `p22_habitaciones` · `botones` · Airtable: `habitacionesMinimas` *(no aplica a estudio)*
+
+> "¿Cuántas habitaciones mínimas necesitas?"
+
+| Label | Value |
+|---|---|
+| 1 | `1` |
+| 2 | `2` |
+| 3 | `3` |
+| 4 o más | `4+` |
+
+- → `p23_amueblado`
+
+---
+
+#### `p23_amueblado` · `botones` · Airtable: `amueblado`
+
+> "¿Prefieres la vivienda amueblada?"
+
+| Label | Value |
+|---|---|
+| Sí, completamente amueblada | `si` |
+| Sin muebles | `no` |
+| Indiferente | `indiferente` |
+
+- → `p24_imprescindibles`
+
+---
+
+#### `p24_imprescindibles` · `botones` · **multiselect** · exclusivo: `no` · Airtable: `imprescindibles`
+
+> "¿Hay algo que sea imprescindible para la vivienda?"
+
+| Label | Value |
+|---|---|
+| Ascensor | `ascensor` |
+| Plaza de garaje | `garaje` |
+| Calefacción central o gas | `calefaccion` |
+| Terraza / exterior | `terraza` |
+| Ninguno en particular *(excluyente)* | `no` |
+
+- → `p24b_comodidades`
+
+---
+
+#### `p24b_comodidades` · `botones` · **multiselect** · exclusivo: `ninguna` · Airtable: `comodidades`
+
+> "¿Hay alguna comodidad que sea imprescindible para tu día a día?"
+
+| Label | Value |
+|---|---|
+| Cerca del transporte público | `transporte` |
+| Zona tranquila / residencial | `zona-tranquila` |
+| Cerca de colegios | `cerca-colegios` |
+| Fibra óptica / buen internet | `internet` |
+| Ninguna en particular *(excluyente)* | `ninguna` |
+
+- → `p25_modalidad`
+
+---
+
+#### `p25_modalidad` · `botones` · Airtable: `modalidad`
+
 > "¿Cómo prefieres que gestionemos la búsqueda?"
-`[Dejar el piso alquilado antes de viajar]` *(100% a distancia, con videovisitas e informes)*
-`[Llegar primero a un alojamiento temporal y buscar el definitivo allí]` *(con apoyo presencial)*
+
+| Label | Value |
+|---|---|
+| Dejar el piso alquilado antes de viajar (100% a distancia) | `antes-de-viajar` |
+| Llegar primero a un alojamiento temporal y buscar allí | `ya-estando` |
+
+- → `p26_profesion`
 
 ---
 
-### Bloque F — Perfil profesional (todos)
+### Perfil profesional (todos los que llegan a Nivel 2)
 
-**P26. Profesión** `[input]` `[llm]`
+---
+
+#### `p26_profesion` · **`llm`** *(Etapa 1: funciona como `input`)* · Airtable: `profesion`
+
 > "Para completar tu perfil, ¿a qué te dedicas o cuál es tu profesión?"
 
-**P27. Nivel de estudios** `[botones]`
-`[Sin estudios superiores]`
-`[Bachillerato o equivalente]` *(orientar sobre homologación)*
-`[Técnico / FP]` *(orientar sobre homologación)*
-`[Universitario / Grado]` *(orientar sobre homologación)*
-`[Posgrado / Máster / Doctorado]` *(orientar sobre homologación)*
+- Validación: `texto`
+- En Etapa 1: texto libre sin llamada a IA.
+- **Etapa futura:** este paso usará la API de Claude para respuesta personalizada.
+- → `p27_estudios`
 
 ---
 
-## Cierre y entrega
+#### `p27_estudios` · `botones` · **sin campo Airtable**
 
-**Entrega del Plan Estratégico**
-> "Con todo lo que me has contado, **[Nombre]**, puedo preparar tu **Plan Estratégico** personalizado. Te lo enviaremos por correo electrónico a la brevedad."
+> "¿Cuál es tu nivel de estudios?"
 
-**Atribución** `[botones]`
-> "Y una última muy rápida que nos ayuda a mejorar: ¿cómo nos conociste?"
-`[Redes sociales]` → *(¿cuál?)*
-`[Recomendación]` → *(¿de quién?)*
-`[Búsqueda en Google]`
-`[Otro]` → *(¿cuál?)*
+| Label | Value |
+|---|---|
+| Sin estudios superiores | `sin-superiores` |
+| Bachillerato o equivalente | `bachillerato` |
+| Técnico / FP / Terciario | `fp` |
+| Universitario / Grado | `universitario` |
+| Posgrado / Máster / Doctorado | `posgrado` |
 
-**Despedida**
-> "¡Perfecto, **[Nombre]**! Revisaremos tu caso con cuidado y, si tu perfil encaja con lo que exige hoy el mercado gallego, te contactaremos en un máximo de 48 h hábiles para una videollamada inicial. El equipo queda disponible para cualquier consulta. ¡Mucho ánimo, este es un gran paso hacia Galicia!"
+- → `atribucion`
 
 ---
 
-## Notas para la implementación
+### Cierre y guardado final
 
-- **Plan Estratégico:** nombre único del documento entregable (unifica las antiguas "Hoja de Ruta" y "Plan Migratorio"). Su contenido varía según las respuestas, pero el nombre es siempre el mismo.
-- **Pregunta filtro de plazo (P4):** colocada al inicio a propósito. Plazo de 1 a 6 meses = accionable; menos de 1 mes = urgencia; más de 6 meses o sin fecha = seguimiento futuro (no se descarta).
-- **Transparencia del modelo de pago:** se anuncia en la bienvenida y se confirma en P14 antes de pedir el teléfono. La explicación ampliada (botón "Me gustaría que me lo expliquen mejor") es un texto fijo, no generado por IA.
-- **Bloque de viabilidad (P8–P14):** preguntas sensibles seguidas. Mantener las justificaciones y el micro-acuse previo; suavizan la sensación de "control bancario".
-- **Teléfono al final (P15):** se pide tras aportar valor; no adelantarlo.
-- **Ruta "lead en preparación":** quien no califica no se descarta en frío, pasa a seguimiento.
-- **Eficiencia de tokens:** la IA solo interviene en pasos `[llm]`; el resto son botones, selectores y validación por regex.
-- **Tono:** tuteo en español neutro, sin modismos regionales ni formas de "vosotros".
+---
+
+#### `atribucion` · `botones` · Airtable: `comoNosConociste` · **`guardar_lead_completo` ← SEGUNDO GUARDADO**
+
+> "Una última, muy rápida, que nos ayuda a mejorar: ¿cómo nos conociste?"
+
+| Label | Value |
+|---|---|
+| Instagram | `instagram` |
+| Facebook | `facebook` |
+| TikTok | `tiktok` |
+| Google | `google` |
+| Recomendación | `recomendacion` |
+| Otro | `otro` |
+
+- **PATCH a Airtable** con todos los campos del flujo completo.
+- → `despedida`
+
+---
+
+#### `despedida` · `botones` · **`fin`**
+
+> "¡Perfecto, {{nombre}}! En los próximos 2 días hábiles revisaremos tu caso con atención y te haremos llegar un plan a medida para tu situación. ¡Mucho ánimo, que este ya es un gran paso hacia Galicia!"
+
+| Label | Value |
+|---|---|
+| Cerrar | `cerrar` |
+
+- Cierra el widget. Fin del flujo principal.
+
+> *Nota: hay un `_texto_futuro_email` en el JSON preparado para cuando se active el envío de Plan Estratégico por correo (Etapa 3). Hasta entonces, el texto activo es el de arriba.*
+
+---
+
+## Mapa de campos → Airtable
+
+| Campo Airtable | Paso | Tipo Airtable | Notas |
+|---|---|---|---|
+| `nombreCompleto` | `p1_nombre` | Single line | Guardado en nivel1 |
+| `email` | `p2_email` | Single line | Guardado en nivel1 |
+| `telefono` | `p15_telefono` | Single line | Guardado en nivel1 |
+| `paisResidencia` | `p3_origen` o `p3b_pais` | Single line | `en_espana` o el texto del país |
+| `fechaLlegada` | `p4_plazo` | Single line | `menos-1-mes` \| `1-3-meses` \| `3-6-meses` \| `mas-6-meses` \| `sin-fecha` |
+| `ciudadDestino` | `p5_ciudad` | Single select | `vigo` \| `a-coruna` \| `santiago` \| `pontevedra` \| `lugo` \| `indiferente` |
+| `adultos` | `p6a_adultos` | Single select | `1` \| `2` \| `3` \| `4+` |
+| `ninos` | `p6c_ninos` | Single select | `0` \| `1` \| `2` \| `3+` (solo si hay menores) |
+| `adolescentes` | `p6d_adolescentes` | Single select | `0` \| `1` \| `2` \| `3+` (solo si hay menores) |
+| `mascotas` | `p7_mascotas` | Single select | `si` \| `no` |
+| `mascotaTipo` | `p7b_tipo` | Multiple select | `perro` \| `gato` \| `otro` (solo si mascotas=si) |
+| `mascotaPeso` | `p7b_peso` | Single select | `0-5 kg` \| `5-10 kg` \| `+10 kg` (solo si mascotaTipo incluye perro) |
+| `documentacion` | `p8_documentacion` | Single select | 6 opciones |
+| `situacionLaboral` | `p9_laboral` | Single select | 7 opciones |
+| `ingresosMensuales` | `p10_ingresos` | Single line | 5 opciones |
+| `garantias` | `p11_garantias` | Multiple select | `adelanto-6-12` \| `aval` \| `seguro-impago` \| `ninguna` |
+| `presupuestoMensual` | `p12_presupuesto` | Single select | `menos-700` \| `700-1000` \| `1000-1400` \| `mas-1400` |
+| `necesidadesEspeciales` | `p16_accesibilidad` | Single line | `si` \| `no` |
+| `tipoInmueble` | `p21_tipo_inmueble` | Single select | `habitacion` \| `estudio` \| `piso` \| `casa` |
+| `habitacionesMinimas` | `p22_habitaciones` | Single select | `1` \| `2` \| `3` \| `4+` (no aplica a estudio) |
+| `amueblado` | `p23_amueblado` | Single select | `si` \| `no` \| `indiferente` |
+| `imprescindibles` | `p24_imprescindibles` | Multiple select | `ascensor` \| `garaje` \| `calefaccion` \| `terraza` \| `no` |
+| `comodidades` | `p24b_comodidades` | Multiple select | `transporte` \| `zona-tranquila` \| `cerca-colegios` \| `internet` \| `ninguna` |
+| `modalidad` | `p25_modalidad` | Single select | `antes-de-viajar` \| `ya-estando` |
+| `profesion` | `p26_profesion` | Long text | Texto libre |
+| `comoNosConociste` | `atribucion` | Single select | `instagram` \| `facebook` \| `tiktok` \| `google` \| `recomendacion` \| `otro` |
+| `comprendeServicio` | *(automático)* | Checkbox | Siempre `true` — se añade en el mapper de `route.ts` |
+| `consentimientoRGPD` | *(automático)* | Checkbox | Siempre `true` — se añade en el mapper de `route.ts` |
+
+**Campos en Airtable que Avoa NO pregunta** (presentes en el formulario web `/conocernos`):
+- `co-living` como opción de `tipoInmueble` — solo disponible en el formulario web.
+
+**Campos que Avoa pregunta pero NO se guardan en Airtable** (enrutamiento puro):
+- Respuesta a `p6b_menores` (si/no menores)
+- Respuesta a `p13_banco` (cuenta bancaria)
+- Respuesta a `p14_servicio` / `p14_explicacion` (comprensión del servicio → se guarda como `true`)
+- Respuesta a `p17_licencia` y `p17b_canje` (tipo de licencia)
+- Respuesta a `p18a_ciudad` (ciudad actual en España)
+- Respuesta a `p19a_tiempo` y `p18b_tiempo` (tiempo en España / planificando)
+- Respuesta a `p20a_objetivo` (busca vivienda o integración)
+- Respuesta a `p27_estudios` (nivel de estudios)
+
+---
+
+## Pasos virtuales (resumen técnico)
+
+| Paso | Comportamiento |
+|---|---|
+| `p11_check` | Definido en `flow.json` pero **nunca alcanzado en runtime**. `flowEngine` resuelve la transición directamente al procesar `p11_garantias`. |
+| `p18_check_origen` | Definido en `flow.json` con texto vacío y sin opciones. Si el widget lo recibe, llama a `avanzarPasoVirtual` con respuesta `""`. `flowEngine` lo resuelve según `sesion.origenResidencia`. Sin embargo, el motor también cortocircuita este paso al procesar `p17_licencia` y `p17b_canje`, por lo que normalmente tampoco llega al widget. |
+
+---
+
+## Diagrama simplificado del flujo principal
+
+```
+bienvenida → rgpd → p1_nombre → p2_email → p15_telefono [SAVE-1]
+  ↓
+p3_origen ──── en_espana ──────────────────────────────┐
+  └── fuera → p3b_pais                                  │
+  ↓ (ambas ramas convergen)                             │
+p4_plazo → p5_ciudad → p6a_adultos → p6b_menores        │
+  ├── si → p6c_ninos → p6d_adolescentes ─┐             │
+  └── no ─────────────────────────────────┤             │
+  ↓                                       │             │
+p7_mascotas ←───────────────────────────-┘             │
+  ├── si → p7b_tipo ──── sin perro → p8               │
+  │         └── con perro → p7b_peso → p8             │
+  └── no ──────────────────────────────→ p8           │
+  ↓                                                    │
+p8_doc → p9_laboral → p10_ingresos                    │
+  ├── sin-ingresos → p10_sin_ingresos_msg ─┐          │
+  └── otros ────────────────────────────────┤          │
+  ↓                                         │          │
+p11_garantias ←──────────────────────────-┘          │
+  ├── ninguna + ingresos riesgo → p11_lead → despedida_preparacion [FIN]
+  └── resto → p12_presupuesto → p13_banco → p14_servicio
+                ↓                                      │
+         transicion_nivel2                             │
+         ├── no → despedida [FIN]                     │
+         └── si → p16_accesibilidad → p17_licencia    │
+                    ↓ (via flowEngine)                 │
+               origenResidencia ←─────────────────────┘
+               ├── en_espana → p18a_ciudad → p19a → p20a_objetivo
+               │                              ├── integrar → p26_profesion
+               │                              └── busco → p21_tipo_inmueble
+               └── fuera → p18b_tiempo → p21_tipo_inmueble
+                              ↓
+                      p21_tipo_inmueble
+                      ├── estudio → p23_amueblado
+                      └── resto → p22_habitaciones → p23_amueblado
+                          ↓
+                      p24_imprescindibles → p24b_comodidades → p25_modalidad
+                          ↓
+                      p26_profesion → p27_estudios → atribucion [SAVE-2]
+                          ↓
+                      despedida [FIN]
+```
