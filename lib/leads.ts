@@ -81,7 +81,7 @@ export type LeadData = {
   ciudadDestino: 'vigo' | 'a-coruna' | 'santiago' | 'pontevedra' | 'lugo' | 'indiferente'
   tipoInmueble?: 'habitacion' | 'estudio' | 'piso' | 'casa' | 'co-living'
   presupuestoMensual: 'menos-700' | '700-1000' | '1000-1400' | 'mas-1400'
-  habitacionesMinimas: '1' | '2' | '3' | '4+'
+  habitacionesMinimas?: '1' | '2' | '3' | '4+'
   amueblado: 'si' | 'no' | 'indiferente'
   estacionamiento?: 'indispensable' | 'deseable' | 'no'   // opcional: Avoa no pregunta por esto
   comodidades?: ('transporte' | 'zona-tranquila' | 'cerca-colegios' | 'internet' | 'ninguna')[]

@@ -18,8 +18,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { saveLead, type LeadData } from '@/lib/leads'
 
 // ---------------------------------------------------------------------------
-// Valores permitidos — fuente de verdad alineada con Airtable
+// Valores permitidos — fuente de verdad alineada con Airtable y flow.json
 // ---------------------------------------------------------------------------
+const VALID_ADULTOS = ['1', '2', '3', '4+'] as const
+const VALID_MENORES_COUNT = ['0', '1', '2', '3+'] as const
+const VALID_MASCOTA_TIPO = ['perro', 'gato', 'otro'] as const
+const VALID_MASCOTA_PESO = ['0-5 kg', '5-10 kg', '+10 kg'] as const
+
 const VALID_DOCUMENTACION = [
   'espanol',
   'ue-otro',
@@ -38,6 +43,16 @@ const VALID_SITUACION_LABORAL = [
   'estudiante',
   'busca-empleo',
 ] as const
+
+const VALID_INGRESOS = [
+  'menos-1500',
+  '1500-2500',
+  '2500-4000',
+  'mas-4000',
+  'sin-ingresos',
+] as const
+
+const VALID_GARANTIAS = ['adelanto-6-12', 'aval', 'seguro-impago', 'ninguna'] as const
 
 const VALID_CIUDAD_DESTINO = [
   'vigo',
@@ -62,12 +77,6 @@ const VALID_HABITACIONES = ['1', '2', '3', '4+'] as const
 
 const VALID_AMUEBLADO = ['si', 'no', 'indiferente'] as const
 
-const VALID_ESTACIONAMIENTO = ['indispensable', 'deseable', 'no'] as const
-
-const VALID_MODALIDAD = ['antes-de-viajar', 'ya-estando'] as const
-
-const VALID_GARANTIAS = ['adelanto-6-12', 'aval', 'seguro-impago', 'ninguna'] as const
-
 const VALID_IMPRESCINDIBLES = [
   'ascensor',
   'garaje',
@@ -83,6 +92,18 @@ const VALID_COMODIDADES = [
   'internet',
   'ninguna',
 ] as const
+
+const VALID_NECESIDADES_ESPECIALES = ['si', 'no'] as const
+
+const VALID_FECHA_LLEGADA = [
+  'menos-1-mes',
+  '1-3-meses',
+  '3-6-meses',
+  'mas-6-meses',
+  'sin-fecha',
+] as const
+
+const VALID_MODALIDAD = ['antes-de-viajar', 'ya-estando'] as const
 
 const VALID_COMO_NOS_CONOCISTE = [
   'instagram',
@@ -130,17 +151,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // 2. Validación de campos obligatorios
 
     // --- Strings simples no vacíos ---
-    const stringFields = [
-      'nombreCompleto',
-      'email',
-      'telefono',
-      'paisResidencia',
-      'personas',
-      'fechaLlegada',
-      // inicioContrato: opcional — obligatorio en el formulario web, omitido por Avoa
-    ] as const
-
-    for (const field of stringFields) {
+    for (const field of ['nombreCompleto', 'email', 'telefono', 'paisResidencia'] as const) {
       const value = body[field]
       if (typeof value !== 'string' || value.trim() === '') {
         return errorResponse(`Campo requerido faltante o inválido: ${field}`, 400)
@@ -152,9 +163,41 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Campo requerido faltante o inválido: email (formato inválido)', 400)
     }
 
+    // --- adultos ---
+    if (!VALID_ADULTOS.includes(body.adultos)) {
+      return errorResponse('Campo requerido faltante o inválido: adultos', 400)
+    }
+
     // --- mascotas ---
     if (body.mascotas !== 'si' && body.mascotas !== 'no') {
       return errorResponse('Campo requerido faltante o inválido: mascotas', 400)
+    }
+
+    // --- mascotaTipo (condicional: requerido si mascotas === 'si') ---
+    if (body.mascotas === 'si') {
+      if (!Array.isArray(body.mascotaTipo) || (body.mascotaTipo as string[]).length === 0) {
+        return errorResponse('Campo requerido faltante o inválido: mascotaTipo', 400)
+      }
+      const invalid = (body.mascotaTipo as string[]).find(
+        (v) => !VALID_MASCOTA_TIPO.includes(v as (typeof VALID_MASCOTA_TIPO)[number])
+      )
+      if (invalid) {
+        return errorResponse(`Valor inválido en mascotaTipo: ${invalid}`, 400)
+      }
+      // mascotaPeso requerido si hay perro
+      if ((body.mascotaTipo as string[]).includes('perro')) {
+        if (!VALID_MASCOTA_PESO.includes(body.mascotaPeso)) {
+          return errorResponse('Campo requerido faltante o inválido: mascotaPeso', 400)
+        }
+      }
+    }
+
+    // --- ninos / adolescentes (condicionales: presentes cuando hayMenores=si) ---
+    if (body.ninos !== undefined && !VALID_MENORES_COUNT.includes(body.ninos)) {
+      return errorResponse('Valor inválido: ninos', 400)
+    }
+    if (body.adolescentes !== undefined && !VALID_MENORES_COUNT.includes(body.adolescentes)) {
+      return errorResponse('Valor inválido: adolescentes', 400)
     }
 
     // --- documentacion ---
@@ -167,38 +210,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Campo requerido faltante o inválido: situacionLaboral', 400)
     }
 
-    // --- ciudadDestino ---
-    if (!VALID_CIUDAD_DESTINO.includes(body.ciudadDestino)) {
-      return errorResponse('Campo requerido faltante o inválido: ciudadDestino', 400)
+    // --- ingresosMensuales (select, mismo catálogo que Avoa) ---
+    if (!VALID_INGRESOS.includes(body.ingresosMensuales)) {
+      return errorResponse('Campo requerido faltante o inválido: ingresosMensuales', 400)
     }
 
-    // --- presupuestoMensual ---
-    if (!VALID_PRESUPUESTO.includes(body.presupuestoMensual)) {
-      return errorResponse('Campo requerido faltante o inválido: presupuestoMensual', 400)
-    }
-
-    // --- habitacionesMinimas ---
-    if (!VALID_HABITACIONES.includes(body.habitacionesMinimas)) {
-      return errorResponse('Campo requerido faltante o inválido: habitacionesMinimas', 400)
-    }
-
-    // --- amueblado ---
-    if (!VALID_AMUEBLADO.includes(body.amueblado)) {
-      return errorResponse('Campo requerido faltante o inválido: amueblado', 400)
-    }
-
-    // --- estacionamiento (opcional — Avoa no pregunta; el formulario web puede incluirlo) ---
-    if (body.estacionamiento !== undefined && !VALID_ESTACIONAMIENTO.includes(body.estacionamiento)) {
-      return errorResponse('Valor inválido: estacionamiento', 400)
-    }
-
-    // --- modalidad ---
-    if (!VALID_MODALIDAD.includes(body.modalidad)) {
-      return errorResponse('Campo requerido faltante o inválido: modalidad', 400)
-    }
-
-    // --- garantias (array, puede ser vacío) ---
-    if (!Array.isArray(body.garantias)) {
+    // --- garantias (array no vacío) ---
+    if (!Array.isArray(body.garantias) || (body.garantias as string[]).length === 0) {
       return errorResponse('Campo requerido faltante o inválido: garantias', 400)
     }
     const invalidGarantia = (body.garantias as string[]).find(
@@ -208,29 +226,31 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse(`Valor inválido en garantias: ${invalidGarantia}`, 400)
     }
 
-    // --- tipoInmueble (opcional) ---
-    if (body.tipoInmueble !== undefined && !VALID_TIPO_INMUEBLE.includes(body.tipoInmueble)) {
-      return errorResponse('Valor inválido: tipoInmueble', 400)
+    // --- ciudadDestino ---
+    if (!VALID_CIUDAD_DESTINO.includes(body.ciudadDestino)) {
+      return errorResponse('Campo requerido faltante o inválido: ciudadDestino', 400)
     }
 
-    // --- comodidades (opcional, array) ---
-    if (body.comodidades !== undefined) {
-      if (!Array.isArray(body.comodidades)) {
-        return errorResponse('Campo inválido: comodidades debe ser un array', 400)
-      }
-      const invalidComodidad = (body.comodidades as string[]).find(
-        (c) => !VALID_COMODIDADES.includes(c as (typeof VALID_COMODIDADES)[number])
-      )
-      if (invalidComodidad) {
-        return errorResponse(`Valor inválido en comodidades: ${invalidComodidad}`, 400)
+    // --- tipoInmueble (requerido en el formulario web) ---
+    if (!VALID_TIPO_INMUEBLE.includes(body.tipoInmueble)) {
+      return errorResponse('Campo requerido faltante o inválido: tipoInmueble', 400)
+    }
+
+    // --- presupuestoMensual ---
+    if (!VALID_PRESUPUESTO.includes(body.presupuestoMensual)) {
+      return errorResponse('Campo requerido faltante o inválido: presupuestoMensual', 400)
+    }
+
+    // --- habitacionesMinimas (condicional: solo si tipoInmueble !== 'estudio') ---
+    if (body.tipoInmueble !== 'estudio') {
+      if (!VALID_HABITACIONES.includes(body.habitacionesMinimas)) {
+        return errorResponse('Campo requerido faltante o inválido: habitacionesMinimas', 400)
       }
     }
 
-    // --- inicioContrato (opcional — presente en formulario web, ausente en Avoa) ---
-    if (body.inicioContrato !== undefined) {
-      if (typeof body.inicioContrato !== 'string' || body.inicioContrato.trim() === '') {
-        return errorResponse('Valor inválido: inicioContrato', 400)
-      }
+    // --- amueblado ---
+    if (!VALID_AMUEBLADO.includes(body.amueblado)) {
+      return errorResponse('Campo requerido faltante o inválido: amueblado', 400)
     }
 
     // --- imprescindibles (opcional, array) ---
@@ -238,17 +258,49 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       if (!Array.isArray(body.imprescindibles)) {
         return errorResponse('Campo inválido: imprescindibles debe ser un array', 400)
       }
-      const invalidImprescindible = (body.imprescindibles as string[]).find(
+      const invalid = (body.imprescindibles as string[]).find(
         (v) => !VALID_IMPRESCINDIBLES.includes(v as (typeof VALID_IMPRESCINDIBLES)[number])
       )
-      if (invalidImprescindible) {
-        return errorResponse(`Valor inválido en imprescindibles: ${invalidImprescindible}`, 400)
+      if (invalid) {
+        return errorResponse(`Valor inválido en imprescindibles: ${invalid}`, 400)
       }
+    }
+
+    // --- comodidades (opcional, array) ---
+    if (body.comodidades !== undefined) {
+      if (!Array.isArray(body.comodidades)) {
+        return errorResponse('Campo inválido: comodidades debe ser un array', 400)
+      }
+      const invalid = (body.comodidades as string[]).find(
+        (c) => !VALID_COMODIDADES.includes(c as (typeof VALID_COMODIDADES)[number])
+      )
+      if (invalid) {
+        return errorResponse(`Valor inválido en comodidades: ${invalid}`, 400)
+      }
+    }
+
+    // --- necesidadesEspeciales (opcional) ---
+    if (
+      body.necesidadesEspeciales !== undefined &&
+      !VALID_NECESIDADES_ESPECIALES.includes(body.necesidadesEspeciales)
+    ) {
+      return errorResponse('Valor inválido: necesidadesEspeciales', 400)
+    }
+
+    // --- fechaLlegada (select, mismo catálogo que Avoa) ---
+    if (!VALID_FECHA_LLEGADA.includes(body.fechaLlegada)) {
+      return errorResponse('Campo requerido faltante o inválido: fechaLlegada', 400)
+    }
+
+    // --- modalidad ---
+    if (!VALID_MODALIDAD.includes(body.modalidad)) {
+      return errorResponse('Campo requerido faltante o inválido: modalidad', 400)
     }
 
     // --- comoNosConociste (opcional) ---
     if (
       body.comoNosConociste !== undefined &&
+      body.comoNosConociste !== '' &&
       !VALID_COMO_NOS_CONOCISTE.includes(body.comoNosConociste)
     ) {
       return errorResponse('Valor inválido: comoNosConociste', 400)
@@ -265,6 +317,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // 3. Construir el objeto LeadData tipado
+    const esEstudio = body.tipoInmueble === 'estudio'
+
     const leadData: LeadData = {
       // Datos personales
       nombreCompleto: (body.nombreCompleto as string).trim(),
@@ -273,27 +327,37 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       paisResidencia: (body.paisResidencia as string).trim(),
 
       // Grupo familiar
-      personas: (body.personas as string).trim(),
+      adultos: body.adultos as LeadData['adultos'],
+      ...(body.ninos !== undefined ? { ninos: body.ninos as LeadData['ninos'] } : {}),
+      ...(body.adolescentes !== undefined
+        ? { adolescentes: body.adolescentes as LeadData['adolescentes'] }
+        : {}),
       mascotas: body.mascotas as 'si' | 'no',
-      ...(typeof body.detalleMascotas === 'string' && body.detalleMascotas.trim()
-        ? { detalleMascotas: body.detalleMascotas.trim() }
+      ...(body.mascotas === 'si' && Array.isArray(body.mascotaTipo)
+        ? { mascotaTipo: body.mascotaTipo as LeadData['mascotaTipo'] }
+        : {}),
+      ...(body.mascotas === 'si' &&
+      (body.mascotaTipo as string[])?.includes('perro') &&
+      body.mascotaPeso
+        ? { mascotaPeso: body.mascotaPeso as LeadData['mascotaPeso'] }
         : {}),
 
       // Situación legal y laboral
       documentacion: body.documentacion as LeadData['documentacion'],
       situacionLaboral: body.situacionLaboral as LeadData['situacionLaboral'],
-      ingresosMensuales: typeof body.ingresosMensuales === 'string' ? body.ingresosMensuales.trim() : '',
+      ingresosMensuales: body.ingresosMensuales as string,
 
       // Garantías
       garantias: body.garantias as LeadData['garantias'],
 
       // Preferencias de vivienda
       ciudadDestino: body.ciudadDestino as LeadData['ciudadDestino'],
-      ...(body.tipoInmueble ? { tipoInmueble: body.tipoInmueble as LeadData['tipoInmueble'] } : {}),
+      tipoInmueble: body.tipoInmueble as LeadData['tipoInmueble'],
       presupuestoMensual: body.presupuestoMensual as LeadData['presupuestoMensual'],
-      habitacionesMinimas: body.habitacionesMinimas as LeadData['habitacionesMinimas'],
+      ...(!esEstudio
+        ? { habitacionesMinimas: body.habitacionesMinimas as LeadData['habitacionesMinimas'] }
+        : {}),
       amueblado: body.amueblado as LeadData['amueblado'],
-      ...(body.estacionamiento ? { estacionamiento: body.estacionamiento as LeadData['estacionamiento'] } : {}),
       ...(Array.isArray(body.imprescindibles) && body.imprescindibles.length > 0
         ? { imprescindibles: body.imprescindibles as LeadData['imprescindibles'] }
         : {}),
@@ -301,22 +365,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         ? { comodidades: body.comodidades as LeadData['comodidades'] }
         : {}),
 
-      // Perfil adicional
-      ...(typeof body.necesidadesEspeciales === 'string' && body.necesidadesEspeciales.trim()
-        ? { necesidadesEspeciales: body.necesidadesEspeciales.trim() }
+      // Perfil adicional (opcionales)
+      ...(typeof body.necesidadesEspeciales === 'string' && body.necesidadesEspeciales
+        ? { necesidadesEspeciales: body.necesidadesEspeciales }
         : {}),
       ...(typeof body.profesion === 'string' && body.profesion.trim()
         ? { profesion: body.profesion.trim() }
         : {}),
 
       // Plazos
-      fechaLlegada: (body.fechaLlegada as string).trim(),
-      ...(typeof body.inicioContrato === 'string' && body.inicioContrato.trim()
-        ? { inicioContrato: body.inicioContrato.trim() }
-        : {}),
+      fechaLlegada: body.fechaLlegada as string,
       modalidad: body.modalidad as LeadData['modalidad'],
 
-      // Atribución
+      // Atribución (opcional)
       ...(body.comoNosConociste
         ? { comoNosConociste: body.comoNosConociste as LeadData['comoNosConociste'] }
         : {}),
@@ -341,13 +402,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
 
       console.error('[api/lead] Error al guardar lead —', new Date().toISOString())
-      return errorResponse('Error al guardar tu consulta. Por favor intentá de nuevo.', 500)
+      return errorResponse('Error al guardar tu consulta. Por favor intenta de nuevo.', 500)
     }
 
     // 5. Éxito
     return successResponse()
   } catch {
     console.error('[api/lead] Error inesperado —', new Date().toISOString())
-    return errorResponse('Error interno del servidor. Por favor intentá de nuevo.', 500)
+    return errorResponse('Error interno del servidor. Por favor intenta de nuevo.', 500)
   }
 }
