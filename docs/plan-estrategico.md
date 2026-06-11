@@ -205,7 +205,7 @@ Si hoy no lo tienes resuelto, tranquilo: es justo una de las cosas que miraremos
 
 Cuando quieras dar el siguiente paso, escríbenos. Tu nuevo hogar en Galicia te está esperando. 🌿
 
-*Avoa, asistente virtual de Tu Lugar en Galicia*
+*Gina, asistente virtual de Tu Lugar en Galicia*
 
 ---
 

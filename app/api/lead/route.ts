@@ -210,7 +210,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Campo requerido faltante o inválido: situacionLaboral', 400)
     }
 
-    // --- ingresosMensuales (select, mismo catálogo que Avoa) ---
+    // --- ingresosMensuales (select, mismo catálogo que Gina) ---
     if (!VALID_INGRESOS.includes(body.ingresosMensuales)) {
       return errorResponse('Campo requerido faltante o inválido: ingresosMensuales', 400)
     }
@@ -287,7 +287,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Valor inválido: necesidadesEspeciales', 400)
     }
 
-    // --- fechaLlegada (select, mismo catálogo que Avoa) ---
+    // --- fechaLlegada (select, mismo catálogo que Gina) ---
     if (!VALID_FECHA_LLEGADA.includes(body.fechaLlegada)) {
       return errorResponse('Campo requerido faltante o inválido: fechaLlegada', 400)
     }

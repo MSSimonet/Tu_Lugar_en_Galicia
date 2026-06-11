@@ -1,16 +1,16 @@
 /**
- * lib/avoa/session.ts — Tipo y factory de la sesión de Avoa.
+ * lib/gina/session.ts — Tipo y factory de la sesión de Gina.
  *
- * La sesión viaja en cada request al API de Avoa.
+ * La sesión viaja en cada request al API de Gina.
  * No se persiste en base de datos en Etapa 1: vive en el estado React del widget.
  */
 
-export type AvoaEtiqueta =
+export type GinaEtiqueta =
   | 'lead-en-preparacion'
   | 'seguimiento-futuro'
   | 'califica'
 
-export type AvoaSession = {
+export type GinaSession = {
   /** ID del paso que se está mostrando actualmente */
   pasoActual: string
   /** Mapa campo → valor capturado (un campo por paso) */
@@ -20,7 +20,7 @@ export type AvoaSession = {
   /** Origen de residencia capturado en p3_origen: determina la rama p17→p18 */
   origenResidencia: 'en_espana' | 'fuera' | null
   /** Etiqueta CRM asignada por el motor según lógica de negocio */
-  etiqueta?: AvoaEtiqueta
+  etiqueta?: GinaEtiqueta
   /** true cuando se llega a un paso con accion:"fin" */
   completado: boolean
   /** Record ID de Airtable creado en guardar_nivel1 — usado para PATCH en guardados posteriores */
@@ -28,7 +28,7 @@ export type AvoaSession = {
 }
 
 /** Crea una sesión inicial antes de mostrar el primer paso */
-export function crearSesion(): AvoaSession {
+export function crearSesion(): GinaSession {
   return {
     pasoActual: 'bienvenida',
     respuestas: {},

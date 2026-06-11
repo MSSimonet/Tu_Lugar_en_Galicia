@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * AvoaButtons.tsx — Selector de opciones de botón para el chat de Avoa.
+ * GinaButtons.tsx — Selector de opciones de botón para el chat de Gina.
  *
  * Soporta:
  *   - Selección única: un clic envía directamente
@@ -12,7 +12,7 @@
  */
 
 import { useState } from 'react'
-import type { Opcion } from '@/lib/avoa/flowEngine'
+import type { Opcion } from '@/lib/gina/flowEngine'
 
 type Props = {
   opciones: Opcion[]
@@ -26,7 +26,7 @@ type Props = {
   onSeleccion: (valor: string | string[]) => void
 }
 
-export function AvoaButtons({ opciones, multiselect, exclusivaValue, deshabilitado, inline, onSeleccion }: Props) {
+export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilitado, inline, onSeleccion }: Props) {
   const [seleccionados, setSeleccionados] = useState<string[]>([])
 
   function toggleOpcion(value: string) {

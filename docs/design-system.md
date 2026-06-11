@@ -91,7 +91,7 @@ piedra de granito, rías, lluvia, calidez. Ningún competidor liga su imagen al 
 ## 5. Voz en la interfaz (microcopy)
 
 - Voz unificada: "tú" neutro, español internacional. Nunca "vos", nunca "vosotros".
-  Esta voz aplica tanto a la web como al asistente Avoa.
+  Esta voz aplica tanto a la web como al asistente Gina.
 - Segunda persona singular, cálida y directa: "Te buscamos el hogar", "Estás en el lugar correcto".
 - CTAs directos: "Agenda tu videollamada", "Escríbenos por WhatsApp".
 - Nada de jerga ni tono frío. La persona que nos lee no tiene tiempo para textos largos.

@@ -1,4 +1,4 @@
-# Avoa — Flujo conversacional (fuente de verdad)
+# Gina — Flujo conversacional (fuente de verdad)
 
 > **Este documento refleja el `flow.json` y `flowEngine.ts` actuales.**
 > Actualizar cada vez que se modifique el flujo. En caso de conflicto, el código manda.
@@ -9,10 +9,10 @@
 
 | Elemento | Detalle |
 |---|---|
-| Motor | `lib/avoa/flowEngine.ts` — puro, sin side effects |
-| Flujo | `lib/avoa/flow.json` — array de pasos en JSON |
-| API | `app/api/avoa/route.ts` — procesa respuesta, decide guardado |
-| Widget | `components/avoa/AvoaWidget.tsx` — gestiona estado y mensajes |
+| Motor | `lib/gina/flowEngine.ts` — puro, sin side effects |
+| Flujo | `lib/gina/flow.json` — array de pasos en JSON |
+| API | `app/api/gina/route.ts` — procesa respuesta, decide guardado |
+| Widget | `components/gina/GinaWidget.tsx` — gestiona estado y mensajes |
 | CRM | Airtable — tabla `Leads` |
 
 **Tipos de paso:**
@@ -47,7 +47,7 @@
 
 #### `bienvenida` · `botones` · sin campo Airtable
 
-> "¡Hola! Soy Avoa, tu asistente virtual del equipo de Tu Lugar en Galicia.
+> "¡Hola! Soy Gina, tu asistente virtual del equipo de Tu Lugar en Galicia.
 >
 > En unos minutos te hago unas preguntas para entender tu situación y saber si podemos ayudarte a encontrar vivienda antes de llegar. Nada de formularios aburridos: esto es una conversación.
 >
@@ -545,7 +545,7 @@
 | Piso / Apartamento | `piso` | → `p22_habitaciones` |
 | Casa | `casa` | → `p22_habitaciones` |
 
-> *Nota:* `co-living` existe en `LeadData` y en el formulario web pero **no está en Avoa** en este flujo.
+> *Nota:* `co-living` existe en `LeadData` y en el formulario web pero **no está en Gina** en este flujo.
 
 ---
 
@@ -723,10 +723,10 @@
 | `comprendeServicio` | *(automático)* | Checkbox | Siempre `true` — se añade en el mapper de `route.ts` |
 | `consentimientoRGPD` | *(automático)* | Checkbox | Siempre `true` — se añade en el mapper de `route.ts` |
 
-**Campos en Airtable que Avoa NO pregunta** (presentes en el formulario web `/conocernos`):
+**Campos en Airtable que Gina NO pregunta** (presentes en el formulario web `/conocernos`):
 - `co-living` como opción de `tipoInmueble` — solo disponible en el formulario web.
 
-**Campos que Avoa pregunta pero NO se guardan en Airtable** (enrutamiento puro):
+**Campos que Gina pregunta pero NO se guardan en Airtable** (enrutamiento puro):
 - Respuesta a `p6b_menores` (si/no menores)
 - Respuesta a `p13_banco` (cuenta bancaria)
 - Respuesta a `p14_servicio` / `p14_explicacion` (comprensión del servicio → se guarda como `true`)

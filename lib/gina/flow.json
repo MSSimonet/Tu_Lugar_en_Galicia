@@ -2,7 +2,7 @@
   {
     "id": "bienvenida",
     "tipo": "botones",
-    "texto": "¡Hola! Soy Avoa, tu asistente virtual del equipo de Tu Lugar en Galicia.\n\nEn unos minutos te hago unas preguntas para entender tu situación y saber si podemos ayudarte a encontrar vivienda antes de llegar. Nada de formularios aburridos: esto es una conversación.\n\n¿Empezamos?",
+    "texto": "¡Hola! Soy Gina, tu asistente virtual del equipo de Tu Lugar en Galicia.\n\nEn unos minutos te hago unas preguntas para entender tu situación y saber si podemos ayudarte a encontrar vivienda antes de llegar. Nada de formularios aburridos: esto es una conversación.\n\n¿Empezamos?",
     "opciones": [
       { "label": "Sí, empecemos", "value": "empecemos" }
     ],

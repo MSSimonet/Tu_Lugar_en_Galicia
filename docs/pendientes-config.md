@@ -90,10 +90,10 @@ Cada ítem tiene su estado actual, qué hay que hacer y dónde se hace.
 
 ---
 
-## Decisiones pendientes de Avoa (Fase 4)
+## Decisiones pendientes de Gina (Fase 4)
 
 Estos ítems deben resolverse antes de que el `AI Engineer` arranque la construcción del widget.
-Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
+Fuentes de referencia: `/docs/gina-flujo.md` y `/docs/gina-barandas.md`.
 
 ---
 
@@ -102,9 +102,9 @@ Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
 | Campo | Detalle |
 |---|---|
 | **Estado actual** | Cifra de mercado resuelta: lo habitual en España es fianza 1–2 meses + primer mes + acreditar ingresos ~3× la renta. Falta confirmar con Silvana cuáles son sus honorarios de servicio y si ese monto entra como criterio de calificación adicional. |
-| **Qué decidir** | Confirmar con Silvana el monto de sus honorarios y si Avoa los menciona explícitamente o los deriva a la videollamada. El umbral de solvencia de mercado ya está claro. |
-| **Impacto** | Define el texto de la Pregunta 10 del flujo y la lógica de la ruta de descalificación elegante (Ajuste B de `avoa-barandas.md`). Sin esto el `AI Engineer` no puede codificar el filtro. |
-| **Dónde registrar** | Actualizar `docs/avoa-flujo.md` (P10) una vez acordado con Silvana. |
+| **Qué decidir** | Confirmar con Silvana el monto de sus honorarios y si Gina los menciona explícitamente o los deriva a la videollamada. El umbral de solvencia de mercado ya está claro. |
+| **Impacto** | Define el texto de la Pregunta 10 del flujo y la lógica de la ruta de descalificación elegante (Ajuste B de `gina-barandas.md`). Sin esto el `AI Engineer` no puede codificar el filtro. |
+| **Dónde registrar** | Actualizar `docs/gina-flujo.md` (P10) una vez acordado con Silvana. |
 
 ---
 
@@ -112,12 +112,12 @@ Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
 
 | Campo | Detalle |
 |---|---|
-| **Decisión tomada** | El Plan Estratégico es una hoja de ruta de pasos personalizados según los pendientes que deja la charla con Avoa. Ejemplos: si el usuario no tiene NIE → bloque "Cómo obtener el NIE"; si no tiene garantías → bloque "Opciones de aval y seguro de alquiler". Los bloques son condicionales y reutilizables. |
+| **Decisión tomada** | El Plan Estratégico es una hoja de ruta de pasos personalizados según los pendientes que deja la charla con Gina. Ejemplos: si el usuario no tiene NIE → bloque "Cómo obtener el NIE"; si no tiene garantías → bloque "Opciones de aval y seguro de alquiler". Los bloques son condicionales y reutilizables. |
 | **A quién se entrega** | A **todos** los usuarios, califiquen o no. A quien sí califica: hoja de ruta para avanzar con Silvana. A quien no califica: el plan muestra sus puntos pendientes como oportunidades de mejora, nunca como rechazo. |
 | **Tono para no calificados** | Aplicar principios de Dale Carnegie ("Cómo ganar amigos e influir sobre las personas"): reconocer primero lo positivo del perfil, enmarcar cada pendiente como un paso concreto hacia el objetivo, redactar con calidez y empatía. El usuario debe sentir que recibe ayuda, no una negativa. |
 | **Implementación recomendada** | Plantilla con bloques condicionales activados por las respuestas del cuestionario. IA mínima (solo para personalizar el texto del encabezado si hace falta). Briefing detallado a desarrollar por el equipo antes de que el `AI Engineer` empiece. |
-| **Estado** | ⚠️ Cuello de botella principal de Avoa. Sin el briefing de bloques, el `AI Engineer` no puede construirlo. |
-| **Próximo paso** | Silvana y el equipo definen los bloques y condiciones → crear `docs/avoa-plan-estrategico.md` → enlazar desde `docs/roadmap.md` Fase 4. |
+| **Estado** | ⚠️ Cuello de botella principal de Gina. Sin el briefing de bloques, el `AI Engineer` no puede construirlo. |
+| **Próximo paso** | Silvana y el equipo definen los bloques y condiciones → crear `docs/gina-plan-estrategico.md` → enlazar desde `docs/roadmap.md` Fase 4. |
 
 ---
 
@@ -125,9 +125,9 @@ Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
 
 | Campo | Detalle |
 |---|---|
-| **Estado actual** | El formulario de diagnóstico guarda leads via `lib/leads.ts` → Airtable. Avoa todavía no tiene destino definido. |
-| **Decisión tomada** | Avoa debe guardar los datos capturados en el **mismo destino** que el formulario (`lib/leads.ts` / Airtable). No crear una base de datos separada ni una tabla nueva. |
-| **Instrucción para el AI Engineer** | Reutilizar o extender `lib/leads.ts` para el volcado del chat. Si Airtable necesita campos nuevos (p. ej. `canal: "avoa"`), agregarlos a la tabla existente, no crear una nueva. |
+| **Estado actual** | El formulario de diagnóstico guarda leads via `lib/leads.ts` → Airtable. Gina todavía no tiene destino definido. |
+| **Decisión tomada** | Gina debe guardar los datos capturados en el **mismo destino** que el formulario (`lib/leads.ts` / Airtable). No crear una base de datos separada ni una tabla nueva. |
+| **Instrucción para el AI Engineer** | Reutilizar o extender `lib/leads.ts` para el volcado del chat. Si Airtable necesita campos nuevos (p. ej. `canal: "gina"`), agregarlos a la tabla existente, no crear una nueva. |
 | **Dónde** | `lib/leads.ts` + tabla de Airtable existente (Fase 1). |
 
 ---
@@ -136,7 +136,7 @@ Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
 
 | Campo | Detalle |
 |---|---|
-| **Decisión** | **Gemini** (Google), por costo a escala. Las barandas de `avoa-barandas.md` son agnósticas al modelo y se reutilizan sin cambios como System Prompt. |
+| **Decisión** | **Gemini** (Google), por costo a escala. Las barandas de `gina-barandas.md` son agnósticas al modelo y se reutilizan sin cambios como System Prompt. |
 | **Impacto técnico** | Variable de entorno: `GEMINI_API_KEY`. Cliente SDK en `lib/ai/`. Documentado como **ADR-008** en `docs/ARCHITECTURE.md`. |
 | **Estado** | ✅ Cerrado. |
 
@@ -160,34 +160,34 @@ Fuentes de referencia: `/docs/avoa-flujo.md` y `/docs/avoa-barandas.md`.
 
 ---
 
-### A4-7. Honorarios de Silvana en el flujo de Avoa — ✅ DECIDIDO
+### A4-7. Honorarios de Silvana en el flujo de Gina — ✅ DECIDIDO
 
 | Campo | Detalle |
 |---|---|
-| **Decisión** | Avoa **no menciona el precio** del servicio. Todo lo relativo a honorarios se deriva a la videollamada con Silvana. |
-| **Impacto en el flujo** | El cuestionario no incluye ninguna pregunta ni mención de precio. El cierre de Avoa invita a agendar la videollamada sin condicionar el costo. |
-| **Estado** | ✅ Cerrado. Reflejar en `docs/avoa-flujo.md` sección Cierre cuando se revise ese doc. |
+| **Decisión** | Gina **no menciona el precio** del servicio. Todo lo relativo a honorarios se deriva a la videollamada con Silvana. |
+| **Impacto en el flujo** | El cuestionario no incluye ninguna pregunta ni mención de precio. El cierre de Gina invita a agendar la videollamada sin condicionar el costo. |
+| **Estado** | ✅ Cerrado. Reflejar en `docs/gina-flujo.md` sección Cierre cuando se revise ese doc. |
 
 ---
 
-### A4-8. Formulario web — respaldo permanente de Avoa — ✅ DECIDIDO
+### A4-8. Formulario web — respaldo permanente de Gina — ✅ DECIDIDO
 
 | Campo | Detalle |
 |---|---|
-| **Decisión** | El formulario de diagnóstico (Fase 1) se mantiene como canal de captación secundario **permanente**, no temporal. Avoa es el canal principal; el formulario es el respaldo para quienes prefieran no usar el chat. |
-| **Impacto** | No hay trabajo adicional de código. Al lanzar Avoa, asegurarse de que ambos canales queden visibles en la UI. |
+| **Decisión** | El formulario de diagnóstico (Fase 1) se mantiene como canal de captación secundario **permanente**, no temporal. Gina es el canal principal; el formulario es el respaldo para quienes prefieran no usar el chat. |
+| **Impacto** | No hay trabajo adicional de código. Al lanzar Gina, asegurarse de que ambos canales queden visibles en la UI. |
 | **Estado** | ✅ Cerrado. |
 
 ---
 
-### A4-9. Preguntas filtro de Avoa — lógica de etiquetado interno — ✅ DECIDIDO
+### A4-9. Preguntas filtro de Gina — lógica de etiquetado interno — ✅ DECIDIDO
 
 | Campo | Detalle |
 |---|---|
-| **Decisión** | Avoa **NO corta la conversación** a quien no califica. Completa el cuestionario completo con todos los usuarios para capturar el máximo de datos. La calificación opera a nivel de **etiqueta interna** en Airtable ("califica" / "no califica"), no de corte de la charla. |
+| **Decisión** | Gina **NO corta la conversación** a quien no califica. Completa el cuestionario completo con todos los usuarios para capturar el máximo de datos. La calificación opera a nivel de **etiqueta interna** en Airtable ("califica" / "no califica"), no de corte de la charla. |
 | **Beneficio** | Silvana puede priorizar su atención hacia los leads calificados; los no calificados quedan en la base de datos para nurturing futuro y reciben el Plan Estratégico con pasos de mejora (ver A4-2). |
-| **Instrucción para el AI Engineer** | Las preguntas P9 y P10 del flujo determinan la etiqueta interna. El flujo no tiene ramas de "cierre prematuro" salvo el límite de 3 desvíos consecutivos ya definido en `avoa-barandas.md`. |
-| **Estado** | ✅ Cerrado. Documentar las condiciones exactas de etiquetado en `docs/avoa-flujo.md` (P9, P10) antes de construir. |
+| **Instrucción para el AI Engineer** | Las preguntas P9 y P10 del flujo determinan la etiqueta interna. El flujo no tiene ramas de "cierre prematuro" salvo el límite de 3 desvíos consecutivos ya definido en `gina-barandas.md`. |
+| **Estado** | ✅ Cerrado. Documentar las condiciones exactas de etiquetado en `docs/gina-flujo.md` (P9, P10) antes de construir. |
 
 ---
 

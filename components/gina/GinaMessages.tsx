@@ -1,23 +1,23 @@
 'use client'
 
 /**
- * AvoaMessages.tsx — Historial de mensajes del chat de Avoa.
+ * GinaMessages.tsx — Historial de mensajes del chat de Gina.
  *
- * Muestra burbujas alternadas: Avoa (izquierda, blanco) y usuario (derecha, grafito).
+ * Muestra burbujas alternadas: Gina (izquierda, blanco) y usuario (derecha, grafito).
  * Auto-scroll al último mensaje cada vez que cambia el historial.
  *
  * Cuando el paso actual es de tipo "botones", las opciones se renderizan
- * directamente aquí (inline, alineadas con el texto del mensaje de Avoa),
+ * directamente aquí (inline, alineadas con el texto del mensaje de Gina),
  * no en la barra inferior.
  */
 
 import React, { useEffect, useRef, useMemo } from 'react'
-import { AvoaButtons } from './AvoaButtons'
-import type { Opcion } from '@/lib/avoa/flowEngine'
+import { GinaButtons } from './GinaButtons'
+import type { Opcion } from '@/lib/gina/flowEngine'
 
 export type Mensaje = {
   id: string
-  de: 'avoa' | 'usuario'
+  de: 'gina' | 'usuario'
   texto: string
   /** ID del paso al que pertenece este mensaje — permite truncar el historial al editar */
   pasoId?: string
@@ -61,7 +61,7 @@ function SparklesIcon({ className, style }: { className?: string; style?: React.
   )
 }
 
-export function AvoaMessages({
+export function GinaMessages({
   mensajes,
   cargando,
   opciones,
@@ -74,22 +74,22 @@ export function AvoaMessages({
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const lastAvoaMsgRef = useRef<HTMLDivElement>(null)
+  const lastGinaMsgRef = useRef<HTMLDivElement>(null)
 
-  const lastAvoaIdx = useMemo(
-    () => mensajes.reduce<number>((acc, m, i) => (m.de === 'avoa' ? i : acc), -1),
+  const lastGinaIdx = useMemo(
+    () => mensajes.reduce<number>((acc, m, i) => (m.de === 'gina' ? i : acc), -1),
     [mensajes],
   )
 
   // Auto-scroll:
   // - cargando: scroll al fondo para mostrar el indicador de escritura
-  // - nuevo mensaje Avoa: scroll al INICIO del último mensaje para evitar que
+  // - nuevo mensaje Gina: scroll al INICIO del último mensaje para evitar que
   //   textos largos queden cortados por arriba (era el bug con la 2ª pregunta)
   useEffect(() => {
     if (cargando) {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
     } else {
-      lastAvoaMsgRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      lastGinaMsgRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }, [mensajes, cargando])
 
@@ -102,17 +102,17 @@ export function AvoaMessages({
       className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3"
       role="log"
       aria-live="polite"
-      aria-label="Conversación con Avoa"
+      aria-label="Conversación con Gina"
       style={{ backgroundColor: 'var(--color-niebla)' }}
     >
       {mensajes.map((msg, i) => (
         <div
           key={msg.id}
-          ref={i === lastAvoaIdx ? lastAvoaMsgRef : undefined}
+          ref={i === lastGinaIdx ? lastGinaMsgRef : undefined}
           className={`flex items-end gap-2 ${msg.de === 'usuario' ? 'flex-row-reverse' : 'flex-row'}`}
         >
-          {/* Avatar de Avoa — cuadrado redondeado con sparkles */}
-          {msg.de === 'avoa' && (
+          {/* Avatar de Gina — cuadrado redondeado con sparkles */}
+          {msg.de === 'gina' && (
             <div
               aria-hidden="true"
               className="shrink-0 w-7 h-7 rounded-md flex items-center justify-center"
@@ -125,12 +125,12 @@ export function AvoaMessages({
           {/* Burbuja */}
           <div
             className={`max-w-[75%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap ${
-              msg.de === 'avoa'
+              msg.de === 'gina'
                 ? 'rounded-2xl rounded-tl-none'   // ángulo superior-izq apunta al avatar
                 : 'rounded-2xl rounded-br-none'   // ángulo inferior-der apunta al usuario
             }`}
             style={
-              msg.de === 'avoa'
+              msg.de === 'gina'
                 ? {
                     backgroundColor: '#FFFFFF',
                     color: 'var(--color-granito)',
@@ -198,7 +198,7 @@ export function AvoaMessages({
               backgroundColor: '#FFFFFF',
               boxShadow: '0 1px 2px rgba(42,43,46,0.08)',
             }}
-            aria-label="Avoa está escribiendo"
+            aria-label="Gina está escribiendo"
           >
             <span className="flex gap-1">
               {[0, 1, 2].map((i) => (
@@ -216,14 +216,14 @@ export function AvoaMessages({
         </div>
       )}
 
-      {/* Botones de opciones — inline, alineados con el texto del mensaje de Avoa */}
+      {/* Botones de opciones — inline, alineados con el texto del mensaje de Gina */}
       {mostrarBotones && (
         <div
           className="pl-9 mt-1"
           role="group"
           aria-label="Opciones de respuesta"
         >
-          <AvoaButtons
+          <GinaButtons
             inline
             opciones={opciones!}
             multiselect={multiselect}

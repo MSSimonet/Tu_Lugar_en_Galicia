@@ -1,20 +1,20 @@
 'use client'
 
 /**
- * AvoaWidget.tsx — Widget flotante del asistente Avoa.
+ * GinaWidget.tsx — Widget flotante del asistente Gina.
  *
  * - Botón flotante en esquina inferior derecha
  * - Panel de chat responsive: 90vw/80vh en mobile, 380×560px en desktop
  * - Gestiona el estado completo de la sesión y el historial de mensajes
- * - Llama a /api/avoa para procesar cada respuesta
+ * - Llama a /api/gina para procesar cada respuesta
  */
 
 import { useState, useEffect, useRef, useCallback, useId } from 'react'
 import Link from 'next/link'
-import { AvoaMessages, type Mensaje } from './AvoaMessages'
-import { AvoaInput } from './AvoaInput'
-import { crearSesion, type AvoaSession } from '@/lib/avoa/session'
-import { obtenerPaso, personalizarTexto, INGRESOS_RIESGO, type Paso, type Opcion } from '@/lib/avoa/flowEngine'
+import { GinaMessages, type Mensaje } from './GinaMessages'
+import { GinaInput } from './GinaInput'
+import { crearSesion, type GinaSession } from '@/lib/gina/session'
+import { obtenerPaso, personalizarTexto, INGRESOS_RIESGO, type Paso, type Opcion } from '@/lib/gina/flowEngine'
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -46,7 +46,7 @@ function resolverTextoUsuario(respuesta: string | string[], opciones?: Opcion[])
 }
 
 /**
- * Retardo de escritura natural antes de mostrar cada mensaje de Avoa.
+ * Retardo de escritura natural antes de mostrar cada mensaje de Gina.
  * Proporcional al largo del texto: 8 ms por carácter, mínimo 500 ms, máximo 1 200 ms.
  * Durante este tiempo `cargando` sigue en true, manteniendo el indicador de puntitos.
  */
@@ -70,7 +70,7 @@ type ConfirmEdicion = {
  * Re-deriva todos los campos computados de la sesión (nombre, origenResidencia,
  * etiqueta, completado) a partir de las respuestas que sobreviven al truncado.
  *
- * Campos computados cubiertos (todos los de AvoaSession en Fase 1):
+ * Campos computados cubiertos (todos los de GinaSession en Fase 1):
  *   • nombre           ← respuestas['nombreCompleto'] (p1_nombre)
  *   • origenResidencia ← respuestas['paisResidencia'] (p3_origen)
  *   • etiqueta         ← respuestas['garantias'] + respuestas['ingresosMensuales'] (p11_garantias)
@@ -79,8 +79,8 @@ type ConfirmEdicion = {
 function truncarHastaEdicion(
   mensajes: Mensaje[],
   pasoId: string,
-  sesion: AvoaSession,
-): { nuevosMensajes: Mensaje[]; nuevaSesion: AvoaSession } {
+  sesion: GinaSession,
+): { nuevosMensajes: Mensaje[]; nuevaSesion: GinaSession } {
   const idxRespuesta = mensajes.findIndex((m) => m.de === 'usuario' && m.pasoId === pasoId)
   if (idxRespuesta === -1) return { nuevosMensajes: mensajes, nuevaSesion: sesion }
 
@@ -106,14 +106,14 @@ function truncarHastaEdicion(
 
   // 2. origenResidencia — value de p3_origen almacenado como paisResidencia
   const paisResidencia = nuevasRespuestas['paisResidencia']
-  let origenResidencia: AvoaSession['origenResidencia'] = null
+  let origenResidencia: GinaSession['origenResidencia'] = null
   if (typeof paisResidencia === 'string' && paisResidencia !== '') {
     origenResidencia = paisResidencia === 'en_espana' ? 'en_espana' : 'fuera'
   }
 
   // 3. etiqueta — único valor posible en Fase 1: 'lead-en-preparacion'
   //    Solo se re-aplica si AMBOS campos fuente siguen presentes tras el truncado.
-  let etiqueta: AvoaSession['etiqueta'] = undefined
+  let etiqueta: GinaSession['etiqueta'] = undefined
   const garantias = nuevasRespuestas['garantias']
   const ingresos = nuevasRespuestas['ingresosMensuales']
   if (Array.isArray(garantias) && typeof ingresos === 'string') {
@@ -124,7 +124,7 @@ function truncarHastaEdicion(
   }
 
   // 4. completado — siempre false al retomar la edición
-  const nuevaSesion: AvoaSession = {
+  const nuevaSesion: GinaSession = {
     ...sesion,
     respuestas: nuevasRespuestas,
     pasoActual: pasoId,
@@ -139,18 +139,18 @@ function truncarHastaEdicion(
 
 // ── Componente ─────────────────────────────────────────────────────────────
 
-export function AvoaWidget() {
+export function GinaWidget() {
   const dialogId = useId()
   const [abierto, setAbierto] = useState(false)
-  const [sesion, setSesion] = useState<AvoaSession>(crearSesion)
+  const [sesion, setSesion] = useState<GinaSession>(crearSesion)
   const [pasoActual, setPasoActual] = useState<Paso>(obtenerPrimerPaso)
   const [mensajes, setMensajes] = useState<Mensaje[]>(() => {
-    // Inicializar con el primer mensaje de Avoa (lazy initializer — evita useEffect innecesario)
+    // Inicializar con el primer mensaje de Gina (lazy initializer — evita useEffect innecesario)
     const primerPaso = obtenerPrimerPaso()
     return [
       {
         id: generarId(),
-        de: 'avoa' as const,
+        de: 'gina' as const,
         texto: personalizarTexto(primerPaso.texto, ''),
         pasoId: primerPaso.id,
       },
@@ -188,10 +188,10 @@ export function AvoaWidget() {
    * Se llama cuando el motor devuelve un paso vacío como p11_check o p18_check_origen.
    */
   const avanzarPasoVirtual = useCallback(
-    async (sesionVirtual: AvoaSession) => {
+    async (sesionVirtual: GinaSession) => {
       setCargando(true)
       try {
-        const res = await fetch('/api/avoa', {
+        const res = await fetch('/api/gina', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           // Respuesta vacía — el motor resuelve el paso virtual por lógica interna
@@ -201,22 +201,22 @@ export function AvoaWidget() {
         if (!res.ok) throw new Error(`Error ${res.status}`)
 
         const data = (await res.json()) as {
-          sesionActualizada: AvoaSession
+          sesionActualizada: GinaSession
           siguientePaso: Paso
         }
 
         setSesion(data.sesionActualizada)
         setPasoActual(data.siguientePaso)
 
-        const textoAvoa = personalizarTexto(
+        const textoGina = personalizarTexto(
           data.siguientePaso.texto,
           data.sesionActualizada.nombre,
         )
-        if (textoAvoa.trim()) {
-          await typingDelay(textoAvoa)
+        if (textoGina.trim()) {
+          await typingDelay(textoGina)
           setMensajes((prev) => [
             ...prev,
-            { id: generarId(), de: 'avoa', texto: textoAvoa, pasoId: data.siguientePaso.id },
+            { id: generarId(), de: 'gina', texto: textoGina, pasoId: data.siguientePaso.id },
           ])
         }
 
@@ -224,7 +224,7 @@ export function AvoaWidget() {
           setInputDeshabilitado(false)
         }
       } catch (err) {
-        console.error('[AvoaWidget] Error en paso virtual:', err)
+        console.error('[GinaWidget] Error en paso virtual:', err)
       } finally {
         setCargando(false)
       }
@@ -256,7 +256,7 @@ export function AvoaWidget() {
       setInputDeshabilitado(true)
 
       try {
-        const res = await fetch('/api/avoa', {
+        const res = await fetch('/api/gina', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sesion, respuesta }),
@@ -267,7 +267,7 @@ export function AvoaWidget() {
         }
 
         const data = (await res.json()) as {
-          sesionActualizada: AvoaSession
+          sesionActualizada: GinaSession
           siguientePaso: Paso
         }
 
@@ -286,15 +286,15 @@ export function AvoaWidget() {
           return
         }
 
-        // Mostrar texto de Avoa personalizado con retardo de escritura natural
-        const textoAvoa = personalizarTexto(
+        // Mostrar texto de Gina personalizado con retardo de escritura natural
+        const textoGina = personalizarTexto(
           siguientePaso.texto,
           sesionActualizada.nombre,
         )
-        await typingDelay(textoAvoa)
+        await typingDelay(textoGina)
         setMensajes((prev) => [
           ...prev,
-          { id: generarId(), de: 'avoa', texto: textoAvoa, pasoId: siguientePaso.id },
+          { id: generarId(), de: 'gina', texto: textoGina, pasoId: siguientePaso.id },
         ])
 
         // Si la sesión terminó, deshabilitar permanentemente
@@ -304,12 +304,12 @@ export function AvoaWidget() {
           setInputDeshabilitado(false)
         }
       } catch (err) {
-        console.error('[AvoaWidget] Error al procesar respuesta:', err)
+        console.error('[GinaWidget] Error al procesar respuesta:', err)
         setMensajes((prev) => [
           ...prev,
           {
             id: generarId(),
-            de: 'avoa',
+            de: 'gina',
             texto: 'Ups, algo no salió bien. ¿Puedes intentarlo de nuevo?',
           },
         ])
@@ -325,11 +325,11 @@ export function AvoaWidget() {
 
   /**
    * Ejecuta la edición: trunca el historial, reconstruye la sesión y re-muestra
-   * el mensaje de Avoa para que el usuario vuelva a responder ese paso.
+   * el mensaje de Gina para que el usuario vuelva a responder ese paso.
    */
   function ejecutarEdicion(pasoId: string) {
     const { nuevosMensajes, nuevaSesion } = truncarHastaEdicion(mensajes, pasoId, sesion)
-    // nuevosMensajes ya contiene el mensaje de Avoa que hizo la pregunta (es el elemento
+    // nuevosMensajes ya contiene el mensaje de Gina que hizo la pregunta (es el elemento
     // inmediatamente anterior a la respuesta del usuario). No se agrega de nuevo: hacerlo
     // causaría que la misma pregunta apareciera duplicada en el historial.
     setMensajes(nuevosMensajes)
@@ -374,7 +374,7 @@ export function AvoaWidget() {
 
   // ── Render ──
 
-  // Los botones se renderizan inline en AvoaMessages, no en la barra inferior.
+  // Los botones se renderizan inline en GinaMessages, no en la barra inferior.
   // El campo de texto siempre es visible: deshabilitado en pasos de botones,
   // habilitado en pasos de texto libre (input / llm).
   const esPasoBotones = pasoActual.tipo === 'botones'
@@ -386,7 +386,7 @@ export function AvoaWidget() {
     ? 'Conversación finalizada'
     : esPasoBotones
       ? 'Elige una opción de arriba 👆'
-      : undefined  // AvoaInput usará el placeholder según pasoActual.validacion
+      : undefined  // GinaInput usará el placeholder según pasoActual.validacion
 
   return (
     <>
@@ -403,7 +403,7 @@ export function AvoaWidget() {
           ref={botonAbrirRef}
           type="button"
           onClick={() => setAbierto(true)}
-          aria-label="Abrir asistente Avoa"
+          aria-label="Abrir asistente Gina"
           aria-expanded={abierto}
           aria-controls={dialogId}
           className="flex items-center gap-2 pl-4 pr-5 py-3 rounded-full shadow-lg text-sm font-semibold transition-brand cursor-pointer"
@@ -428,7 +428,7 @@ export function AvoaWidget() {
               d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
             />
           </svg>
-          Habla con Avoa
+          Habla con Gina
         </button>
 
         <Link
@@ -444,7 +444,7 @@ export function AvoaWidget() {
       <div
         id={dialogId}
         role="dialog"
-        aria-label="Asistente Avoa — Tu Lugar en Galicia"
+        aria-label="Asistente Gina — Tu Lugar en Galicia"
         aria-modal="true"
         onKeyDown={onKeyDown}
         className={`
@@ -494,7 +494,7 @@ export function AvoaWidget() {
                 className="text-sm font-bold leading-none tracking-wide"
                 style={{ color: 'var(--color-laton-claro)' }}
               >
-                Avoa
+                Gina
               </p>
               <p
                 className="text-xs leading-tight mt-0.5"
@@ -509,7 +509,7 @@ export function AvoaWidget() {
             ref={botonCerrarRef}
             type="button"
             onClick={() => setAbierto(false)}
-            aria-label="Cerrar asistente Avoa"
+            aria-label="Cerrar asistente Gina"
             className="transition-brand cursor-pointer p-1 rounded"
             style={{ color: 'var(--color-arena)', opacity: 0.7 }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
@@ -529,7 +529,7 @@ export function AvoaWidget() {
         </div>
 
         {/* Mensajes + botones inline (cuando el paso es tipo "botones") */}
-        <AvoaMessages
+        <GinaMessages
           mensajes={mensajes}
           cargando={cargando}
           opciones={esPasoBotones ? pasoActual.opciones : undefined}
@@ -545,7 +545,7 @@ export function AvoaWidget() {
         {confirmEdicion !== null && (
           <div
             role="alertdialog"
-            aria-labelledby="avoa-confirm-titulo"
+            aria-labelledby="gina-confirm-titulo"
             className="shrink-0 px-4 py-3 border-t"
             style={{
               borderColor: 'var(--color-laton)',
@@ -553,7 +553,7 @@ export function AvoaWidget() {
             }}
           >
             <p
-              id="avoa-confirm-titulo"
+              id="gina-confirm-titulo"
               className="text-xs leading-snug mb-3"
               style={{ color: 'var(--color-granito)' }}
             >
@@ -599,7 +599,7 @@ export function AvoaWidget() {
             backgroundColor: 'var(--color-arena)',
           }}
         >
-          <AvoaInput
+          <GinaInput
             validacion={!esPasoBotones ? pasoActual.validacion : undefined}
             placeholder={inputPlaceholder}
             deshabilitado={inputEsDeshabilitado}

@@ -1,12 +1,12 @@
-# Avoa — Barandas, arquitectura y salvaguardas
+# Gina — Barandas, arquitectura y salvaguardas
 ### Tu Lugar En Galicia · Construcción propia (widget web)
 
 **Decisión de partida:** el chatbot se construye a medida como widget de chat en la web. WhatsApp y otros canales quedan para una fase posterior. Por eso el documento mantiene todo **portable**: las reglas de control y el flujo no dependen de ninguna plataforma concreta, así que migrar a WhatsApp más adelante no obliga a rehacer el trabajo.
 
-Este documento es la capa de control y construcción que envuelve a **avoa-flujo.md** (el guion conversacional). Tres partes:
+Este documento es la capa de control y construcción que envuelve a **gina-flujo.md** (el guion conversacional). Tres partes:
 **Parte 1** — bloque de control para el System Prompt (instrucciones ocultas del bot). Es independiente de la plataforma.
 **Parte 2** — arquitectura mínima para construirlo vosotros.
-**Parte 3** — salvaguardas del cuestionario (ya integradas en avoa-flujo.md).
+**Parte 3** — salvaguardas del cuestionario (ya integradas en gina-flujo.md).
 
 ---
 
@@ -15,7 +15,7 @@ Este documento es la capa de control y construcción que envuelve a **avoa-flujo
 > 🛑 **REGLAS CRÍTICAS DE CONTROL DE CONVERSACIÓN**
 
 **1. Identidad y Foco Absoluto.**
-Eres Avoa, representante virtual del equipo de "Tu Lugar En Galicia". Tu único propósito es guiar al usuario por el proceso de calificación, reubicación y vivienda en Galicia. Mantienes siempre tuteo en español neutro, tono cálido y plural de equipo ("nosotros", "nuestro equipo").
+Eres Gina, representante virtual del equipo de "Tu Lugar En Galicia". Tu único propósito es guiar al usuario por el proceso de calificación, reubicación y vivienda en Galicia. Mantienes siempre tuteo en español neutro, tono cálido y plural de equipo ("nosotros", "nuestro equipo").
 
 **2. Clasificación previa de todo texto libre.**
 Antes de responder a cualquier mensaje escrito, clasifícalo en UNA de estas tres categorías y actúa según corresponda:
@@ -78,7 +78,7 @@ Al cerrar, vuelca los datos capturados a Google Sheets o a vuestro CRM vía API.
 
 ---
 
-## PARTE 3 — Salvaguardas del cuestionario (ya integradas en avoa-flujo.md)
+## PARTE 3 — Salvaguardas del cuestionario (ya integradas en gina-flujo.md)
 
 Las salvaguardas que antes figuraban como "ajustes pendientes" ya están aplicadas en el flujo. Se documentan aquí para que no se pierdan en la implementación.
 

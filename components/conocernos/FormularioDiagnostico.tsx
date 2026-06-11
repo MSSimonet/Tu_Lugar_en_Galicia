@@ -145,7 +145,7 @@ function validate(form: FormState): FormErrors {
   return errors
 }
 
-// Toggle multiselect con opción excluyente — replica lógica de AvoaButtons
+// Toggle multiselect con opción excluyente — replica lógica de GinaButtons
 function toggleExclusivo<T extends string>(
   current: T[],
   value: T,
@@ -824,7 +824,7 @@ export function FormularioDiagnostico() {
             )}
           </div>
 
-          {/* Ingresos mensuales — select con mismos valores que Avoa */}
+          {/* Ingresos mensuales — select con mismos valores que Gina */}
           <div>
             <label htmlFor="ingresosMensuales" className={labelClass}>
               Ingresos netos mensuales del hogar
@@ -1097,7 +1097,7 @@ export function FormularioDiagnostico() {
             />
           </FieldWrapper>
 
-          {/* Fecha de llegada — select con mismos valores que Avoa */}
+          {/* Fecha de llegada — select con mismos valores que Gina */}
           <div>
             <label htmlFor="fechaLlegada" className={labelClass}>
               ¿En qué plazo necesitas tener resuelta tu vivienda?

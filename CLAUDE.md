@@ -17,11 +17,11 @@ Contexto completo del negocio, marca, competencia y producto en:
 - `/docs/ARCHITECTURE.md` — stack y decisiones técnicas
 - `/docs/PRD-fase-1.md` — requisitos de la fase actual
 - `/docs/design-system.md` — identidad visual y componentes
-- `/docs/avoa-flujo.md` — flujo conversacional de Avoa (fuente de verdad del cuestionario)
-- `/docs/avoa-barandas.md` — reglas de control del system prompt y arquitectura del widget de Avoa
+- `/docs/gina-flujo.md` — flujo conversacional de Gina (fuente de verdad del cuestionario)
+- `/docs/gina-barandas.md` — reglas de control del system prompt y arquitectura del widget de Gina
 - `/docs/contexto-estrategico.md` — contexto de negocio, marca y competencia
   (nota: la voz de marca descrita en ese doc usaba "vos" rioplatense; la decisión vigente es "tú" neutro — ver §6)
-- `/docs/avoa-recursos-preparacion.md` — material de apoyo y recursos del asistente Avoa
+- `/docs/gina-recursos-preparacion.md` — material de apoyo y recursos del asistente Gina
 - `/docs/legal-terminos-privacidad.md` — fuente de la política de privacidad real (datos fiscales pendientes de completar)
 
 ---
@@ -32,7 +32,7 @@ Contexto completo del negocio, marca, competencia y producto en:
 - **Deploy:** Vercel (auto-deploy desde GitHub `main`)
 - **DNS / SSL / CDN / cron del scraper:** Cloudflare (free)
 - **Leads / CRM (Fase 1):** Airtable o Google Sheets — NO base de datos todavía
-- **IA (Avoa):** API de Claude llamada desde API routes de Next.js (clave solo en servidor)
+- **IA (Gina):** API de Claude llamada desde API routes de Next.js (clave solo en servidor)
 - **Base de datos:** se introduce SOLO en Fase 5 (Vercel Postgres / Neon / Supabase)
 - **Agenda:** Cal.com embebido — **Pagos:** Stripe (Fase 6)
 
@@ -56,7 +56,7 @@ La colección instalada tiene +200 agentes genéricos. En este repo se usan úni
 | Marca | `Brand Guardian` | `/docs/design-system.md` |
 | Diseño UI | `UI Designer` | `/docs/design-system.md`, `tailwind.config.ts`, `app/globals.css` (solo tokens) |
 | Builder principal | `Frontend Developer` | `/app`, `/components` (excepto `/app/api`) |
-| IA | `AI Engineer` | `/app/api/avoa`, `/lib/ai` |
+| IA | `AI Engineer` | `/app/api/gina`, `/lib/ai` |
 | Scraping | `Data Engineer` | `/workers/scraper` |
 | Infra / deploy | `DevOps Automator` | `vercel.json`, `/.github`, config raíz, Cloudflare |
 | Git | `Git Workflow Master` | define convención de ramas (no toca features) |

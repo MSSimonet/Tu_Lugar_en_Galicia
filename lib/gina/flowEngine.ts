@@ -1,12 +1,12 @@
 /**
- * lib/avoa/flowEngine.ts — Motor de estados del cuestionario de Avoa.
+ * lib/gina/flowEngine.ts — Motor de estados del cuestionario de Gina.
  *
  * Motor puro: sin side effects de IA ni de red.
  * Los pasos de tipo "llm" en Etapa 1 se procesan como inputs de texto normales.
  */
 
 import flow from './flow.json'
-import type { AvoaSession } from './session'
+import type { GinaSession } from './session'
 
 // ── Tipos del flujo ────────────────────────────────────────────────────────
 
@@ -56,7 +56,7 @@ export const INGRESOS_RIESGO = new Set(['menos-1500', 'sin-ingresos'])
 // ── Motor principal ────────────────────────────────────────────────────────
 
 export type ResultadoProcesamiento = {
-  sesionActualizada: AvoaSession
+  sesionActualizada: GinaSession
   siguientePasoId: string
 }
 
@@ -69,12 +69,12 @@ export type ResultadoProcesamiento = {
  * @param respuesta Valor de la opción elegida (string) o array de valores (multiselect)
  */
 export function procesarRespuesta(
-  session: AvoaSession,
+  session: GinaSession,
   paso: Paso,
   respuesta: string | string[],
 ): ResultadoProcesamiento {
   // Clonar para inmutabilidad
-  const sesion: AvoaSession = {
+  const sesion: GinaSession = {
     ...session,
     respuestas: { ...session.respuestas },
   }
@@ -127,7 +127,7 @@ export function procesarRespuesta(
  * Maneja los pasos virtuales p11_check y p18_check_origen.
  */
 function resolverSiguiente(
-  sesion: AvoaSession,
+  sesion: GinaSession,
   paso: Paso,
   respuesta: string | string[],
 ): string {

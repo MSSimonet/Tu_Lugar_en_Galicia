@@ -1,24 +1,24 @@
 /**
- * app/api/avoa/route.ts — Endpoint serverless del motor de Avoa.
+ * app/api/gina/route.ts — Endpoint serverless del motor de Gina.
  *
- * POST /api/avoa
- * Body: { sesion: AvoaSession, respuesta: string | string[] }
- * Response: { sesionActualizada: AvoaSession, siguientePaso: Paso }
+ * POST /api/gina
+ * Body: { sesion: GinaSession, respuesta: string | string[] }
+ * Response: { sesionActualizada: GinaSession, siguientePaso: Paso }
  *
  * En Etapa 1 los pasos de tipo "llm" NO llaman a ninguna IA externa:
  * reciben el texto del usuario, lo guardan y devuelven el siguiente paso.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { procesarRespuesta, obtenerPaso } from '@/lib/avoa/flowEngine'
-import type { AvoaSession } from '@/lib/avoa/session'
+import { procesarRespuesta, obtenerPaso } from '@/lib/gina/flowEngine'
+import type { GinaSession } from '@/lib/gina/session'
 import { saveLead } from '@/lib/leads'
 import type { LeadData } from '@/lib/leads'
 
 export const runtime = 'edge'
 
 type RequestBody = {
-  sesion: AvoaSession
+  sesion: GinaSession
   respuesta: string | string[]
 }
 
@@ -83,12 +83,12 @@ export async function POST(req: NextRequest) {
       const recordId = await guardarEnAirtable(sesionActualizada)
       sesionParaDevolver = { ...sesionActualizada, airtableRecordId: recordId }
     } catch (err) {
-      console.error('[avoa] Error al guardar nivel1:', (err as Error).message)
+      console.error('[gina] Error al guardar nivel1:', (err as Error).message)
       // Sin record ID: el guardado final hará POST como fallback, no se pierde el lead
     }
   } else if (paso.accion === 'guardar_lead_completo' || paso.accion === 'guardar_lead_parcial') {
     guardarEnAirtable(sesionActualizada).catch((err) => {
-      console.error('[avoa] Error al guardar lead:', (err as Error).message)
+      console.error('[gina] Error al guardar lead:', (err as Error).message)
     })
   }
 
@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
  * Pasa sesion.airtableRecordId a saveLead: si existe hace PATCH, si no hace POST.
  * Devuelve el record ID resultante (nuevo en POST, el mismo en PATCH).
  */
-async function guardarEnAirtable(sesion: AvoaSession): Promise<string> {
+async function guardarEnAirtable(sesion: GinaSession): Promise<string> {
   const r = sesion.respuestas
 
   const lead: Partial<LeadData> & Pick<LeadData, 'nombreCompleto' | 'email' | 'consentimientoRGPD'> = {

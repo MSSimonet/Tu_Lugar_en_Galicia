@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * AvoaInput.tsx — Campo de texto libre para el chat de Avoa.
+ * GinaInput.tsx — Campo de texto libre para el chat de Gina.
  *
  * Soporta validación inline de email y teléfono.
  * Enter (sin Shift) envía el mensaje.
@@ -32,7 +32,7 @@ function validar(valor: string, tipo?: TipoValidacion): string | null {
   return null
 }
 
-export function AvoaInput({ validacion, placeholder, deshabilitado, onEnvio }: Props) {
+export function GinaInput({ validacion, placeholder, deshabilitado, onEnvio }: Props) {
   const [valor, setValor] = useState('')
   const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -86,7 +86,7 @@ export function AvoaInput({ validacion, placeholder, deshabilitado, onEnvio }: P
             disabled={deshabilitado}
             placeholder={placeholderTexto}
             aria-invalid={error ? 'true' : 'false'}
-            aria-describedby={error ? 'avoa-input-error' : undefined}
+            aria-describedby={error ? 'gina-input-error' : undefined}
             className="
               w-full px-4 py-2 rounded-xl text-sm
               border border-[color:var(--color-laton)]
@@ -128,7 +128,7 @@ export function AvoaInput({ validacion, placeholder, deshabilitado, onEnvio }: P
       {/* Error inline */}
       {error && (
         <p
-          id="avoa-input-error"
+          id="gina-input-error"
           role="alert"
           className="mt-1 ml-1 text-xs"
           style={{ color: 'var(--color-coral)' }}

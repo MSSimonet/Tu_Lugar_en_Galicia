@@ -1,6 +1,6 @@
 /**
  * lib/leads.ts — Integración con Airtable para guardar leads del formulario de diagnóstico
- * y del cuestionario de Avoa.
+ * y del cuestionario de Gina.
  *
  * IMPORTANTE: Las columnas en Airtable deben existir con los nombres exactos
  * de las keys del tipo LeadData (camelCase). Columnas y tipos:
@@ -29,14 +29,14 @@
  *
  *   Selección múltiple (Multiple select):
  *     garantias      → adelanto-6-12 | aval | seguro-impago | ninguna
- *     imprescindibles → ascensor | garaje | calefaccion | terraza | no   ← NUEVO (Avoa p24)
+ *     imprescindibles → ascensor | garaje | calefaccion | terraza | no   ← NUEVO (Gina p24)
  *     comodidades    → transporte | zona-tranquila | cerca-colegios | internet | ninguna
  *
  *   Casilla (Checkbox):
  *     comprendeServicio, consentimientoRGPD
  *
  * Fuente del canal del lead (campo interno de Airtable, no viene del formulario):
- *   Se puede distinguir formulario web vs. Avoa via el campo "fuenteLead" si se añade.
+ *   Se puede distinguir formulario web vs. Gina via el campo "fuenteLead" si se añade.
  */
 
 export type LeadData = {
@@ -83,19 +83,19 @@ export type LeadData = {
   presupuestoMensual: 'menos-700' | '700-1000' | '1000-1400' | 'mas-1400'
   habitacionesMinimas?: '1' | '2' | '3' | '4+'
   amueblado: 'si' | 'no' | 'indiferente'
-  estacionamiento?: 'indispensable' | 'deseable' | 'no'   // opcional: Avoa no pregunta por esto
+  estacionamiento?: 'indispensable' | 'deseable' | 'no'   // opcional: Gina no pregunta por esto
   comodidades?: ('transporte' | 'zona-tranquila' | 'cerca-colegios' | 'internet' | 'ninguna')[]
 
-  // Perfil adicional (Nivel 2 de Avoa)
+  // Perfil adicional (Nivel 2 de Gina)
   necesidadesEspeciales?: string
   profesion?: string
 
-  // Características físicas del inmueble (selección múltiple — Avoa p24)
+  // Características físicas del inmueble (selección múltiple — Gina p24)
   imprescindibles?: ('ascensor' | 'garaje' | 'calefaccion' | 'terraza' | 'no')[]
 
   // Plazos y modalidad
   fechaLlegada: string
-  inicioContrato?: string   // obligatorio en el formulario web, omitido por Avoa
+  inicioContrato?: string   // obligatorio en el formulario web, omitido por Gina
   modalidad: 'antes-de-viajar' | 'ya-estando'
 
   // Atribución
