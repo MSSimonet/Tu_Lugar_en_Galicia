@@ -49,7 +49,7 @@
 
 > "¡Hola! Soy Gina, tu asistente virtual del equipo de Tu Lugar en Galicia.
 >
-> En unos minutos te hago unas preguntas para entender tu situación y saber si podemos ayudarte a encontrar vivienda antes de llegar. Nada de formularios aburridos: esto es una conversación.
+> En unos minutos te hago unas preguntas para entender tu situación y saber si podemos ayudarte a encontrar tu vivienda en Galicia. Nada de formularios aburridos: esto es una conversación.
 >
 > ¿Empezamos?"
 
@@ -250,7 +250,38 @@
 | Gato | `gato` |
 | Otro | `otro` |
 
-- Condicional en `flowEngine`: si la selección **incluye `perro`** → `p7b_peso`; si no → `p8_documentacion`
+- Condicional en `flowEngine`:
+  - incluye `perro` → `p7c_cant_perros`
+  - incluye `gato` (sin perro) → `p7c_cant_gatos`
+  - solo `otro` → `p8_documentacion`
+
+---
+
+#### `p7c_cant_perros` · `botones` · Airtable: `cantidadPerros` *(solo si mascotaTipo incluye "perro")*
+
+> "¿Cuántos perros tienes?"
+
+| Label | Value |
+|---|---|
+| 1 | `1` |
+| 2 | `2` |
+| 3+ | `3+` |
+
+- Condicional en `flowEngine`: si mascotaTipo también incluye `gato` → `p7c_cant_gatos`; si no → `p7b_peso`
+
+---
+
+#### `p7c_cant_gatos` · `botones` · Airtable: `cantidadGatos` *(solo si mascotaTipo incluye "gato")*
+
+> "¿Cuántos gatos tienes?"
+
+| Label | Value |
+|---|---|
+| 1 | `1` |
+| 2 | `2` |
+| 3+ | `3+` |
+
+- Condicional en `flowEngine`: si mascotaTipo incluye `perro` → `p7b_peso`; si no → `p8_documentacion`
 
 ---
 
@@ -333,8 +364,9 @@
 
 | Label | Value |
 |---|---|
-| Adelantar varios meses de alquiler (6–12) | `adelanto-6-12` |
-| Aval bancario o avalista con ingresos en España | `aval` |
+| Aportes de meses de garantía adicional (6–12) | `garantia-adicional` |
+| Aval bancario | `aval-bancario` |
+| Avalista con ingresos en España | `avalista` |
 | Contratar un seguro de impago | `seguro-impago` |
 | Ninguna de las anteriores *(excluyente)* | `ninguna` |
 
@@ -455,12 +487,12 @@
 
 | Label | Value | Siguiente (resuelto en flowEngine) |
 |---|---|---|
-| Española | `espanola` | → `p18a_ciudad` (en España) / `p18b_tiempo` (fuera) |
-| Europea | `europea` | → `p18a_ciudad` (en España) / `p18b_tiempo` (fuera) |
+| Española | `espanola` | → `p18a_ciudad` (en España) / `p21_tipo_inmueble` (fuera) |
+| Europea | `europea` | → `p18a_ciudad` (en España) / `p21_tipo_inmueble` (fuera) |
 | De mi país de origen | `extranjera` | → `p17b_canje` |
-| No tengo | `no` | → `p18a_ciudad` (en España) / `p18b_tiempo` (fuera) |
+| No tengo | `no` | → `p18a_ciudad` (en España) / `p21_tipo_inmueble` (fuera) |
 
-> *Nota técnica:* El flow.json apunta a `p18_check_origen` (paso virtual). El motor lo cortocircuita directamente al procesar `p17_licencia`: si `sesion.origenResidencia === 'en_espana'` → `p18a_ciudad`; si no → `p18b_tiempo`.
+> *Nota técnica:* El flow.json apunta a `p18_check_origen` (paso virtual). El motor lo cortocircuita directamente al procesar `p17_licencia`: si `sesion.origenResidencia === 'en_espana'` → `p18a_ciudad`; si no → `p21_tipo_inmueble`.
 
 ---
 
@@ -470,7 +502,7 @@
 
 | Label | Value | Siguiente |
 |---|---|---|
-| Entendido, seguimos | `entendido` | → `p18a_ciudad` / `p18b_tiempo` (mismo cortocircuito) |
+| Entendido, seguimos | `entendido` | → `p18a_ciudad` (en España) / `p21_tipo_inmueble` (fuera) |
 
 ---
 
@@ -516,17 +548,7 @@
 
 #### **Rama "viene de fuera"** (`origenResidencia === 'fuera'`)
 
-##### `p18b_tiempo` · `botones` · **sin campo Airtable**
-
-> "¿Cuánto tiempo llevas planificando la mudanza?"
-
-| Label | Value |
-|---|---|
-| Menos de 1 año | `menos-1` |
-| Entre 1 y 5 años | `1-5` |
-| Más de 5 años | `mas-5` |
-
-- → `p21_tipo_inmueble`
+*Fluye directamente a `p21_tipo_inmueble` sin pasos intermedios.*
 
 ---
 
@@ -605,19 +627,6 @@
 | Cerca de colegios | `cerca-colegios` |
 | Fibra óptica / buen internet | `internet` |
 | Ninguna en particular *(excluyente)* | `ninguna` |
-
-- → `p25_modalidad`
-
----
-
-#### `p25_modalidad` · `botones` · Airtable: `modalidad`
-
-> "¿Cómo prefieres que gestionemos la búsqueda?"
-
-| Label | Value |
-|---|---|
-| Dejar el piso alquilado antes de viajar (100% a distancia) | `antes-de-viajar` |
-| Llegar primero a un alojamiento temporal y buscar allí | `ya-estando` |
 
 - → `p26_profesion`
 
@@ -705,11 +714,13 @@
 | `adolescentes` | `p6d_adolescentes` | Single select | `0` \| `1` \| `2` \| `3+` (solo si hay menores) |
 | `mascotas` | `p7_mascotas` | Single select | `si` \| `no` |
 | `mascotaTipo` | `p7b_tipo` | Multiple select | `perro` \| `gato` \| `otro` (solo si mascotas=si) |
+| `cantidadPerros` | `p7c_cant_perros` | Single select | `1` \| `2` \| `3+` (solo si mascotaTipo incluye perro) |
+| `cantidadGatos` | `p7c_cant_gatos` | Single select | `1` \| `2` \| `3+` (solo si mascotaTipo incluye gato) |
 | `mascotaPeso` | `p7b_peso` | Single select | `0-5 kg` \| `5-10 kg` \| `+10 kg` (solo si mascotaTipo incluye perro) |
 | `documentacion` | `p8_documentacion` | Single select | 6 opciones |
 | `situacionLaboral` | `p9_laboral` | Single select | 7 opciones |
 | `ingresosMensuales` | `p10_ingresos` | Single line | 5 opciones |
-| `garantias` | `p11_garantias` | Multiple select | `adelanto-6-12` \| `aval` \| `seguro-impago` \| `ninguna` |
+| `garantias` | `p11_garantias` | Multiple select | `garantia-adicional` \| `aval-bancario` \| `avalista` \| `seguro-impago` \| `ninguna` |
 | `presupuestoMensual` | `p12_presupuesto` | Single select | `menos-700` \| `700-1000` \| `1000-1400` \| `mas-1400` |
 | `necesidadesEspeciales` | `p16_accesibilidad` | Single line | `si` \| `no` |
 | `tipoInmueble` | `p21_tipo_inmueble` | Single select | `habitacion` \| `estudio` \| `piso` \| `casa` |
@@ -717,7 +728,6 @@
 | `amueblado` | `p23_amueblado` | Single select | `si` \| `no` \| `indiferente` |
 | `imprescindibles` | `p24_imprescindibles` | Multiple select | `ascensor` \| `garaje` \| `calefaccion` \| `terraza` \| `no` |
 | `comodidades` | `p24b_comodidades` | Multiple select | `transporte` \| `zona-tranquila` \| `cerca-colegios` \| `internet` \| `ninguna` |
-| `modalidad` | `p25_modalidad` | Single select | `antes-de-viajar` \| `ya-estando` |
 | `profesion` | `p26_profesion` | Long text | Texto libre |
 | `comoNosConociste` | `atribucion` | Single select | `instagram` \| `facebook` \| `tiktok` \| `google` \| `recomendacion` \| `otro` |
 | `comprendeServicio` | *(automático)* | Checkbox | Siempre `true` — se añade en el mapper de `route.ts` |
@@ -732,7 +742,7 @@
 - Respuesta a `p14_servicio` / `p14_explicacion` (comprensión del servicio → se guarda como `true`)
 - Respuesta a `p17_licencia` y `p17b_canje` (tipo de licencia)
 - Respuesta a `p18a_ciudad` (ciudad actual en España)
-- Respuesta a `p19a_tiempo` y `p18b_tiempo` (tiempo en España / planificando)
+- Respuesta a `p19a_tiempo` (tiempo viviendo en España)
 - Respuesta a `p20a_objetivo` (busca vivienda o integración)
 - Respuesta a `p27_estudios` (nivel de estudios)
 
@@ -760,9 +770,12 @@ p4_plazo → p5_ciudad → p6a_adultos → p6b_menores        │
   └── no ─────────────────────────────────┤             │
   ↓                                       │             │
 p7_mascotas ←───────────────────────────-┘             │
-  ├── si → p7b_tipo ──── sin perro → p8               │
-  │         └── con perro → p7b_peso → p8             │
-  └── no ──────────────────────────────→ p8           │
+  ├── si → p7b_tipo ──── perro → p7c_cant_perros ─┐  │
+  │         ├── gato (sin perro) → p7c_cant_gatos  │  │
+  │         │    └── (si perro también) ──────────→┤  │
+  │         │         └── p7b_peso ──────────────→ p8 │
+  │         └── solo otro → p8                        │
+  └── no ─────────────────────────────────────→ p8   │
   ↓                                                    │
 p8_doc → p9_laboral → p10_ingresos                    │
   ├── sin-ingresos → p10_sin_ingresos_msg ─┐          │
@@ -780,13 +793,13 @@ p11_garantias ←─────────────────────
                ├── en_espana → p18a_ciudad → p19a → p20a_objetivo
                │                              ├── integrar → p26_profesion
                │                              └── busco → p21_tipo_inmueble
-               └── fuera → p18b_tiempo → p21_tipo_inmueble
+               └── fuera → p21_tipo_inmueble
                               ↓
                       p21_tipo_inmueble
                       ├── estudio → p23_amueblado
                       └── resto → p22_habitaciones → p23_amueblado
                           ↓
-                      p24_imprescindibles → p24b_comodidades → p25_modalidad
+                      p24_imprescindibles → p24b_comodidades
                           ↓
                       p26_profesion → p27_estudios → atribucion [SAVE-2]
                           ↓

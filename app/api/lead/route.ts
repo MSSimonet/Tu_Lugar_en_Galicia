@@ -52,7 +52,7 @@ const VALID_INGRESOS = [
   'sin-ingresos',
 ] as const
 
-const VALID_GARANTIAS = ['adelanto-6-12', 'aval', 'seguro-impago', 'ninguna'] as const
+const VALID_GARANTIAS = ['garantia-adicional', 'aval-bancario', 'avalista', 'seguro-impago', 'ninguna'] as const
 
 const VALID_CIUDAD_DESTINO = [
   'vigo',
@@ -102,8 +102,6 @@ const VALID_FECHA_LLEGADA = [
   'mas-6-meses',
   'sin-fecha',
 ] as const
-
-const VALID_MODALIDAD = ['antes-de-viajar', 'ya-estando'] as const
 
 const VALID_COMO_NOS_CONOCISTE = [
   'instagram',
@@ -292,11 +290,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Campo requerido faltante o inválido: fechaLlegada', 400)
     }
 
-    // --- modalidad ---
-    if (!VALID_MODALIDAD.includes(body.modalidad)) {
-      return errorResponse('Campo requerido faltante o inválido: modalidad', 400)
-    }
-
     // --- comoNosConociste (opcional) ---
     if (
       body.comoNosConociste !== undefined &&
@@ -375,7 +368,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       // Plazos
       fechaLlegada: body.fechaLlegada as string,
-      modalidad: body.modalidad as LeadData['modalidad'],
 
       // Atribución (opcional)
       ...(body.comoNosConociste

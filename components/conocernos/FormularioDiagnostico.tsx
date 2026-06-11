@@ -28,7 +28,7 @@ type FormState = {
   documentacion: LeadData['documentacion'] | ''
   situacionLaboral: LeadData['situacionLaboral'] | ''
   ingresosMensuales: string
-  garantias: ('adelanto-6-12' | 'aval' | 'seguro-impago' | 'ninguna')[]
+  garantias: ('garantia-adicional' | 'aval-bancario' | 'avalista' | 'seguro-impago' | 'ninguna')[]
   // Vivienda
   ciudadDestino: LeadData['ciudadDestino'] | ''
   tipoInmueble: 'habitacion' | 'estudio' | 'piso' | 'casa' | 'co-living' | ''
@@ -41,7 +41,6 @@ type FormState = {
   necesidadesEspeciales: 'si' | 'no' | ''
   profesion: string
   fechaLlegada: string
-  modalidad: 'antes-de-viajar' | 'ya-estando' | ''
   // Para terminar
   comoNosConociste: 'instagram' | 'facebook' | 'tiktok' | 'google' | 'recomendacion' | 'otro' | ''
   comprendeServicio: boolean
@@ -76,7 +75,6 @@ const INITIAL_STATE: FormState = {
   necesidadesEspeciales: '',
   profesion: '',
   fechaLlegada: '',
-  modalidad: '',
   comoNosConociste: '',
   comprendeServicio: false,
   consentimientoRGPD: false,
@@ -135,8 +133,6 @@ function validate(form: FormState): FormErrors {
     errors.amueblado = 'Indícanos si necesitas la vivienda amueblada'
   if (!form.fechaLlegada)
     errors.fechaLlegada = 'Indicanos en qué plazo necesitas resolver tu vivienda'
-  if (!form.modalidad)
-    errors.modalidad = 'Cuéntanos cómo prefieres organizar la búsqueda'
   if (!form.comprendeServicio)
     errors.comprendeServicio = 'Es importante que entiendas cómo funciona el servicio antes de continuar'
   if (!form.consentimientoRGPD)
@@ -409,7 +405,6 @@ export function FormularioDiagnostico() {
           : {}),
         ...(form.profesion.trim() ? { profesion: form.profesion.trim() } : {}),
         fechaLlegada: form.fechaLlegada,
-        modalidad: form.modalidad as LeadData['modalidad'],
         // Para terminar — opcional
         ...(form.comoNosConociste
           ? { comoNosConociste: form.comoNosConociste as LeadData['comoNosConociste'] }
@@ -858,8 +853,9 @@ export function FormularioDiagnostico() {
               </legend>
               <CheckboxGroup
                 options={[
-                  { value: 'adelanto-6-12' as const, label: 'Adelantar varios meses de alquiler (6–12)' },
-                  { value: 'aval' as const, label: 'Aval bancario o avalista con ingresos en España' },
+                  { value: 'garantia-adicional' as const, label: 'Aportes de meses de garantía adicional (6–12)' },
+                  { value: 'aval-bancario' as const, label: 'Aval bancario' },
+                  { value: 'avalista' as const, label: 'Avalista con ingresos en España' },
                   { value: 'seguro-impago' as const, label: 'Contratar un seguro de impago' },
                   { value: 'ninguna' as const, label: 'Ninguna de las anteriores' },
                 ]}
@@ -1120,27 +1116,6 @@ export function FormularioDiagnostico() {
             {errors.fechaLlegada && (
               <p id="fechaLlegada-error" className={errorClass} role="alert">{errors.fechaLlegada}</p>
             )}
-          </div>
-
-          {/* Modalidad */}
-          <div>
-            <fieldset>
-              <legend id="rg-modalidad" className={`${labelClass} mb-[var(--space-2)]`}>
-                ¿Cómo prefieres gestionar la búsqueda?
-                <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
-              </legend>
-              <RadioGroup
-                name="modalidad"
-                options={[
-                  { value: 'antes-de-viajar', label: 'Dejar el piso alquilado antes de viajar (100% a distancia)' },
-                  { value: 'ya-estando', label: 'Llegar primero a un alojamiento temporal y buscar allí' },
-                ]}
-                value={form.modalidad}
-                onChange={(v) => set('modalidad', v as LeadData['modalidad'])}
-                error={errors.modalidad}
-                labelId="rg-modalidad"
-              />
-            </fieldset>
           </div>
 
         </div>

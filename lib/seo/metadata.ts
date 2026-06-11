@@ -14,7 +14,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
   home: {
     title: 'Relocation en Galicia para familias latinoamericanas | Tu Lugar en Galicia',
     description:
-      'Ayudamos a familias emigrantes a encontrar alquiler en Galicia antes de llegar. Más de 200 familias reubicadas. Agenda tu videollamada gratuita hoy.',
+      'Ayudamos a familias emigrantes a encontrar alquiler en Galicia, estés donde estés. Más de 200 familias reubicadas. Agenda tu videollamada gratuita hoy.',
     keywords: [
       'relocation galicia',
       'mudarse a galicia desde argentina',

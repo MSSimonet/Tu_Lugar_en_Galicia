@@ -122,6 +122,14 @@ export function procesarRespuesta(
   return { sesionActualizada: sesion, siguientePasoId }
 }
 
+/** Devuelve el array de tipos de mascota capturado en p7b_tipo. */
+function getMascotaTipos(sesion: GinaSession): string[] {
+  const val = sesion.respuestas['mascotaTipo']
+  if (Array.isArray(val)) return val as string[]
+  if (typeof val === 'string') return [val]
+  return []
+}
+
 /**
  * Resuelve el id del siguiente paso según la respuesta y la lógica de ramas.
  * Maneja los pasos virtuales p11_check y p18_check_origen.
@@ -133,10 +141,22 @@ function resolverSiguiente(
 ): string {
   const valorSimple = Array.isArray(respuesta) ? respuesta[0] : respuesta
 
-  // p7b_tipo — mostrar peso solo si hay perro en la selección
+  // p7b_tipo → cantidad por tipo, luego peso si hay perro
   if (paso.id === 'p7b_tipo') {
     const tipos = Array.isArray(respuesta) ? respuesta : [respuesta]
-    return tipos.includes('perro') ? 'p7b_peso' : 'p8_documentacion'
+    if (tipos.includes('perro')) return 'p7c_cant_perros'
+    if (tipos.includes('gato')) return 'p7c_cant_gatos'
+    return 'p8_documentacion'
+  }
+
+  // p7c_cant_perros → si también hay gato, contar gatos; si no, peso del perro
+  if (paso.id === 'p7c_cant_perros') {
+    return getMascotaTipos(sesion).includes('gato') ? 'p7c_cant_gatos' : 'p7b_peso'
+  }
+
+  // p7c_cant_gatos → si hay perro, peso del perro; si no, documentación
+  if (paso.id === 'p7c_cant_gatos') {
+    return getMascotaTipos(sesion).includes('perro') ? 'p7b_peso' : 'p8_documentacion'
   }
 
   // Paso virtual: p11_check — lógica post-garantías
@@ -153,7 +173,7 @@ function resolverSiguiente(
   if (paso.id === 'p18_check_origen' || paso.id === 'p17_licencia' || paso.id === 'p17b_canje') {
     const rawNext = resolverRama(paso, valorSimple)
     if (rawNext === 'p18_check_origen') {
-      return sesion.origenResidencia === 'en_espana' ? 'p18a_ciudad' : 'p18b_tiempo'
+      return sesion.origenResidencia === 'en_espana' ? 'p18a_ciudad' : 'p21_tipo_inmueble'
     }
     return rawNext
   }

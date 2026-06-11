@@ -2,7 +2,7 @@
   {
     "id": "bienvenida",
     "tipo": "botones",
-    "texto": "¡Hola! Soy Gina, tu asistente virtual del equipo de Tu Lugar en Galicia.\n\nEn unos minutos te hago unas preguntas para entender tu situación y saber si podemos ayudarte a encontrar vivienda antes de llegar. Nada de formularios aburridos: esto es una conversación.\n\n¿Empezamos?",
+    "texto": "¡Hola! Soy Gina, tu asistente virtual del equipo de Tu Lugar en Galicia.\n\nEn unos minutos te hago unas preguntas para entender tu situación y saber si podemos ayudarte a encontrar tu vivienda en Galicia. Nada de formularios aburridos: esto es una conversación.\n\n¿Empezamos?",
     "opciones": [
       { "label": "Sí, empecemos", "value": "empecemos" }
     ],
@@ -174,7 +174,31 @@
       { "label": "Gato", "value": "gato" },
       { "label": "Otro", "value": "otro" }
     ],
+    "siguiente": "p7c_cant_perros"
+  },
+  {
+    "id": "p7c_cant_perros",
+    "tipo": "botones",
+    "campo": "cantidadPerros",
+    "texto": "¿Cuántos perros tienes?",
+    "opciones": [
+      { "label": "1", "value": "1" },
+      { "label": "2", "value": "2" },
+      { "label": "3+", "value": "3+" }
+    ],
     "siguiente": "p7b_peso"
+  },
+  {
+    "id": "p7c_cant_gatos",
+    "tipo": "botones",
+    "campo": "cantidadGatos",
+    "texto": "¿Cuántos gatos tienes?",
+    "opciones": [
+      { "label": "1", "value": "1" },
+      { "label": "2", "value": "2" },
+      { "label": "3+", "value": "3+" }
+    ],
+    "siguiente": "p8_documentacion"
   },
   {
     "id": "p7b_peso",
@@ -256,8 +280,9 @@
     "exclusivaValue": "ninguna",
     "texto": "En España es habitual pedir garantías extra a perfiles internacionales. Marca las que podrías asumir:",
     "opciones": [
-      { "label": "Adelantar varios meses de alquiler (6–12)", "value": "adelanto-6-12" },
-      { "label": "Aval bancario o avalista con ingresos en España", "value": "aval" },
+      { "label": "Aportes de meses de garantía adicional (6–12)", "value": "garantia-adicional" },
+      { "label": "Aval bancario", "value": "aval-bancario" },
+      { "label": "Avalista con ingresos en España", "value": "avalista" },
       { "label": "Contratar un seguro de impago", "value": "seguro-impago" },
       { "label": "Ninguna de las anteriores", "value": "ninguna" }
     ],
@@ -432,17 +457,6 @@
     }
   },
   {
-    "id": "p18b_tiempo",
-    "tipo": "botones",
-    "texto": "¿Cuánto tiempo llevas planificando la mudanza?",
-    "opciones": [
-      { "label": "Menos de 1 año", "value": "menos-1" },
-      { "label": "Entre 1 y 5 años", "value": "1-5" },
-      { "label": "Más de 5 años", "value": "mas-5" }
-    ],
-    "siguiente": "p21_tipo_inmueble"
-  },
-  {
     "id": "p21_tipo_inmueble",
     "tipo": "botones",
     "campo": "tipoInmueble",
@@ -512,17 +526,6 @@
       { "label": "Cerca de colegios", "value": "cerca-colegios" },
       { "label": "Fibra óptica / buen internet", "value": "internet" },
       { "label": "Ninguna en particular", "value": "ninguna" }
-    ],
-    "siguiente": "p25_modalidad"
-  },
-  {
-    "id": "p25_modalidad",
-    "tipo": "botones",
-    "campo": "modalidad",
-    "texto": "¿Cómo prefieres que gestionemos la búsqueda?",
-    "opciones": [
-      { "label": "Dejar el piso alquilado antes de viajar (100% a distancia)", "value": "antes-de-viajar" },
-      { "label": "Llegar primero a un alojamiento temporal y buscar allí", "value": "ya-estando" }
     ],
     "siguiente": "p26_profesion"
   },

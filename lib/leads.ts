@@ -14,6 +14,8 @@
  *
  *   Selección única (Single select):
  *     mascotas           → si | no
+ *     cantidadPerros     → 1 | 2 | 3+   (solo si mascotaTipo incluye perro)
+ *     cantidadGatos      → 1 | 2 | 3+   (solo si mascotaTipo incluye gato)
  *     documentacion      → espanol | ue-otro | residencia-aprobada | en-tramite |
  *                          nacionalidad-en-tramite | turista
  *     situacionLaboral   → cuenta-ajena | autonomo | teletrabajo-extranjero |
@@ -28,7 +30,7 @@
  *     comoNosConociste   → instagram | facebook | tiktok | google | recomendacion | otro
  *
  *   Selección múltiple (Multiple select):
- *     garantias      → adelanto-6-12 | aval | seguro-impago | ninguna
+ *     garantias      → garantia-adicional | aval-bancario | avalista | seguro-impago | ninguna
  *     imprescindibles → ascensor | garaje | calefaccion | terraza | no   ← NUEVO (Gina p24)
  *     comodidades    → transporte | zona-tranquila | cerca-colegios | internet | ninguna
  *
@@ -54,6 +56,8 @@ export type LeadData = {
   mascotas: 'si' | 'no'
   detalleMascotas?: string
   mascotaTipo?: ('perro' | 'gato' | 'otro')[]
+  cantidadPerros?: '1' | '2' | '3+'
+  cantidadGatos?: '1' | '2' | '3+'
   mascotaPeso?: '0-5 kg' | '5-10 kg' | '+10 kg'
 
   // Situación legal y laboral
@@ -75,7 +79,7 @@ export type LeadData = {
   ingresosMensuales: string
 
   // Capacidad de garantías (selección múltiple)
-  garantias: ('adelanto-6-12' | 'aval' | 'seguro-impago' | 'ninguna')[]
+  garantias: ('garantia-adicional' | 'aval-bancario' | 'avalista' | 'seguro-impago' | 'ninguna')[]
 
   // Preferencias de vivienda
   ciudadDestino: 'vigo' | 'a-coruna' | 'santiago' | 'pontevedra' | 'lugo' | 'indiferente'
@@ -96,7 +100,7 @@ export type LeadData = {
   // Plazos y modalidad
   fechaLlegada: string
   inicioContrato?: string   // obligatorio en el formulario web, omitido por Gina
-  modalidad: 'antes-de-viajar' | 'ya-estando'
+  modalidad?: 'antes-de-viajar' | 'ya-estando'
 
   // Atribución
   comoNosConociste?: 'instagram' | 'facebook' | 'tiktok' | 'google' | 'recomendacion' | 'otro'
