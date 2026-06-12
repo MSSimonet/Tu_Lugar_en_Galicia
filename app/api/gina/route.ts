@@ -164,8 +164,7 @@ async function guardarEnAirtable(sesion: GinaSession, incluirCalificacion = fals
             cantidadGatos: r['cantidadGatos'] as string | undefined,
             situacionLaboral: r['situacionLaboral'] as string | undefined,
             presupuestoMensual: r['presupuestoMensual'] as string | undefined,
-            cuentaBancaria: r['cuentaBancaria'] as string | undefined,
-            comprendeHonorarios: r['comprendeHonorarios'] as string | undefined,
+            nivelEstudios: r['nivelEstudios'] as string | undefined,
           }),
         }
       : {}),

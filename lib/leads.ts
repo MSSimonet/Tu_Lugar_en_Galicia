@@ -26,7 +26,6 @@
  *     habitacionesMinimas → 1 | 2 | 3 | 4+
  *     amueblado          → si | no | indiferente
  *     estacionamiento    → indispensable | deseable | no
- *     modalidad          → antes-de-viajar | ya-estando
  *     comoNosConociste      → instagram | facebook | tiktok | google | recomendacion | otro
      necesidadesEspeciales → si | no
  *
@@ -98,10 +97,9 @@ export type LeadData = {
   // Características físicas del inmueble (selección múltiple — Gina p24)
   imprescindibles?: ('ascensor' | 'garaje' | 'calefaccion' | 'terraza' | 'no')[]
 
-  // Plazos y modalidad
+  // Plazos
   fechaLlegada: string
   inicioContrato?: string   // obligatorio en el formulario web, omitido por Gina
-  modalidad?: 'antes-de-viajar' | 'ya-estando'
 
   // Atribución
   comoNosConociste?: 'instagram' | 'facebook' | 'tiktok' | 'google' | 'recomendacion' | 'otro'

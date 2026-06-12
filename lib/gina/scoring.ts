@@ -14,8 +14,7 @@ export type ScoringInput = {
   cantidadGatos?: string
   situacionLaboral?: string
   presupuestoMensual?: string
-  cuentaBancaria?: string
-  comprendeHonorarios?: string
+  nivelEstudios?: string
 }
 
 type Dim = { pts: number; max: 2 }
@@ -41,13 +40,12 @@ export function calcularCalificacion(input: ScoringInput): Calificacion {
   if (tieneNinguna && !tieneOtraGarantia && ingresosBajos) return 'bajo'
 
   // PASO 2: Cap máximo en-desarrollo para estancia-estudios
-  // (valor no activo en el flujo actual, preparado para futura opción)
   const capEnDesarrollo = input.documentacion === 'estancia-estudios'
 
   // PASO 3: Puntuación porcentual (solo cuentan dimensiones respondidas)
   const dims: (Dim | null)[] = []
 
-  // plazo (fechaLlegada)
+  // 1. plazo (fechaLlegada)
   if (input.fechaLlegada) {
     const pts =
       input.fechaLlegada === '1-3-meses' ? 2
@@ -58,35 +56,36 @@ export function calcularCalificacion(input: ScoringInput): Calificacion {
     dims.push(null)
   }
 
-  // ciudad
+  // 2. ciudad (ciudadDestino)
   if (input.ciudadDestino) {
     const pts =
-      ['vigo', 'a-coruna', 'indiferente'].includes(input.ciudadDestino) ? 2
-      : ['santiago', 'pontevedra'].includes(input.ciudadDestino) ? 1
+      ['vigo', 'a-coruna'].includes(input.ciudadDestino) ? 2
+      : ['santiago', 'pontevedra', 'lugo', 'indiferente'].includes(input.ciudadDestino) ? 1
       : 0
     dims.push({ pts, max: 2 })
   } else {
     dims.push(null)
   }
 
-  // adultos
+  // 3. composicionFamiliar (reemplaza las dimensiones separadas de adultos y menores)
+  // ninos/adolescentes undefined = rama "no menores" → parseCantidad devuelve 0
   if (input.adultos) {
-    const pts = ['1', '2', '3'].includes(input.adultos) ? 2 : 1
+    const numAdultos = parseCantidad(input.adultos)
+    const totalMenores = parseCantidad(input.ninos) + parseCantidad(input.adolescentes)
+    let pts: number
+    if (totalMenores === 0 && [1, 2, 3].includes(numAdultos)) {
+      pts = 2
+    } else if (totalMenores === 1 && [1, 2].includes(numAdultos)) {
+      pts = 2
+    } else {
+      pts = 1
+    }
     dims.push({ pts, max: 2 })
   } else {
     dims.push(null)
   }
 
-  // menores: solo se cuenta si el flujo ya pasó la pregunta de mascotas (que viene después)
-  // hayMenores=true si ninos o adolescentes existen en sesión (la rama "sí" los guarda)
-  if (input.mascotas !== undefined) {
-    const hayMenores = input.ninos !== undefined || input.adolescentes !== undefined
-    dims.push({ pts: hayMenores ? 1 : 2, max: 2 })
-  } else {
-    dims.push(null)
-  }
-
-  // mascotas
+  // 4. mascotas
   if (input.mascotas !== undefined) {
     if (input.mascotas === 'no') {
       dims.push({ pts: 2, max: 2 })
@@ -100,7 +99,7 @@ export function calcularCalificacion(input: ScoringInput): Calificacion {
     dims.push(null)
   }
 
-  // situacionLaboral
+  // 5. situacionLaboral
   if (input.situacionLaboral) {
     const pts =
       ['cuenta-ajena', 'autonomo', 'teletrabajo-extranjero', 'rentista'].includes(
@@ -113,7 +112,7 @@ export function calcularCalificacion(input: ScoringInput): Calificacion {
     dims.push(null)
   }
 
-  // ingresosMensuales
+  // 6. ingresosMensuales
   if (input.ingresosMensuales) {
     const pts =
       input.ingresosMensuales === 'mas-4000' ? 2
@@ -124,7 +123,7 @@ export function calcularCalificacion(input: ScoringInput): Calificacion {
     dims.push(null)
   }
 
-  // garantias
+  // 7. garantias
   if (garantias.length > 0) {
     const tieneAlto =
       garantias.includes('aval-bancario') || garantias.includes('garantia-adicional')
@@ -135,7 +134,7 @@ export function calcularCalificacion(input: ScoringInput): Calificacion {
     dims.push(null)
   }
 
-  // presupuestoMensual
+  // 8. presupuesto (presupuestoMensual)
   if (input.presupuestoMensual) {
     const pts = ['700-1000', '1000-1400', 'mas-1400'].includes(input.presupuestoMensual) ? 2 : 1
     dims.push({ pts, max: 2 })
@@ -143,16 +142,10 @@ export function calcularCalificacion(input: ScoringInput): Calificacion {
     dims.push(null)
   }
 
-  // banco (cuentaBancaria)
-  if (input.cuentaBancaria !== undefined) {
-    dims.push({ pts: input.cuentaBancaria === 'si' ? 2 : 0, max: 2 })
-  } else {
-    dims.push(null)
-  }
-
-  // honorarios (comprendeHonorarios)
-  if (input.comprendeHonorarios !== undefined) {
-    dims.push({ pts: input.comprendeHonorarios === 'entiende' ? 2 : 1, max: 2 })
+  // 9. estudios (nivelEstudios)
+  if (input.nivelEstudios) {
+    const pts = input.nivelEstudios === 'sin-estudios' ? 1 : 2
+    dims.push({ pts, max: 2 })
   } else {
     dims.push(null)
   }
