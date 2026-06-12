@@ -14,6 +14,7 @@ import { procesarRespuesta, obtenerPaso } from '@/lib/gina/flowEngine'
 import type { GinaSession } from '@/lib/gina/session'
 import { saveLead } from '@/lib/leads'
 import type { LeadData } from '@/lib/leads'
+import { calcularCalificacion } from '@/lib/gina/scoring'
 
 export const runtime = 'edge'
 
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
       // Sin record ID: el guardado final hará POST como fallback, no se pierde el lead
     }
   } else if (paso.accion === 'guardar_lead_completo' || paso.accion === 'guardar_lead_parcial') {
-    guardarEnAirtable(sesionActualizada).catch((err) => {
+    guardarEnAirtable(sesionActualizada, true).catch((err) => {
       console.error('[gina] Error al guardar lead:', (err as Error).message)
     })
   }
@@ -103,7 +104,7 @@ export async function POST(req: NextRequest) {
  * Pasa sesion.airtableRecordId a saveLead: si existe hace PATCH, si no hace POST.
  * Devuelve el record ID resultante (nuevo en POST, el mismo en PATCH).
  */
-async function guardarEnAirtable(sesion: GinaSession): Promise<string> {
+async function guardarEnAirtable(sesion: GinaSession, incluirCalificacion = false): Promise<string> {
   const r = sesion.respuestas
 
   const lead: Partial<LeadData> & Pick<LeadData, 'nombreCompleto' | 'email' | 'consentimientoRGPD'> = {
@@ -132,12 +133,42 @@ async function guardarEnAirtable(sesion: GinaSession): Promise<string> {
       ? { imprescindibles: r['imprescindibles'] as LeadData['imprescindibles'] }
       : {}),
     comodidades: r['comodidades'] as LeadData['comodidades'] ?? undefined,
-    necesidadesEspeciales: r['necesidadesEspeciales'] ? String(r['necesidadesEspeciales']) : undefined,
+    necesidadesEspeciales: r['necesidadesEspeciales'] as LeadData['necesidadesEspeciales'] ?? undefined,
     profesion: r['profesion'] ? String(r['profesion']) : undefined,
     fechaLlegada: String(r['fechaLlegada'] ?? ''),
     comoNosConociste: r['comoNosConociste'] as LeadData['comoNosConociste'] ?? undefined,
-    comprendeServicio: true,
+    // Campos de perfil ampliado (Nivel 2 — opcionales, undefined omitidos por JSON.stringify)
+    cuentaBancaria: r['cuentaBancaria'] as LeadData['cuentaBancaria'] ?? undefined,
+    comprendeHonorarios: r['comprendeHonorarios'] as LeadData['comprendeHonorarios'] ?? undefined,
+    tipoLicencia: r['tipoLicencia'] as LeadData['tipoLicencia'] ?? undefined,
+    ciudadActual: r['ciudadActual'] ? String(r['ciudadActual']) : undefined,
+    tiempoEnEspana: r['tiempoEnEspana'] as LeadData['tiempoEnEspana'] ?? undefined,
+    objetivoBusqueda: r['objetivoBusqueda'] as LeadData['objetivoBusqueda'] ?? undefined,
+    nivelEstudios: r['nivelEstudios'] as LeadData['nivelEstudios'] ?? undefined,
+    // comprendeServicio refleja la respuesta real de p14_servicio
+    comprendeServicio: r['comprendeHonorarios'] === 'entiende',
     consentimientoRGPD: true,
+    ...(incluirCalificacion
+      ? {
+          calificacion: calcularCalificacion({
+            documentacion: r['documentacion'] as string | undefined,
+            garantias: r['garantias'] as string[] | undefined,
+            ingresosMensuales: r['ingresosMensuales'] as string | undefined,
+            fechaLlegada: r['fechaLlegada'] as string | undefined,
+            ciudadDestino: r['ciudadDestino'] as string | undefined,
+            adultos: r['adultos'] as string | undefined,
+            ninos: r['ninos'] as string | undefined,
+            adolescentes: r['adolescentes'] as string | undefined,
+            mascotas: r['mascotas'] as string | undefined,
+            cantidadPerros: r['cantidadPerros'] as string | undefined,
+            cantidadGatos: r['cantidadGatos'] as string | undefined,
+            situacionLaboral: r['situacionLaboral'] as string | undefined,
+            presupuestoMensual: r['presupuestoMensual'] as string | undefined,
+            cuentaBancaria: r['cuentaBancaria'] as string | undefined,
+            comprendeHonorarios: r['comprendeHonorarios'] as string | undefined,
+          }),
+        }
+      : {}),
   }
 
   return saveLead(lead as LeadData, sesion.airtableRecordId)

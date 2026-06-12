@@ -174,7 +174,7 @@
       { "label": "Gato", "value": "gato" },
       { "label": "Otro", "value": "otro" }
     ],
-    "siguiente": "p7c_cant_perros"
+    "_nota_engine": "Ruteo gestionado en flowEngine.ts: perro→p7c_cant_perros, solo-gato→p7c_cant_gatos, solo-otro→p8_documentacion, perro+gato→perros→gatos→peso. El campo 'siguiente' no aplica para pasos multiselect con lógica combinatoria."
   },
   {
     "id": "p7c_cant_perros",
@@ -331,6 +331,7 @@
   {
     "id": "p13_banco",
     "tipo": "botones",
+    "campo": "cuentaBancaria",
     "texto": "¿Ya tienes cuenta bancaria operativa en España?",
     "opciones": [
       { "label": "Sí", "value": "si" },
@@ -341,14 +342,15 @@
   {
     "id": "p14_servicio",
     "tipo": "botones",
+    "campo": "comprendeHonorarios",
     "texto": "¿Entiendes que somos un servicio de consultoría y búsqueda personalizada, con honorarios propios, aparte del alquiler y la fianza?",
     "opciones": [
-      { "label": "Sí, lo entiendo perfectamente", "value": "si" },
-      { "label": "Me gustaría que me lo expliquen mejor", "value": "explicar" }
+      { "label": "Sí, lo entiendo perfectamente", "value": "entiende" },
+      { "label": "Me gustaría que me lo expliquen mejor", "value": "pide-explicacion" }
     ],
     "ramas": {
-      "si": "transicion_nivel2",
-      "explicar": "p14_explicacion"
+      "entiende": "transicion_nivel2",
+      "pide-explicacion": "p14_explicacion"
     }
   },
   {
@@ -396,18 +398,19 @@
   {
     "id": "p17_licencia",
     "tipo": "botones",
+    "campo": "tipoLicencia",
     "texto": "¿Tienes licencia de conducir?",
     "opciones": [
       { "label": "Española", "value": "espanola" },
       { "label": "Europea", "value": "europea" },
-      { "label": "De mi país de origen", "value": "extranjera" },
-      { "label": "No tengo", "value": "no" }
+      { "label": "De mi país de origen", "value": "origen" },
+      { "label": "No tengo", "value": "no-tiene" }
     ],
     "ramas": {
       "espanola": "p18_check_origen",
       "europea": "p18_check_origen",
-      "extranjera": "p17b_canje",
-      "no": "p18_check_origen"
+      "origen": "p17b_canje",
+      "no-tiene": "p18_check_origen"
     }
   },
   {
@@ -428,6 +431,7 @@
   {
     "id": "p18a_ciudad",
     "tipo": "input",
+    "campo": "ciudadActual",
     "texto": "¿En qué ciudad o provincia vives actualmente?",
     "validacion": "texto",
     "siguiente": "p19a_tiempo"
@@ -435,25 +439,27 @@
   {
     "id": "p19a_tiempo",
     "tipo": "botones",
+    "campo": "tiempoEnEspana",
     "texto": "¿Cuánto tiempo llevas viviendo en España?",
     "opciones": [
-      { "label": "Menos de 1 año", "value": "menos-1" },
-      { "label": "Entre 1 y 5 años", "value": "1-5" },
-      { "label": "Más de 5 años", "value": "mas-5" }
+      { "label": "Menos de 1 año", "value": "menos-1-ano" },
+      { "label": "Entre 1 y 5 años", "value": "1-5-anos" },
+      { "label": "Más de 5 años", "value": "mas-5-anos" }
     ],
     "siguiente": "p20a_objetivo"
   },
   {
     "id": "p20a_objetivo",
     "tipo": "botones",
+    "campo": "objetivoBusqueda",
     "texto": "¿Estás buscando vivienda en Galicia, o ya tienes dónde vivir y buscas orientación para integrarte?",
     "opciones": [
-      { "label": "Busco vivienda", "value": "busco" },
-      { "label": "Ya tengo vivienda, quiero integrarme", "value": "integrar" }
+      { "label": "Busco vivienda", "value": "busca-vivienda" },
+      { "label": "Ya tengo vivienda, quiero integrarme", "value": "integrarse" }
     ],
     "ramas": {
-      "busco": "p21_tipo_inmueble",
-      "integrar": "p26_profesion"
+      "busca-vivienda": "p21_tipo_inmueble",
+      "integrarse": "p26_profesion"
     }
   },
   {
@@ -540,11 +546,12 @@
   {
     "id": "p27_estudios",
     "tipo": "botones",
+    "campo": "nivelEstudios",
     "texto": "¿Cuál es tu nivel de estudios?",
     "opciones": [
-      { "label": "Sin estudios superiores", "value": "sin-superiores" },
+      { "label": "Sin estudios superiores", "value": "sin-estudios" },
       { "label": "Bachillerato o equivalente", "value": "bachillerato" },
-      { "label": "Técnico / FP / Terciario", "value": "fp" },
+      { "label": "Técnico / FP / Terciario", "value": "tecnico" },
       { "label": "Universitario / Grado", "value": "universitario" },
       { "label": "Posgrado / Máster / Doctorado", "value": "posgrado" }
     ],

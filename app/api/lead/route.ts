@@ -360,7 +360,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       // Perfil adicional (opcionales)
       ...(typeof body.necesidadesEspeciales === 'string' && body.necesidadesEspeciales
-        ? { necesidadesEspeciales: body.necesidadesEspeciales }
+        ? { necesidadesEspeciales: body.necesidadesEspeciales as LeadData['necesidadesEspeciales'] }
         : {}),
       ...(typeof body.profesion === 'string' && body.profesion.trim()
         ? { profesion: body.profesion.trim() }

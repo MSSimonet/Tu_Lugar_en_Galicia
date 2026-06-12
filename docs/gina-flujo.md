@@ -421,7 +421,7 @@
 
 ---
 
-#### `p13_banco` · `botones` · **sin campo Airtable**
+#### `p13_banco` · `botones` · Airtable: `cuentaBancaria`
 
 > "¿Ya tienes cuenta bancaria operativa en España?"
 
@@ -432,7 +432,7 @@
 
 ---
 
-#### `p14_servicio` · `botones` · **sin campo Airtable**
+#### `p14_servicio` · `botones` · Airtable: `comprendeHonorarios`
 
 > "¿Entiendes que somos un servicio de consultoría y búsqueda personalizada, con honorarios propios, aparte del alquiler y la fianza?"
 
@@ -440,6 +440,9 @@
 |---|---|---|
 | Sí, lo entiendo perfectamente | `si` | → `transicion_nivel2` |
 | Me gustaría que me lo expliquen mejor | `explicar` | → `p14_explicacion` |
+
+- El valor (`si` o `explicar`) se guarda en Airtable como `comprendeHonorarios`.
+- El campo Airtable `comprendeServicio` (checkbox) se deriva: `true` si `comprendeHonorarios === 'si'`, `false` si `explicar`.
 
 ---
 
@@ -481,7 +484,7 @@
 
 ---
 
-#### `p17_licencia` · `botones` · **sin campo Airtable**
+#### `p17_licencia` · `botones` · Airtable: `tipoLicencia`
 
 > "¿Tienes licencia de conducir?"
 
@@ -489,14 +492,14 @@
 |---|---|---|
 | Española | `espanola` | → `p18a_ciudad` (en España) / `p21_tipo_inmueble` (fuera) |
 | Europea | `europea` | → `p18a_ciudad` (en España) / `p21_tipo_inmueble` (fuera) |
-| De mi país de origen | `extranjera` | → `p17b_canje` |
-| No tengo | `no` | → `p18a_ciudad` (en España) / `p21_tipo_inmueble` (fuera) |
+| De mi país de origen | `origen` | → `p17b_canje` |
+| No tengo | `no-tiene` | → `p18a_ciudad` (en España) / `p21_tipo_inmueble` (fuera) |
 
 > *Nota técnica:* El flow.json apunta a `p18_check_origen` (paso virtual). El motor lo cortocircuita directamente al procesar `p17_licencia`: si `sesion.origenResidencia === 'en_espana'` → `p18a_ciudad`; si no → `p21_tipo_inmueble`.
 
 ---
 
-#### `p17b_canje` · `botones` · **sin campo Airtable** *(solo si eligió "extranjera")*
+#### `p17b_canje` · `botones` · **sin campo Airtable** *(solo si eligió "origen")*
 
 > "Si tu país tiene convenio con España, puedes canjear tu licencia. Te orientamos sobre los requisitos."
 
@@ -512,7 +515,7 @@
 
 #### **Rama "ya vive en España"** (`origenResidencia === 'en_espana'`)
 
-##### `p18a_ciudad` · `input` · **sin campo Airtable**
+##### `p18a_ciudad` · `input` · Airtable: `ciudadActual`
 
 > "¿En qué ciudad o provincia vives actualmente?"
 
@@ -521,28 +524,28 @@
 
 ---
 
-##### `p19a_tiempo` · `botones` · **sin campo Airtable**
+##### `p19a_tiempo` · `botones` · Airtable: `tiempoEnEspana`
 
 > "¿Cuánto tiempo llevas viviendo en España?"
 
 | Label | Value |
 |---|---|
-| Menos de 1 año | `menos-1` |
-| Entre 1 y 5 años | `1-5` |
-| Más de 5 años | `mas-5` |
+| Menos de 1 año | `menos-1-ano` |
+| Entre 1 y 5 años | `1-5-anos` |
+| Más de 5 años | `mas-5-anos` |
 
 - → `p20a_objetivo`
 
 ---
 
-##### `p20a_objetivo` · `botones` · **sin campo Airtable**
+##### `p20a_objetivo` · `botones` · Airtable: `objetivoBusqueda`
 
 > "¿Estás buscando vivienda en Galicia, o ya tienes dónde vivir y buscas orientación para integrarte?"
 
 | Label | Value | Siguiente |
 |---|---|---|
-| Busco vivienda | `busco` | → `p21_tipo_inmueble` |
-| Ya tengo vivienda, quiero integrarme | `integrar` | → `p26_profesion` (salta vivienda) |
+| Busco vivienda | `busca-vivienda` | → `p21_tipo_inmueble` |
+| Ya tengo vivienda, quiero integrarme | `integrarse` | → `p26_profesion` (salta vivienda) |
 
 ---
 
@@ -647,15 +650,15 @@
 
 ---
 
-#### `p27_estudios` · `botones` · **sin campo Airtable**
+#### `p27_estudios` · `botones` · Airtable: `nivelEstudios`
 
 > "¿Cuál es tu nivel de estudios?"
 
 | Label | Value |
 |---|---|
-| Sin estudios superiores | `sin-superiores` |
+| Sin estudios superiores | `sin-estudios` |
 | Bachillerato o equivalente | `bachillerato` |
-| Técnico / FP / Terciario | `fp` |
+| Técnico / FP / Terciario | `tecnico` |
 | Universitario / Grado | `universitario` |
 | Posgrado / Máster / Doctorado | `posgrado` |
 

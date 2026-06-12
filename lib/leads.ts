@@ -10,7 +10,7 @@
  *     fechaLlegada, inicioContrato
  *
  *   Texto largo (Long text):
- *     personas, detalleMascotas, necesidadesEspeciales, profesion
+ *     personas, detalleMascotas, profesion
  *
  *   Selección única (Single select):
  *     mascotas           → si | no
@@ -27,7 +27,8 @@
  *     amueblado          → si | no | indiferente
  *     estacionamiento    → indispensable | deseable | no
  *     modalidad          → antes-de-viajar | ya-estando
- *     comoNosConociste   → instagram | facebook | tiktok | google | recomendacion | otro
+ *     comoNosConociste      → instagram | facebook | tiktok | google | recomendacion | otro
+     necesidadesEspeciales → si | no
  *
  *   Selección múltiple (Multiple select):
  *     garantias      → garantia-adicional | aval-bancario | avalista | seguro-impago | ninguna
@@ -91,7 +92,7 @@ export type LeadData = {
   comodidades?: ('transporte' | 'zona-tranquila' | 'cerca-colegios' | 'internet' | 'ninguna')[]
 
   // Perfil adicional (Nivel 2 de Gina)
-  necesidadesEspeciales?: string
+  necesidadesEspeciales?: 'si' | 'no'
   profesion?: string
 
   // Características físicas del inmueble (selección múltiple — Gina p24)
@@ -104,6 +105,18 @@ export type LeadData = {
 
   // Atribución
   comoNosConociste?: 'instagram' | 'facebook' | 'tiktok' | 'google' | 'recomendacion' | 'otro'
+
+  // Calificación automática del lead
+  calificacion?: 'potencial' | 'en-desarrollo' | 'bajo'
+
+  // Campos de perfil ampliado (Nivel 2 Gina — no todos aparecen en el formulario web)
+  cuentaBancaria?: 'si' | 'no'
+  comprendeHonorarios?: 'entiende' | 'pide-explicacion'
+  tipoLicencia?: 'espanola' | 'europea' | 'origen' | 'no-tiene'
+  ciudadActual?: string
+  tiempoEnEspana?: 'menos-1-ano' | '1-5-anos' | 'mas-5-anos'
+  objetivoBusqueda?: 'busca-vivienda' | 'integrarse'
+  nivelEstudios?: 'sin-estudios' | 'bachillerato' | 'tecnico' | 'universitario' | 'posgrado'
 
   // Consentimientos
   comprendeServicio: boolean
