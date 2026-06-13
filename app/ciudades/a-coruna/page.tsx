@@ -48,6 +48,7 @@ export default function ACorunaCiudadPage() {
       descripcion={descripcion}
       precios={precios}
       faqs={faqs}
+      imagenSrc="/images/ciudades/hero-coruna.jpg"
       imagenAlt="El Paseo Marítimo de A Coruña con la Torre de Hércules al fondo"
     />
   )

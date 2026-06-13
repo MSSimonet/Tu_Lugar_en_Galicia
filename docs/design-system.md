@@ -160,10 +160,14 @@ piedra de granito, rías, lluvia, calidez. Ningún competidor liga su imagen al 
   --text-xl:   2rem;      /* 32px */
   --text-2xl:  2.5rem;    /* 40px */
   --text-3xl:  3.5rem;    /* 56px */
+  --text-4xl:  4.25rem;   /* 68px — display, titulares de gran escala */
+  --text-5xl:  5.5rem;    /* 88px — display grande */
+  --text-6xl:  6.5rem;    /* 104px — display del hero en escritorio grande */
 
   /* Interlineado */
   --leading-cuerpo:   1.5;
   --leading-titulo:   1.2;
+  --leading-display:  1.08;  /* titulares display de gran escala (hero) */
 
   /* Tracking UI (coherente con wordmark del logo) */
   --tracking-ui: 0.06em;

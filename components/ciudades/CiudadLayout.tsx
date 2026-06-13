@@ -55,6 +55,9 @@ export function CiudadLayout({
             className="object-cover opacity-30"
             sizes="100vw"
           />
+          {/* Scrim sobre la foto: granito 55% → imagen efectiva ≈13 % → latón-claro sobre
+              fondo resultante >8:1 garantizado incluso con fotos muy claras. */}
+          <div className="absolute inset-0 bg-[var(--color-granito)] opacity-55" />
         </div>
         <div className="relative z-10 max-w-5xl mx-auto px-[var(--space-6)] py-20 md:py-28 text-center">
           <h1

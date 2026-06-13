@@ -6,36 +6,31 @@ const ciudades = [
     nombre: "Vigo",
     slug: "vigo",
     descripcion: "La ciudad portuaria más grande de Galicia, con playa y mar.",
-    placeholder:
-      "https://placehold.co/400x250/1A5247/F2F0EB?text=Vigo",
+    imagen: "/images/ciudades/card-vigo.jpg",
   },
   {
     nombre: "A Coruña",
     slug: "a-coruna",
     descripcion: "Elegancia costera, paseo marítimo y vida cultural activa.",
-    placeholder:
-      "https://placehold.co/400x250/1A5247/F2F0EB?text=A+Coru%C3%B1a",
+    imagen: "/images/ciudades/card-coruna.jpg",
   },
   {
     nombre: "Santiago de Compostela",
     slug: "santiago-de-compostela",
     descripcion: "Ciudad histórica, universitaria y de escala humana perfecta.",
-    placeholder:
-      "https://placehold.co/400x250/1A5247/F2F0EB?text=Santiago",
+    imagen: "/images/ciudades/card-santiago.jpg",
   },
   {
     nombre: "Pontevedra",
     slug: "pontevedra",
     descripcion: "Tranquilidad, ría y una ciudad pensada para los peatones.",
-    placeholder:
-      "https://placehold.co/400x250/1A5247/F2F0EB?text=Pontevedra",
+    imagen: "/images/ciudades/card-pontevedra.jpg",
   },
   {
     nombre: "Lugo",
     slug: "lugo",
     descripcion: "Muralla romana, interior verde y ritmo de vida tranquilo.",
-    placeholder:
-      "https://placehold.co/400x250/1A5247/F2F0EB?text=Lugo",
+    imagen: "/images/ciudades/card-lugo.jpg",
   },
 ];
 
@@ -63,7 +58,7 @@ export function CiudadesCards() {
         </p>
 
         <ul className="grid grid-cols-1 gap-[var(--space-6)] md:grid-cols-2 lg:grid-cols-3 [&>li:last-child:nth-child(odd)]:md:col-span-2 [&>li:last-child:nth-child(odd)]:lg:col-span-1 [&>li:last-child]:lg:col-start-2">
-          {ciudades.map(({ nombre, slug, descripcion, placeholder }) => (
+          {ciudades.map(({ nombre, slug, descripcion, imagen }) => (
             <li key={slug}>
               <Link
                 href={`/ciudades/${slug}`}
@@ -71,7 +66,7 @@ export function CiudadesCards() {
               >
                 <div className="relative h-48 w-full overflow-hidden">
                   <Image
-                    src={placeholder}
+                    src={imagen}
                     alt={`Fotografía representativa de ${nombre}`}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

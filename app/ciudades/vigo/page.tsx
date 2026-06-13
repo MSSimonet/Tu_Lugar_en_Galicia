@@ -48,6 +48,7 @@ export default function VigoCiudadPage() {
       descripcion={descripcion}
       precios={precios}
       faqs={faqs}
+      imagenSrc="/images/ciudades/hero-vigo.jpg"
       imagenAlt="Vista panorámica de Vigo y la Ría desde el Monte Castro"
     />
   )

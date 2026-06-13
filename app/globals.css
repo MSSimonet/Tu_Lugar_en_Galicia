@@ -39,10 +39,14 @@
   --text-xl:   2rem;
   --text-2xl:  2.5rem;
   --text-3xl:  3.5rem;
+  --text-4xl:  4.25rem;   /* 68px — display */
+  --text-5xl:  5.5rem;    /* 88px — display grande */
+  --text-6xl:  6.5rem;    /* 104px — display del hero en escritorio grande */
 
   /* Interlineado */
   --leading-cuerpo: 1.5;
   --leading-titulo: 1.2;
+  --leading-display: 1.08; /* titulares de gran escala (hero) */
 
   /* Tracking UI (coherente con wordmark del logo) */
   --tracking-ui: 0.06em;
