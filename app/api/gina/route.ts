@@ -188,6 +188,13 @@ async function guardarEnAirtable(sesion: GinaSession, incluirCalificacion = fals
     // Habilitar descomentando la línea siguiente una vez creada la columna:
     // etiqueta: sesion.etiqueta ?? undefined,
 
+    // modalidad: derivada de origenResidencia.
+    // "fuera" → "antes-de-viajar" (opción válida confirmada en Airtable)
+    // "en_espana" → "ya-en-espana" (PENDIENTE: crear esa opción en el campo Single select de Airtable)
+    //   Una vez creada, reemplazar la línea por:
+    //   modalidad: sesion.origenResidencia === 'fuera' ? 'antes-de-viajar' : sesion.origenResidencia === 'en_espana' ? 'ya-en-espana' : undefined,
+    modalidad: sesion.origenResidencia === 'fuera' ? 'antes-de-viajar' : undefined,
+
     ...(incluirCalificacion
       ? {
           calificacion: calcularCalificacion({
