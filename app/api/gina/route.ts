@@ -183,6 +183,11 @@ async function guardarEnAirtable(sesion: GinaSession, incluirCalificacion = fals
       ? r['comprendeHonorarios'] === 'entiende'
       : undefined,
 
+    // etiqueta: asignada por el motor según el segmento.
+    // PENDIENTE: requiere crear la columna manualmente en Airtable (ver comentario en commit C3-2).
+    // Habilitar descomentando la línea siguiente una vez creada la columna:
+    // etiqueta: sesion.etiqueta ?? undefined,
+
     ...(incluirCalificacion
       ? {
           calificacion: calcularCalificacion({

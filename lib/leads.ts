@@ -107,6 +107,9 @@ export type LeadData = {
   // Calificación automática del lead
   calificacion?: 'potencial' | 'en-desarrollo' | 'bajo'
 
+  // Etiqueta de segmento (Single select en Airtable — columna creada manualmente)
+  etiqueta?: 'lead-en-preparacion' | 'seguimiento-futuro' | 'califica'
+
   // Campos de perfil ampliado (Nivel 2 Gina — no todos aparecen en el formulario web)
   cuentaBancaria?: 'si' | 'no'
   comprendeHonorarios?: 'entiende' | 'pide-explicacion'
