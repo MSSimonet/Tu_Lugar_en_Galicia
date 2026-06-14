@@ -5,7 +5,7 @@ const pasos = [
     numero: 1,
     nombre: "Nos conocemos",
     descripcion:
-      "Completás un formulario corto y evaluamos si podemos ayudarte hoy.",
+      "Completas un formulario corto y evaluamos si podemos ayudarte hoy.",
   },
   {
     numero: 2,

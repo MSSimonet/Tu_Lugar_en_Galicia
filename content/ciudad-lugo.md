@@ -43,7 +43,7 @@ Estos rangos son orientativos y varían según barrio y estado del inmueble.
 
 Si buscas calidad de vida gallega a un precio que te permita vivir tranquilo, Lugo puede ser exactamente lo que necesitas. Cuéntanos tu situación y lo evaluamos juntos.
 
-**Botón:** Completá el diagnóstico para Lugo
+**Botón:** Completa el diagnóstico para Lugo
 
 ---
 

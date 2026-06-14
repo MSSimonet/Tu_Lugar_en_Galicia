@@ -43,7 +43,7 @@ Estos rangos son orientativos y varían según barrio y estado del inmueble.
 
 A Coruña te está esperando. Si ya sabes que esta es tu ciudad — o si todavía estás evaluando — cuéntanos tu situación y te ayudamos a encontrar el barrio y el piso que encajan con tu vida.
 
-**Botón:** Completá el diagnóstico para A Coruña
+**Botón:** Completa el diagnóstico para A Coruña
 
 ---
 

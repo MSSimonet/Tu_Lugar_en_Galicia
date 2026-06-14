@@ -21,7 +21,7 @@ const faqs = [
   {
     question: '¿Puedo alquilar un piso en Vigo antes de llegar a España?',
     answer:
-      'Sí, y es exactamente lo que hacemos. Buscamos opciones, visitamos los pisos por vos, negociamos con el propietario y coordinamos la firma del contrato de manera que cuando llegues, la vivienda ya esté disponible. No es lo habitual en el mercado — pero con nuestra gestión es posible.',
+      'Sí, y es exactamente lo que hacemos. Buscamos opciones, visitamos los pisos por ti, negociamos con el propietario y coordinamos la firma del contrato de manera que cuando llegues, la vivienda ya esté disponible. No es lo habitual en el mercado — pero con nuestra gestión es posible.',
   },
   {
     question: '¿Qué documentación me van a pedir para alquilar en Vigo?',

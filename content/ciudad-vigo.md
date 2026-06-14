@@ -43,14 +43,14 @@ Estos rangos son orientativos y varían según barrio y estado del inmueble.
 
 ¿Vigo es tu destino? Cuéntanos tu situación y te ayudamos a encontrar el barrio y el piso que se adaptan a lo que necesitas. El primer paso es el formulario de diagnóstico — sin costo, sin compromiso.
 
-**Botón:** Completá el diagnóstico para Vigo
+**Botón:** Completa el diagnóstico para Vigo
 
 ---
 
 ## Preguntas frecuentes — Vigo
 
 **¿Puedo alquilar un piso en Vigo antes de llegar a España?**
-Sí, y es exactamente lo que hacemos. Buscamos opciones, visitamos los pisos por vos, negociamos con el propietario y coordinamos la firma del contrato de manera que cuando llegues, la vivienda ya esté disponible. No es lo habitual en el mercado — pero con nuestra gestión es posible.
+Sí, y es exactamente lo que hacemos. Buscamos opciones, visitamos los pisos por ti, negociamos con el propietario y coordinamos la firma del contrato de manera que cuando llegues, la vivienda ya esté disponible. No es lo habitual en el mercado — pero con nuestra gestión es posible.
 
 **¿Qué documentación me van a pedir para alquilar en Vigo?**
 La mayoría de los propietarios pide: pasaporte o documento de identidad, prueba de ingresos (contrato de trabajo, extracto bancario o declaración de renta del país de origen), y en muchos casos una garantía adicional como adelanto de meses de alquiler o seguro de impago. Nosotros te orientamos según tu situación específica antes de que empieces a buscar.

@@ -100,39 +100,39 @@ function validate(form: FormState): FormErrors {
   if (!form.paisResidencia.trim())
     errors.paisResidencia = 'Cuéntanos desde qué país nos escribes'
   if (!form.adultos)
-    errors.adultos = 'Indicanos cuántos adultos se mudan'
+    errors.adultos = 'Indícanos cuántos adultos se mudan'
   if (!form.hayMenores)
-    errors.hayMenores = 'Indicanos si viajan menores de edad'
+    errors.hayMenores = 'Indícanos si viajan menores de edad'
   if (form.hayMenores === 'si' && !form.ninos)
-    errors.ninos = 'Indicanos cuántos niños de 0 a 12 años'
+    errors.ninos = 'Indícanos cuántos niños de 0 a 12 años'
   if (form.hayMenores === 'si' && !form.adolescentes)
-    errors.adolescentes = 'Indicanos cuántos adolescentes de 13 a 17 años'
+    errors.adolescentes = 'Indícanos cuántos adolescentes de 13 a 17 años'
   if (!form.mascotas)
-    errors.mascotas = 'Indicanos si viajan con mascotas'
+    errors.mascotas = 'Indícanos si viajan con mascotas'
   if (form.mascotas === 'si' && form.mascotaTipo.length === 0)
-    errors.mascotaTipo = 'Indicanos qué tipo de mascota traes'
+    errors.mascotaTipo = 'Indícanos qué tipo de mascota traes'
   if (form.mascotas === 'si' && form.mascotaTipo.includes('perro') && !form.mascotaPeso)
-    errors.mascotaPeso = 'Indicanos el peso aproximado de tu perro'
+    errors.mascotaPeso = 'Indícanos el peso aproximado de tu perro'
   if (!form.documentacion)
-    errors.documentacion = 'Seleccioná tu situación de documentación'
+    errors.documentacion = 'Selecciona tu situación de documentación'
   if (!form.situacionLaboral)
-    errors.situacionLaboral = 'Seleccioná tu situación laboral al llegar'
+    errors.situacionLaboral = 'Selecciona tu situación laboral al llegar'
   if (!form.ingresosMensuales)
-    errors.ingresosMensuales = 'Indicanos tu rango de ingresos mensuales'
+    errors.ingresosMensuales = 'Indícanos tu rango de ingresos mensuales'
   if (form.garantias.length === 0)
-    errors.garantias = 'Seleccioná al menos una opción de garantía (aunque sea ninguna)'
+    errors.garantias = 'Selecciona al menos una opción de garantía (aunque sea ninguna)'
   if (!form.ciudadDestino)
-    errors.ciudadDestino = 'Elegí una ciudad de destino'
+    errors.ciudadDestino = 'Elige una ciudad de destino'
   if (!form.tipoInmueble)
-    errors.tipoInmueble = 'Seleccioná el tipo de vivienda que buscas'
+    errors.tipoInmueble = 'Selecciona el tipo de vivienda que buscas'
   if (!form.presupuestoMensual)
-    errors.presupuestoMensual = 'Indicanos tu presupuesto mensual de alquiler'
+    errors.presupuestoMensual = 'Indícanos tu presupuesto mensual de alquiler'
   if (form.tipoInmueble !== 'estudio' && !form.habitacionesMinimas)
     errors.habitacionesMinimas = 'Indícanos cuántas habitaciones necesitas'
   if (!form.amueblado)
     errors.amueblado = 'Indícanos si necesitas la vivienda amueblada'
   if (!form.fechaLlegada)
-    errors.fechaLlegada = 'Indicanos en qué plazo necesitas resolver tu vivienda'
+    errors.fechaLlegada = 'Indícanos en qué plazo necesitas resolver tu vivienda'
   if (!form.comprendeServicio)
     errors.comprendeServicio = 'Es importante que entiendas cómo funciona el servicio antes de continuar'
   if (!form.consentimientoRGPD)

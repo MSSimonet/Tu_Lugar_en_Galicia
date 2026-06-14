@@ -166,7 +166,7 @@ export default function PoliticaDePrivacidadPage() {
               6. Tus derechos
             </h2>
             <p className="mb-[var(--space-3)]">
-              Podés ejercer en cualquier momento los siguientes derechos reconocidos por el RGPD y
+              Puedes ejercer en cualquier momento los siguientes derechos reconocidos por el RGPD y
               la Ley Orgánica de Protección de Datos (LOPDGDD):
             </p>
             <ul className="list-disc pl-[var(--space-6)] flex flex-col gap-[var(--space-2)] mb-[var(--space-4)]">
@@ -178,13 +178,13 @@ export default function PoliticaDePrivacidadPage() {
               <li><strong>Portabilidad:</strong> recibir tus datos en un formato estructurado y legible.</li>
             </ul>
             <p className="mb-[var(--space-3)]">
-              Para ejercer cualquiera de estos derechos, enviá un email a{' '}
+              Para ejercer cualquiera de estos derechos, envía un email a{' '}
               <TodoBlock>TODO: completar email de protección de datos</TodoBlock>{' '}
               con el asunto <strong>&quot;Protección de datos&quot;</strong> e indicando el derecho que
-              querés ejercer y tus datos de identificación.
+              quieres ejercer y tus datos de identificación.
             </p>
             <p>
-              Si considerás que el tratamiento de tus datos no es conforme a la normativa, podés
+              Si consideras que el tratamiento de tus datos no es conforme a la normativa, puedes
               presentar una reclamación ante la{' '}
               <strong>Agencia Española de Protección de Datos (AEPD)</strong>:{' '}
               <a

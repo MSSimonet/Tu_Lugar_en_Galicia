@@ -43,7 +43,7 @@ Estos rangos son orientativos y varían según barrio y estado del inmueble.
 
 Pontevedra es una de las ciudades más elegidas por familias que buscan calidad de vida sin complicaciones. Si te llama, cuéntanos tu situación y te ayudamos a encontrar el lugar ideal.
 
-**Botón:** Completá el diagnóstico para Pontevedra
+**Botón:** Completa el diagnóstico para Pontevedra
 
 ---
 

@@ -37,7 +37,7 @@ Escríbenos por WhatsApp
 Sin vueltas. Así acompañamos a cada familia.
 
 **Paso 1 — Nos conocemos**
-Completás un formulario corto y evaluamos si podemos ayudarte hoy.
+Completas un formulario corto y evaluamos si podemos ayudarte hoy.
 
 **Paso 2 — Videollamada**
 Nos conocemos, te contamos cómo funciona todo y respondemos tus preguntas.

@@ -43,7 +43,7 @@ Estos rangos son orientativos y varían según barrio y estado del inmueble.
 
 Si Santiago te llama — y a muchos les llama antes de que terminen de leer esta página — cuéntanos tu situación. Te ayudamos a encontrar el barrio y el piso que se adaptan a tu familia y a tu presupuesto.
 
-**Botón:** Completá el diagnóstico para Santiago
+**Botón:** Completa el diagnóstico para Santiago
 
 ---
 
