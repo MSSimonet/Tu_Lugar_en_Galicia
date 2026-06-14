@@ -107,6 +107,12 @@ export type LeadData = {
   // Calificación automática del lead
   calificacion?: 'potencial' | 'en-desarrollo' | 'bajo'
 
+  // Etiqueta de segmento (Single select en Airtable — columna creada manualmente)
+  etiqueta?: 'lead-en-preparacion' | 'seguimiento-futuro' | 'califica'
+
+  // Modalidad de búsqueda según origen (Single select — "ya-en-espana" requiere crearse en Airtable)
+  modalidad?: 'antes-de-viajar' | 'ya-en-espana'
+
   // Campos de perfil ampliado (Nivel 2 Gina — no todos aparecen en el formulario web)
   cuentaBancaria?: 'si' | 'no'
   comprendeHonorarios?: 'entiende' | 'pide-explicacion'

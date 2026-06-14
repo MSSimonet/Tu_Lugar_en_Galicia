@@ -75,27 +75,37 @@ export async function POST(req: NextRequest) {
   }
 
   // Guardado en Airtable según la acción del paso que se acaba de procesar.
-  // nivel1 es blocking para capturar el record ID y devolverlo al cliente.
-  // parcial/completo son fire-and-forget; usan el record ID ya almacenado para hacer PATCH.
+  // nivel1: bloqueante para capturar el record ID; usa conReintentos, fallo no bloquea al usuario.
+  // parcial/completo: awaited con reintentos; si fallan todos devuelve guardado:false al cliente.
   let sesionParaDevolver = sesionActualizada
+  let guardado = true
 
   if (paso.accion === 'guardar_nivel1') {
-    try {
-      const recordId = await guardarEnAirtable(sesionActualizada)
+    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada))
+    if (recordId) {
       sesionParaDevolver = { ...sesionActualizada, airtableRecordId: recordId }
-    } catch (err) {
-      console.error('[gina] Error al guardar nivel1:', (err as Error).message)
-      // Sin record ID: el guardado final hará POST como fallback, no se pierde el lead
+    } else {
+      console.error('[gina] nivel1 falló tras 3 intentos — el guardado completo hará POST como fallback')
     }
   } else if (paso.accion === 'guardar_lead_completo' || paso.accion === 'guardar_lead_parcial') {
-    guardarEnAirtable(sesionActualizada, true).catch((err) => {
-      console.error('[gina] Error al guardar lead:', (err as Error).message)
-    })
+    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true))
+    if (!recordId) {
+      guardado = false
+      console.error('[gina] guardado completo/parcial falló tras 3 intentos — lead perdido, revisar logs')
+    }
+  } else if (paso.id === 'transicion_nivel2' && siguientePasoId === 'despedida') {
+    // El usuario eligió no continuar al Nivel 2: guardar el lead con calificación antes de la despedida
+    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true))
+    if (!recordId) {
+      guardado = false
+      console.error('[gina] guardado (transicion_nivel2→no) falló tras 3 intentos')
+    }
   }
 
   return NextResponse.json({
     sesionActualizada: sesionParaDevolver,
     siguientePaso,
+    guardado,
   })
 }
 
@@ -103,51 +113,90 @@ export async function POST(req: NextRequest) {
  * Mapea las respuestas de la sesión al tipo LeadData y llama a saveLead.
  * Pasa sesion.airtableRecordId a saveLead: si existe hace PATCH, si no hace POST.
  * Devuelve el record ID resultante (nuevo en POST, el mismo en PATCH).
+ *
+ * REGLA: un campo se incluye SOLO si fue respondido en sesion.respuestas.
+ * Sin defaults: un campo no preguntado llega como undefined y JSON.stringify lo omite.
  */
 async function guardarEnAirtable(sesion: GinaSession, incluirCalificacion = false): Promise<string> {
   const r = sesion.respuestas
 
   const lead: Partial<LeadData> & Pick<LeadData, 'nombreCompleto' | 'email' | 'consentimientoRGPD'> = {
+    // Siempre presentes (nombre y email se capturan antes de cualquier guardado)
     nombreCompleto: String(r['nombreCompleto'] ?? ''),
     email: String(r['email'] ?? ''),
-    telefono: String(r['telefono'] ?? ''),
-    paisResidencia: String(r['paisResidencia'] ?? ''),
-    adultos: r['adultos'] as LeadData['adultos'] ?? undefined,
-    ninos: r['ninos'] as LeadData['ninos'] ?? undefined,
-    adolescentes: r['adolescentes'] as LeadData['adolescentes'] ?? undefined,
-    mascotas: (r['mascotas'] as 'si' | 'no') ?? 'no',
-    mascotaTipo: r['mascotaTipo'] as LeadData['mascotaTipo'] ?? undefined,
-    cantidadPerros: r['cantidadPerros'] as LeadData['cantidadPerros'] ?? undefined,
-    cantidadGatos: r['cantidadGatos'] as LeadData['cantidadGatos'] ?? undefined,
-    mascotaPeso: r['mascotaPeso'] as LeadData['mascotaPeso'] ?? undefined,
-    documentacion: (r['documentacion'] as LeadData['documentacion']) ?? 'turista',
-    situacionLaboral: (r['situacionLaboral'] as LeadData['situacionLaboral']) ?? 'busca-empleo',
-    ingresosMensuales: String(r['ingresosMensuales'] ?? ''),
-    garantias: (r['garantias'] as LeadData['garantias']) ?? [],
-    ciudadDestino: (r['ciudadDestino'] as LeadData['ciudadDestino']) ?? 'indiferente',
-    tipoInmueble: r['tipoInmueble'] as LeadData['tipoInmueble'] ?? undefined,
-    presupuestoMensual: (r['presupuestoMensual'] as LeadData['presupuestoMensual']) ?? 'menos-700',
-    habitacionesMinimas: (r['habitacionesMinimas'] as LeadData['habitacionesMinimas']) ?? '1',
-    amueblado: (r['amueblado'] as LeadData['amueblado']) ?? 'indiferente',
-    ...(Array.isArray(r['imprescindibles']) && (r['imprescindibles'] as string[]).length > 0
-      ? { imprescindibles: r['imprescindibles'] as LeadData['imprescindibles'] }
-      : {}),
-    comodidades: r['comodidades'] as LeadData['comodidades'] ?? undefined,
-    necesidadesEspeciales: r['necesidadesEspeciales'] as LeadData['necesidadesEspeciales'] ?? undefined,
-    profesion: r['profesion'] ? String(r['profesion']) : undefined,
-    fechaLlegada: String(r['fechaLlegada'] ?? ''),
-    comoNosConociste: r['comoNosConociste'] as LeadData['comoNosConociste'] ?? undefined,
-    // Campos de perfil ampliado (Nivel 2 — opcionales, undefined omitidos por JSON.stringify)
-    cuentaBancaria: r['cuentaBancaria'] as LeadData['cuentaBancaria'] ?? undefined,
-    comprendeHonorarios: r['comprendeHonorarios'] as LeadData['comprendeHonorarios'] ?? undefined,
-    tipoLicencia: r['tipoLicencia'] as LeadData['tipoLicencia'] ?? undefined,
-    ciudadActual: r['ciudadActual'] ? String(r['ciudadActual']) : undefined,
-    tiempoEnEspana: r['tiempoEnEspana'] as LeadData['tiempoEnEspana'] ?? undefined,
-    objetivoBusqueda: r['objetivoBusqueda'] as LeadData['objetivoBusqueda'] ?? undefined,
-    nivelEstudios: r['nivelEstudios'] as LeadData['nivelEstudios'] ?? undefined,
-    // comprendeServicio refleja la respuesta real de p14_servicio
-    comprendeServicio: r['comprendeHonorarios'] === 'entiende',
     consentimientoRGPD: true,
+
+    // Datos personales
+    telefono: r['telefono'] ? String(r['telefono']) : undefined,
+    // p3_origen escribe 'en_espana'|'fuera' en r['paisResidencia']; p3b_pais lo sobreescribe con el país real.
+    // Usamos origenResidencia como decisor para evitar guardar los valores sentinel del flujo.
+    paisResidencia:
+      sesion.origenResidencia === 'en_espana'
+        ? 'España'
+        : sesion.origenResidencia === 'fuera' && r['paisResidencia']
+          ? String(r['paisResidencia'])
+          : undefined,
+    fechaLlegada: r['fechaLlegada'] ? String(r['fechaLlegada']) : undefined,
+
+    // Destino
+    ciudadDestino: r['ciudadDestino'] ? (r['ciudadDestino'] as LeadData['ciudadDestino']) : undefined,
+
+    // Composición familiar
+    adultos: r['adultos'] ? (r['adultos'] as LeadData['adultos']) : undefined,
+    ninos: r['ninos'] ? (r['ninos'] as LeadData['ninos']) : undefined,
+    adolescentes: r['adolescentes'] ? (r['adolescentes'] as LeadData['adolescentes']) : undefined,
+
+    // Mascotas
+    mascotas: r['mascotas'] ? (r['mascotas'] as LeadData['mascotas']) : undefined,
+    mascotaTipo: Array.isArray(r['mascotaTipo']) && (r['mascotaTipo'] as string[]).length > 0
+      ? (r['mascotaTipo'] as LeadData['mascotaTipo'])
+      : undefined,
+    cantidadPerros: r['cantidadPerros'] ? (r['cantidadPerros'] as LeadData['cantidadPerros']) : undefined,
+    cantidadGatos: r['cantidadGatos'] ? (r['cantidadGatos'] as LeadData['cantidadGatos']) : undefined,
+    mascotaPeso: r['mascotaPeso'] ? (r['mascotaPeso'] as LeadData['mascotaPeso']) : undefined,
+
+    // Situación legal y laboral
+    documentacion: r['documentacion'] ? (r['documentacion'] as LeadData['documentacion']) : undefined,
+    situacionLaboral: r['situacionLaboral'] ? (r['situacionLaboral'] as LeadData['situacionLaboral']) : undefined,
+    ingresosMensuales: r['ingresosMensuales'] ? String(r['ingresosMensuales']) : undefined,
+    garantias: Array.isArray(r['garantias']) && (r['garantias'] as string[]).length > 0
+      ? (r['garantias'] as LeadData['garantias'])
+      : undefined,
+
+    // Preferencias de vivienda
+    presupuestoMensual: r['presupuestoMensual'] ? (r['presupuestoMensual'] as LeadData['presupuestoMensual']) : undefined,
+    tipoInmueble: r['tipoInmueble'] ? (r['tipoInmueble'] as LeadData['tipoInmueble']) : undefined,
+    habitacionesMinimas: r['habitacionesMinimas'] ? (r['habitacionesMinimas'] as LeadData['habitacionesMinimas']) : undefined,
+    amueblado: r['amueblado'] ? (r['amueblado'] as LeadData['amueblado']) : undefined,
+    imprescindibles: Array.isArray(r['imprescindibles']) && (r['imprescindibles'] as string[]).length > 0
+      ? (r['imprescindibles'] as LeadData['imprescindibles'])
+      : undefined,
+    comodidades: r['comodidades'] ? (r['comodidades'] as LeadData['comodidades']) : undefined,
+
+    // Perfil adicional (Nivel 2)
+    necesidadesEspeciales: r['necesidadesEspeciales'] ? (r['necesidadesEspeciales'] as LeadData['necesidadesEspeciales']) : undefined,
+    profesion: r['profesion'] ? String(r['profesion']) : undefined,
+    comoNosConociste: r['comoNosConociste'] ? (r['comoNosConociste'] as LeadData['comoNosConociste']) : undefined,
+    cuentaBancaria: r['cuentaBancaria'] ? (r['cuentaBancaria'] as LeadData['cuentaBancaria']) : undefined,
+    comprendeHonorarios: r['comprendeHonorarios'] ? (r['comprendeHonorarios'] as LeadData['comprendeHonorarios']) : undefined,
+    tipoLicencia: r['tipoLicencia'] ? (r['tipoLicencia'] as LeadData['tipoLicencia']) : undefined,
+    ciudadActual: r['ciudadActual'] ? String(r['ciudadActual']) : undefined,
+    tiempoEnEspana: r['tiempoEnEspana'] ? (r['tiempoEnEspana'] as LeadData['tiempoEnEspana']) : undefined,
+    objetivoBusqueda: r['objetivoBusqueda'] ? (r['objetivoBusqueda'] as LeadData['objetivoBusqueda']) : undefined,
+    nivelEstudios: r['nivelEstudios'] ? (r['nivelEstudios'] as LeadData['nivelEstudios']) : undefined,
+
+    // comprendeServicio: derivado, solo cuando la pregunta fue respondida
+    comprendeServicio: r['comprendeHonorarios'] !== undefined
+      ? r['comprendeHonorarios'] === 'entiende'
+      : undefined,
+
+    etiqueta: sesion.etiqueta ?? undefined,
+
+    modalidad:
+      sesion.origenResidencia === 'fuera' ? 'antes-de-viajar'
+      : sesion.origenResidencia === 'en_espana' ? 'ya-en-espana'
+      : undefined,
+
     ...(incluirCalificacion
       ? {
           calificacion: calcularCalificacion({
@@ -171,4 +220,25 @@ async function guardarEnAirtable(sesion: GinaSession, incluirCalificacion = fals
   }
 
   return saveLead(lead as LeadData, sesion.airtableRecordId)
+}
+
+/**
+ * Ejecuta fn hasta 3 veces (0 ms, 200 ms, 600 ms de espera entre intentos).
+ * Devuelve el resultado si algún intento tiene éxito, o null si todos fallan.
+ * No lanza excepciones: el caller decide qué hacer con null.
+ */
+async function conReintentos<T>(fn: () => Promise<T>): Promise<T | null> {
+  const delays = [0, 200, 600]
+  for (let i = 0; i < delays.length; i++) {
+    if (delays[i] > 0) {
+      await new Promise((r) => setTimeout(r, delays[i]))
+    }
+    try {
+      return await fn()
+    } catch (err) {
+      const intento = i + 1
+      console.error(`[gina] intento ${intento}/3 falló:`, (err as Error).message)
+    }
+  }
+  return null
 }
