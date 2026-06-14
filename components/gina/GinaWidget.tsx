@@ -163,6 +163,14 @@ export function GinaWidget() {
   const botonAbrirRef = useRef<HTMLButtonElement>(null)
   const botonCerrarRef = useRef<HTMLButtonElement>(null)
 
+  // ── Apertura mediante evento global (permite abrirlo desde cualquier componente) ──
+
+  useEffect(() => {
+    function handleOpen() { setAbierto(true) }
+    window.addEventListener('gina:open', handleOpen)
+    return () => window.removeEventListener('gina:open', handleOpen)
+  }, [])
+
   // ── Gestión de foco al abrir/cerrar ──
 
   useEffect(() => {

@@ -1,13 +1,28 @@
-const POSTER = "/images/home/hero-lanzada-poster.jpg";
-const VIDEO  = "/videos/hero-lanzada.mp4";
+'use client'
+
+import Link from 'next/link'
+
+const POSTER = "/images/home/hero-lanzada-poster.jpg"
+const VIDEO  = "/videos/hero-lanzada.mp4"
+
+const STATS = [
+  { value: "+200", label: "familias" },
+  { value: "5",    label: "ciudades" },
+  { value: "4",    label: "años" },
+] as const
+
+function abrirGina() {
+  window.dispatchEvent(new CustomEvent('gina:open'))
+}
 
 export function Hero() {
   return (
     <section
-      className="relative flex min-h-screen flex-col justify-end hero-gradient"
+      className="relative flex flex-col"
+      style={{ minHeight: '100svh' }}
       aria-labelledby="hero-heading"
     >
-      {/* Video a pleno color en toda la pantalla — sin overlay general */}
+      {/* ── Capa de fondo: video + degradado esfumado ── */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         <video
           autoPlay
@@ -22,71 +37,175 @@ export function Hero() {
             width: "100%",
             height: "100%",
             objectFit: "cover",
+            filter: "saturate(.84) brightness(.92)",
           }}
         >
           <source src={VIDEO} type="video/mp4" />
         </video>
 
-        {/* Scrim: degradado de pantalla completa, transparente arriba → oscuro
-            abajo, donde vive el texto. La imagen se ve, solo oscurecida. */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 32%, rgba(0,0,0,0.55) 68%, rgba(0,0,0,0.78) 100%)",
-            pointerEvents: "none",
-          }}
-        />
+        {/* Sombreado esfumado lateral (desktop) / desde abajo (móvil) */}
+        <div className="absolute inset-0 hero-lateral-gradient" style={{ pointerEvents: "none" }} />
       </div>
 
-      {/* Bloque editorial: centrado en móvil, anclado abajo-izquierda en escritorio */}
-      <div className="relative z-10 mx-auto w-full max-w-6xl px-[var(--space-6)] pb-[var(--space-16)] pt-[var(--space-24)] md:px-[var(--space-12)] md:pb-[var(--space-24)]">
+      {/* ── Contenido principal — centrado vertical, alineado a la izquierda ── */}
+      <div className="relative z-10 flex flex-1 items-center">
         <div
-          className="text-center md:text-left animate-fade-in-up"
-          style={{ maxWidth: "calc(60ch + 1cm)" }}
+          className="animate-hero-content"
+          style={{
+            maxWidth: "560px",
+            paddingLeft: "clamp(28px, 7vw, 104px)",
+            paddingRight: "clamp(20px, 4vw, 48px)",
+            paddingTop: "clamp(48px, 6vw, 80px)",
+            paddingBottom: "clamp(32px, 4vw, 56px)",
+          }}
         >
-          {/* Titular — Fraunces 600 (titular del sistema), dorado con degradado metálico.
-              drop-shadow (no text-shadow) porque el fill es transparente por el clip. */}
+          {/* Eyebrow */}
+          <p
+            style={{
+              fontFamily: "var(--font-mulish)",
+              fontWeight: 500,
+              fontSize: "12px",
+              letterSpacing: "0.32em",
+              textTransform: "uppercase",
+              color: "#D4B873",
+              marginBottom: "1.25rem",
+            }}
+          >
+            Relocation especializado en Galicia
+          </p>
+
+          {/* Titular */}
           <h1
             id="hero-heading"
-            className="md:w-max md:whitespace-nowrap"
             style={{
-              fontFamily: "var(--font-titular)",
-              fontWeight: 600,
-              fontSize: "clamp(1.2rem, 2.2vw, 1.9rem)",
-              lineHeight: 1.2,
-              letterSpacing: "0.5px",
-              background:
-                "linear-gradient(135deg, #F4DD8C 0%, #E6C158 45%, #C9A23D 100%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
+              fontFamily: "var(--font-cormorant)",
+              fontWeight: 400,
+              fontSize: "clamp(2.5rem, 4.6vw, 4.1rem)",
+              lineHeight: 1.15,
+              color: "#F7F4ED",
+              marginBottom: "1.25rem",
             }}
           >
-            Tu nueva vida en Galicia empieza con una puerta abierta...
+            Tu nueva vida en Galicia empieza con una{" "}
+            <em style={{ fontStyle: "italic", color: "#E7D29C" }}>
+              puerta abierta...
+            </em>
           </h1>
 
-          <p
-            className="mx-auto md:mx-0"
+          {/* Línea dorada */}
+          <div
+            aria-hidden="true"
             style={{
-              fontFamily: "var(--font-ui)",
-              fontWeight: 400,
-              fontSize: "clamp(1rem, 1.8vw, 1.25rem)",
-              lineHeight: 1.6,
-              maxWidth: "60ch",
-              marginTop: "1.25rem",
-              color: "#EDE4D3",
-              textShadow: "0 1px 4px rgba(0,0,0,0.4)",
+              width: "46px",
+              height: "1px",
+              backgroundColor: "#C9A961",
+              marginBottom: "1.25rem",
+            }}
+          />
+
+          {/* Subtítulo */}
+          <p
+            style={{
+              fontFamily: "var(--font-mulish)",
+              fontWeight: 300,
+              lineHeight: 1.78,
+              color: "#e6e9e7",
+              maxWidth: "40ch",
+              marginBottom: "2rem",
             }}
           >
-            Encontramos y aseguramos la vivienda que se adapta a tu momento de
-            vida. Un servicio de reubicación honesto y profesional que se
-            encarga de todo el proceso a distancia, para que tu única tarea al
-            llegar sea abrir tu puerta.
+            Gestionamos todo el proceso a distancia, con honestidad y criterio
+            profesional, para que tu única tarea al llegar sea abrir tu puerta.
+          </p>
+
+          {/* Botón primario — abre el widget de Gina */}
+          <button
+            type="button"
+            onClick={abrirGina}
+            className="transition-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E7D29C]"
+            style={{
+              display: "inline-block",
+              backgroundColor: "#C9A961",
+              color: "#15130b",
+              borderRadius: "2px",
+              padding: "0.875rem 2rem",
+              fontFamily: "var(--font-mulish)",
+              fontWeight: 600,
+              fontSize: "0.9375rem",
+              letterSpacing: "0.04em",
+              cursor: "pointer",
+              border: "none",
+              marginBottom: "1rem",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#E7D29C" }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#C9A961" }}
+          >
+            Cuéntale tu caso a Gina
+          </button>
+
+          {/* Enlace al formulario */}
+          <p
+            style={{
+              fontFamily: "var(--font-mulish)",
+              fontSize: "0.82rem",
+              color: "#aab2af",
+            }}
+          >
+            ¿Prefieres escribirlo?{" "}
+            <Link
+              href="/conocernos"
+              style={{
+                color: "#aab2af",
+                textDecoration: "underline",
+                textUnderlineOffset: "3px",
+              }}
+            >
+              Completa el formulario
+            </Link>
           </p>
         </div>
       </div>
+
+      {/* ── Fila de datos — anclada al pie del hero ── */}
+      <div
+        className="relative z-10"
+        style={{
+          borderTop: "1px solid rgba(255, 255, 255, 0.12)",
+          padding:
+            "clamp(14px, 2.2vw, 22px) clamp(28px, 7vw, 104px)",
+        }}
+      >
+        <dl className="flex gap-[clamp(28px,5vw,72px)]">
+          {STATS.map(({ value, label }) => (
+            <div key={label}>
+              <dt
+                style={{
+                  fontFamily: "var(--font-cormorant)",
+                  fontWeight: 500,
+                  fontSize: "clamp(1.5rem, 2.4vw, 2rem)",
+                  color: "#E7D29C",
+                  lineHeight: 1.1,
+                }}
+              >
+                {value}
+              </dt>
+              <dd
+                style={{
+                  fontFamily: "var(--font-mulish)",
+                  fontWeight: 500,
+                  fontSize: "0.6rem",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "#a4ada9",
+                  marginTop: "0.2rem",
+                }}
+              >
+                {label}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </section>
-  );
+  )
 }
