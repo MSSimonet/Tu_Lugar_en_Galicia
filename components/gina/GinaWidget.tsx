@@ -10,7 +10,6 @@
  */
 
 import { useState, useEffect, useRef, useCallback, useId } from 'react'
-import Link from 'next/link'
 import { GinaMessages, type Mensaje } from './GinaMessages'
 import { GinaInput } from './GinaInput'
 import { crearSesion, type GinaSession } from '@/lib/gina/session'
@@ -160,7 +159,6 @@ export function GinaWidget() {
   const [inputDeshabilitado, setInputDeshabilitado] = useState(false)
   const [confirmEdicion, setConfirmEdicion] = useState<ConfirmEdicion | null>(null)
 
-  const botonAbrirRef = useRef<HTMLButtonElement>(null)
   const botonCerrarRef = useRef<HTMLButtonElement>(null)
 
   // ── Apertura mediante evento global (permite abrirlo desde cualquier componente) ──
@@ -176,8 +174,6 @@ export function GinaWidget() {
   useEffect(() => {
     if (abierto) {
       setTimeout(() => botonCerrarRef.current?.focus(), 100)
-    } else {
-      botonAbrirRef.current?.focus()
     }
   }, [abierto])
 
@@ -398,69 +394,6 @@ export function GinaWidget() {
 
   return (
     <>
-      {/* Botón flotante de apertura + enlace al formulario */}
-      <div
-        className={`
-          fixed bottom-6 right-6 z-50
-          flex flex-col items-end gap-1.5
-          transition-all duration-300
-          ${abierto ? 'opacity-0 pointer-events-none' : 'opacity-100'}
-        `}
-      >
-        <button
-          ref={botonAbrirRef}
-          type="button"
-          onClick={() => setAbierto(true)}
-          aria-label="¡Hola! soy Gina, abrir asistente"
-          aria-expanded={abierto}
-          aria-controls={dialogId}
-          className="flex items-center gap-2 pl-4 pr-5 py-3 rounded-full text-sm font-semibold transition-brand cursor-pointer"
-          style={{
-            background: 'linear-gradient(135deg, #2A2A2A 0%, #1A1A1A 100%)',
-            color: 'var(--color-laton-claro)',
-            letterSpacing: '0.04em',
-            border: '1px solid rgba(230, 193, 88, 0.4)',
-            boxShadow:
-              '0 4px 12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(230, 193, 88, 0.15), 0 0 16px rgba(230, 193, 88, 0.12)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.boxShadow =
-              '0 6px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(230, 193, 88, 0.25), 0 0 20px rgba(230, 193, 88, 0.2)'
-            e.currentTarget.style.transform = 'translateY(-1px)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.boxShadow =
-              '0 4px 12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(230, 193, 88, 0.15), 0 0 16px rgba(230, 193, 88, 0.12)'
-            e.currentTarget.style.transform = 'translateY(0)'
-          }}
-        >
-          {/* Ícono sparkles — indica asistente IA, no chat humano */}
-          <svg
-            className="w-5 h-5 shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
-            />
-          </svg>
-          ¡Hola! soy Gina
-        </button>
-
-        <Link
-          href="/conocernos"
-          className="text-xs underline-offset-2 hover:underline transition-brand"
-          style={{ color: 'var(--color-pizarra)', opacity: 0.65 }}
-        >
-          ¿Prefieres un formulario?
-        </Link>
-      </div>
-
       {/* Panel del chat */}
       <div
         id={dialogId}
