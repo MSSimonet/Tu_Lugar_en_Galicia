@@ -107,8 +107,8 @@ export type LeadData = {
   // Calificación automática del lead
   calificacion?: 'potencial' | 'en-desarrollo' | 'bajo'
 
-  // Etiqueta de segmento (Single select en Airtable — columna creada manualmente)
-  etiqueta?: 'lead-en-preparacion' | 'seguimiento-futuro' | 'califica'
+  // Etiqueta de segmento (Single select en Airtable)
+  etiqueta?: 'lead-en-preparacion' | 'seguimiento-futuro' | 'califica' | 'incompleto'
 
   // Modalidad de búsqueda según origen (Single select — "ya-en-espana" requiere crearse en Airtable)
   modalidad?: 'antes-de-viajar' | 'ya-en-espana'
