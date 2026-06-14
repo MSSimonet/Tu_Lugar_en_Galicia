@@ -403,7 +403,7 @@ export function GinaWidget() {
           ref={botonAbrirRef}
           type="button"
           onClick={() => setAbierto(true)}
-          aria-label="Abrir asistente Gina"
+          aria-label="¡Hola! soy Gina, abrir asistente"
           aria-expanded={abierto}
           aria-controls={dialogId}
           className="flex items-center gap-2 pl-4 pr-5 py-3 rounded-full text-sm font-semibold transition-brand cursor-pointer"

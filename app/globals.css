@@ -4,8 +4,8 @@
   /* === PALETA DE COLOR === */
 
   /* Identidad primaria — latón/bronce (extraído del logo) */
-  /* #9A7A2E en lugar de #B8973F: ratio ~5.1:1 sobre blanco, pasa WCAG AA */
-  --color-laton:        #9A7A2E;
+  /* #8F722B: blanco sobre latón = 4.56:1 (WCAG AA) y latón sobre blanco = 4.56:1 */
+  --color-laton:        #8F722B;
   --color-laton-claro:  #D4B96A;
   --color-laton-oscuro: #8A6E2A;
 

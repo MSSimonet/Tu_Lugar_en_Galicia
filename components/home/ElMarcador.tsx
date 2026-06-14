@@ -51,10 +51,16 @@ export function ElMarcador() {
       aria-label="El marcador — cifras en tiempo real"
     >
       <div className="mx-auto max-w-4xl">
-        <h2 className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] text-[var(--color-laton-claro)] uppercase">
+        <h2
+          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] uppercase"
+          style={{ color: 'var(--color-niebla)' }}
+        >
           En tiempo real
         </h2>
-        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-blanco)] md:text-[var(--text-2xl)]">
+        <p
+          className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] md:text-[var(--text-2xl)]"
+          style={{ color: '#FFFFFF' }}
+        >
           El Marcador
         </p>
 
@@ -69,7 +75,8 @@ export function ElMarcador() {
                 />
               ) : (
                 <span
-                  className="block font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-blanco)]"
+                  className="block font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)]"
+                  style={{ color: '#FFFFFF' }}
                   aria-label={`${display[key]}${unidad ? " " + unidad : ""} — ${etiqueta}`}
                 >
                   {display[key]}
@@ -78,7 +85,10 @@ export function ElMarcador() {
                   )}
                 </span>
               )}
-              <span className="mt-[var(--space-2)] block font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] text-[var(--color-niebla)] opacity-80 uppercase">
+              <span
+                className="mt-[var(--space-2)] block font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] uppercase"
+                style={{ color: 'var(--color-niebla)', opacity: 0.8 }}
+              >
                 {etiqueta}
               </span>
             </li>

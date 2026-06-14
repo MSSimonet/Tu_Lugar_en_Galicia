@@ -17,7 +17,7 @@ piedra de granito, rías, lluvia, calidez. Ningún competidor liga su imagen al 
 
 | Token | Hex final | Uso |
 |---|---|---|
-| `laton` (primario de identidad) | `#9A7A2E` | color extraído del logo — aldaba, wordmark metálico; CTA primario, acentos de marca (ajustado de #B8973F para WCAG AA: ratio ~5.1:1 sobre blanco) |
+| `laton` (primario de identidad) | `#8F722B` | color extraído del logo — aldaba, wordmark metálico; CTA primario, acentos de marca (ajustado de #9A7A2E para WCAG AA: blanco sobre latón = 4.56:1 ✓, latón sobre blanco = 4.56:1 ✓) |
 | `laton-claro` | `#D4B96A` | hover sobre `laton`, highlights decorativos |
 | `laton-oscuro` | `#8A6E2A` | estados activos, sombras cálidas sobre `laton` |
 | `atlantico` (acento territorio) | `#1A5247` | verde atlántico profundo — secciones de territorio, íconos de naturaleza |
