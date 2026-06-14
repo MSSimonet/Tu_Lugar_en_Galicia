@@ -93,6 +93,13 @@ export async function POST(req: NextRequest) {
       guardado = false
       console.error('[gina] guardado completo/parcial falló tras 3 intentos — lead perdido, revisar logs')
     }
+  } else if (paso.id === 'transicion_nivel2' && siguientePasoId === 'despedida') {
+    // El usuario eligió no continuar al Nivel 2: guardar el lead con calificación antes de la despedida
+    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true))
+    if (!recordId) {
+      guardado = false
+      console.error('[gina] guardado (transicion_nivel2→no) falló tras 3 intentos')
+    }
   }
 
   return NextResponse.json({
