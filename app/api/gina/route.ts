@@ -75,27 +75,30 @@ export async function POST(req: NextRequest) {
   }
 
   // Guardado en Airtable según la acción del paso que se acaba de procesar.
-  // nivel1 es blocking para capturar el record ID y devolverlo al cliente.
-  // parcial/completo son fire-and-forget; usan el record ID ya almacenado para hacer PATCH.
+  // nivel1: bloqueante para capturar el record ID; usa conReintentos, fallo no bloquea al usuario.
+  // parcial/completo: awaited con reintentos; si fallan todos devuelve guardado:false al cliente.
   let sesionParaDevolver = sesionActualizada
+  let guardado = true
 
   if (paso.accion === 'guardar_nivel1') {
-    try {
-      const recordId = await guardarEnAirtable(sesionActualizada)
+    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada))
+    if (recordId) {
       sesionParaDevolver = { ...sesionActualizada, airtableRecordId: recordId }
-    } catch (err) {
-      console.error('[gina] Error al guardar nivel1:', (err as Error).message)
-      // Sin record ID: el guardado final hará POST como fallback, no se pierde el lead
+    } else {
+      console.error('[gina] nivel1 falló tras 3 intentos — el guardado completo hará POST como fallback')
     }
   } else if (paso.accion === 'guardar_lead_completo' || paso.accion === 'guardar_lead_parcial') {
-    guardarEnAirtable(sesionActualizada, true).catch((err) => {
-      console.error('[gina] Error al guardar lead:', (err as Error).message)
-    })
+    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true))
+    if (!recordId) {
+      guardado = false
+      console.error('[gina] guardado completo/parcial falló tras 3 intentos — lead perdido, revisar logs')
+    }
   }
 
   return NextResponse.json({
     sesionActualizada: sesionParaDevolver,
     siguientePaso,
+    guardado,
   })
 }
 
@@ -196,4 +199,25 @@ async function guardarEnAirtable(sesion: GinaSession, incluirCalificacion = fals
   }
 
   return saveLead(lead as LeadData, sesion.airtableRecordId)
+}
+
+/**
+ * Ejecuta fn hasta 3 veces (0 ms, 200 ms, 600 ms de espera entre intentos).
+ * Devuelve el resultado si algún intento tiene éxito, o null si todos fallan.
+ * No lanza excepciones: el caller decide qué hacer con null.
+ */
+async function conReintentos<T>(fn: () => Promise<T>): Promise<T | null> {
+  const delays = [0, 200, 600]
+  for (let i = 0; i < delays.length; i++) {
+    if (delays[i] > 0) {
+      await new Promise((r) => setTimeout(r, delays[i]))
+    }
+    try {
+      return await fn()
+    } catch (err) {
+      const intento = i + 1
+      console.error(`[gina] intento ${intento}/3 falló:`, (err as Error).message)
+    }
+  }
+  return null
 }

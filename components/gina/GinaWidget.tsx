@@ -273,9 +273,26 @@ export function GinaWidget() {
         const data = (await res.json()) as {
           sesionActualizada: GinaSession
           siguientePaso: Paso
+          guardado?: boolean
         }
 
         const { sesionActualizada, siguientePaso } = data
+
+        // Si el guardado falló tras 3 reintentos, mostrar error y no avanzar a despedida
+        if (data.guardado === false) {
+          await typingDelay('Hubo un problema guardando tu información.')
+          setMensajes((prev) => [
+            ...prev,
+            {
+              id: generarId(),
+              de: 'gina',
+              texto:
+                'Hubo un problema guardando tu información. Por favor, escríbenos directamente a hola@tulugarengalicia.com para que podamos ayudarte.',
+            },
+          ])
+          setInputDeshabilitado(true)
+          return
+        }
 
         setSesion(sesionActualizada)
         setPasoActual(siguientePaso)
