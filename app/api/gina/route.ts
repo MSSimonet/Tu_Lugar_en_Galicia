@@ -128,7 +128,14 @@ async function guardarEnAirtable(sesion: GinaSession, incluirCalificacion = fals
 
     // Datos personales
     telefono: r['telefono'] ? String(r['telefono']) : undefined,
-    paisResidencia: r['paisResidencia'] ? String(r['paisResidencia']) : undefined,
+    // p3_origen escribe 'en_espana'|'fuera' en r['paisResidencia']; p3b_pais lo sobreescribe con el país real.
+    // Usamos origenResidencia como decisor para evitar guardar los valores sentinel del flujo.
+    paisResidencia:
+      sesion.origenResidencia === 'en_espana'
+        ? 'España'
+        : sesion.origenResidencia === 'fuera' && r['paisResidencia']
+          ? String(r['paisResidencia'])
+          : undefined,
     fechaLlegada: r['fechaLlegada'] ? String(r['fechaLlegada']) : undefined,
 
     // Destino
