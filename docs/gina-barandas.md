@@ -72,7 +72,7 @@ Un endpoint (vale una función serverless) que recibe la respuesta, consulta el 
 **5. Persistencia / CRM.**
 Al cerrar, vuelca los datos capturados a Google Sheets o a vuestro CRM vía API. Es buen momento para aplicar las etiquetas de calificación (p. ej. "califica", "lead en preparación", "seguimiento futuro").
 
-**Stack mínimo sugerido:** widget en React + backend serverless + la API de Anthropic para los pasos `llm`. Las validaciones de formato (email, teléfono) se resuelven en cliente o backend, sin gastar tokens.
+**Stack mínimo sugerido:** widget en React + backend serverless + la API de Gemini para los pasos `llm`. Las validaciones de formato (email, teléfono) se resuelven en cliente o backend, sin gastar tokens.
 
 > **Nota de portabilidad a WhatsApp (fase futura):** el flujo en JSON y las reglas de control se reutilizan tal cual. Lo único que cambia es el canal y sus límites de interfaz: WhatsApp permite máximo **3 botones de respuesta rápida** o una **lista de hasta 10 opciones**. Las preguntas con más de 3 opciones (p. ej. P4 plazo con 5, o P9 situación laboral con 6) irían como lista, no como botones. Tenedlo presente al diseñar el JSON para no rehacerlo luego.
 

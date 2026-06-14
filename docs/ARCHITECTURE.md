@@ -23,7 +23,7 @@ Vercel  ──►  Next.js app
                 ├── páginas (SSR/SSG) ── SEO
                 └── /app/api/*  (backend)
                         ├── /lead  → Airtable/Sheets   (Fase 1)
-                        └── /gina  → API de Claude      (Fase 4)
+                        └── /gina  → API de Gemini      (Fase 4)
 Cloudflare Worker (cron 15 días) → precios → la web los lee   (Fase 3)
 ```
 
@@ -87,11 +87,11 @@ el repo (MDX). La DB entra solo cuando hay estado multiusuario (mapa, presupuest
 Cron Trigger cada 15 días. Vercel sirve la app.
 **Consecuencia:** el scraping pesado no consume recursos de Vercel.
 
-### ADR-004 — La clave de la API de Claude vive solo en el servidor
-**Contexto:** Gina usa la API de Claude.
+### ADR-004 — La clave de la API de Gemini vive solo en el servidor
+**Contexto:** Gina usa la API de Gemini.
 **Decisión:** las llamadas se hacen desde `/app/api/gina` (servidor). La clave está en variables
 de entorno de Vercel, nunca en el cliente ni en el repo.
-**Consecuencia:** seguridad de la clave; el widget de chat habla con nuestro endpoint, no con Anthropic directamente.
+**Consecuencia:** seguridad de la clave; el widget de chat habla con nuestro endpoint, no con Gemini directamente.
 
 ### ADR-005 — Idioma y tono
 **Decisión:** sitio en español primero (multiidioma en Fase 6). Tono cálido, "tú" neutro (español internacional), cercano.

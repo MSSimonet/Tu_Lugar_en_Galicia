@@ -20,7 +20,9 @@ Contexto completo del negocio, marca, competencia y producto en:
 - `/docs/gina-flujo.md` — flujo conversacional de Gina (fuente de verdad del cuestionario)
 - `/docs/gina-barandas.md` — reglas de control del system prompt y arquitectura del widget de Gina
 - `/docs/contexto-estrategico.md` — contexto de negocio, marca y competencia
-  (nota: la voz de marca descrita en ese doc usaba "vos" rioplatense; la decisión vigente es "tú" neutro — ver §6)
+  (⚠️ DESACTUALIZADO en dos cosas: describe la voz de marca en "vos" rioplatense y menciona la
+  API de Claude para Gina. Las reglas vigentes están en §2 (IA = Gemini) y §6 (voz = "tú" neutro).
+  Si editás ese doc, corregí sus ejemplos de copy a "tú" neutro y la mención de IA a Gemini.)
 - `/docs/gina-recursos-preparacion.md` — material de apoyo y recursos del asistente Gina
 - `/docs/legal-terminos-privacidad.md` — fuente de la política de privacidad real (datos fiscales pendientes de completar)
 
@@ -32,7 +34,9 @@ Contexto completo del negocio, marca, competencia y producto en:
 - **Deploy:** Vercel (auto-deploy desde GitHub `main`)
 - **DNS / SSL / CDN / cron del scraper:** Cloudflare (free)
 - **Leads / CRM (Fase 1):** Airtable o Google Sheets — NO base de datos todavía
-- **IA (Gina):** API de Claude llamada desde API routes de Next.js (clave solo en servidor)
+- **IA (Gina):** **API de Gemini (Google)** llamada desde API routes de Next.js (clave solo en servidor).
+  Decisión vigente: Gemini por costo. NO volver a la API de Claude/Anthropic sin un ADR.
+  La clave va en `GEMINI_API_KEY` (solo servidor) — nunca en el cliente ni en el repo.
 - **Base de datos:** se introduce SOLO en Fase 5 (Vercel Postgres / Neon / Supabase)
 - **Agenda:** Cal.com embebido — **Pagos:** Stripe (Fase 6)
 
@@ -104,10 +108,27 @@ Ejemplo real:
 - Componentes en TypeScript (`.tsx`), nombres en inglés, copy de cara al usuario en español.
 - Estilos solo con clases de Tailwind y los tokens de `/docs/design-system.md`. Nada de CSS suelto.
 - Commits: Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`).
-- Idioma del sitio: español (futuro: + portugués + inglés en Fase 6). Tono de marca: cálido,
-  cercano, en "tú" neutro (español internacional). Nunca "vos", nunca "vosotros", nunca corporativo ni frío.
 - Variables de entorno (claves) nunca en el código ni en el cliente: solo en `.env.local` y
   en las variables de entorno de Vercel.
+
+### 6.1. Dos registros de voz que NUNCA se cruzan
+
+Esta es la regla que evita la contradicción histórica del proyecto. Hay **dos voces distintas**
+para **dos cosas distintas**:
+
+- **Voz de MARCA — todo lo que se PUBLICA → "tú" neutro.**
+  Español internacional, cálido y cercano. Aplica a: la web, el copy de las páginas, los captions
+  de Instagram, el blog y **todos los mensajes que Gina le muestra al cliente**.
+  Nunca "vos", nunca "vosotros", nunca corporativo ni frío.
+  Motivo: el público es argentino, venezolano y brasileño mezclado; el "tú" neutro no deja a nadie afuera.
+
+- **Voz de TRABAJO — la conversación con el humano → "vos" rioplatense.**
+  Es cómo los agentes le hablan a Silvana / al equipo dentro de Claude Code o del chat.
+  **NUNCA aparece en nada publicado, ni en el producto, ni en la salida de Gina.**
+
+> 🧭 Regla mnemotécnica: **lo que ve el cliente = "tú"; lo que hablás conmigo = "vos".**
+
+- Idioma del sitio: español (futuro: + portugués + inglés en Fase 6).
 
 ---
 

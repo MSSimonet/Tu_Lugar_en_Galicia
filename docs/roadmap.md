@@ -106,7 +106,7 @@ modelo de datos y acuerdos con cadenas.
 - `/docs/gina-barandas.md` — reglas de control del system prompt y arquitectura del widget
 
 **Qué se construye**
-- Widget de chat de Gina en la web con el flujo definido en `gina-flujo.md` (motor de estados JSON + API de Claude solo en pasos `llm`).
+- Widget de chat de Gina en la web con el flujo definido en `gina-flujo.md` (motor de estados JSON + API de Gemini solo en pasos `llm`).
 - Traductor de contratos/anuncios (pega texto → explicación simple).
 - Integración con WhatsApp (fase posterior; el flujo JSON y las barandas son portables sin rehacer).
 
