@@ -17,6 +17,11 @@ const precios = [
   { tipo: '3+ hab. con garaje o zona premium', rango: '1.300 € – 1.700 €' },
 ]
 
+// ⚠️ FUENTE DE VERDAD del FAQ de Vigo = este array (es lo que renderiza la página).
+// El mismo contenido existe en content/ciudad-vigo.md como copia de autoría/SEO.
+// Hoy ambos están sincronizados palabra por palabra; si editás uno, replicá en el otro.
+// Dedup real (que la página lea del .md) requiere un loader de markdown en /lib
+// (gray-matter + fs) — pendiente como mejora futura fuera del alcance de esta tarea.
 const faqs = [
   {
     question: '¿Puedo alquilar un piso en Vigo antes de llegar a España?',

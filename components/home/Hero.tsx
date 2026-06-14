@@ -45,13 +45,13 @@ export function Hero() {
           className="text-center md:text-left animate-fade-in-up"
           style={{ maxWidth: "calc(60ch + 1cm)" }}
         >
-          {/* Titular — Cormorant Garamond 600, dorado con degradado metálico.
+          {/* Titular — Fraunces 600 (titular del sistema), dorado con degradado metálico.
               drop-shadow (no text-shadow) porque el fill es transparente por el clip. */}
           <h1
             id="hero-heading"
             className="md:w-max md:whitespace-nowrap"
             style={{
-              fontFamily: "var(--font-cormorant), Georgia, serif",
+              fontFamily: "var(--font-titular)",
               fontWeight: 600,
               fontSize: "clamp(1.2rem, 2.2vw, 1.9rem)",
               lineHeight: 1.2,
@@ -70,7 +70,7 @@ export function Hero() {
           <p
             className="mx-auto md:mx-0"
             style={{
-              fontFamily: "var(--font-karla), system-ui, sans-serif",
+              fontFamily: "var(--font-ui)",
               fontWeight: 400,
               fontSize: "clamp(1rem, 1.8vw, 1.25rem)",
               lineHeight: 1.6,
