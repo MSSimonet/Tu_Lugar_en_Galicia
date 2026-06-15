@@ -59,17 +59,21 @@ export function Hero() {
             paddingBottom: "clamp(32px, 4vw, 56px)",
           }}
         >
-          {/* Eyebrow */}
+          {/* Eyebrow — píldora semitransparente; letter-spacing responsivo vía .hero-eyebrow */}
           <p
+            className="hero-eyebrow"
             style={{
+              display: "inline-block",
               fontFamily: "var(--font-mulish)",
               fontWeight: 500,
               fontSize: "12px",
-              letterSpacing: "0.32em",
               textTransform: "uppercase",
               color: "#D4B873",
+              background: "rgba(0,0,0,0.45)",
+              borderRadius: "999px",
+              padding: "4px 12px",
               marginBottom: "1.25rem",
-              textShadow: "0 1px 6px rgba(0,0,0,0.70), 0 0 18px rgba(0,0,0,0.40)",
+              textShadow: "0 1px 4px rgba(0,0,0,0.60)",
             }}
           >
             Relocation especializado en Galicia

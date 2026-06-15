@@ -134,6 +134,14 @@ details > dd {
   }
 }
 
+/* ── Hero eyebrow — letter-spacing responsive ──────────────────────────── */
+/* Desktop: tracking amplio para dar presencia de badge */
+.hero-eyebrow { letter-spacing: 0.32em; }
+/* Móvil: tracking reducido para que quepa en una sola línea dentro de la píldora */
+@media (max-width: 767px) {
+  .hero-eyebrow { letter-spacing: 0.14em; }
+}
+
 /* ── Hero content animation ──────────────────────────────────────────────── */
 @keyframes heroContentIn {
   from { opacity: 0; transform: translateY(18px); }
