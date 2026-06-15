@@ -10,7 +10,7 @@ const AEMET_CODIGOS: Record<string, string> = {
   'lugo':                     '27028',
 }
 
-const AEMET_BASE = 'https://opendata.aemet.es/openapi/api'
+const AEMET_BASE = 'https://opendata.aemet.es/opendata/api'
 
 interface PeriodoValor {
   value: number | string
@@ -56,7 +56,8 @@ export async function GET(
   try {
     // Paso 1: obtener la URL de datos de la AEMET
     const metaRes = await fetch(
-      `${AEMET_BASE}/prediccion/especifica/municipio/horaria/${codigo}?api_key=${apiKey}`,
+      `${AEMET_BASE}/prediccion/especifica/municipio/horaria/${codigo}`,
+      { headers: { 'api_key': apiKey } },
     )
 
     if (!metaRes.ok) {
