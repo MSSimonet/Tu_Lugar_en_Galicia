@@ -14,6 +14,7 @@ import { GinaMessages, type Mensaje } from './GinaMessages'
 import { GinaInput } from './GinaInput'
 import { crearSesion, type GinaSession } from '@/lib/gina/session'
 import { obtenerPaso, personalizarTexto, INGRESOS_RIESGO, type Paso, type Opcion } from '@/lib/gina/flowEngine'
+import { guardarSesionLocal, cargarSesionLocal, limpiarSesionLocal } from '@/lib/gina/sessionStorage'
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -184,6 +185,37 @@ export function GinaWidget() {
       setAbierto(false)
     }
   }
+
+  // ── Persistencia en localStorage ──────────────────────────────────────────
+
+  // Restaura la sesión al montar si hay una guardada de menos de 24 h.
+  // Corre solo en el cliente (useEffect no ejecuta en SSR), lo que evita
+  // discrepancias de hidratación con el HTML renderizado en servidor.
+  useEffect(() => {
+    const guardada = cargarSesionLocal()
+    if (!guardada) return
+    try {
+      const paso = obtenerPaso(guardada.pasoActualId)
+      setSesion(guardada.sesion)
+      setPasoActual(paso)
+      setMensajes([
+        ...guardada.mensajes,
+        { id: generarId(), de: 'gina' as const, texto: 'Retomamos donde lo dejaste.' },
+      ])
+    } catch {
+      // El paso guardado ya no existe en flow.json (actualización del flujo) → empezar limpio
+      limpiarSesionLocal()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Guarda el estado tras cada paso respondido.
+  // Se omite si sesion.respuestas está vacío (estado inicial antes de responder).
+  // guardarSesionLocal elimina automáticamente la entrada cuando sesion.completado === true.
+  useEffect(() => {
+    if (Object.keys(sesion.respuestas).length === 0) return
+    guardarSesionLocal(sesion, mensajes, pasoActual.id)
+  }, [sesion, mensajes, pasoActual])
 
   // ── Avanzar paso virtual (declarado antes de procesarRespuesta para evitar hoisting) ──
 
