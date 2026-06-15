@@ -87,15 +87,23 @@ export async function POST(req: NextRequest) {
     } else {
       console.error('[gina] nivel1 falló tras 3 intentos — el guardado completo hará POST como fallback')
     }
-  } else if (paso.accion === 'guardar_lead_completo' || paso.accion === 'guardar_lead_parcial') {
-    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true))
+  } else if (paso.accion === 'guardar_lead_completo') {
+    // Cuestionario completo: etiqueta derivada de calificacion ('califica' | 'seguimiento-futuro')
+    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true, true))
     if (!recordId) {
       guardado = false
-      console.error('[gina] guardado completo/parcial falló tras 3 intentos — lead perdido, revisar logs')
+      console.error('[gina] guardado completo falló tras 3 intentos — lead perdido, revisar logs')
+    }
+  } else if (paso.accion === 'guardar_lead_parcial') {
+    // Salida temprana (lead-en-preparacion): etiqueta ya en sesion.etiqueta, no es guardado completo
+    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true, false))
+    if (!recordId) {
+      guardado = false
+      console.error('[gina] guardado parcial falló tras 3 intentos — lead perdido, revisar logs')
     }
   } else if (paso.id === 'transicion_nivel2' && siguientePasoId === 'despedida') {
-    // El usuario eligió no continuar al Nivel 2: guardar el lead con calificación antes de la despedida
-    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true))
+    // "No" al nivel 2: guardado incompleto (no llegó al paso atribucion)
+    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true, false))
     if (!recordId) {
       guardado = false
       console.error('[gina] guardado (transicion_nivel2→no) falló tras 3 intentos')
@@ -117,8 +125,50 @@ export async function POST(req: NextRequest) {
  * REGLA: un campo se incluye SOLO si fue respondido en sesion.respuestas.
  * Sin defaults: un campo no preguntado llega como undefined y JSON.stringify lo omite.
  */
-async function guardarEnAirtable(sesion: GinaSession, incluirCalificacion = false): Promise<string> {
+/**
+ * esGuardadoCompleto: true SOLO para accion=guardar_lead_completo (llegó al paso atribucion).
+ * Determina si la etiqueta se deriva de la calificación ('califica'/'seguimiento-futuro')
+ * o se marca como 'incompleto'. La etiqueta 'lead-en-preparacion' ya en sesion.etiqueta
+ * tiene prioridad y nunca se pisa.
+ */
+async function guardarEnAirtable(
+  sesion: GinaSession,
+  incluirCalificacion = false,
+  esGuardadoCompleto = false,
+): Promise<string> {
   const r = sesion.respuestas
+
+  // Calificación: se calcula cuando hay datos suficientes (incluirCalificacion=true).
+  // Se extrae aquí para reutilizarla en la derivación de etiqueta.
+  const calificacion: LeadData['calificacion'] | undefined = incluirCalificacion
+    ? calcularCalificacion({
+        documentacion: r['documentacion'] as string | undefined,
+        garantias: r['garantias'] as string[] | undefined,
+        ingresosMensuales: r['ingresosMensuales'] as string | undefined,
+        fechaLlegada: r['fechaLlegada'] as string | undefined,
+        ciudadDestino: r['ciudadDestino'] as string | undefined,
+        adultos: r['adultos'] as string | undefined,
+        ninos: r['ninos'] as string | undefined,
+        adolescentes: r['adolescentes'] as string | undefined,
+        mascotas: r['mascotas'] as string | undefined,
+        cantidadPerros: r['cantidadPerros'] as string | undefined,
+        cantidadGatos: r['cantidadGatos'] as string | undefined,
+        situacionLaboral: r['situacionLaboral'] as string | undefined,
+        presupuestoMensual: r['presupuestoMensual'] as string | undefined,
+        nivelEstudios: r['nivelEstudios'] as string | undefined,
+      })
+    : undefined
+
+  // Etiqueta — reglas en orden de prioridad:
+  // 1. 'lead-en-preparacion' ya asignada por el motor → no tocar
+  // 2. Guardado completo + calificacion potencial → 'califica'
+  // 3. Guardado completo + calificacion en-desarrollo|bajo → 'seguimiento-futuro'
+  // 4. Cualquier otro guardado (nivel1, transicion_nivel2→no) → 'incompleto'
+  const etiqueta: LeadData['etiqueta'] = sesion.etiqueta
+    ? (sesion.etiqueta as LeadData['etiqueta'])
+    : esGuardadoCompleto && calificacion
+      ? (calificacion === 'potencial' ? 'califica' : 'seguimiento-futuro')
+      : 'incompleto'
 
   const lead: Partial<LeadData> & Pick<LeadData, 'nombreCompleto' | 'email' | 'consentimientoRGPD'> = {
     // Siempre presentes (nombre y email se capturan antes de cualquier guardado)
@@ -190,33 +240,14 @@ async function guardarEnAirtable(sesion: GinaSession, incluirCalificacion = fals
       ? r['comprendeHonorarios'] === 'entiende'
       : undefined,
 
-    etiqueta: sesion.etiqueta ?? undefined,
+    etiqueta,
 
     modalidad:
       sesion.origenResidencia === 'fuera' ? 'antes-de-viajar'
       : sesion.origenResidencia === 'en_espana' ? 'ya-en-espana'
       : undefined,
 
-    ...(incluirCalificacion
-      ? {
-          calificacion: calcularCalificacion({
-            documentacion: r['documentacion'] as string | undefined,
-            garantias: r['garantias'] as string[] | undefined,
-            ingresosMensuales: r['ingresosMensuales'] as string | undefined,
-            fechaLlegada: r['fechaLlegada'] as string | undefined,
-            ciudadDestino: r['ciudadDestino'] as string | undefined,
-            adultos: r['adultos'] as string | undefined,
-            ninos: r['ninos'] as string | undefined,
-            adolescentes: r['adolescentes'] as string | undefined,
-            mascotas: r['mascotas'] as string | undefined,
-            cantidadPerros: r['cantidadPerros'] as string | undefined,
-            cantidadGatos: r['cantidadGatos'] as string | undefined,
-            situacionLaboral: r['situacionLaboral'] as string | undefined,
-            presupuestoMensual: r['presupuestoMensual'] as string | undefined,
-            nivelEstudios: r['nivelEstudios'] as string | undefined,
-          }),
-        }
-      : {}),
+    ...(calificacion ? { calificacion } : {}),
   }
 
   return saveLead(lead as LeadData, sesion.airtableRecordId)
