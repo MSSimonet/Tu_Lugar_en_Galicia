@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tu Lugar en Galicia
 
-## Getting Started
+Sitio web y sistema de calificación de leads para el primer servicio de **relocation especializado en Galicia**, España. Ayuda a familias latinoamericanas a conseguir vivienda antes de llegar, acompañándolas en todo el proceso a distancia.
 
-First, run the development server:
+**Producción:** [tu-lugar-en-galicia.vercel.app](https://tu-lugar-en-galicia.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## Stack
+
+- **Framework:** Next.js 16 (App Router) + TypeScript + Tailwind CSS 4
+- **Deploy:** Vercel (auto-deploy desde `main`)
+- **CDN / DNS:** Cloudflare
+- **CRM:** Airtable
+- **IA (Gina):** API de Gemini (Google)
+- **Clima:** API AEMET (España)
+- **Agenda:** Cal.com embebido
+
+---
+
+## Estructura principal
+
+```
+app/                  — Páginas y API routes (Next.js App Router)
+├── api/gina/         — Motor conversacional de Gina → Airtable
+├── api/clima/        — Clima en tiempo real por ciudad (AEMET, caché 6h)
+├── api/lead/         — Formulario de diagnóstico → Airtable
+├── ciudades/         — 5 páginas de ciudad (Vigo, A Coruña, Santiago, Pontevedra, Lugo)
+components/           — Componentes React
+├── gina/             — Widget conversacional completo
+├── home/             — Secciones de la home
+├── ciudades/         — Layout y FAQ de páginas de ciudad
+lib/gina/             — Flujo JSON + motor de estados + persistencia
+docs/                 — Arquitectura, roadmap, PRD, design-system
+CLAUDE.md             — Reglas del proyecto para Claude Code
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables de entorno
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Crear `.env.local` en la raíz con:
 
-## Learn More
+```env
+AIRTABLE_API_KEY=
+AIRTABLE_BASE_ID=
+AIRTABLE_TABLE_NAME=
+GEMINI_API_KEY=
+AEMET_API_KEY=
+```
 
-To learn more about Next.js, take a look at the following resources:
+Las mismas variables deben estar configuradas en Vercel (Settings → Environment Variables).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Correr en local
 
-## Deploy on Vercel
+```bash
+npm install
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Abre [http://localhost:3000](http://localhost:3000).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build    # build de producción
+npm run lint     # ESLint
+npx tsc --noEmit # TypeScript
+```
+
+---
+
+## Gina
+
+Gina es el asistente conversacional que califica leads antes de que lleguen a Silvana. El flujo vive en `lib/gina/flow.json` (~47 pasos, con bifurcaciones por perfil). Al terminar, guarda el lead en Airtable con una calificación (`potencial` / `en-desarrollo` / `bajo`) y una etiqueta (`califica` / `seguimiento-futuro` / `lead-en-preparacion` / `incompleto`).
+
+La sesión persiste en `localStorage` por 24 horas para no perder conversaciones a mitad en móvil.
+
+---
+
+## Despliegue
+
+Cualquier push a `main` dispara un deploy automático en Vercel. Las ramas siguen la convención `feature/<fase>-<tarea-corta>`.
+
+---
+
+*Actualizado: junio 2026*
