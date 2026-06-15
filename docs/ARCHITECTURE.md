@@ -23,7 +23,7 @@ Vercel  ──►  Next.js app
                 ├── páginas (SSR/SSG) ── SEO
                 └── /app/api/*  (backend)
                         ├── /lead  → Airtable/Sheets   (Fase 1)
-                        └── /gina  → API de Gemini      (Fase 4)
+                        └── /avoa  → API de Claude      (Fase 4)
 Cloudflare Worker (cron 15 días) → precios → la web los lee   (Fase 3)
 ```
 
@@ -52,7 +52,7 @@ Cloudflare Worker (cron 15 días) → precios → la web los lee   (Fase 3)
 │   ├── robots.ts             # SEO Specialist
 │   └── api/                  # Backend Architect
 │       ├── lead/route.ts     # Fase 1
-│       └── gina/route.ts     # AI Engineer (Fase 4)
+│       └── avoa/route.ts     # AI Engineer (Fase 4)
 ├── components/               # Frontend Developer
 ├── content/                  # Content Creator (MDX del blog, Fase 2)
 ├── lib/                      # Backend Architect
@@ -88,10 +88,10 @@ Cron Trigger cada 15 días. Vercel sirve la app.
 **Consecuencia:** el scraping pesado no consume recursos de Vercel.
 
 ### ADR-004 — La clave de la API de Gemini vive solo en el servidor
-**Contexto:** Gina usa la API de Gemini.
-**Decisión:** las llamadas se hacen desde `/app/api/gina` (servidor). La clave está en variables
+**Contexto:** Avoa usa la API de Gemini.
+**Decisión:** las llamadas se hacen desde `/app/api/avoa` (servidor). La clave está en variables
 de entorno de Vercel, nunca en el cliente ni en el repo.
-**Consecuencia:** seguridad de la clave; el widget de chat habla con nuestro endpoint, no con Gemini directamente.
+**Consecuencia:** seguridad de la clave; el widget de chat habla con nuestro endpoint, no con Google directamente.
 
 ### ADR-005 — Idioma y tono
 **Decisión:** sitio en español primero (multiidioma en Fase 6). Tono cálido, "tú" neutro (español internacional), cercano.
@@ -106,7 +106,7 @@ de entorno de Vercel, nunca en el cliente ni en el repo.
 | `AIRTABLE_API_KEY` / `GOOGLE_SHEETS_*` | 1 | guardar leads |
 | `SHEET_MARCADOR_ID` | 1 | leer El Marcador |
 | `OPENWEATHER_API_KEY` | 2 | clima por ciudad |
-| `GEMINI_API_KEY` | 4 | Gina (Gemini) |
+| `GEMINI_API_KEY` | 4 | Avoa (Gemini) |
 | `DATABASE_URL` | 5 | base de datos |
 | `STRIPE_SECRET_KEY` | 6 | pagos |
 
@@ -157,20 +157,20 @@ en CLAUDE.md §3). No se crean carpetas vacías en el scaffold para no generar a
 - Un `create-next-app` posterior en la misma carpeta fallaría por nombre con mayúsculas; si se
   necesita reinicializar, hacerlo en una carpeta temporal y mover como se hizo en este scaffold.
 
-### ADR-008 — Modelo de IA para Gina: Gemini en lugar de Claude
+### ADR-008 — Modelo de IA para Avoa: Gemini en lugar de Claude
 
 **Status:** Accepted — 2026-05-31
 
-**Contexto:** Gina necesita un modelo de lenguaje para los pasos `[llm]` del cuestionario
+**Contexto:** Avoa necesita un modelo de lenguaje para los pasos `[llm]` del cuestionario
 (texto libre). El stack inicial asumía Claude (Anthropic), ya integrado en el proyecto.
 Se evaluaron Claude Haiku y Gemini Flash en términos de costo a escala.
 
-**Decisión:** Se usa **Gemini** (Google) como modelo de IA para Gina, por costo a escala.
-Las barandas definidas en `docs/gina-barandas.md` son agnósticas al modelo y se aplican
+**Decisión:** Se usa **Gemini** (Google) como modelo de IA para Avoa, por costo a escala.
+Las barandas definidas en `docs/avoa-barandas.md` son agnósticas al modelo y se aplican
 sin cambios como System Prompt independientemente del proveedor.
 
 **Consecuencias:**
-- Variable de entorno: `GEMINI_API_KEY` (en lugar de `ANTHROPIC_API_KEY` para Gina).
+- Variable de entorno: `GEMINI_API_KEY` (en lugar de `ANTHROPIC_API_KEY` para Avoa).
 - El cliente SDK en `lib/ai/` usará el SDK de Google Generative AI.
 - `ANTHROPIC_API_KEY` queda disponible para otros usos futuros si se incorpora Claude
   en otra parte del stack.
@@ -206,7 +206,7 @@ previa con Vercel o Cloudflare. Ejecutá cada sección en orden.
    | `GOOGLE_SHEETS_*` | 1 | Credenciales de Google Sheets (alternativa a Airtable) |
    | `SHEET_MARCADOR_ID` | 1 | ID de la hoja de El Marcador |
    | `OPENWEATHER_API_KEY` | 2 | Clima por ciudad |
-   | `GEMINI_API_KEY` | 4 | API de Gemini para Gina |
+   | `GEMINI_API_KEY` | 4 | API de Gemini para Avoa |
    | `DATABASE_URL` | 5 | Conexión a base de datos |
    | `STRIPE_SECRET_KEY` | 6 | Pagos con Stripe |
 
