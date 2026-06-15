@@ -69,6 +69,7 @@ export function Hero() {
               textTransform: "uppercase",
               color: "#D4B873",
               marginBottom: "1.25rem",
+              textShadow: "0 1px 6px rgba(0,0,0,0.70), 0 0 18px rgba(0,0,0,0.40)",
             }}
           >
             Relocation especializado en Galicia
