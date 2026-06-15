@@ -235,10 +235,7 @@ async function guardarEnAirtable(
     objetivoBusqueda: r['objetivoBusqueda'] ? (r['objetivoBusqueda'] as LeadData['objetivoBusqueda']) : undefined,
     nivelEstudios: r['nivelEstudios'] ? (r['nivelEstudios'] as LeadData['nivelEstudios']) : undefined,
 
-    // comprendeServicio: derivado, solo cuando la pregunta fue respondida
-    comprendeServicio: r['comprendeHonorarios'] !== undefined
-      ? r['comprendeHonorarios'] === 'entiende'
-      : undefined,
+    comprendeServicio: true,
 
     etiqueta,
 

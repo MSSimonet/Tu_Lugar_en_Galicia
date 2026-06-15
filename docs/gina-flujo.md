@@ -188,7 +188,7 @@
 
 ---
 
-#### `p6b_menores` · `botones` · **sin campo Airtable** (solo enrutamiento)
+#### `p6b_menores` · `botones` · sin campo Airtable (solo enrutamiento)
 
 > "¿Viajan menores de edad contigo?"
 
@@ -740,7 +740,7 @@
 - `co-living` como opción de `tipoInmueble` — solo disponible en el formulario web.
 
 **Campos que Gina pregunta pero NO se guardan en Airtable** (enrutamiento puro):
-- Respuesta a `p6b_menores` (si/no menores)
+- Respuesta a `p6b_menores` (si/no menores) — solo enruta (el conteo real queda en `ninos`/`adolescentes`)
 - Respuesta a `p13_banco` (cuenta bancaria)
 - Respuesta a `p14_servicio` / `p14_explicacion` (comprensión del servicio → se guarda como `true`)
 - Respuesta a `p17_licencia` y `p17b_canje` (tipo de licencia)

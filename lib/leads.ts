@@ -28,6 +28,7 @@
  *     estacionamiento    → indispensable | deseable | no
  *     comoNosConociste      → instagram | facebook | tiktok | google | recomendacion | otro
      necesidadesEspeciales → si | no
+ *     comprendeHonorarios → entiende | pide-explicacion
  *
  *   Selección múltiple (Multiple select):
  *     garantias      → garantia-adicional | aval-bancario | avalista | seguro-impago | ninguna
