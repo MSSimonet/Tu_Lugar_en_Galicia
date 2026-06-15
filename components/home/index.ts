@@ -1,5 +1,4 @@
 export { Hero } from "./Hero";
-export { Metricas } from "./Metricas";
 export { ElMarcador } from "./ElMarcador";
 export { ComoFuncionaResumen } from "./ComoFuncionaResumen";
 export { CiudadesCards } from "./CiudadesCards";

@@ -49,6 +49,7 @@ export default function PontevedraCiudadPage() {
       precios={precios}
       faqs={faqs}
       imagenAlt="El casco histórico peatonal de Pontevedra y el río Lérez"
+      slug="pontevedra"
     />
   )
 }

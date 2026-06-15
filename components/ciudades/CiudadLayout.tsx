@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { FAQAccordion } from '@/components/ciudades/FAQAccordion'
+import { ClimaActual } from '@/components/ciudad/ClimaActual'
 import { faqSchema } from '@/lib/seo/schemas'
 import { WHATSAPP_NUMBER } from '@/lib/config/site'
 
@@ -13,6 +14,7 @@ export interface CiudadLayoutProps {
   faqs: { question: string; answer: string }[]
   imagenSrc?: string
   imagenAlt?: string
+  slug?: string
 }
 
 export function CiudadLayout({
@@ -23,6 +25,7 @@ export function CiudadLayout({
   faqs,
   imagenSrc,
   imagenAlt,
+  slug,
 }: CiudadLayoutProps) {
   const heroImage =
     imagenSrc ??
@@ -82,6 +85,7 @@ export function CiudadLayout({
           >
             {subtitulo}
           </p>
+          {slug && <ClimaActual slug={slug} />}
         </div>
       </section>
 

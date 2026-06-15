@@ -7,7 +7,7 @@ const VIDEO  = "/videos/hero-lanzada.mp4"
 
 const STATS = [
   { value: "+200", label: "familias" },
-  { value: "5",    label: "ciudades" },
+  { value: "57",   label: "en 2025" },
   { value: "4",    label: "años" },
 ] as const
 

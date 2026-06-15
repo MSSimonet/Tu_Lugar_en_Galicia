@@ -49,6 +49,7 @@ export default function LugoCiudadPage() {
       precios={precios}
       faqs={faqs}
       imagenAlt="La muralla romana de Lugo, Patrimonio de la Humanidad, al atardecer"
+      slug="lugo"
     />
   )
 }

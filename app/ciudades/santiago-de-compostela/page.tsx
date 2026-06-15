@@ -49,6 +49,7 @@ export default function SantiagoDeCompostelaCiudadPage() {
       precios={precios}
       faqs={faqs}
       imagenAlt="La Catedral de Santiago de Compostela y la Plaza del Obradoiro"
+      slug="santiago-de-compostela"
     />
   )
 }

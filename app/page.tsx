@@ -2,7 +2,6 @@ import { getNextMetadata } from "@/lib/seo/metadata";
 import { localBusinessSchema } from "@/lib/seo/schemas";
 import {
   Hero,
-  Metricas,
   ElMarcador,
   ComoFuncionaResumen,
   CiudadesCards,
@@ -22,7 +21,6 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema()) }}
       />
       <Hero />
-      <Metricas />
       <ElMarcador />
       <ComoFuncionaResumen />
       <CiudadesCards />
