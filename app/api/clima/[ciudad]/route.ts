@@ -42,16 +42,31 @@ function entradaMasCercana<T extends PeriodoValor>(arr: T[] | undefined, hora: n
 
 function extraerViento(vientoArr: unknown[] | undefined): number | null {
   if (!Array.isArray(vientoArr) || vientoArr.length === 0) return null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const entry = vientoArr[0] as any
+  const entry = vientoArr[0] as Record<string, unknown>
   if (entry == null) return null
-  // Estructura plana: {value: N, periodo: "HH"}
-  if (entry.value !== undefined) return Number(entry.value) || null
-  // Estructura anidada: {velocidad: [{value: N}], ...}
+
+  // Resolve raw velocity from multiple possible AEMET structures
+  let rawVal: unknown = undefined
+
   if (Array.isArray(entry.velocidad) && entry.velocidad.length > 0) {
-    return Number(entry.velocidad[0].value) || null
+    // AEMET actual: velocidad: ["2"] — array of strings
+    // Fallback legacy: velocidad: [{value: "2"}] — array of objects
+    const first = entry.velocidad[0]
+    rawVal = typeof first === 'object' && first !== null
+      ? (first as Record<string, unknown>).value
+      : first
+  } else if (entry.velocidad !== undefined) {
+    // Direct value: {velocidad: "Calma"} or {velocidad: 10}
+    rawVal = entry.velocidad
+  } else if (entry.value !== undefined) {
+    // Flat structure: {value: 10, periodo: "HH"}
+    rawVal = entry.value
   }
-  return null
+
+  if (rawVal === undefined) return null
+  if (rawVal === 'Calma') return 0
+  const n = Number(rawVal)
+  return isNaN(n) ? null : n
 }
 
 export async function GET(
