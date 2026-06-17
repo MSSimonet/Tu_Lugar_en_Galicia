@@ -8,7 +8,7 @@ import { SITE_NAME } from '@/lib/config/site'
 const navLinks = [
   { label: 'Inicio', href: '/' },
   { label: 'Cómo funciona', href: '/como-funciona' },
-  { label: 'Ciudades', href: '/ciudades/vigo' },
+  { label: 'Ciudades', href: '/ciudades' },
   { label: 'Sobre Silvana', href: '/sobre-silvana' },
   { label: '¿Tienes dudas?', href: '/faq' },
 ]
