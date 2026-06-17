@@ -511,7 +511,7 @@ export function FormularioDiagnostico() {
 
       {status === 'error' && (
         <div
-          className="rounded-[var(--radius-card)] border border-[var(--color-coral)] bg-[#FDF3F1] p-[var(--space-4)] text-[var(--text-sm)] text-[var(--color-coral)]"
+          className="rounded-[var(--radius-card)] border border-[var(--color-coral)] bg-[#FDF3F1] p-[var(--space-4)] text-[var(--text-sm)] text-[#922B21]"
           role="alert"
           aria-live="assertive"
         >
