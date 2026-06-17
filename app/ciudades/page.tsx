@@ -89,21 +89,32 @@ export default function CiudadesIndexPage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-[var(--color-granito)] px-6 md:px-12 py-16 md:py-24 text-center">
-        <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-claro)] mb-4">
-          Tu Lugar en Galicia · Ciudades
-        </p>
+      <section
+        className="bg-[var(--color-granito)] flex flex-col items-center justify-center text-center px-6 md:px-12"
+        style={{ minHeight: '320px' }}
+      >
+        {/* Eyebrow pill */}
+        <span
+          className="inline-flex items-center px-3 py-1 rounded-full mb-5 font-[family-name:var(--font-mulish)] tracking-widest uppercase text-[var(--color-laton-claro)] border"
+          style={{
+            fontSize: '10px',
+            background: 'rgba(0,0,0,0.42)',
+            borderColor: 'rgba(255,255,255,0.18)',
+          }}
+        >
+          Relocation especializado · Galicia
+        </span>
         <h1
-          className="font-[family-name:var(--font-cormorant)] text-[var(--color-niebla)] font-normal leading-tight mb-4"
-          style={{ fontSize: 'clamp(2.4rem, 6vw, 4rem)' }}
+          className="font-[family-name:var(--font-cormorant)] text-white font-normal leading-tight mb-4"
+          style={{ fontSize: 'clamp(2.4rem, 6vw, 3.5rem)' }}
         >
           Elige tu ciudad
         </h1>
         <p
-          className="font-[family-name:var(--font-mulish)] text-white/65 max-w-lg mx-auto leading-relaxed"
-          style={{ fontSize: '1rem' }}
+          className="font-[family-name:var(--font-mulish)] leading-relaxed max-w-[480px] mx-auto"
+          style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.70)' }}
         >
-          Cada ciudad de Galicia tiene su carácter. Encuentra la que se parece a lo que buscas.
+          Cada ciudad de Galicia tiene su carácter. Encuentra la que mejor se adapta a lo que buscas.
         </p>
       </section>
 
