@@ -18,7 +18,7 @@
 **Tipos de paso:**
 - `botones` — opciones fijas (puede ser multiselect, puede tener excluyente)
 - `input` — texto libre con validación por regex (`texto`, `email`, `telefono`)
-- `llm` — texto libre; en Etapa 1 se procesa igual que `input` (0 llamadas a IA)
+- `llm` — texto libre con IA; **no se usa actualmente** (reservado para upgrade futuro; hoy todo texto libre va como `input`)
 
 **Pasos virtuales:** pasos con `texto: ""` y `opciones: []`. El widget los detecta y llama a `avanzarPasoVirtual` automáticamente. El motor resuelve su transición dentro del `flowEngine` sin mostrarlos al usuario.
 
@@ -432,21 +432,21 @@
 
 ---
 
-#### `p14_servicio` · `botones` · Airtable: `comprendeHonorarios`
+#### `p14_servicio` · `botones` · Airtable: `comprendeHonorarios` (+ `comprendeServicio` automático)
 
 > "¿Entiendes que somos un servicio de consultoría y búsqueda personalizada, con honorarios propios, aparte del alquiler y la fianza?"
 
 | Label | Value | Siguiente |
 |---|---|---|
-| Sí, lo entiendo perfectamente | `si` | → `transicion_nivel2` |
-| Me gustaría que me lo expliquen mejor | `explicar` | → `p14_explicacion` |
+| Sí, lo entiendo perfectamente | `entiende` | → `transicion_nivel2` |
+| Me gustaría que me lo expliquen mejor | `pide-explicacion` | → `p14_explicacion` |
 
-- El valor (`si` o `explicar`) se guarda en Airtable como `comprendeHonorarios`.
-- El campo Airtable `comprendeServicio` (checkbox) se deriva: `true` si `comprendeHonorarios === 'si'`, `false` si `explicar`.
+- La respuesta literal (`entiende` / `pide-explicacion`) se guarda en `comprendeHonorarios`.
+- Además, el campo `comprendeServicio` (checkbox) se fija siempre en `true` en el mapper de `route.ts`, porque al llegar a este punto el usuario ha comprendido el servicio (se le haya explicado o no).
 
 ---
 
-#### `p14_explicacion` · `botones` · **sin campo Airtable** *(solo si eligió "explicar")*
+#### `p14_explicacion` · `botones` · **sin campo Airtable** *(solo si eligió "pide-explicacion")*
 
 > "Claro, con gusto te explico. Somos una agencia de relocalización: nuestro trabajo es encontrar la vivienda adecuada para ti, gestionar la comunicación con propietarios, preparar tu candidatura y acompañarte en todo el proceso. Cobramos honorarios por ese servicio —separados del alquiler y la fianza—, igual que cualquier profesional. ¿Seguimos?"
 
@@ -639,13 +639,13 @@
 
 ---
 
-#### `p26_profesion` · **`llm`** *(Etapa 1: funciona como `input`)* · Airtable: `profesion`
+#### `p26_profesion` · `input` · Airtable: `profesion`
 
 > "Para completar tu perfil, ¿a qué te dedicas o cuál es tu profesión?"
 
 - Validación: `texto`
-- En Etapa 1: texto libre sin llamada a IA.
-- **Etapa futura:** este paso usará la API de Claude para respuesta personalizada.
+- Texto libre: se guarda tal cual lo escribe el usuario, sin llamada a IA.
+- **Upgrade futuro (opcional):** este paso podría usar una API de IA (p. ej. Gemini) para normalizar/interpretar la profesión. No implementado por ahora.
 - → `p27_estudios`
 
 ---
@@ -725,13 +725,20 @@
 | `ingresosMensuales` | `p10_ingresos` | Single line | 5 opciones |
 | `garantias` | `p11_garantias` | Multiple select | `garantia-adicional` \| `aval-bancario` \| `avalista` \| `seguro-impago` \| `ninguna` |
 | `presupuestoMensual` | `p12_presupuesto` | Single select | `menos-700` \| `700-1000` \| `1000-1400` \| `mas-1400` |
+| `cuentaBancaria` | `p13_banco` | Single select | `si` \| `no` |
+| `comprendeHonorarios` | `p14_servicio` | Single select | `entiende` \| `pide-explicacion` |
 | `necesidadesEspeciales` | `p16_accesibilidad` | Single line | `si` \| `no` |
+| `tipoLicencia` | `p17_licencia` | Single select | `espanola` \| `europea` \| `origen` \| `no-tiene` |
+| `ciudadActual` | `p18a_ciudad` | Single line | Texto libre *(solo rama "ya vive en España")* |
+| `tiempoEnEspana` | `p19a_tiempo` | Single select | `menos-1-ano` \| `1-5-anos` \| `mas-5-anos` *(solo rama España)* |
+| `objetivoBusqueda` | `p20a_objetivo` | Single select | `busca-vivienda` \| `integrarse` *(solo rama España)* |
 | `tipoInmueble` | `p21_tipo_inmueble` | Single select | `habitacion` \| `estudio` \| `piso` \| `casa` |
 | `habitacionesMinimas` | `p22_habitaciones` | Single select | `1` \| `2` \| `3` \| `4+` (no aplica a estudio) |
 | `amueblado` | `p23_amueblado` | Single select | `si` \| `no` \| `indiferente` |
 | `imprescindibles` | `p24_imprescindibles` | Multiple select | `ascensor` \| `garaje` \| `calefaccion` \| `terraza` \| `no` |
 | `comodidades` | `p24b_comodidades` | Multiple select | `transporte` \| `zona-tranquila` \| `cerca-colegios` \| `internet` \| `ninguna` |
 | `profesion` | `p26_profesion` | Long text | Texto libre |
+| `nivelEstudios` | `p27_estudios` | Single select | `sin-estudios` \| `bachillerato` \| `tecnico` \| `universitario` \| `posgrado` |
 | `comoNosConociste` | `atribucion` | Single select | `instagram` \| `facebook` \| `tiktok` \| `google` \| `recomendacion` \| `otro` |
 | `comprendeServicio` | *(automático)* | Checkbox | Siempre `true` — se añade en el mapper de `route.ts` |
 | `consentimientoRGPD` | *(automático)* | Checkbox | Siempre `true` — se añade en el mapper de `route.ts` |
@@ -741,13 +748,8 @@
 
 **Campos que Gina pregunta pero NO se guardan en Airtable** (enrutamiento puro):
 - Respuesta a `p6b_menores` (si/no menores) — solo enruta (el conteo real queda en `ninos`/`adolescentes`)
-- Respuesta a `p13_banco` (cuenta bancaria)
-- Respuesta a `p14_servicio` / `p14_explicacion` (comprensión del servicio → se guarda como `true`)
-- Respuesta a `p17_licencia` y `p17b_canje` (tipo de licencia)
-- Respuesta a `p18a_ciudad` (ciudad actual en España)
-- Respuesta a `p19a_tiempo` (tiempo viviendo en España)
-- Respuesta a `p20a_objetivo` (busca vivienda o integración)
-- Respuesta a `p27_estudios` (nivel de estudios)
+- Respuesta a `p14_explicacion` (mensaje informativo, solo "continuar")
+- Respuesta a `p17b_canje` (orientación de canje de licencia — solo informa, no se guarda)
 
 ---
 
