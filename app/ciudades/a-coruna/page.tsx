@@ -3,54 +3,46 @@ import { CiudadLayout } from '@/components/ciudades'
 
 export const metadata = getNextMetadata('aCoruna')
 
-const descripcion = [
-  'A Coruña tiene algo que pocas ciudades en España pueden decir: una playa urbana en el centro mismo. El Paseo Marítimo más largo de Europa bordea la ciudad, y desde cualquier punto del centro puedes llegar caminando al mar en menos de veinte minutos. Para muchas familias latinoamericanas que vienen de ciudades costeras, eso no es un detalle — es una forma de vida.',
-  'Es también la ciudad gallega más cosmopolita. Sede de grandes empresas (Inditex nació aquí), con una clase media consolidada, una oferta cultural activa y una vida nocturna y gastronómica que sorprende a quienes vienen esperando una ciudad pequeña. A Coruña tiene el tamaño justo: lo suficientemente grande para que no te falte nada, lo suficientemente manejable para que no te pierda.',
-  'La Torre de Hércules, el faro romano más antiguo del mundo en funcionamiento, se convierte rápidamente en un símbolo que adoptás como propio. Hay algo en esa permanencia — dos mil años mirando el Atlántico — que le da a la ciudad una identidad única. Los coruñeses son conocidos por su carácter abierto y su sentido del humor. La adaptación suele ser natural.',
-  'En términos prácticos: el Complejo Hospitalario Universitario de A Coruña (CHUAC) es uno de los hospitales de referencia del noroeste de España. Los colegios públicos tienen buena reputación. La conexión en AVE con Madrid y en autobús con Vigo y Santiago es fluida. Y el Aeropuerto de Alvedro, a pocos kilómetros, conecta con Madrid, Barcelona y varias ciudades europeas.',
-]
-
-const precios = [
-  { tipo: 'Estudio / 1 habitación', rango: '650 € – 850 €' },
-  { tipo: '2 habitaciones', rango: '850 € – 1.150 €' },
-  { tipo: '3 habitaciones', rango: '1.100 € – 1.500 €' },
-  { tipo: '3+ hab. con vistas al mar o zona premium', rango: '1.400 € – 1.900 €' },
-]
-
-const faqs = [
-  {
-    question: '¿Es A Coruña una ciudad cara para vivir?',
-    answer:
-      'Es algo más cara que Vigo en términos de alquiler, pero sigue siendo muy accesible comparada con Madrid, Barcelona o el País Vasco. Para una familia de tres personas, con un piso de dos habitaciones en una zona buena, el alquiler está entre 850 € y 1.150 €. El costo de vida en general (comida, transporte, ocio) es razonable.',
-  },
-  {
-    question: '¿Hay trabajo para latinoamericanos en A Coruña?',
-    answer:
-      'El sector servicios, logística, industria y tecnología tienen demanda activa. Inditex y su cadena de empresas generan miles de puestos de trabajo directos e indirectos. También hay oportunidades en hostelería, comercio y salud. Trabajar en España requiere tener la documentación migratoria en orden — te orientamos sobre eso en la videollamada.',
-  },
-  {
-    question: '¿Cómo es el sistema de transporte público en A Coruña?',
-    answer:
-      'La red de autobuses urbanos (Compañía de Tranvías) cubre bien toda la ciudad. No hay metro, pero los buses son frecuentes y puntuales. Para moverte por Galicia, el tren y los autobuses interurbanos conectan con Vigo, Santiago y Ferrol sin problemas.',
-  },
-  {
-    question: '¿A Coruña es una buena ciudad para criar hijos?',
-    answer:
-      'Muy buena. Tiene una escala manejable, espacios verdes, playas accesibles, colegios de calidad y un ambiente tranquilo más allá del centro. La violencia urbana es prácticamente inexistente. Muchas familias latinoamericanas que llegaron pensando en quedarse un año terminan echando raíces.',
-  },
-]
-
 export default function ACorunaCiudadPage() {
   return (
     <CiudadLayout
       nombre="A Coruña"
-      subtitulo="La ciudad que tiene el mar en todas partes y una luz que no olvidás"
-      descripcion={descripcion}
-      precios={precios}
-      faqs={faqs}
-      imagenSrc="/images/ciudades/hero-coruna.jpg"
-      imagenAlt="El Paseo Marítimo de A Coruña con la Torre de Hércules al fondo"
       slug="a-coruna"
+      codigoAEMET="15030"
+      videoSrc="/videos/Coruña.mp4"
+      posterSrc="/images/ciudades/hero-coruna.jpg"
+      descripcionCorta="Ciudad atlántica con barrios consolidados, buenas escuelas y un mercado de alquiler más tranquilo que Vigo."
+      descripcionLarga="A Coruña combina ciudad costera con infraestructura de capital regional. Tiene universidad, hospitales de referencia, una red de colegios sólida y conexión directa con el aeropuerto de Santiago a menos de 40 minutos. Su carácter es abierto y cosmopolita — una ciudad que recibe bien a quien llega."
+      descripcionLarga2="El mercado de alquiler en A Coruña es activo pero algo menos saturado que en Vigo. Con el perfil adecuado y los documentos en orden, los tiempos de búsqueda suelen ser más cortos. Aun así, los pisos que aceptan mascotas o familias numerosas requieren una búsqueda específica y con experiencia."
+      barrios={[
+        { nombre: 'Agra del Orzán', descripcion: 'Céntrico, diverso y bien conectado. Muy popular entre familias recién llegadas.' },
+        { nombre: 'Matogrande', descripcion: 'Barrio tranquilo con parques y colegios. Primera opción para familias con niños.' },
+        { nombre: 'Os Mallos', descripcion: 'Relación calidad-precio destacada. Buena opción para quienes buscan amplitud sin salirse del presupuesto.' },
+      ]}
+      alquileres={[
+        { habitaciones: '1 habitación', rango: '550–750€' },
+        { habitaciones: '2 habitaciones', rango: '700–950€' },
+        { habitaciones: '3 habitaciones', rango: '850–1.200€' },
+        { habitaciones: '4 habitaciones o más', rango: '1.050–1.450€' },
+      ]}
+      faqs={[
+        {
+          pregunta: '¿Es A Coruña una ciudad cara para vivir?',
+          respuesta: 'Es algo más cara que Vigo en términos de alquiler, pero sigue siendo muy accesible comparada con Madrid, Barcelona o el País Vasco. Para una familia de tres personas, con un piso de dos habitaciones en una zona buena, el alquiler está entre 700 € y 950 €.',
+        },
+        {
+          pregunta: '¿Hay trabajo para latinoamericanos en A Coruña?',
+          respuesta: 'El sector servicios, logística, industria y tecnología tienen demanda activa. Inditex y su cadena de empresas generan miles de puestos de trabajo directos e indirectos. También hay oportunidades en hostelería, comercio y salud.',
+        },
+        {
+          pregunta: '¿Cómo es el sistema de transporte público en A Coruña?',
+          respuesta: 'La red de autobuses urbanos cubre bien toda la ciudad. No hay metro, pero los buses son frecuentes y puntuales. Para moverte por Galicia, el tren y los autobuses interurbanos conectan con Vigo, Santiago y Ferrol sin problemas.',
+        },
+        {
+          pregunta: '¿A Coruña es una buena ciudad para criar hijos?',
+          respuesta: 'Muy buena. Tiene una escala manejable, espacios verdes, playas accesibles, colegios de calidad y un ambiente tranquilo más allá del centro. Muchas familias latinoamericanas que llegaron pensando en quedarse un año terminan echando raíces.',
+        },
+      ]}
     />
   )
 }
