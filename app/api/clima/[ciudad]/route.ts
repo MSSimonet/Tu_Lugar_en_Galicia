@@ -26,6 +26,9 @@ interface DiaPred {
   temperatura?: PeriodoValor[]
   estadoCielo?: EstadoCielo[]
   precipitacion?: PeriodoValor[]
+  humedadRelativa?: PeriodoValor[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  vientoAndRachaMax?: any[]
 }
 
 function entradaMasCercana<T extends PeriodoValor>(arr: T[] | undefined, hora: number): T | null {
@@ -35,6 +38,20 @@ function entradaMasCercana<T extends PeriodoValor>(arr: T[] | undefined, hora: n
     const currDiff = Math.abs(parseInt(curr.periodo) - hora)
     return currDiff < prevDiff ? curr : prev
   })
+}
+
+function extraerViento(vientoArr: unknown[] | undefined): number | null {
+  if (!Array.isArray(vientoArr) || vientoArr.length === 0) return null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const entry = vientoArr[0] as any
+  if (entry == null) return null
+  // Estructura plana: {value: N, periodo: "HH"}
+  if (entry.value !== undefined) return Number(entry.value) || null
+  // Estructura anidada: {velocidad: [{value: N}], ...}
+  if (Array.isArray(entry.velocidad) && entry.velocidad.length > 0) {
+    return Number(entry.velocidad[0].value) || null
+  }
+  return null
 }
 
 export async function GET(
@@ -91,17 +108,29 @@ export async function GET(
     const diaHoy: DiaPred =
       prediccion.dia.find(d => d.fecha?.startsWith(fechaHoy)) ?? prediccion.dia[0]
 
-    const tempEntry  = entradaMasCercana(diaHoy.temperatura,   horaActual)
-    const cieloEntry = entradaMasCercana(diaHoy.estadoCielo,   horaActual)
-    const precipEntry = entradaMasCercana(diaHoy.precipitacion, horaActual)
+    const tempEntry    = entradaMasCercana(diaHoy.temperatura,    horaActual)
+    const cieloEntry   = entradaMasCercana(diaHoy.estadoCielo,    horaActual)
+    const precipEntry  = entradaMasCercana(diaHoy.precipitacion,  horaActual)
+    const humedadEntry = entradaMasCercana(diaHoy.humedadRelativa, horaActual)
+
+    // tempMin/tempMax: mínimo y máximo de todas las temperaturas horarias del día
+    const todasTemps = (diaHoy.temperatura ?? [])
+      .map(t => Number(t.value))
+      .filter(n => !isNaN(n))
+    const tempMin = todasTemps.length > 0 ? Math.min(...todasTemps) : null
+    const tempMax = todasTemps.length > 0 ? Math.max(...todasTemps) : null
 
     return NextResponse.json(
       {
         ciudad,
-        temperatura:    tempEntry  ? Number(tempEntry.value)  : null,
-        cielo:          cieloEntry ? (cieloEntry as EstadoCielo).descripcion : null,
-        precipitacion:  precipEntry ? Number(precipEntry.value) : null,
-        actualizadoEn:  ahora.toISOString(),
+        temperatura:   tempEntry   ? Number(tempEntry.value)                      : null,
+        tempMin,
+        tempMax,
+        descripcion:   cieloEntry  ? (cieloEntry as EstadoCielo).descripcion      : null,
+        precipitacion: precipEntry ? Number(precipEntry.value)                    : null,
+        viento:        extraerViento(diaHoy.vientoAndRachaMax),
+        humedad:       humedadEntry ? Number(humedadEntry.value)                  : null,
+        actualizadoEn: ahora.toISOString(),
       },
       {
         headers: {
