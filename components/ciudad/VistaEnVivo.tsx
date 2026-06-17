@@ -1,3 +1,12 @@
+// TODO PRE-DEPLOY — PENDIENTE LEGAL
+// El widget de Windy embed se usa actualmente como solución provisional de desarrollo.
+// ANTES del deploy a producción hay que resolver una de estas opciones:
+//   a) Obtener autorización formal de MeteoGalicia para embeber sus cámaras (email enviado)
+//   b) Conseguir cámaras turísticas de los ayuntamientos o Turespaña para cada ciudad
+//   c) Reemplazar por imágenes estáticas propias si no se consigue autorización
+// El uso del embed de Windy sin autorización explícita puede ser problemático en producción.
+// Contacto MeteoGalicia: meteogalicia@meteogalicia.es
+
 'use client'
 
 type VistaEnVivoProps = {
