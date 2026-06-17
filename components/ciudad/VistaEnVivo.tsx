@@ -16,29 +16,63 @@ type VistaEnVivoProps = {
   descripcionUbicacion?: string
 }
 
-export function VistaEnVivo({ lat, lon, nombreCiudad, descripcionUbicacion }: VistaEnVivoProps) {
-  const src = `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=450&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1`
-
+export function VistaEnVivo({ nombreCiudad, descripcionUbicacion }: VistaEnVivoProps) {
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '220px', borderRadius: '1rem', overflow: 'hidden', background: '#0D1F1A' }}>
-      <iframe
-        src={src}
-        style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-        title={`Vista en tiempo real de ${nombreCiudad}`}
-        loading="lazy"
-      />
-      {/* Badge EN VIVO */}
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+      minHeight: '220px',
+      borderRadius: '1rem',
+      overflow: 'hidden',
+      background: '#0D1F1A',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '0.5rem',
+    }}>
+      {/* Ícono de cámara */}
+      <svg
+        width={32}
+        height={32}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="rgba(255,255,255,0.3)"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+        <circle cx="12" cy="13" r="3" />
+      </svg>
+
+      {/* Texto principal */}
+      <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+        Cámara en vivo
+      </span>
+
+      {/* Subtexto */}
+      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)' }}>
+        Próximamente
+      </span>
+
+      {/* Badge EN VIVO (inactivo) */}
       <div style={{
         position: 'absolute', top: 10, left: 10,
         display: 'flex', alignItems: 'center', gap: 5,
         background: 'rgba(0,0,0,0.55)',
         border: '0.5px solid rgba(255,255,255,0.2)',
         borderRadius: 20, padding: '3px 10px',
+        opacity: 0.4,
         pointerEvents: 'none',
       }}>
         <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#E55' }} />
         <span style={{ fontSize: 10, color: 'white', fontWeight: 500, letterSpacing: '0.06em' }}>EN VIVO</span>
       </div>
+
       {/* Label ubicación */}
       {descripcionUbicacion && (
         <div style={{
