@@ -220,49 +220,14 @@ export function CiudadLayout({
           />
         </div>
 
-        {/* Fila 3: FAQ + CTA verde */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_280px] gap-5">
-          {/* FAQ */}
-          <div className="bg-white rounded-2xl border border-[var(--color-arena)] p-6">
-            <h2
-              className="font-[family-name:var(--font-cormorant)] text-[var(--color-granito)] text-2xl font-normal mb-5"
-            >
-              Preguntas frecuentes sobre {nombre}
-            </h2>
-            <FAQAccordion faqs={faqsMapped} />
-          </div>
-
-          {/* CTA verde */}
-          <div
-            className="rounded-2xl p-6 flex flex-col justify-between"
-            style={{ background: 'var(--color-atlantico)' }}
+        {/* Fila 3: FAQ ancho completo */}
+        <div className="bg-white rounded-2xl border border-[var(--color-arena)] p-6">
+          <h2
+            className="font-[family-name:var(--font-cormorant)] text-[var(--color-granito)] text-2xl font-normal mb-5"
           >
-            <div>
-              <h2
-                className="font-[family-name:var(--font-cormorant)] text-white text-2xl font-normal leading-tight mb-3"
-              >
-                ¿{nombre} es tu destino?
-              </h2>
-              <p className="font-[family-name:var(--font-mulish)] text-white/70 text-sm leading-relaxed mb-6">
-                Cuéntanos tu situación y te ayudamos a encontrar el barrio y el piso que necesitas. Sin costo, sin compromiso.
-              </p>
-            </div>
-            <div className="space-y-3">
-              <button
-                onClick={abrirGina}
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-[family-name:var(--font-mulish)] font-semibold text-sm text-white uppercase tracking-wide transition-all duration-200 hover:brightness-110 active:scale-95"
-                style={{ background: 'var(--color-laton)' }}
-              >
-                <span aria-hidden="true">✨</span> Hablar con Gina
-              </button>
-              <Link
-                href="/conocernos"
-                className="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-full font-[family-name:var(--font-mulish)] text-sm text-white/80 border border-white/20 hover:bg-white/10 transition-colors"
-              >
-                O completa el formulario
-              </Link>
-            </div>
-          </div>
+            Preguntas frecuentes sobre {nombre}
+          </h2>
+          <FAQAccordion faqs={faqsMapped} />
         </div>
 
       </div>
