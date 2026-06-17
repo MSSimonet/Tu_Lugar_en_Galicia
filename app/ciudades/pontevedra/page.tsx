@@ -16,9 +16,10 @@ export default function PontevedraCiudadPage() {
       descripcionLarga="Pontevedra es una ciudad que se disfruta caminando. Su centro histórico es casi completamente peatonal, lo que la convierte en una de las ciudades más vivibles de España para familias con niños. Tiene buenos colegios, hospital de referencia, y está a solo 30 minutos de Vigo por tren — lo que la hace una opción muy real para quienes trabajan allí."
       descripcionLarga2="El mercado de alquiler en Pontevedra es más tranquilo y accesible que en las ciudades grandes. La oferta es menor, pero los precios son más razonables y la competencia más manejable. Una buena alternativa para familias que priorizan calidad de vida sobre tamaño de ciudad."
       barrios={[
-        { nombre: 'A Parda', descripcion: 'Barrio residencial tranquilo con buenas conexiones y colegios cercanos.' },
-        { nombre: 'Centro histórico', descripcion: 'Para quienes quieren vivir en el corazón peatonal de la ciudad.' },
-        { nombre: 'Campolongo', descripcion: 'Zona bien comunicada, popular entre familias por sus espacios verdes.' },
+        { nombre: 'Zona Monumental (Casco Vello)', descripcion: 'Histórico, peatonal y lleno de encanto medieval. El corazón de la ciudad para los amantes del comercio local y la vida urbana sin coches.' },
+        { nombre: 'Campolongo', descripcion: 'Céntrico, cómodo y excelentemente equipado con parques y complejos deportivos. La opción número uno para la vida familiar diaria.' },
+        { nombre: 'A Moureira', descripcion: 'Tradición marinera renovada con un toque bohemio a orillas del río. Perfecto para quienes buscan un entorno tranquilo y con personalidad.' },
+        { nombre: 'O Burgo / Zona Universitaria', descripcion: 'Económico, activo y en constante modernización. Muy atractivo para estudiantes, jóvenes profesionales y perfiles inversores.' },
       ]}
       alquileres={[
         { habitaciones: '1 habitación', rango: '480–650€' },

@@ -16,9 +16,10 @@ export default function SantiagoDeCompostelaCiudadPage() {
       descripcionLarga="Santiago es la capital de Galicia y una de las ciudades más bien conservadas de Europa. Tiene universidad pública grande, excelentes centros de salud, buena red de transporte y una vida cultural activa todo el año. Para familias que no necesitan la intensidad de una ciudad grande, Santiago ofrece algo difícil de encontrar: escala humana con infraestructura completa."
       descripcionLarga2="El mercado de alquiler en Santiago es más pequeño que en Vigo o A Coruña — lo que significa menos oferta, pero también menos competencia. Los pisos cerca del centro histórico son muy cotizados; los barrios residenciales exteriores ofrecen más espacio por el mismo precio."
       barrios={[
-        { nombre: 'Fontiñas', descripcion: 'Barrio moderno y familiar, con supermercados, colegios y fácil acceso al centro.' },
-        { nombre: 'Ensanche', descripcion: 'Zona céntrica con buena vida de barrio. Muy buscada por parejas y profesionales.' },
-        { nombre: 'San Lázaro', descripcion: 'Cerca de la universidad y los servicios. Popular entre familias jóvenes.' },
+        { nombre: 'Ensanche (Zona Nueva)', descripcion: 'Céntrico, comercial y con muchísima vida estudiantil y cultural. La zona más dinámica y mejor comunicada para el día a día.' },
+        { nombre: 'Casco Histórico', descripcion: 'Mágico, empedrado y con un encanto arquitectónico inigualable. Ideal para quienes buscan una experiencia residencial auténtica e inspiradora.' },
+        { nombre: 'San Lázaro / Fontiñas', descripcion: 'Moderno, administrativo y con acceso rápido a las principales salidas de la ciudad. Una de las zonas favoritas para familias de funcionarios y profesionales.' },
+        { nombre: 'Conxo / Santa Marta', descripcion: 'En plena expansión, residencial y muy bien valorado por su cercanía al hospital. Perfecto para quienes buscan pisos nuevos y zonas comunes despejadas.' },
       ]}
       alquileres={[
         { habitaciones: '1 habitación', rango: '550–730€' },

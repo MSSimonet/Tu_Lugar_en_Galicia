@@ -16,9 +16,10 @@ export default function VigoCiudadPage() {
       descripcionLarga="Vigo no es solo la ciudad más poblada de Galicia: es la puerta de entrada natural para familias que llegan desde América Latina. Puerto atlántico, universidad, hospitales de referencia, centros comerciales y una red de transporte que conecta con toda Galicia en menos de dos horas. Hay comunidad latinoamericana consolidada, colegios bien valorados y una vida urbana real sin pagar precios de capital."
       descripcionLarga2="El mercado de alquiler en Vigo es activo y competitivo. Los pisos buenos salen y entran rápido — por eso tener a alguien que ya conoce el mercado, y que puede visitarlos el mismo día que aparecen, marca toda la diferencia."
       barrios={[
-        { nombre: 'Coia', descripcion: 'Barrio familiar con colegios, supermercados y buena conexión. Muy buscado por familias con hijos.' },
-        { nombre: 'Bouzas', descripcion: 'Tranquilo y cerca del puerto. Ideal para familias que priorizan calidad de vida y espacios al aire libre.' },
-        { nombre: 'Travesas', descripcion: 'Céntrico y bien conectado. Primera opción para quienes llegan solos o en pareja.' },
+        { nombre: 'Plaza de Compostela (Zona Alameda)', descripcion: 'Exclusivo, señorial y rodeado de zonas verdes. La opción preferida para quienes buscan tranquilidad premium en pleno centro.' },
+        { nombre: 'Bouzas', descripcion: 'Marinero, con encanto histórico y vida propia junto al mar. Ideal para quienes quieren huir del bullicio sin salir de la ciudad.' },
+        { nombre: 'O Castro', descripcion: 'Residencial, verde y con vistas panorámicas espectaculares. Perfecto para familias que priorizan el aire libre y la desconexión.' },
+        { nombre: 'Navia', descripcion: 'Joven, dinámico y en plena expansión. Una de las zonas más demandadas por parejas jóvenes gracias a sus amplias avenidas y servicios.' },
       ]}
       alquileres={[
         { habitaciones: '1 habitación', rango: '600–800€' },

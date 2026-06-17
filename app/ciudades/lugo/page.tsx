@@ -16,9 +16,10 @@ export default function LugoCiudadPage() {
       descripcionLarga="Lugo tiene algo que las ciudades grandes no pueden ofrecer: calma y espacio. Es la ciudad más interior de Galicia, con un casco histórico declarado Patrimonio de la Humanidad por su muralla romana intacta. Tiene universidad, hospital de referencia y todos los servicios que una familia necesita, a una escala que hace la vida más fácil."
       descripcionLarga2="El mercado de alquiler en Lugo es el más accesible de las cinco ciudades. La oferta es más amplia en relación a la demanda, y los precios permiten encontrar pisos amplios a costos que en Vigo o A Coruña serían impensables. Una opción excelente para familias que priorizan espacio y tranquilidad."
       barrios={[
-        { nombre: 'Centro histórico', descripcion: 'Vivir dentro de la muralla romana. Única experiencia, muy buscada por quienes llegan de grandes ciudades.' },
-        { nombre: 'Sagrado Corazón', descripcion: 'Barrio residencial tranquilo con colegios y parques. Muy popular entre familias.' },
-        { nombre: 'A Milagrosa', descripcion: 'Bien comunicado y con buena oferta de pisos amplios a precios razonables.' },
+        { nombre: 'Recinto Amurallado (Centro Histórico)', descripcion: 'Monumental, vibrante y protegido por la muralla romana. Vivir aquí es respirar historia con todos los servicios a pie de calle.' },
+        { nombre: 'Aceña de Olga', descripcion: 'Residencial, universitario y rodeado de amplias zonas verdes. Muy cotizado por familias que buscan viviendas amplias y tranquilidad.' },
+        { nombre: 'A Milagrosa', descripcion: 'Diverso, multicultural y con un tejido comercial de barrio muy fuerte. La alternativa perfecta para presupuestos ajustados que buscan cercanía al centro.' },
+        { nombre: 'San Roque / As Fontiñas', descripcion: 'Conectado, dinámico y con una excelente relación calidad-precio. Un barrio de toda la vida que ofrece comodidad y todos los servicios esenciales.' },
       ]}
       alquileres={[
         { habitaciones: '1 habitación', rango: '400–560€' },

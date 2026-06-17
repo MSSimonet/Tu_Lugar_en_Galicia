@@ -17,9 +17,10 @@ export default function ACorunaCiudadPage() {
       descripcionLarga="A Coruña combina ciudad costera con infraestructura de capital regional. Tiene universidad, hospitales de referencia, una red de colegios sólida y conexión directa con el aeropuerto de Santiago a menos de 40 minutos. Su carácter es abierto y cosmopolita — una ciudad que recibe bien a quien llega."
       descripcionLarga2="El mercado de alquiler en A Coruña es activo pero algo menos saturado que en Vigo. Con el perfil adecuado y los documentos en orden, los tiempos de búsqueda suelen ser más cortos. Aun así, los pisos que aceptan mascotas o familias numerosas requieren una búsqueda específica y con experiencia."
       barrios={[
-        { nombre: 'Agra del Orzán', descripcion: 'Céntrico, diverso y bien conectado. Muy popular entre familias recién llegadas.' },
-        { nombre: 'Matogrande', descripcion: 'Barrio tranquilo con parques y colegios. Primera opción para familias con niños.' },
-        { nombre: 'Os Mallos', descripcion: 'Relación calidad-precio destacada. Buena opción para quienes buscan amplitud sin salirse del presupuesto.' },
+        { nombre: 'Ensanche / Plaza de Lugo', descripcion: 'Elegante, comercial y con una oferta gastronómica inmejorable. El epicentro de las tendencias y la vida urbana coruñesa.' },
+        { nombre: 'Ciudad Vieja', descripcion: 'Tranquilo, histórico y con un ambiente casi de pueblo dentro de la ciudad. Una joya para quienes buscan desconexión y patrimonio.' },
+        { nombre: 'Riazor / Ciudad Escolar', descripcion: 'Frente al mar, deportivo y con una excelente oferta educativa. La opción idónea para familias activas que quieren ver el océano cada día.' },
+        { nombre: 'Matogrande', descripcion: 'Moderno, empresarial y con un ambiente residencial exclusivo. Muy valorado por su accesibilidad y su perfil ejecutivo.' },
       ]}
       alquileres={[
         { habitaciones: '1 habitación', rango: '550–750€' },
