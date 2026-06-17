@@ -9,6 +9,7 @@ export default function VigoCiudadPage() {
       nombre="Vigo"
       slug="vigo"
       codigoAEMET="36057"
+      vistaEnVivo={{ lat: 42.2406, lon: -8.7207, descripcionUbicacion: 'Puerto de Vigo' }}
       videoSrc="/videos/Vigo.mp4"
       posterSrc="/images/ciudades/hero-vigo.jpg"
       descripcionCorta="La ciudad más grande de Galicia. Ría, mar y montaña a la vez — con toda la infraestructura que una familia necesita para empezar."

@@ -9,6 +9,7 @@ export default function LugoCiudadPage() {
       nombre="Lugo"
       slug="lugo"
       codigoAEMET="27028"
+      vistaEnVivo={{ lat: 43.0097, lon: -7.5567, descripcionUbicacion: 'Muralla romana' }}
       videoSrc="/videos/Lugo.mp4"
       posterSrc="/images/ciudades/card-lugo.jpg"
       descripcionCorta="La ciudad romana de Galicia. Muralla histórica, ritmo tranquilo y los alquileres más accesibles de las cinco ciudades."

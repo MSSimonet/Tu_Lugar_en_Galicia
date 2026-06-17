@@ -9,6 +9,7 @@ export default function ACorunaCiudadPage() {
       nombre="A Coruña"
       slug="a-coruna"
       codigoAEMET="15030"
+      vistaEnVivo={{ lat: 43.3623, lon: -8.4115, descripcionUbicacion: 'Torre de Hércules' }}
       videoSrc="/videos/Coruña.mp4"
       posterSrc="/images/ciudades/hero-coruna.jpg"
       descripcionCorta="Ciudad atlántica con barrios consolidados, buenas escuelas y un mercado de alquiler más tranquilo que Vigo."

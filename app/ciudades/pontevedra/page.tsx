@@ -9,6 +9,7 @@ export default function PontevedraCiudadPage() {
       nombre="Pontevedra"
       slug="pontevedra"
       codigoAEMET="36038"
+      vistaEnVivo={{ lat: 42.4336, lon: -8.6480, descripcionUbicacion: 'Casco histórico' }}
       videoSrc="/videos/pontevedra.mp4"
       posterSrc="/images/ciudades/card-pontevedra.jpg"
       descripcionCorta="La ciudad más peatonal de España. Pequeña, cómoda y con una calidad de vida que sorprende a quien llega."

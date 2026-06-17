@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FAQAccordion } from '@/components/ciudades/FAQAccordion'
 import { ClimaActual } from '@/components/ciudad/ClimaActual'
+import { VistaEnVivo } from '@/components/ciudad/VistaEnVivo'
 import { faqSchema } from '@/lib/seo/schemas'
 
 export interface CiudadLayoutProps {
@@ -18,6 +19,7 @@ export interface CiudadLayoutProps {
   alquileres: { habitaciones: string; rango: string }[]
   faqs: { pregunta: string; respuesta: string }[]
   codigoAEMET: string
+  vistaEnVivo: { lat: number; lon: number; descripcionUbicacion: string }
 }
 
 export function CiudadLayout({
@@ -31,6 +33,7 @@ export function CiudadLayout({
   barrios,
   alquileres,
   faqs,
+  vistaEnVivo,
   // codigoAEMET is informational; API routing uses slug
 }: CiudadLayoutProps) {
   const faqsMapped = faqs.map(f => ({ question: f.pregunta, answer: f.respuesta }))
@@ -208,44 +211,13 @@ export function CiudadLayout({
             </p>
           </div>
 
-          {/* Video "en vivo" */}
-          <div
-            className="rounded-2xl overflow-hidden relative"
-            style={{ background: '#0D1F1A', minHeight: '200px' }}
-          >
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover opacity-75"
-              aria-hidden="true"
-            >
-              <source src={videoSrc} type="video/mp4" />
-            </video>
-            {/* Fallback si no hay video */}
-            <Image
-              src={posterSrc}
-              alt=""
-              fill
-              className="object-cover opacity-50"
-              aria-hidden="true"
-              sizes="(max-width: 768px) 100vw, 33vw"
-            />
-            {/* Badge EN VIVO */}
-            <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" aria-hidden="true" />
-              <span className="font-[family-name:var(--font-mulish)] text-white text-[10px] tracking-widest uppercase font-semibold">
-                En vivo
-              </span>
-            </div>
-            {/* Label ubicación */}
-            <div className="absolute bottom-3 left-3 z-10">
-              <span className="font-[family-name:var(--font-mulish)] text-white/80 text-[10px] tracking-wide">
-                {nombre}, Galicia
-              </span>
-            </div>
-          </div>
+          {/* Vista en vivo Windy */}
+          <VistaEnVivo
+            lat={vistaEnVivo.lat}
+            lon={vistaEnVivo.lon}
+            nombreCiudad={nombre}
+            descripcionUbicacion={vistaEnVivo.descripcionUbicacion}
+          />
         </div>
 
         {/* Fila 3: FAQ + CTA verde */}

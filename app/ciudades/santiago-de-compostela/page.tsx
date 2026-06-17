@@ -9,6 +9,7 @@ export default function SantiagoDeCompostelaCiudadPage() {
       nombre="Santiago de Compostela"
       slug="santiago-de-compostela"
       codigoAEMET="15078"
+      vistaEnVivo={{ lat: 42.8782, lon: -8.5448, descripcionUbicacion: 'Praza do Obradoiro' }}
       videoSrc="/videos/Santiago.mp4"
       posterSrc="/images/ciudades/card-santiago.jpg"
       descripcionCorta="Ciudad universitaria, patrimonio mundial y capital de Galicia. Más tranquila que Vigo o A Coruña, con una calidad de vida difícil de igualar."
