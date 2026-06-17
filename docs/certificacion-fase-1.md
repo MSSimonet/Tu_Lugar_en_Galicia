@@ -264,3 +264,23 @@ El proyecto compila sin errores. Genera 19 rutas estáticas y 2 dinámicas. Los 
 **Fecha de evaluación:** 2026-05-29
 **Estado:** FASE 1 CERTIFICADA — construcción completa con deuda técnica documentada
 **Re-evaluación:** no requerida para avanzar a Fase 2; recomendada tras resolver DT-1 a DT-10 antes del lanzamiento público
+
+---
+
+## Revisión post-certificación — junio 2026
+
+Auditoría manual realizada en junio 2026. Resultado: 8 de los 9 ítems pre-lanzamiento eran falsos positivos (el QA fue escrito antes de que se implementaran las correcciones). El único fix real fue DT-3.
+
+| # | Resultado |
+|---|---|
+| DT-1 | ✅ Ya estaba corregido |
+| DT-2 | ✅ Falso positivo — hex incorrecto en QA |
+| DT-3 | ✅ Corregido — banner error coral→#922B21 (commit a842470) |
+| DT-4 | ✅ Falso positivo — FAQAccordion usa `<details>/<div>`, no `<dl>` |
+| DT-6 | ✅ Falso positivo — animación removida en commit previo |
+| DT-8 | ✅ Falso positivo — Twitter Card ya implementada |
+| DT-9 | ✅ Falso positivo — Escape y retorno de foco ya implementados |
+| DT-10 | ✅ Falso positivo — `<caption>` ya presente con sr-only |
+
+Pendientes reales que quedan (no pre-lanzamiento):
+- DT-5, DT-7, DT-12, DT-13, DT-14, DT-15 — Fase 2
