@@ -22,6 +22,14 @@ export interface CiudadLayoutProps {
   vistaEnVivo: { lat: number; lon: number; descripcionUbicacion: string }
 }
 
+const TODAS_LAS_CIUDADES = [
+  { slug: 'vigo', nombre: 'Vigo', imagen: '/images/ciudades/card-vigo.jpg', descripcion: 'La ciudad más grande de Galicia' },
+  { slug: 'a-coruna', nombre: 'A Coruña', imagen: '/images/ciudades/card-coruna.jpg', descripcion: 'Ciudad atlántica y cosmopolita' },
+  { slug: 'santiago-de-compostela', nombre: 'Santiago de Compostela', imagen: '/images/ciudades/card-santiago.jpg', descripcion: 'Capital y Patrimonio de la Humanidad' },
+  { slug: 'pontevedra', nombre: 'Pontevedra', imagen: '/images/ciudades/card-pontevedra.jpg', descripcion: 'La ciudad más peatonal de España' },
+  { slug: 'lugo', nombre: 'Lugo', imagen: '/images/ciudades/card-lugo.jpg', descripcion: 'Muralla romana y ritmo tranquilo' },
+]
+
 export function CiudadLayout({
   nombre,
   slug,
@@ -231,6 +239,52 @@ export function CiudadLayout({
         </div>
 
       </div>
+
+      {/* ── OTRAS CIUDADES ── */}
+      {(() => {
+        const otras = TODAS_LAS_CIUDADES.filter(c => c.slug !== slug)
+        return (
+          <section className="bg-[var(--color-niebla)] px-6 md:px-8 py-7">
+            <div className="max-w-7xl mx-auto">
+              <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton)] mb-5">
+                Otras ciudades
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {otras.map(ciudad => (
+                  <Link
+                    key={ciudad.slug}
+                    href={`/ciudades/${ciudad.slug}`}
+                    className="group block rounded-xl overflow-hidden relative"
+                    style={{ aspectRatio: '4/3' }}
+                  >
+                    <Image
+                      src={ciudad.imagen}
+                      alt={ciudad.nombre}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                    />
+                    {/* Overlay inferior */}
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 55%)' }}
+                      aria-hidden="true"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                      <p
+                        className="font-[family-name:var(--font-cormorant)] text-white font-normal leading-tight"
+                        style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)' }}
+                      >
+                        {ciudad.nombre}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )
+      })()}
     </>
   )
 }
