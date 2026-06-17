@@ -6,31 +6,31 @@ const ciudades = [
     nombre: "Vigo",
     slug: "vigo",
     descripcion: "La ciudad portuaria más grande de Galicia, con playa y mar.",
-    imagen: "/images/ciudades/card-vigo.jpg",
+    imagen: "/images/ciudades/card_vigo.jpg",
   },
   {
     nombre: "A Coruña",
     slug: "a-coruna",
     descripcion: "Elegancia costera, paseo marítimo y vida cultural activa.",
-    imagen: "/images/ciudades/card-coruna.jpg",
+    imagen: "/images/ciudades/card_coruna.jpg",
   },
   {
     nombre: "Santiago de Compostela",
     slug: "santiago-de-compostela",
     descripcion: "Ciudad histórica, universitaria y de escala humana perfecta.",
-    imagen: "/images/ciudades/card-santiago.jpg",
+    imagen: "/images/ciudades/card_santiago.jpg",
   },
   {
     nombre: "Pontevedra",
     slug: "pontevedra",
     descripcion: "Tranquilidad, ría y una ciudad pensada para los peatones.",
-    imagen: "/images/ciudades/card-pontevedra.jpg",
+    imagen: "/images/ciudades/card_pontevedra.jpg",
   },
   {
     nombre: "Lugo",
     slug: "lugo",
     descripcion: "Muralla romana, interior verde y ritmo de vida tranquilo.",
-    imagen: "/images/ciudades/card-lugo.jpg",
+    imagen: "/images/ciudades/card_lugo.jpg",
   },
 ];
 

@@ -11,7 +11,7 @@ export default function SantiagoDeCompostelaCiudadPage() {
       codigoAEMET="15078"
       vistaEnVivo={{ lat: 42.8782, lon: -8.5448, descripcionUbicacion: 'Praza do Obradoiro' }}
       videoSrc="/videos/Santiago.mp4"
-      posterSrc="/images/ciudades/card-santiago.jpg"
+      posterSrc="/images/ciudades/card_santiago.jpg"
       descripcionCorta="Ciudad universitaria, patrimonio mundial y capital de Galicia. Más tranquila que Vigo o A Coruña, con una calidad de vida difícil de igualar."
       descripcionLarga="Santiago es la capital de Galicia y una de las ciudades más bien conservadas de Europa. Tiene universidad pública grande, excelentes centros de salud, buena red de transporte y una vida cultural activa todo el año. Para familias que no necesitan la intensidad de una ciudad grande, Santiago ofrece algo difícil de encontrar: escala humana con infraestructura completa."
       descripcionLarga2="El mercado de alquiler en Santiago es más pequeño que en Vigo o A Coruña — lo que significa menos oferta, pero también menos competencia. Los pisos cerca del centro histórico son muy cotizados; los barrios residenciales exteriores ofrecen más espacio por el mismo precio."

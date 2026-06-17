@@ -11,7 +11,7 @@ export default function LugoCiudadPage() {
       codigoAEMET="27028"
       vistaEnVivo={{ lat: 43.0097, lon: -7.5567, descripcionUbicacion: 'Muralla romana' }}
       videoSrc="/videos/Lugo.mp4"
-      posterSrc="/images/ciudades/card-lugo.jpg"
+      posterSrc="/images/ciudades/card_lugo.jpg"
       descripcionCorta="La ciudad romana de Galicia. Muralla histórica, ritmo tranquilo y los alquileres más accesibles de las cinco ciudades."
       descripcionLarga="Lugo tiene algo que las ciudades grandes no pueden ofrecer: calma y espacio. Es la ciudad más interior de Galicia, con un casco histórico declarado Patrimonio de la Humanidad por su muralla romana intacta. Tiene universidad, hospital de referencia y todos los servicios que una familia necesita, a una escala que hace la vida más fácil."
       descripcionLarga2="El mercado de alquiler en Lugo es el más accesible de las cinco ciudades. La oferta es más amplia en relación a la demanda, y los precios permiten encontrar pisos amplios a costos que en Vigo o A Coruña serían impensables. Una opción excelente para familias que priorizan espacio y tranquilidad."

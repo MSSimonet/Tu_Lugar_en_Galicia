@@ -11,7 +11,7 @@ export default function VigoCiudadPage() {
       codigoAEMET="36057"
       vistaEnVivo={{ lat: 42.2406, lon: -8.7207, descripcionUbicacion: 'Puerto de Vigo' }}
       videoSrc="/videos/Vigo.mp4"
-      posterSrc="/images/ciudades/hero-vigo.jpg"
+      posterSrc="/images/ciudades/card_vigo.jpg"
       descripcionCorta="La ciudad más grande de Galicia. Ría, mar y montaña a la vez — con toda la infraestructura que una familia necesita para empezar."
       descripcionLarga="Vigo no es solo la ciudad más poblada de Galicia: es la puerta de entrada natural para familias que llegan desde América Latina. Puerto atlántico, universidad, hospitales de referencia, centros comerciales y una red de transporte que conecta con toda Galicia en menos de dos horas. Hay comunidad latinoamericana consolidada, colegios bien valorados y una vida urbana real sin pagar precios de capital."
       descripcionLarga2="El mercado de alquiler en Vigo es activo y competitivo. Los pisos buenos salen y entran rápido — por eso tener a alguien que ya conoce el mercado, y que puede visitarlos el mismo día que aparecen, marca toda la diferencia."

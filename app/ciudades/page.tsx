@@ -12,31 +12,31 @@ const CIUDADES = [
   {
     slug: 'vigo',
     nombre: 'Vigo',
-    imagen: '/images/ciudades/card-vigo.jpg',
+    imagen: '/images/ciudades/card_vigo.jpg',
     descripcion: 'Donde la ría se abre al Atlántico y la ciudad nunca para.',
   },
   {
     slug: 'a-coruna',
     nombre: 'A Coruña',
-    imagen: '/images/ciudades/card-coruna.jpg',
+    imagen: '/images/ciudades/card_coruna.jpg',
     descripcion: 'Viento, faro y una luz que no se parece a ninguna otra.',
   },
   {
     slug: 'santiago-de-compostela',
     nombre: 'Santiago de Compostela',
-    imagen: '/images/ciudades/card-santiago.jpg',
+    imagen: '/images/ciudades/card_santiago.jpg',
     descripcion: 'La ciudad que lleva siglos esperando a quien llega.',
   },
   {
     slug: 'pontevedra',
     nombre: 'Pontevedra',
-    imagen: '/images/ciudades/card-pontevedra.jpg',
+    imagen: '/images/ciudades/card_pontevedra.jpg',
     descripcion: 'Piedra, silencio y la vida que pasa despacio.',
   },
   {
     slug: 'lugo',
     nombre: 'Lugo',
-    imagen: '/images/ciudades/card-lugo.jpg',
+    imagen: '/images/ciudades/card_lugo.jpg',
     descripcion: 'Dos mil años de muralla y todo el tiempo del mundo.',
   },
 ]

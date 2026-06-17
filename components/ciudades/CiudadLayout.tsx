@@ -20,14 +20,15 @@ export interface CiudadLayoutProps {
   faqs: { pregunta: string; respuesta: string }[]
   codigoAEMET: string
   vistaEnVivo: { lat: number; lon: number; descripcionUbicacion: string }
+  objectPosition?: string
 }
 
 const TODAS_LAS_CIUDADES = [
-  { slug: 'vigo', nombre: 'Vigo', imagen: '/images/ciudades/card-vigo.jpg', descripcion: 'La ciudad más grande de Galicia' },
-  { slug: 'a-coruna', nombre: 'A Coruña', imagen: '/images/ciudades/card-coruna.jpg', descripcion: 'Ciudad atlántica y cosmopolita' },
-  { slug: 'santiago-de-compostela', nombre: 'Santiago de Compostela', imagen: '/images/ciudades/card-santiago.jpg', descripcion: 'Capital y Patrimonio de la Humanidad' },
-  { slug: 'pontevedra', nombre: 'Pontevedra', imagen: '/images/ciudades/card-pontevedra.jpg', descripcion: 'La ciudad más peatonal de España' },
-  { slug: 'lugo', nombre: 'Lugo', imagen: '/images/ciudades/card-lugo.jpg', descripcion: 'Muralla romana y ritmo tranquilo' },
+  { slug: 'vigo', nombre: 'Vigo', imagen: '/images/ciudades/card_vigo.jpg', descripcion: 'La ciudad más grande de Galicia' },
+  { slug: 'a-coruna', nombre: 'A Coruña', imagen: '/images/ciudades/card_coruna.jpg', descripcion: 'Ciudad atlántica y cosmopolita' },
+  { slug: 'santiago-de-compostela', nombre: 'Santiago de Compostela', imagen: '/images/ciudades/card_santiago.jpg', descripcion: 'Capital y Patrimonio de la Humanidad' },
+  { slug: 'pontevedra', nombre: 'Pontevedra', imagen: '/images/ciudades/card_pontevedra.jpg', descripcion: 'La ciudad más peatonal de España' },
+  { slug: 'lugo', nombre: 'Lugo', imagen: '/images/ciudades/card_lugo.jpg', descripcion: 'Muralla romana y ritmo tranquilo' },
 ]
 
 export function CiudadLayout({
@@ -42,6 +43,7 @@ export function CiudadLayout({
   alquileres,
   faqs,
   vistaEnVivo,
+  objectPosition = 'center',
   // codigoAEMET is informational; API routing uses slug
 }: CiudadLayoutProps) {
   const faqsMapped = faqs.map(f => ({ question: f.pregunta, answer: f.respuesta }))
@@ -75,6 +77,7 @@ export function CiudadLayout({
             fill
             priority
             className="object-cover"
+            style={{ objectPosition }}
             sizes="100vw"
           />
           <video
@@ -84,6 +87,7 @@ export function CiudadLayout({
             playsInline
             poster={posterSrc}
             className="absolute inset-0 w-full h-full object-cover"
+            style={{ objectPosition }}
             aria-hidden="true"
           >
             <source src={videoSrc} type="video/mp4" />

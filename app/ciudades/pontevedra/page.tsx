@@ -10,8 +10,8 @@ export default function PontevedraCiudadPage() {
       slug="pontevedra"
       codigoAEMET="36038"
       vistaEnVivo={{ lat: 42.4336, lon: -8.6480, descripcionUbicacion: 'Casco histórico' }}
-      videoSrc="/videos/pontevedra.mp4"
-      posterSrc="/images/ciudades/card-pontevedra.jpg"
+      videoSrc="/videos/Pontevedra.mp4"
+      posterSrc="/images/ciudades/card_pontevedra.jpg"
       descripcionCorta="La ciudad más peatonal de España. Pequeña, cómoda y con una calidad de vida que sorprende a quien llega."
       descripcionLarga="Pontevedra es una ciudad que se disfruta caminando. Su centro histórico es casi completamente peatonal, lo que la convierte en una de las ciudades más vivibles de España para familias con niños. Tiene buenos colegios, hospital de referencia, y está a solo 30 minutos de Vigo por tren — lo que la hace una opción muy real para quienes trabajan allí."
       descripcionLarga2="El mercado de alquiler en Pontevedra es más tranquilo y accesible que en las ciudades grandes. La oferta es menor, pero los precios son más razonables y la competencia más manejable. Una buena alternativa para familias que priorizan calidad de vida sobre tamaño de ciudad."

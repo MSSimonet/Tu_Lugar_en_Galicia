@@ -10,8 +10,9 @@ export default function ACorunaCiudadPage() {
       slug="a-coruna"
       codigoAEMET="15030"
       vistaEnVivo={{ lat: 43.3623, lon: -8.4115, descripcionUbicacion: 'Torre de Hércules' }}
+      objectPosition="top center"
       videoSrc="/videos/coruna.mp4"
-      posterSrc="/images/ciudades/hero-coruna.jpg"
+      posterSrc="/images/ciudades/card_coruna.jpg"
       descripcionCorta="Ciudad atlántica con barrios consolidados, buenas escuelas y un mercado de alquiler más tranquilo que Vigo."
       descripcionLarga="A Coruña combina ciudad costera con infraestructura de capital regional. Tiene universidad, hospitales de referencia, una red de colegios sólida y conexión directa con el aeropuerto de Santiago a menos de 40 minutos. Su carácter es abierto y cosmopolita — una ciudad que recibe bien a quien llega."
       descripcionLarga2="El mercado de alquiler en A Coruña es activo pero algo menos saturado que en Vigo. Con el perfil adecuado y los documentos en orden, los tiempos de búsqueda suelen ser más cortos. Aun así, los pisos que aceptan mascotas o familias numerosas requieren una búsqueda específica y con experiencia."
