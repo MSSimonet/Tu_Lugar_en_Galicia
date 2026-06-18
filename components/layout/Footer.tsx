@@ -20,22 +20,6 @@ const cityLinks = [
   { label: 'Lugo', href: '/ciudades/lugo' },
 ]
 
-const stats = [
-  { num: '+200', label: 'familias' },
-  { num: '57', label: 'en 2025' },
-  { num: '4', label: 'años' },
-]
-
-function IconSparkles() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 3l1.912 5.813L19.5 10.5l-5.588 1.687L12 18l-1.912-5.813L4.5 10.5l5.588-1.687z" />
-      <path d="M5 17.5l.8 2.4L8.2 20.7l-2.4.8L5 24l-.8-2.4L1.8 20.7l2.4-.8z" />
-      <path d="M19 2l.6 1.8 1.8.6-1.8.6L19 7l-.6-1.8L16.6 4.4l1.8-.6z" />
-    </svg>
-  )
-}
-
 function IconWhatsApp() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -69,43 +53,11 @@ export function Footer() {
   const year = new Date().getFullYear()
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 
-  function abrirGina() {
-    document.dispatchEvent(new CustomEvent('gina:open'))
-  }
-
   return (
     <footer className="bg-[var(--color-granito)]">
 
-      {/* ── ZONA 1: CTA superior ── */}
-      <div className="border-b border-[rgba(255,255,255,0.08)] px-12 py-12
-                      flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-        <div>
-          <p className="font-[family-name:var(--font-titular)] text-white font-normal leading-snug max-w-lg text-[1.9rem]">
-            Tu próximo hogar en Galicia empieza con una conversación.
-          </p>
-          <p className="mt-2 text-white/55 text-[0.88rem]">
-            Cuéntanos tu caso y te decimos si podemos ayudarte — sin compromiso.
-          </p>
-        </div>
-        <div className="flex flex-col gap-3 shrink-0">
-          <button
-            onClick={abrirGina}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-laton)] text-white px-6 py-3 text-sm font-medium font-[family-name:var(--font-ui)] tracking-wide transition-all duration-200 hover:bg-[var(--color-laton-oscuro)] cursor-pointer"
-          >
-            <IconSparkles />
-            Cuéntale tu caso a Gina
-          </button>
-          <Link
-            href="/conocernos"
-            className="inline-flex items-center justify-center rounded-full border border-[rgba(255,255,255,0.2)] text-white px-6 py-3 text-sm font-medium font-[family-name:var(--font-ui)] tracking-wide transition-all duration-200 hover:border-white/40 hover:bg-white/5"
-          >
-            O completa el formulario
-          </Link>
-        </div>
-      </div>
-
-      {/* ── ZONA 2: Cuerpo 4 columnas ── */}
-      <div className="border-b border-[rgba(255,255,255,0.08)] px-12 py-10
+      {/* ── ZONA 1: Cuerpo 4 columnas ── */}
+      <div className="border-b border-[rgba(255,255,255,0.08)] px-12 py-[1.75rem]
                       grid grid-cols-1 md:grid-cols-[1.8fr_1fr_1fr_1fr] gap-8">
 
         {/* Col 1 — Marca */}
@@ -116,18 +68,6 @@ export function Footer() {
           <p className="text-white/45 leading-[1.65] text-[0.82rem]">
             El primer servicio de relocalización especializado en Galicia. Acompañamos a familias latinoamericanas en todo el proceso de búsqueda de vivienda antes de llegar.
           </p>
-          <div className="flex gap-6 mt-1">
-            {stats.map(({ num, label }) => (
-              <div key={label} className="flex flex-col">
-                <span className="font-[family-name:var(--font-titular)] text-[var(--color-laton-claro)] text-[1.3rem]">
-                  {num}
-                </span>
-                <span className="text-white/40 uppercase tracking-wider text-[10px]">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Col 2 — Navegación */}
@@ -210,7 +150,7 @@ export function Footer() {
       </div>
 
       {/* ── ZONA 3: Pie legal ── */}
-      <div className="px-12 py-[0.9rem]
+      <div className="px-12 py-[0.75rem]
                       flex flex-col md:flex-row md:justify-between md:items-center
                       gap-2 text-center md:text-left">
         <p className="text-white/30 text-[0.78rem]">
