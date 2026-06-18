@@ -26,16 +26,6 @@ const stats = [
   { num: '4', label: 'años' },
 ]
 
-function IconSparkles() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 3l1.912 5.813L19.5 10.5l-5.588 1.687L12 18l-1.912-5.813L4.5 10.5l5.588-1.687z" />
-      <path d="M5 17.5l.8 2.4L8.2 20.7l-2.4.8L5 24l-.8-2.4L1.8 20.7l2.4-.8z" />
-      <path d="M19 2l.6 1.8 1.8.6-1.8.6L19 7l-.6-1.8L16.6 4.4l1.8-.6z" />
-    </svg>
-  )
-}
-
 function IconWhatsApp() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -69,16 +59,11 @@ export function Footer() {
   const year = new Date().getFullYear()
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 
-  function abrirGina() {
-    document.dispatchEvent(new CustomEvent('gina:open'))
-  }
-
   return (
     <footer className="bg-[var(--color-granito)]">
 
       {/* ── ZONA 1: CTA superior ── */}
-      <div className="border-b border-[rgba(255,255,255,0.08)] px-12 py-12
-                      flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+      <div className="border-b border-[rgba(255,255,255,0.08)] px-12 py-12">
         <div>
           <p className="font-[family-name:var(--font-titular)] text-white font-normal leading-snug max-w-lg text-[1.9rem]">
             Tu próximo hogar en Galicia empieza con una conversación.
@@ -86,21 +71,6 @@ export function Footer() {
           <p className="mt-2 text-white/55 text-[0.88rem]">
             Cuéntanos tu caso y te decimos si podemos ayudarte — sin compromiso.
           </p>
-        </div>
-        <div className="flex flex-col gap-3 shrink-0">
-          <button
-            onClick={abrirGina}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-laton)] text-white px-6 py-3 text-sm font-medium font-[family-name:var(--font-ui)] tracking-wide transition-all duration-200 hover:bg-[var(--color-laton-oscuro)] cursor-pointer"
-          >
-            <IconSparkles />
-            Cuéntale tu caso a Gina
-          </button>
-          <Link
-            href="/conocernos"
-            className="inline-flex items-center justify-center rounded-full border border-[rgba(255,255,255,0.2)] text-white px-6 py-3 text-sm font-medium font-[family-name:var(--font-ui)] tracking-wide transition-all duration-200 hover:border-white/40 hover:bg-white/5"
-          >
-            O completa el formulario
-          </Link>
         </div>
       </div>
 
