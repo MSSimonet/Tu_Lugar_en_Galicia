@@ -1,85 +1,229 @@
+'use client'
+
 import Link from 'next/link'
 import { SITE_NAME, WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from '@/lib/config/site'
 
-const footerLinks = [
+const navLinks = [
   { label: 'Inicio', href: '/' },
   { label: 'Cómo funciona', href: '/como-funciona' },
-  { label: 'Ciudades', href: '/ciudades/vigo' },
+  { label: 'Ciudades', href: '/ciudades' },
+  { label: 'Sobre Silvana', href: '/sobre-silvana' },
   { label: '¿Tienes dudas?', href: '/faq' },
-  { label: 'Vamos a conocernos', href: '/conocernos' },
+  { label: 'Agenda', href: '/agenda' },
 ]
+
+const cityLinks = [
+  { label: 'Vigo', href: '/ciudades/vigo' },
+  { label: 'A Coruña', href: '/ciudades/a-coruna' },
+  { label: 'Santiago de Compostela', href: '/ciudades/santiago-de-compostela' },
+  { label: 'Pontevedra', href: '/ciudades/pontevedra' },
+  { label: 'Lugo', href: '/ciudades/lugo' },
+]
+
+const stats = [
+  { num: '+200', label: 'familias' },
+  { num: '57', label: 'en 2025' },
+  { num: '4', label: 'años' },
+]
+
+function IconSparkles() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 3l1.912 5.813L19.5 10.5l-5.588 1.687L12 18l-1.912-5.813L4.5 10.5l5.588-1.687z" />
+      <path d="M5 17.5l.8 2.4L8.2 20.7l-2.4.8L5 24l-.8-2.4L1.8 20.7l2.4-.8z" />
+      <path d="M19 2l.6 1.8 1.8.6-1.8.6L19 7l-.6-1.8L16.6 4.4l1.8-.6z" />
+    </svg>
+  )
+}
+
+function IconWhatsApp() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  )
+}
+
+function IconInstagram() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  )
+}
+
+function IconCalendar() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  )
+}
 
 export function Footer() {
   const year = new Date().getFullYear()
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 
+  function abrirGina() {
+    document.dispatchEvent(new CustomEvent('gina:open'))
+  }
+
   return (
-    <footer className="bg-[var(--color-granito)] text-[var(--color-niebla)] border-t border-[var(--color-pizarra)]/30">
-      <div className="max-w-7xl mx-auto px-[var(--space-6)] py-[var(--space-12)] flex flex-col gap-[var(--space-8)]">
-        {/* Marca y tagline */}
-        <div className="flex flex-col gap-[var(--space-2)]">
-          <span className="font-[family-name:var(--font-titular)] text-[var(--text-lg)] font-semibold text-[var(--color-niebla)]">
+    <footer className="bg-[var(--color-granito)]">
+
+      {/* ── ZONA 1: CTA superior ── */}
+      <div className="border-b border-[rgba(255,255,255,0.08)] px-12 py-12
+                      flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+        <div>
+          <p className="font-[family-name:var(--font-titular)] text-white font-normal leading-snug max-w-lg text-[1.9rem]">
+            Tu próximo hogar en Galicia empieza con una conversación.
+          </p>
+          <p className="mt-2 text-white/55 text-[0.88rem]">
+            Cuéntanos tu caso y te decimos si podemos ayudarte — sin compromiso.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 shrink-0">
+          <button
+            onClick={abrirGina}
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-laton)] text-white px-6 py-3 text-sm font-medium font-[family-name:var(--font-ui)] tracking-wide transition-all duration-200 hover:bg-[var(--color-laton-oscuro)] cursor-pointer"
+          >
+            <IconSparkles />
+            Cuéntale tu caso a Gina
+          </button>
+          <Link
+            href="/conocernos"
+            className="inline-flex items-center justify-center rounded-full border border-[rgba(255,255,255,0.2)] text-white px-6 py-3 text-sm font-medium font-[family-name:var(--font-ui)] tracking-wide transition-all duration-200 hover:border-white/40 hover:bg-white/5"
+          >
+            O completa el formulario
+          </Link>
+        </div>
+      </div>
+
+      {/* ── ZONA 2: Cuerpo 4 columnas ── */}
+      <div className="border-b border-[rgba(255,255,255,0.08)] px-12 py-10
+                      grid grid-cols-1 md:grid-cols-[1.8fr_1fr_1fr_1fr] gap-8">
+
+        {/* Col 1 — Marca */}
+        <div className="flex flex-col gap-4">
+          <p className="font-[family-name:var(--font-titular)] text-white text-[1.1rem]">
             {SITE_NAME}
-          </span>
-          <span className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-arena)]">
-            El primer servicio de relocalización especializado en Galicia
-          </span>
+          </p>
+          <p className="text-white/45 leading-[1.65] text-[0.82rem]">
+            El primer servicio de relocalización especializado en Galicia. Acompañamos a familias latinoamericanas en todo el proceso de búsqueda de vivienda antes de llegar.
+          </p>
+          <div className="flex gap-6 mt-1">
+            {stats.map(({ num, label }) => (
+              <div key={label} className="flex flex-col">
+                <span className="font-[family-name:var(--font-titular)] text-[var(--color-laton-claro)] text-[1.3rem]">
+                  {num}
+                </span>
+                <span className="text-white/40 uppercase tracking-wider text-[10px]">
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Links de navegación */}
-        <nav aria-label="Navegación del pie de página">
-          <ul className="flex flex-wrap gap-x-[var(--space-6)] gap-y-[var(--space-3)]">
-            {footerLinks.map(({ label, href }) => (
+        {/* Col 2 — Navegación */}
+        <nav aria-label="Navegación footer">
+          <p className="text-[var(--color-laton)] uppercase tracking-wider text-[10px] mb-4">
+            Navegación
+          </p>
+          <ul className="flex flex-col gap-[9px]">
+            {navLinks.map(({ label, href }) => (
               <li key={href}>
                 <Link
                   href={href}
-                  className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] uppercase text-[var(--color-arena)] hover:text-[var(--color-laton-claro)] transition-colors duration-150"
+                  className="text-white/60 hover:text-white transition-colors duration-150 text-[0.85rem] no-underline"
                 >
                   {label}
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                href="/politica-de-privacidad"
-                className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] uppercase text-[var(--color-arena)] hover:text-[var(--color-laton-claro)] transition-colors duration-150"
-              >
-                Política de privacidad
-              </Link>
-            </li>
           </ul>
         </nav>
 
-        {/* Contacto por WhatsApp */}
-        <div className="flex items-center gap-[var(--space-3)]">
-          <a
-            href={whatsappHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Escríbenos por WhatsApp"
-            className="inline-flex items-center gap-[var(--space-2)] font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-arena)] hover:text-[var(--color-laton-claro)] transition-colors duration-150"
-          >
-            {/* WhatsApp SVG oficial */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              width="18"
-              height="18"
-              aria-hidden="true"
-              className="shrink-0"
-            >
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
-            Escríbenos por WhatsApp
-          </a>
-        </div>
+        {/* Col 3 — Ciudades */}
+        <nav aria-label="Ciudades disponibles">
+          <p className="text-[var(--color-laton)] uppercase tracking-wider text-[10px] mb-4">
+            Ciudades
+          </p>
+          <ul className="flex flex-col gap-[9px]">
+            {cityLinks.map(({ label, href }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className="text-white/60 hover:text-white transition-colors duration-150 text-[0.85rem] no-underline"
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-        {/* Copyright */}
-        <p className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-arena)] border-t border-[var(--color-pizarra)] pt-[var(--space-6)]">
-          &copy; {year} {SITE_NAME}. Todos los derechos reservados.
-        </p>
+        {/* Col 4 — Contacto */}
+        <div>
+          <p className="text-[var(--color-laton)] uppercase tracking-wider text-[10px] mb-4">
+            Contacto
+          </p>
+          <ul className="flex flex-col gap-[9px]">
+            <li>
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors duration-150 text-[0.85rem] no-underline"
+              >
+                <span className="text-[var(--color-laton)] shrink-0"><IconWhatsApp /></span>
+                WhatsApp
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://instagram.com/tulugarengalicia"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors duration-150 text-[0.85rem] no-underline"
+              >
+                <span className="text-[var(--color-laton)] shrink-0"><IconInstagram /></span>
+                @tulugarengalicia
+              </a>
+            </li>
+            <li>
+              <Link
+                href="/agenda"
+                className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors duration-150 text-[0.85rem] no-underline"
+              >
+                <span className="text-[var(--color-laton)] shrink-0"><IconCalendar /></span>
+                Agenda una llamada
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
+
+      {/* ── ZONA 3: Pie legal ── */}
+      <div className="px-12 py-[0.9rem]
+                      flex flex-col md:flex-row md:justify-between md:items-center
+                      gap-2 text-center md:text-left">
+        <p className="text-white/30 text-[0.78rem]">
+          © {year} {SITE_NAME}. Todos los derechos reservados.
+        </p>
+        <Link
+          href="/politica-de-privacidad"
+          className="text-white/30 hover:text-white/60 transition-colors duration-150 text-[0.78rem] no-underline"
+        >
+          Política de privacidad
+        </Link>
+      </div>
+
     </footer>
   )
 }
