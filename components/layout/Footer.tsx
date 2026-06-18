@@ -63,15 +63,13 @@ export function Footer() {
     <footer className="bg-[var(--color-granito)]">
 
       {/* ── ZONA 1: CTA superior ── */}
-      <div className="border-b border-[rgba(255,255,255,0.08)] px-12 py-12">
-        <div>
-          <p className="font-[family-name:var(--font-titular)] text-white font-normal leading-snug max-w-lg text-[1.9rem]">
-            Tu próximo hogar en Galicia empieza con una conversación.
-          </p>
-          <p className="mt-2 text-white/55 text-[0.88rem]">
-            Cuéntanos tu caso y te decimos si podemos ayudarte — sin compromiso.
-          </p>
-        </div>
+      <div className="border-b border-[rgba(255,255,255,0.08)] px-12 py-12 text-center">
+        <p className="font-[family-name:var(--font-titular)] text-white font-normal leading-snug text-[1.9rem]">
+          Tu próximo hogar en Galicia empieza con una conversación.
+        </p>
+        <p className="mt-2 text-white/55 text-[0.88rem]">
+          Cuéntanos tu caso y te decimos si podemos ayudarte — sin compromiso.
+        </p>
       </div>
 
       {/* ── ZONA 2: Cuerpo 4 columnas ── */}
