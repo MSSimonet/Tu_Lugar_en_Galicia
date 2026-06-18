@@ -8,7 +8,6 @@ import {
   FeedInstagram,
   MuroLlavesPreview,
   Testimonios,
-  CTAFinal,
 } from "@/components/home";
 
 export const metadata = getNextMetadata("home");
@@ -27,7 +26,6 @@ export default function Home() {
       <FeedInstagram />
       <MuroLlavesPreview />
       <Testimonios />
-      <CTAFinal />
     </>
   );
 }
