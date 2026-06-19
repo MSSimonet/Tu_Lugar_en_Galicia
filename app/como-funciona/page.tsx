@@ -2,74 +2,31 @@ import Link from 'next/link'
 import { getNextMetadata } from '@/lib/seo/metadata'
 import { serviceSchema } from '@/lib/seo/schemas'
 import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from '@/lib/config/site'
+import ComoFuncionaStepper from './ComoFuncionaStepper'
 
 export const metadata = getNextMetadata('comoFunciona')
 
-const pasos = [
-  {
-    numero: '01',
-    nombre: 'Vamos a conocernos',
-    tiempo: '48 horas hábiles',
-    descripcion:
-      'Completas el formulario con tu situación real: dónde estás, cuándo piensas viajar, qué documentación tienes, cuántos son, qué presupuesto manejas. Silvana lee cada formulario personalmente y evalúa si puede ayudarte en este momento. No todos los casos son viables de entrada — y preferimos decirte la verdad desde el principio antes que prometerte algo que no podemos cumplir.',
-  },
-  {
-    numero: '02',
-    nombre: 'Videollamada de conocimiento mutuo',
-    tiempo: '45-60 minutos',
-    descripcion:
-      'Nos conocemos en persona (virtual). Silvana te escucha, te hace las preguntas necesarias para entender bien qué buscas y qué necesitas, y te explica exactamente cómo funciona el proceso, qué vas a conseguir y cuánto cuesta el servicio. No hay letra chica. Esta llamada es el cimiento de todo lo que viene.',
-  },
-  {
-    numero: '03',
-    nombre: 'Búsqueda activa',
-    tiempo: '1-3 semanas según disponibilidad del mercado',
-    descripcion:
-      'Silvana y su red de contactos en Galicia salen a buscar activamente: revisan portales, contactan propietarios directamente, consultan redes informales de alquiler que no aparecen en internet. Filtran por tus criterios concretos — ciudad, barrio, presupuesto, habitaciones, mascotas, fecha de entrada — y descartan las opciones que no cumplen sin gastar tu tiempo.',
-  },
-  {
-    numero: '04',
-    nombre: 'Presentación de opciones',
-    tiempo: 'Inmediato al encontrar opciones que califican',
-    descripcion:
-      'Cuando hay opciones que realmente se ajustan a lo que buscas, te las presentamos con toda la información: fotos actualizadas, videos del piso y del edificio, información del barrio, características del propietario y condiciones del alquiler. Nada de fotos viejas ni información incompleta.',
-  },
-  {
-    numero: '05',
-    nombre: 'Negociación y cierre del contrato',
-    tiempo: '3-7 días',
-    descripcion:
-      'Silvana negocia en tu nombre: precio, condiciones, garantías, fecha de entrada. Si estás en otro país, gestionamos las firmas de manera que todo sea legal y seguro sin que tengas que estar presente físicamente. Te explicamos cada cláusula del contrato en lenguaje claro — sin tecnicismos legales.',
-  },
-  {
-    numero: '06',
-    nombre: 'Acompañamiento post-llegada',
-    tiempo: 'Primeras semanas en Galicia',
-    descripcion:
-      'Cuando llegas, el piso está listo. Pero el servicio no termina ahí. Estamos disponibles para orientarte en los primeros trámites: empadronamiento, apertura de cuenta bancaria, registro en el centro de salud. Queremos que tu llegada a Galicia sea una buena historia. Una que cuentes después.',
-  },
-]
-
 const noSomos = [
-  {
-    titulo: 'No somos una inmobiliaria.',
-    texto:
-      'Las inmobiliarias trabajan para los propietarios. Nosotros trabajamos para ti. Nuestra lealtad es con la familia que busca vivienda, no con quien la pone en alquiler.',
-  },
-  {
-    titulo: 'No cobramos al propietario.',
-    texto:
-      'El propietario no paga nada por nuestro servicio. Por eso podemos buscar en el mercado de particulares y en agencias sin conflicto de interés. No tenemos carteras de pisos propias ni acuerdos que nos obliguen a empujar ciertas opciones.',
-  },
-  {
-    titulo: 'No garantizamos el contrato de arrendamiento.',
-    texto:
-      'Sí garantizamos la búsqueda, la presentación de opciones reales y el acompañamiento en el proceso. El contrato lo firmas tú con el propietario. Nuestra responsabilidad es que tengas toda la información, el apoyo y la negociación necesarios para llegar a ese contrato en las mejores condiciones.',
-  },
+  { titulo: 'No somos una inmobiliaria',  texto: 'Trabajamos para vos, no para el propietario.' },
+  { titulo: 'No cobramos al propietario', texto: 'Sin conflicto de interés, sin carteras propias.' },
+  { titulo: 'No garantizamos el contrato', texto: 'Garantizamos la búsqueda y el acompañamiento.' },
 ]
 
 const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 const schema = serviceSchema()
+
+function IconX() {
+  return (
+    <svg
+      width={14} height={14} viewBox="0 0 24 24" fill="none"
+      stroke="rgba(255,255,255,0.35)" strokeWidth={1.5}
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+    >
+      <path d="M18 6L6 18" />
+      <path d="M6 6l12 12" />
+    </svg>
+  )
+}
 
 export default function ComoFuncionaPage() {
   return (
@@ -79,97 +36,41 @@ export default function ComoFuncionaPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      {/* Hero */}
-      <section className="bg-[var(--color-granito)] py-[var(--space-16)] px-[var(--space-6)]">
-        <div className="mx-auto max-w-3xl">
-          <h1 className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-niebla)] md:text-[var(--text-3xl)]">
-            Cómo funciona Tu Lugar en Galicia: el proceso completo, paso a paso
-          </h1>
-          <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
-            Transparente, personal y sin sorpresas. Así es el camino de principio a fin.
-          </p>
-        </div>
-      </section>
+      {/* ── Stepper principal ── */}
+      <ComoFuncionaStepper />
 
-      {/* Bajada introductoria */}
-      <section className="bg-[var(--color-niebla)] py-[var(--space-12)] px-[var(--space-6)]">
-        <div className="mx-auto max-w-3xl">
-          <p className="font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
-            No somos una inmobiliaria. Somos el intermediario que le faltaba al proceso de mudarse a
-            Galicia. Buscamos, negociamos y gestionamos por ti, para que cuando llegues, tu casa ya
-            esté esperándote. Así es el camino.
-          </p>
-        </div>
-      </section>
-
-      {/* 6 pasos */}
-      <section className="bg-[var(--color-blanco)] py-[var(--space-16)] px-[var(--space-6)]">
-        <div className="mx-auto max-w-3xl">
-          <ol className="relative space-y-[var(--space-12)]">
-            {pasos.map((paso, i) => (
-              <li key={paso.numero} className="relative pl-[var(--space-12)]">
-                {/* Línea conectora */}
-                {i < pasos.length - 1 && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute left-[1.35rem] top-[3.5rem] bottom-[-2.5rem] w-px bg-[var(--color-laton)]"
-                  />
-                )}
-                {/* Número */}
-                <span
-                  aria-hidden="true"
-                  className="absolute left-0 top-0 font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-none text-[var(--color-laton)] font-bold select-none"
-                >
-                  {paso.numero}
-                </span>
-                <div className="pt-[var(--space-1)]">
-                  <h2 className="font-[family-name:var(--font-titular)] text-[var(--text-lg)] text-[var(--color-granito)] leading-[var(--leading-titulo)]">
-                    {paso.nombre}
-                  </h2>
-                  {/* Badge de tiempo */}
-                  <span className="mt-[var(--space-2)] inline-block rounded-[var(--radius-pill)] bg-[var(--color-atlantico)] px-[var(--space-3)] py-[var(--space-1)] font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-white tracking-[var(--tracking-ui)] uppercase">
-                    {paso.tiempo}
+      {/* ── Lo que no somos ── */}
+      <section style={{ background: '#EFEADE', paddingRight: '60px', paddingBottom: '64px', paddingLeft: '60px' }}>
+        <div style={{ maxWidth: '1500px', margin: '0 auto' }}>
+          <div style={{ background: '#1C1D1F', borderRadius: '12px', padding: '1.5rem 2rem' }}>
+            <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: '1.5rem' }}>
+              {noSomos.map((item) => (
+                <div key={item.titulo} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                  <span style={{ marginTop: '3px', flexShrink: 0 }}>
+                    <IconX />
                   </span>
-                  <p className="mt-[var(--space-3)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
-                    {paso.descripcion}
-                  </p>
+                  <div>
+                    <p style={{
+                      fontFamily: 'var(--font-ui)', fontSize: '0.86rem', fontWeight: 500,
+                      color: 'rgba(255,255,255,0.8)', marginTop: 0, marginBottom: '3px',
+                    }}>
+                      {item.titulo}
+                    </p>
+                    <p style={{
+                      fontFamily: 'var(--font-ui)', fontSize: '0.81rem',
+                      color: 'rgba(255,255,255,0.45)', lineHeight: 1.65, marginTop: 0, marginBottom: 0,
+                    }}>
+                      {item.texto}
+                    </p>
+                  </div>
                 </div>
-              </li>
-            ))}
-          </ol>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Lo que NO somos */}
-      <section className="bg-[var(--color-arena)] py-[var(--space-16)] px-[var(--space-6)]">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] leading-[var(--leading-titulo)] mb-[var(--space-8)]">
-            Lo que NO somos
-          </h2>
-          <ul className="space-y-[var(--space-6)]" role="list">
-            {noSomos.map((item) => (
-              <li key={item.titulo} className="flex gap-[var(--space-4)]">
-                <span
-                  aria-hidden="true"
-                  className="mt-1 shrink-0 text-[var(--color-coral)] font-bold text-[var(--text-md)]"
-                >
-                  ✗
-                </span>
-                <div>
-                  <p className="font-[family-name:var(--font-ui)] font-semibold text-[var(--text-sm)] text-[var(--color-granito)]">
-                    {item.titulo}
-                  </p>
-                  <p className="mt-[var(--space-1)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
-                    {item.texto}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* CTA final */}
+      {/* ── CTA final ── */}
       <section className="bg-[var(--color-atlantico)] py-[var(--space-16)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-white leading-[var(--leading-titulo)] mb-[var(--space-4)]">
