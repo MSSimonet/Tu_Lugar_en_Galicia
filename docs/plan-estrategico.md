@@ -4,9 +4,9 @@
 > recibe cada persona. No contiene las fichas de los trámites (están en `tramites-galicia.md`) ni
 > las frases puente (están en `frases-puente.md`): las **reúne** según las respuestas del cuestionario.
 >
-> **Fuentes:** `tramites-galicia.md` (fichas de los 45 trámites) · `frases-puente.md` (una frase por
+> **Fuentes:** `tramites-galicia.md` (fichas de los 55 trámites) · `frases-puente.md` (una frase por
 > trámite) · este archivo (textos fijos + lógica de armado).
-> Revisión: 1 de junio de 2026.
+> Revisión: 19 de junio de 2026 (auditoría de sincronización con flow.json).
 
 ---
 
@@ -47,11 +47,12 @@ Este plan lo armamos a tu medida, con todo lo que nos contaste. Piénsalo como e
 
 | Respuesta | Trámites que se activan |
 |---|---|
-| **Soy español/a (pasaporte español) sin DNI** | `[46]` Partida de nacimiento para primer DNI (desde origen) · `[47]` Expedición del primer DNI en Galicia. **NO** lleva CUE, NIE, TIE ni visado: como español entra y reside con plenos derechos. |
-| **Soy de otro país de la UE / EEE / Suiza** | `[8]` CUE (Certificado de Registro UE). **NO** lleva NIE/TIE (régimen comunitario RD 240/2007). Si trae familiares extracomunitarios → `[9]` Tarjeta de familiar de UE. |
-| **Visado / TIE / NIE ya aprobado** | `[11]` Toma de huellas + TIE (si aún no la tiene físicamente). Más adelante: `[12]` Renovación cuando corresponda. |
-| **En trámite de visado** | `[5]` Visado tipo D · `[6]` Declaración de entrada (si aplica) · `[7]` NIE · `[11]` Toma de huellas + TIE. |
-| **Entraré como turista** | Caso a analizar. Vía habitual: `[5]` Visado/autorización desde España (p. ej. Nómada Digital) · `[7]` NIE · `[11]` TIE. Nota interna: limita opciones; se estudia en videollamada. |
+| **Soy español/a (pasaporte español)** *(value: `espanol`)* | `[46]` Partida de nacimiento para primer DNI (desde origen) · `[47]` Expedición del primer DNI en Galicia. **NO** lleva CUE, NIE, TIE ni visado: como español entra y reside con plenos derechos. ⚠️ *Gina no pregunta si ya tiene DNI; si lo tiene, estos trámites no aplican — confirmar en videollamada.* |
+| **Soy de otro país de la UE / EEE / Suiza** *(value: `ue-otro`)* | `[8]` CUE (Certificado de Registro UE). **NO** lleva NIE/TIE (régimen comunitario RD 240/2007). Si trae familiares extracomunitarios → `[9]` Tarjeta de familiar de UE. |
+| **Residencia / TIE / NIE ya aprobado** *(value: `residencia-aprobada`)* | `[11]` Toma de huellas + TIE (si aún no la tiene físicamente). Más adelante: `[12]` Renovación cuando corresponda. |
+| **En trámite de visado o residencia** *(value: `en-tramite`)* | `[5]` Visado tipo D · `[6]` Declaración de entrada (si aplica) · `[7]` NIE · `[11]` Toma de huellas + TIE. |
+| **Entraré como turista** *(value: `turista`)* | Caso a analizar. Vía habitual: `[5]` Visado/autorización desde España (p. ej. Nómada Digital) · `[7]` NIE · `[11]` TIE. Nota interna: limita opciones; se estudia en videollamada. |
+| **Tengo o estoy tramitando la nacionalidad española** *(value: `nacionalidad-en-tramite`)* | `// TODO-PLAN: definir trámites para este valor nuevo de Gina.` Posible lógica: si la nacionalidad ya se concedió → régimen español (`[46]`+`[47]` si falta DNI); si sigue en trámite → mantiene la TIE vigente + `[12]` renovación hasta resolución. *Confirmar criterio en la videollamada.* |
 
 > *Familiar de ciudadano español* (no es opción directa del cuestionario, surge en P6/videollamada): `[10]` Autorización de residencia de familiares de españoles (régimen propio, RD 1155/2024).
 
@@ -59,12 +60,13 @@ Este plan lo armamos a tu medida, con todo lo que nos contaste. Piénsalo como e
 
 | Respuesta | Trámites que se activan |
 |---|---|
-| **Cuenta ajena con nómina en España** | `[24]` Nº Seguridad Social (NUSS/NAF) · `[25]` Alta en Régimen General (la gestiona la empresa). |
-| **Autónomo registrado en España** | `[23]` Alta censal AEAT (036/037) · `[24]` NUSS/NAF · `[26]` Alta en RETA. |
-| **Teletrabajo para empresa extranjera** | Depende del país de origen (convenio) y del tipo de contrato. Si hay **convenio bilateral** (Argentina, Colombia, etc.): puede cotizar en su país 1–2 años; sin alta en España al inicio. Si cotiza aquí como **autónomo** → `[23]` + `[24]` + `[26]`. Con **visado de nómada digital** puede acogerse al régimen fiscal especial (Ley Beckham). *Orientación inicial; el detalle se confirma con un gestor o la AEAT.* |
-| **Rentista / fondos propios** | Sin alta laboral. Cobertura sanitaria por convenio o seguro privado (ver P20). |
-| **Estudiante** | `[48]` Visado / estancia por estudios. Sin alta laboral (salvo trabajo parcial ≤30 h). Sanidad por el seguro del propio visado. |
-| **Otra / sin empleo aún** | Tu situación laboral se irá definiendo; cuando tengas empleo o actividad, aplican los pasos de Seguridad Social correspondientes (`[24]` + `[25]`/`[26]` según el caso). |
+| **Cuenta ajena con nómina en España** *(value: `cuenta-ajena`)* | `[24]` Nº Seguridad Social (NUSS/NAF) · `[25]` Alta en Régimen General (la gestiona la empresa). |
+| **Autónomo registrado en España** *(value: `autonomo`)* | `[23]` Alta censal AEAT (036/037) · `[24]` NUSS/NAF · `[26]` Alta en RETA. |
+| **Teletrabajo para empresa extranjera** *(value: `teletrabajo-extranjero`)* | Depende del país de origen (convenio) y del tipo de contrato. Si hay **convenio bilateral** (Argentina, Colombia, etc.): puede cotizar en su país 1–2 años; sin alta en España al inicio. Si cotiza aquí como **autónomo** → `[23]` + `[24]` + `[26]`. Con **visado de nómada digital** puede acogerse al régimen fiscal especial (Ley Beckham). *Orientación inicial; el detalle se confirma con un gestor o la AEAT.* |
+| **Rentista / fondos propios** *(value: `rentista`)* | Sin alta laboral. Cobertura sanitaria por convenio bilateral de Seguridad Social o seguro privado. *(No hay pregunta de salud en Gina — ver nota en la sección P20.)* |
+| **Jubilado/a** *(value: `jubilado`)* | `// TODO-PLAN: definir trámites para "jubilado".` Posible lógica: sin alta laboral activa; si cobra pensión de país con convenio bilateral de SS → `[24]` NUSS para cobrar la pensión en España; `[27]` SERGAS si acredita derecho por convenio. Si no hay convenio → seguro privado al inicio. *Confirmar criterio en la videollamada.* |
+| **Estudiante** *(value: `estudiante`)* | `[48]` Visado / estancia por estudios. Sin alta laboral (salvo trabajo parcial ≤30 h). Sanidad por el seguro del propio visado. |
+| **Otra / por el momento sin empleo** *(value: `busca-empleo`)* | Tu situación laboral se irá definiendo; cuando tengas empleo o actividad, aplican los pasos de Seguridad Social correspondientes (`[24]` + `[25]`/`[26]` según el caso). |
 
 ### P13 · Cuenta bancaria en España
 
@@ -81,9 +83,18 @@ Este plan lo armamos a tu medida, con todo lo que nos contaste. Piénsalo como e
 | **Española / Europea** | Ninguno (válidas para conducir). |
 | **No tengo** | Opcional `[45]` si quiere sacarse el permiso en España. |
 
-### P20 (rama "Viene de fuera") · Cobertura de salud / y sanidad para todos
+### P20 · Cobertura de salud / sanidad
 
-| Respuesta | Trámites que se activan |
+> ⚠️ **DISCREPANCIA DETECTADA (auditoría 19/06/2026):** Esta sección referencia una pregunta "P20"
+> sobre cobertura de salud que **NO EXISTE en `lib/gina/flow.json`**. En flow.json, `p20a_objetivo`
+> pregunta sobre "vivienda vs. integración", NO sobre salud. La tabla de abajo describe la lógica
+> deseada pero no tiene pregunta de Gina que la active.
+>
+> **`// TODO-PLAN:`** Decidir si (a) se añade una pregunta de salud al flujo de Gina, o (b) se
+> infiere la activación de `[27]`/`[28]` automáticamente a partir de P9 (quienes cotizan en SS
+> ya tienen derecho a SERGAS) y se elimina esta sección como pregunta independiente.
+
+| Respuesta *(sin pregunta activa en Gina)* | Trámites que se activan |
 |---|---|
 | **Sistema público** | `[27]` Tarjeta Sanitaria SERGAS · `[28]` Beneficiarios (si hay familiares a cargo). |
 | **Seguro médico privado** | El seguro cubre al inicio; al darse de alta en SS → `[27]` SERGAS pasa a ser cobertura principal. |
@@ -160,7 +171,7 @@ aquel del que depende.
 
 - **Frase puente:** cada bloque incluido se introduce conectándolo con la respuesta de la persona
   (ej.: *"Como me contaste que entrarás con un visado en trámite, tu primer paso será…"*).
-- **Solo lo que aplica:** nunca se muestran los 45. El plan incluye únicamente los trámites que las
+- **Solo lo que aplica:** nunca se muestran los 55. El plan incluye únicamente los trámites que las
   respuestas activan, en el orden de la Parte 2.
 - **Trámites de borde** (no se incluyen salvo que la conversación lo indique): `[12]` renovación,
   `[13]` duplicado TIE, `[14]` larga duración, `[15]` cert. residente, `[16]` concordancia,

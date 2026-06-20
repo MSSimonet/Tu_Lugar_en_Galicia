@@ -2,7 +2,7 @@
 
 > **Qué es:** una frase puente por trámite. Conecta el trámite con la respuesta que lo activó,
 > y se coloca justo encima de su ficha (tomada de `tramites-galicia.md`).
-> El número corresponde al del catálogo (1–45).
+> El número corresponde al del catálogo (1–55).
 >
 > **Borradores funcionales:** el tono se pulirá en la pasada final con los suavizadores
 > (Carnegie + psicología/narrativa). Variables disponibles: `{{NOMBRE}}`, `{{PAIS_ORIGEN}}`.
