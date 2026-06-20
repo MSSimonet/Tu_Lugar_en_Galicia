@@ -1,9 +1,11 @@
 # Auditoría del Plan Estratégico — Pendientes
 
-> **Fecha:** 19 de junio de 2026
+> **Fecha inicial:** 19 de junio de 2026
+> **Segunda pasada:** 19 de junio de 2026 (volcado de mapeo-gina-plan.md)
 > **Alcance:** sincronización completa entre `lib/gina/flow.json` (fuente de verdad del código),
-> `docs/plan-estrategico.md`, `docs/tramites-galicia.md` y `docs/frases-puente.md`.
-> **Método:** lectura exhaustiva de las cuatro fuentes, comparación campo por campo de todos los
+> `docs/plan-estrategico.md`, `docs/tramites-galicia.md`, `docs/frases-puente.md` y
+> `docs/mapeo-gina-plan.md`.
+> **Método:** lectura exhaustiva de todas las fuentes, comparación campo por campo de todos los
 > valores de Gina contra las reglas de inclusión del plan, y verificación uno a uno de los 55
 > trámites, sus referencias cruzadas y sus frases puente.
 
@@ -19,59 +21,70 @@ marcado [SIN FUENTE OFICIAL — VERIFICAR]. La última revisión normativa incor
 
 ---
 
-## 2. Discrepancias corregidas en esta auditoría (antes / después)
+## 2. Discrepancias corregidas (historial completo)
+
+### Primera pasada (commit `ce59d81`)
 
 | # | Ubicación | Antes | Después |
 |---|---|---|---|
-| D1 | plan-estrategico.md, P8 | Label: "Visado / TIE / NIE ya aprobado" | "Residencia / TIE / NIE ya aprobado" *(value: `residencia-aprobada`)* — alineado con flow.json |
+| D1 | plan-estrategico.md, P8 | Label: "Visado / TIE / NIE ya aprobado" | "Residencia / TIE / NIE ya aprobado" *(value: `residencia-aprobada`)* |
 | D2 | plan-estrategico.md, P8 | Rama `nacionalidad-en-tramite` no existía | Añadida con TODO-PLAN y lógica tentativa |
 | D3 | plan-estrategico.md, P8 | Label: "Soy español/a (pasaporte español) sin DNI" | Eliminado "sin DNI" + nota de que Gina no pregunta si ya tiene DNI |
 | D4 | plan-estrategico.md, P8 | Label: "En trámite de visado" | "En trámite de visado o residencia" *(value: `en-tramite`)* |
 | D5 | plan-estrategico.md, P9 | Rama `jubilado` no existía | Añadida con TODO-PLAN y lógica tentativa |
 | D6 | plan-estrategico.md, P9 | Label: "Otra / sin empleo aún" | "Otra / por el momento sin empleo" *(value: `busca-empleo`)* |
-| D7 | plan-estrategico.md, P9 | Rentista decía "(ver P20)" | Eliminada referencia rota; nota de que no hay pregunta de salud en Gina |
-| D8 | plan-estrategico.md, P20 | Sección asumía que la pregunta existía en Gina | Añadida advertencia: pregunta P20 de salud NO existe en flow.json |
+| D7 | plan-estrategico.md, P9 | Rentista decía "(ver P20)" | Eliminada referencia rota |
+| D8 | plan-estrategico.md, P20 | Sección asumía que la pregunta existía en Gina | Añadida advertencia: pregunta P20 no existe en flow.json |
 | D9 | plan-estrategico.md, header | "fichas de los 45 trámites" | "fichas de los 55 trámites" |
 | D10 | plan-estrategico.md, Parte 3 | "nunca se muestran los 45" | "nunca se muestran los 55" |
 | D11 | frases-puente.md, header | "catálogo (1–45)" | "catálogo (1–55)" |
-| D12 | plan-estrategico.md, todas las filas P8/P9 | Sin values de flow.json | Añadido *(value: `xxx`)* en cada fila para trazabilidad |
+| D12 | plan-estrategico.md, P8/P9 | Sin values de flow.json | Añadido *(value: `xxx`)* en cada fila |
 
-**Commit:** `ce59d81` — `docs(plan): corregir discrepancias entre flow.json y plan-estrategico.md`
+### Segunda pasada — decisiones críticas (commit `968ca98`)
+
+| # | Ubicación | Antes | Después |
+|---|---|---|---|
+| D13 | plan-estrategico.md, P8 | `nacionalidad-en-tramite` con TODO-PLAN | Regla definitiva: mantiene residencia + `[12]` renovación; al obtener → `[16]` Concordancia + `[46]`/`[47]` DNI |
+| D14 | plan-estrategico.md, P9 | `jubilado` con TODO-PLAN | Regla definitiva: tratado como rentista, sin alta laboral, remite a sección Salud |
+| D15 | plan-estrategico.md, P20 | Sección "P20" con advertencia de pregunta fantasma | Reemplazada por sección fija "Salud / SERGAS" con tabla de dos vías (pública + privada) y casos especiales |
+| D16 | plan-estrategico.md, P9 | Rentista: nota temporal sobre P20 | Referencia a "sección Salud" |
+| D17 | plan-estrategico.md, Fase E | "*(según P20)*" | "*(sección fija)*" |
+
+### Segunda pasada — ajustes menores (commit `af7dae6`)
+
+| # | Ubicación | Antes | Después |
+|---|---|---|---|
+| D18 | plan-estrategico.md, P7 | `[55]` PPP en tabla como trámite activable | Sacado de tabla; convertido en nota condicional fuera de la tabla |
+| D19 | plan-estrategico.md, P6 | "Vienen niños/as en edad escolar" (conceptual) | Regla por conteo: `ninos ≥ 1` o `adolescentes ≥ 1` |
+| D20 | plan-estrategico.md, Parte 3 | `[12]` y `[16]` listados solo como "de borde" | Anotados como activables por `nacionalidad-en-tramite` |
 
 ---
 
-## 3. Valores de Gina sin rama definida en el plan (TODO-PLAN)
+## 3. Puntos críticos — ✅ TODOS RESUELTOS
 
-Estos valores existen en `lib/gina/flow.json` pero el plan no tiene reglas de inclusión completas
-para ellos. Se marcaron con `// TODO-PLAN` en `plan-estrategico.md`.
+Los 3 TODO-PLAN de la primera pasada fueron resueltos en la segunda pasada con las reglas
+definitivas de `mapeo-gina-plan.md`:
 
-### 3.1 P8: `nacionalidad-en-tramite`
+### 3.1 P8: `nacionalidad-en-tramite` — ✅ RESUELTO
 
-- **Label en Gina:** "Tengo o estoy tramitando la nacionalidad española"
-- **Estado:** TODO-PLAN añadido con lógica tentativa
-- **Lógica sugerida (a confirmar):**
-  - Si la nacionalidad ya se concedió → régimen español: `[46]` partida de nacimiento + `[47]` primer DNI (si falta)
-  - Si sigue en trámite → mantiene la TIE vigente + `[12]` renovación hasta resolución
-- **Acción requerida:** Silvana confirma el criterio en la videollamada; luego se escribe la regla definitiva
+- **Regla aplicada:** ya reside legalmente → mantiene residencia actual + `[12]` Renovación si está
+  por vencer. Al obtener la nacionalidad → `[16]` Certificado de Concordancia + `[46]`/`[47]` primer
+  DNI. No requiere ficha nueva.
+- **Commit:** `968ca98`
 
-### 3.2 P9: `jubilado`
+### 3.2 P9: `jubilado` — ✅ RESUELTO
 
-- **Label en Gina:** "Jubilado/a"
-- **Estado:** TODO-PLAN añadido con lógica tentativa
-- **Lógica sugerida (a confirmar):**
-  - Sin alta laboral activa
-  - Si cobra pensión de país con convenio bilateral de SS → `[24]` NUSS para cobrar la pensión; `[27]` SERGAS si acredita derecho por convenio
-  - Si no hay convenio → seguro privado al inicio
-- **Acción requerida:** Confirmar con un gestor de SS qué convenios dan acceso directo al SERGAS para jubilados
+- **Regla aplicada:** sin alta laboral en España, tratado como rentista a efectos de SS. Cobertura
+  sanitaria por convenio internacional de pensiones o seguro privado (remite a sección Salud). No
+  requiere ficha nueva.
+- **Commit:** `968ca98`
 
-### 3.3 P20: pregunta de salud inexistente
+### 3.3 Salud (ex-"P20") — ✅ RESUELTO
 
-- **Estado:** Sección P20 completa del plan referencia una pregunta que nunca se implementó en Gina
-- **Impacto:** Los trámites `[27]` SERGAS, `[28]` Beneficiarios y `[32]` Galicia Saúde Exterior no tienen activación automática desde el cuestionario
-- **Opciones:**
-  - **(a)** Añadir una pregunta de salud al flujo de Gina (modificar flow.json)
-  - **(b)** Inferir la activación automáticamente: quienes cotizan en SS (P9 = cuenta-ajena, autonomo, o teletrabajo con alta) ya tienen derecho → incluir `[27]`+`[28]` siempre que haya alta; para los demás, indicar "a resolver en la videollamada"
-- **Acción requerida:** Decisión de producto sobre cuál opción tomar
+- **Decisión aplicada:** opción (b) — no se añade pregunta a Gina. Se convierte en sección fija que
+  el plan incluye siempre, con tabla de dos vías (pública SERGAS + privada) y casos especiales
+  (`[31]` TSE, `[32]` Galicia Saúde Exterior). Eliminada toda referencia a "P20" como pregunta.
+- **Commit:** `968ca98`
 
 ---
 
@@ -85,54 +98,50 @@ para ellos. Se marcaron con `// TODO-PLAN` en `plan-estrategico.md`.
 
 ---
 
-## 5. Otras observaciones menores
+## 5. Observaciones menores
 
-### 5.1 P8 `espanol`: ambigüedad DNI
+### 5.1 P8 `espanol`: ambigüedad DNI — pendiente
 Gina no distingue entre "español con DNI" y "español sin DNI". Si alguien con pasaporte español
 Y DNI vigente selecciona `espanol`, el plan le incluiría `[46]`+`[47]` innecesariamente.
 **Solución sugerida:** añadir una sub-pregunta en flow.json: "¿Ya tienes DNI español?" (Sí/No).
 
-### 5.2 P6 menores: mapeo conceptual
-El plan dice "Vienen niños/as en edad escolar" → `[37]`+`[38]` pero no especifica qué combinación
-de valores de `p6b_menores` / `p6c_ninos` / `p6d_adolescentes` activa la regla.
-**Solución sugerida:** la regla se activa si `p6b_menores = "si"` Y (`p6c_ninos > 0` O `p6d_adolescentes > 0`).
+### 5.2 P6 menores — ✅ RESUELTO (commit `af7dae6`)
+Regla reescrita por conteo real (`ninos ≥ 1` o `adolescentes ≥ 1`) con nota de que `p6b_menores`
+solo enruta.
 
-### 5.3 P7 PPP: sin criterio de activación
-El plan dice `[55]` PPP "solo si es raza potencialmente peligrosa" pero Gina pregunta tipo
-(perro/gato/otro) y peso (0-5/5-10/+10 kg), sin preguntar la raza directamente. No hay forma
-automática de determinar PPP desde flow.json.
-**Solución sugerida:** añadir una sub-pregunta en flow.json para perros: "¿Tu perro es de una raza
-considerada potencialmente peligrosa (PPP)?" (Sí/No/No sé). Si "No sé" → nota en el plan de
-verificarlo en la videollamada.
+### 5.3 P7 PPP — ✅ RESUELTO (commit `af7dae6`)
+`[55]` convertido en nota condicional dentro del bloque de mascotas. No depende de ningún dato del
+cuestionario; se ofrece como aviso para que la persona lo verifique.
 
-### 5.4 `mapeo-gina-plan.md` no existe
-El briefing de la auditoría lo referencia como fuente, pero el archivo no está en el repositorio.
-Si se creó en una sesión anterior sin commitear, se perdió. Las correcciones que habría contenido
-se aplicaron directamente desde flow.json en esta auditoría.
+### 5.4 `mapeo-gina-plan.md` — ✅ RESUELTO
+El archivo ahora existe en `docs/mapeo-gina-plan.md` y fue usado como fuente para la segunda pasada.
 
-### 5.5 `brief-completar-tramites.md` no existe
-Referenciado en el briefing pero ausente del repositorio.
+### 5.5 `brief-completar-tramites.md` — ✅ RESUELTO
+El archivo ahora existe en `docs/brief-completar-tramites.md`.
 
 ---
 
-## 6. Próximos pasos para completar el Plan Estratégico end-to-end
+## 6. Pendientes reales (lo que queda por hacer)
 
-### Documentación pendiente
-1. **Resolver los 3 TODO-PLAN** (§3): nacionalidad-en-tramite, jubilado, pregunta de salud
-2. **Pasada de tono** sobre las 55 frases puente (Carnegie + psicología/narrativa)
-3. **Definir las 3 sub-preguntas sugeridas** (§5): DNI para españoles, criterio de menores, raza PPP
+### Documentación
+1. **Pasada final de tono** sobre las 55 frases puente y los textos fijos del plan (Carnegie +
+   psicología/narrativa). Las frases están marcadas como "borradores funcionales".
+2. **Sub-pregunta de DNI para españoles** (§5.1): decidir si se añade a flow.json para evitar
+   incluir `[46]`+`[47]` innecesariamente a españoles que ya tienen DNI.
 
-### Código pendiente (NO implementar en esta sesión)
-4. **Módulo de armado del plan** — lógica en `/lib/plan/` que tome las respuestas del lead y ensamble el documento personalizado (fichas + frases puente + textos fijos)
-5. **Generación de PDF** — renderizar el plan armado como PDF descargable o adjunto de email
-6. **Integración Gemini** — para los microajustes de personalización mencionados en las notas de implementación del plan (`GEMINI_API_KEY` no configurada aún)
-7. **Integración Resend** — envío del Plan Estratégico por email al lead (actualmente Gina dice "en los próximos 2 días hábiles" porque no hay envío automático; el texto futuro con email ya está preparado en el campo `_texto_futuro_email` de `despedida` en flow.json)
-8. **Pregunta de salud en Gina** — si se opta por la opción (a) del §3.3, modificar flow.json
+### Código (NO existe todavía — a implementar en sprints futuros)
+3. **Módulo de armado del plan** — lógica en `/lib/plan/` que tome las respuestas del lead y
+   ensamble el documento personalizado (fichas + frases puente + textos fijos).
+4. **Generación de PDF** — renderizar el plan armado como PDF descargable o adjunto de email.
+5. **Integración Resend** — envío del Plan Estratégico por email al lead. Actualmente Gina dice
+   "en los próximos 2 días hábiles" porque no hay envío automático; el texto futuro con email ya
+   está preparado en el campo `_texto_futuro_email` de `despedida` en flow.json.
+6. **Integración Gemini** — para los microajustes de personalización mencionados en las notas de
+   implementación del plan (`GEMINI_API_KEY` no configurada aún).
 
 ### Orden sugerido de ejecución
-1. Resolver TODO-PLANs (decisión de producto → 30 min)
-2. Pasada de tono de frases puente (Brand Guardian + Narratologist → 2-3 h)
-3. Módulo de armado en código (Backend Architect + Frontend Developer → sprint)
-4. Generación de PDF (Frontend Developer → sprint)
-5. Integración Resend (Backend Architect → medio sprint)
-6. Integración Gemini para microajustes (AI Engineer → sprint posterior)
+1. Pasada de tono de frases puente (Brand Guardian + Narratologist → 2-3 h)
+2. Módulo de armado en código (Backend Architect + Frontend Developer → sprint)
+3. Generación de PDF (Frontend Developer → sprint)
+4. Integración Resend (Backend Architect → medio sprint)
+5. Integración Gemini para microajustes (AI Engineer → sprint posterior)
