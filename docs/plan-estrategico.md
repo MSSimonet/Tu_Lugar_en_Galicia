@@ -109,14 +109,23 @@ sección para que la persona conozca ambas vías y elija con criterio.
 
 | Respuesta | Trámites que se activan |
 |---|---|
-| **Sí, viajo con mascota** | `[49]` Microchip · `[50]` Vacuna antirrábica · `[51]` Certificado de salud · `[52]` Certificado oficial de exportación · `[53]` Reserva de vuelo · `[54]` Permiso de embarque · y `[55]` Licencia PPP **solo si es raza potencialmente peligrosa**. |
-| **No** | Ninguno. |
+| **Sí, viajo con mascota** *(value: `si`)* | `[49]` Microchip · `[50]` Vacuna antirrábica · `[51]` Certificado de salud · `[52]` Certificado oficial de exportación · `[53]` Reserva de vuelo · `[54]` Permiso de embarque. **Empezar 3–4 meses antes** por la secuencia microchip → vacuna → 21 días de espera → certificados. |
+| **No** *(value: `no`)* | Ninguno. |
 
-### P6 · Composición del hogar (si hay menores)
+> **Nota condicional sobre PPP `[55]`** (Gina no pregunta la raza): el plan incluye, dentro del
+> bloque de mascotas, una nota del tipo *"Si tu perro pertenece a una raza considerada potencialmente
+> peligrosa (PPP), necesitarás además tramitar la Licencia PPP `[55]` ya en España"*. No depende de
+> ningún dato del cuestionario; se ofrece como aviso para que la persona lo verifique.
 
-| Respuesta | Trámites que se activan |
+### P6 · Composición del hogar — `ninos` / `adolescentes`
+
+| Condición | Trámites que se activan |
 |---|---|
-| **Vienen niños/as en edad escolar** | `[37]` Escolarización de menores · y `[38]` Homologación de sus estudios previos si aplica. |
+| `ninos ≥ 1` **o** `adolescentes ≥ 1` | `[37]` Escolarización de menores (requiere `[21]` empadronamiento). Niños (0–12) y adolescentes (13–17) están todos en edad escolar. Si traen estudios previos a homologar → `[38]` según corresponda. |
+| `ninos = 0` y `adolescentes = 0` | Ninguno. |
+
+> Recordatorio: `p6b_menores` (sí/no) solo enruta al conteo; el dato real para esta regla es el
+> **conteo** de `ninos` y `adolescentes`.
 
 ---
 
@@ -169,8 +178,10 @@ aquel del que depende.
   (ej.: *"Como me contaste que entrarás con un visado en trámite, tu primer paso será…"*).
 - **Solo lo que aplica:** nunca se muestran los 55. El plan incluye únicamente los trámites que las
   respuestas activan, en el orden de la Parte 2.
-- **Trámites de borde** (no se incluyen salvo que la conversación lo indique): `[12]` renovación,
-  `[13]` duplicado TIE, `[14]` larga duración, `[15]` cert. residente, `[16]` concordancia,
+- **Trámites de borde** (no se incluyen salvo que una respuesta los active o la conversación lo indique):
+  `[12]` renovación *(se activa con P8 = `nacionalidad-en-tramite` y `residencia-aprobada`)*,
+  `[13]` duplicado TIE, `[14]` larga duración, `[15]` cert. residente,
+  `[16]` concordancia *(se activa con P8 = `nacionalidad-en-tramite`)*,
   `[29]` médico desplazados, `[30]` programa protección social, `[31]` TSE, `[36]` instrucciones previas.
 - **Dependencia transversal clave:** `[21]` empadronamiento es el cuello de botella: lo necesitan
   TIE, sanidad y escolarización. Va siempre apenas se tiene domicilio.
