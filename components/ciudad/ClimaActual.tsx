@@ -32,7 +32,9 @@ export function ClimaActual({ slug }: { slug: string }) {
   const [estado, setEstado] = useState<Estado>('cargando')
 
   useEffect(() => {
-    fetch(`/api/clima/${slug}`)
+    const controller = new AbortController()
+
+    fetch(`/api/clima/${slug}`, { signal: controller.signal })
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json() as Promise<ClimaData>
@@ -41,7 +43,12 @@ export function ClimaActual({ slug }: { slug: string }) {
         setData(d)
         setEstado('ok')
       })
-      .catch(() => setEstado('error'))
+      .catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === 'AbortError') return
+        setEstado('error')
+      })
+
+    return () => controller.abort()
   }, [slug])
 
   if (estado === 'cargando') {

@@ -55,8 +55,8 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
           Calendario no configurado aún.
           <br />
           Actualizá{' '}
-          <code className="font-mono text-[var(--color-laton)]">CALCOM_URL</code> en{' '}
-          <code className="font-mono text-[var(--color-laton)]">lib/config/site.ts</code>.
+          <code className="font-mono text-[#7A5F22]">CALCOM_URL</code> en{' '}
+          <code className="font-mono text-[#7A5F22]">lib/config/site.ts</code>.
         </p>
       </div>
     )
