@@ -6,7 +6,8 @@ const INTERVAL_MS = 3900
 
 const INK    = '#1F2D27'
 const BONE   = '#F4F0E6'
-const BRASS  = '#A8843E'
+const BRASS      = '#A8843E'
+const BRASS_DARK = '#7A5F22'
 const MUTED  = '#5C5A4E'
 const TRACK  = 'rgba(31,45,39,0.13)'
 const terra  = '#BB5A38'
@@ -22,7 +23,7 @@ const data = [
   },
   {
     num: '02', dur: '45–60 min',
-    title: 'Nos conocemos en persona',
+    title: 'Agendamos una video llamada',
     desc: 'Una reunión para entender a tu familia y trazar juntos el plan a medida.',
     accent: BRASS, tag: '',
     src: '/images/ciudades/tag_santiago.jpg',
@@ -146,7 +147,7 @@ export default function ComoFuncionaStepper() {
               <span style={{ width: '40px', height: '1px', background: BRASS, display: 'block' }} />
               <span style={{
                 fontFamily: 'var(--font-space-mono), monospace', fontSize: '11px',
-                fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase', color: BRASS,
+                fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase', color: BRASS_DARK,
               }}>
                 El proceso
               </span>
@@ -259,7 +260,7 @@ export default function ComoFuncionaStepper() {
                   width: '36px', height: '36px', flex: 'none', borderRadius: '50%',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontFamily: 'var(--font-space-mono), monospace', fontSize: '12px', fontWeight: 700,
-                  background: d.accent, color: BONE,
+                  background: d.accent, color: d.accent === teal ? BONE : '#000000',
                   boxShadow: `0 0 0 5px ${d.accent}26`,
                   transform: 'scale(1.06)', transition: 'all .4s ease',
                 }
@@ -268,7 +269,7 @@ export default function ComoFuncionaStepper() {
                   width: '36px', height: '36px', flex: 'none', borderRadius: '50%',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontFamily: 'var(--font-space-mono), monospace', fontSize: '12px', fontWeight: 700,
-                  background: BRASS, color: BONE, transition: 'all .4s ease',
+                  background: BRASS, color: '#000000', transition: 'all .4s ease',
                 }
               } else {
                 dotStyle = {
@@ -311,7 +312,7 @@ export default function ComoFuncionaStepper() {
                       <span style={{
                         fontFamily: 'var(--font-space-mono), monospace', fontSize: '11px',
                         fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase',
-                        color: isActive ? d.accent : MUTED, transition: 'color .4s ease',
+                        color: isActive ? BRASS_DARK : MUTED, transition: 'color .4s ease',
                       }}>
                         Paso {d.num}
                       </span>

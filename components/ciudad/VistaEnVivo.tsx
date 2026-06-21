@@ -55,12 +55,12 @@ export function VistaEnVivo({ nombreCiudad, descripcionUbicacion }: VistaEnVivoP
       </span>
 
       {/* Subtexto */}
-      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)' }}>
+      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)' }}>
         Próximamente
       </span>
 
-      {/* Badge EN VIVO (inactivo) */}
-      <div style={{
+      {/* Badge EN VIVO (inactivo, decorativo — oculto a lectores de pantalla) */}
+      <div aria-hidden="true" style={{
         position: 'absolute', top: 10, left: 10,
         display: 'flex', alignItems: 'center', gap: 5,
         background: 'rgba(0,0,0,0.55)',
