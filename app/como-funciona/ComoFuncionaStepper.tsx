@@ -7,7 +7,7 @@ const INTERVAL_MS = 3900
 const INK    = '#1F2D27'
 const BONE   = '#F4F0E6'
 const BRASS  = '#A8843E'
-const MUTED  = '#8A8572'
+const MUTED  = '#5C5A4E'
 const TRACK  = 'rgba(31,45,39,0.13)'
 const terra  = '#BB5A38'
 const teal   = '#1A5247'
@@ -152,7 +152,7 @@ export default function ComoFuncionaStepper() {
               </span>
               <span style={{
                 fontFamily: 'var(--font-space-mono), monospace', fontSize: '11px',
-                letterSpacing: '0.18em', color: '#C0B8A4',
+                letterSpacing: '0.18em', color: '#6B6456',
               }}>
                 01 — 05
               </span>
@@ -180,7 +180,7 @@ export default function ComoFuncionaStepper() {
               <span style={{ height: '1px', flex: 1, background: TRACK, display: 'block' }} />
               <span style={{
                 fontFamily: 'var(--font-space-mono), monospace', fontSize: '10.5px',
-                letterSpacing: '0.18em', color: '#AAA492', textTransform: 'uppercase', whiteSpace: 'nowrap',
+                letterSpacing: '0.18em', color: '#6B6456', textTransform: 'uppercase', whiteSpace: 'nowrap',
               }}>
                 Galicia, España · 42.8°N 8.5°O
               </span>
@@ -325,7 +325,7 @@ export default function ComoFuncionaStepper() {
                     <h3 style={{
                       fontFamily: 'var(--font-cormorant), serif', fontWeight: 600,
                       fontSize: '29px', lineHeight: '1.08', margin: 0,
-                      color: isActive ? '#1B2A24' : '#9A9583', transition: 'color .45s ease',
+                      color: isActive ? '#1B2A24' : '#6B6456', transition: 'color .45s ease',
                     }}>
                       {d.title}
                     </h3>

@@ -218,7 +218,7 @@ export function CiudadLayout({
                 </li>
               ))}
             </ul>
-            <p className="font-[family-name:var(--font-mulish)] text-[var(--color-pizarra)] opacity-50 mt-3 leading-snug" style={{ fontSize: '10px' }}>
+            <p className="font-[family-name:var(--font-mulish)] text-[#616669] mt-3 leading-snug" style={{ fontSize: '10px' }}>
               Orientativos. Varían según barrio y estado del inmueble.
             </p>
           </div>
