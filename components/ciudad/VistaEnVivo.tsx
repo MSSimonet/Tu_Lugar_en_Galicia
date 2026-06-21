@@ -55,7 +55,7 @@ export function VistaEnVivo({ nombreCiudad, descripcionUbicacion }: VistaEnVivoP
       </span>
 
       {/* Subtexto */}
-      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)' }}>
+      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
         Próximamente
       </span>
 
@@ -66,7 +66,7 @@ export function VistaEnVivo({ nombreCiudad, descripcionUbicacion }: VistaEnVivoP
         background: 'rgba(0,0,0,0.55)',
         border: '0.5px solid rgba(255,255,255,0.2)',
         borderRadius: 20, padding: '3px 10px',
-        opacity: 0.4,
+        opacity: 0.55,
         pointerEvents: 'none',
       }}>
         <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#E55' }} />
