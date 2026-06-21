@@ -58,7 +58,7 @@ export default function ComoFuncionaPage() {
                     </p>
                     <p style={{
                       fontFamily: 'var(--font-ui)', fontSize: '0.81rem',
-                      color: 'rgba(255,255,255,0.45)', lineHeight: 1.65, marginTop: 0, marginBottom: 0,
+                      color: 'rgba(255,255,255,0.6)', lineHeight: 1.65, marginTop: 0, marginBottom: 0,
                     }}>
                       {item.texto}
                     </p>
