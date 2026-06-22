@@ -19,7 +19,7 @@ export function Hero() {
   return (
     <section
       className="relative flex flex-col"
-      style={{ minHeight: '100svh' }}
+      style={{ minHeight: '100svh', backgroundColor: '#0B1012' }}
       aria-labelledby="hero-heading"
     >
       {/* ── Capa de fondo: video + degradado esfumado ── */}
