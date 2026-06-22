@@ -544,6 +544,38 @@ export function GinaWidget() {
           editarDeshabilitado={cargando || sesion.completado || confirmEdicion !== null}
         />
 
+        {/* Botón secundario "Descargar tu Plan" — solo en despedida y si hay recordId */}
+        {pasoActual.id === 'despedida' && sesion.airtableRecordId && (
+          <div
+            className="shrink-0 px-4 py-3 border-t"
+            style={{ borderColor: 'var(--color-arena)', backgroundColor: '#FFFFFF' }}
+          >
+            <a
+              href={`/api/plan/${sesion.airtableRecordId}/pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium border transition-brand"
+              style={{
+                borderColor: 'var(--color-laton)',
+                color: 'var(--color-laton-oscuro)',
+                backgroundColor: 'transparent',
+              }}
+            >
+              <svg
+                className="w-4 h-4 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              Descargar tu Plan
+            </a>
+          </div>
+        )}
+
         {/* Aviso de confirmación de edición — aparece entre mensajes e input */}
         {confirmEdicion !== null && (
           <div

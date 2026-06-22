@@ -186,3 +186,92 @@ export async function saveLead(data: LeadData, recordId?: string): Promise<strin
   const body = (await response.json()) as { id: string }
   return body.id
 }
+
+/**
+ * Lee un lead existente de Airtable por recordId.
+ *
+ * Usa los mismos nombres de campo que saveLead (camelCase).
+ * Los campos opcionales se omiten si no están presentes en el record.
+ *
+ * Lanza Error si las variables de entorno faltan o si Airtable devuelve error.
+ */
+export async function getLead(recordId: string): Promise<LeadData> {
+  const apiKey = process.env.AIRTABLE_API_KEY
+  const baseId = process.env.AIRTABLE_BASE_ID
+  const tableName = process.env.AIRTABLE_TABLE_NAME
+
+  if (!apiKey || !baseId || !tableName) {
+    throw new Error('Airtable no configurado: faltan variables de entorno')
+  }
+
+  const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}/${recordId}`
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  })
+
+  if (!response.ok) {
+    let msg = `HTTP ${response.status}`
+    try {
+      const body = (await response.json()) as { error?: { message?: string } }
+      if (body?.error?.message) msg += `: ${body.error.message}`
+    } catch { /* usar solo el status */ }
+    throw new Error(`Error al leer Airtable — ${msg}`)
+  }
+
+  const { fields } = (await response.json()) as { fields: Record<string, unknown> }
+
+  const str  = (key: string, fb = '') => typeof fields[key] === 'string' ? (fields[key] as string) : fb
+  const bool = (key: string)           => fields[key] === true
+  const arr  = (key: string)           => Array.isArray(fields[key]) ? (fields[key] as string[]) : []
+  const opt  = (key: string)           => str(key) || undefined
+  const optArr = (key: string)         => Array.isArray(fields[key]) ? (fields[key] as string[]) : undefined
+
+  return {
+    // Campos obligatorios
+    nombreCompleto:    str('nombreCompleto'),
+    email:             str('email'),
+    telefono:          str('telefono'),
+    paisResidencia:    str('paisResidencia'),
+    documentacion:     str('documentacion') as LeadData['documentacion'],
+    situacionLaboral:  str('situacionLaboral') as LeadData['situacionLaboral'],
+    mascotas:          (str('mascotas') || 'no') as 'si' | 'no',
+    ingresosMensuales: str('ingresosMensuales'),
+    garantias:         arr('garantias') as LeadData['garantias'],
+    ciudadDestino:     str('ciudadDestino') as LeadData['ciudadDestino'],
+    presupuestoMensual: str('presupuestoMensual') as LeadData['presupuestoMensual'],
+    amueblado:         (str('amueblado') || 'indiferente') as LeadData['amueblado'],
+    fechaLlegada:      str('fechaLlegada'),
+    comprendeServicio: bool('comprendeServicio'),
+    consentimientoRGPD: bool('consentimientoRGPD'),
+
+    // Campos opcionales
+    personas:          opt('personas'),
+    adultos:           opt('adultos') as LeadData['adultos'],
+    ninos:             opt('ninos') as LeadData['ninos'],
+    adolescentes:      opt('adolescentes') as LeadData['adolescentes'],
+    detalleMascotas:   opt('detalleMascotas'),
+    mascotaTipo:       optArr('mascotaTipo') as LeadData['mascotaTipo'],
+    cantidadPerros:    opt('cantidadPerros') as LeadData['cantidadPerros'],
+    cantidadGatos:     opt('cantidadGatos') as LeadData['cantidadGatos'],
+    mascotaPeso:       opt('mascotaPeso') as LeadData['mascotaPeso'],
+    tipoInmueble:      opt('tipoInmueble') as LeadData['tipoInmueble'],
+    habitacionesMinimas: opt('habitacionesMinimas') as LeadData['habitacionesMinimas'],
+    estacionamiento:   opt('estacionamiento') as LeadData['estacionamiento'],
+    comodidades:       optArr('comodidades') as LeadData['comodidades'],
+    necesidadesEspeciales: opt('necesidadesEspeciales') as LeadData['necesidadesEspeciales'],
+    profesion:         opt('profesion'),
+    imprescindibles:   optArr('imprescindibles') as LeadData['imprescindibles'],
+    inicioContrato:    opt('inicioContrato'),
+    comoNosConociste:  opt('comoNosConociste') as LeadData['comoNosConociste'],
+    calificacion:      opt('calificacion') as LeadData['calificacion'],
+    etiqueta:          opt('etiqueta') as LeadData['etiqueta'],
+    modalidad:         opt('modalidad') as LeadData['modalidad'],
+    cuentaBancaria:    opt('cuentaBancaria') as LeadData['cuentaBancaria'],
+    comprendeHonorarios: opt('comprendeHonorarios') as LeadData['comprendeHonorarios'],
+    tipoLicencia:      opt('tipoLicencia') as LeadData['tipoLicencia'],
+    ciudadActual:      opt('ciudadActual'),
+    tiempoEnEspana:    opt('tiempoEnEspana') as LeadData['tiempoEnEspana'],
+    objetivoBusqueda:  opt('objetivoBusqueda') as LeadData['objetivoBusqueda'],
+    nivelEstudios:     opt('nivelEstudios') as LeadData['nivelEstudios'],
+  }
+}
