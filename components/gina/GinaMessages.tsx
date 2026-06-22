@@ -122,63 +122,39 @@ export function GinaMessages({
             </div>
           )}
 
-          {/* Burbuja */}
-          <div
-            className={`max-w-[75%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap ${
-              msg.de === 'gina'
-                ? 'rounded-2xl rounded-tl-none'   // ángulo superior-izq apunta al avatar
-                : 'rounded-2xl rounded-br-none'   // ángulo inferior-der apunta al usuario
-            }`}
-            style={
-              msg.de === 'gina'
-                ? {
-                    backgroundColor: '#FFFFFF',
-                    color: 'var(--color-granito)',
-                    boxShadow: '0 1px 2px rgba(42,43,46,0.08)',
-                  }
-                : {
-                    backgroundColor: 'var(--color-granito)',
-                    color: 'var(--color-arena)',
-                  }
-            }
-          >
-            {msg.texto}
-          </div>
-
-          {/* Botón de editar — solo en burbujas de usuario, cuando la función está habilitada */}
-          {msg.de === 'usuario' &&
-            !editarDeshabilitado &&
-            onEditarRespuesta &&
-            msg.pasoId && (
-              <button
-                type="button"
-                onClick={() => onEditarRespuesta(msg.pasoId!)}
-                aria-label="Editar esta respuesta"
-                title="Editar respuesta"
-                className="
-                  shrink-0 self-center p-1.5 rounded-lg
-                  opacity-30 hover:opacity-90
-                  transition-opacity cursor-pointer
-                "
-                style={{ color: 'var(--color-granito)' }}
+          {/* Burbuja (+ pill Editar para mensajes de usuario) */}
+          {msg.de === 'usuario' ? (
+            <div className="flex flex-col items-end gap-1">
+              <div
+                className="max-w-[75%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap rounded-2xl rounded-br-none"
+                style={{ backgroundColor: 'var(--color-granito)', color: 'var(--color-arena)' }}
               >
-                {/* Ícono lápiz */}
-                <svg
-                  className="w-3.5 h-3.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  aria-hidden="true"
+                {msg.texto}
+              </div>
+              {!editarDeshabilitado && onEditarRespuesta && msg.pasoId && (
+                <button
+                  type="button"
+                  onClick={() => onEditarRespuesta(msg.pasoId!)}
+                  aria-label="Editar esta respuesta"
+                  className="text-xs underline underline-offset-2 cursor-pointer hover:no-underline transition-colors"
+                  style={{ color: 'var(--color-mar)' }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"
-                  />
-                </svg>
-              </button>
-            )}
+                  Editar
+                </button>
+              )}
+            </div>
+          ) : (
+            <div
+              className="max-w-[75%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap rounded-2xl rounded-tl-none"
+              style={{
+                backgroundColor: '#FFFFFF',
+                color: 'var(--color-granito)',
+                boxShadow: '0 1px 2px rgba(42,43,46,0.08)',
+              }}
+            >
+              {msg.texto}
+            </div>
+          )}
         </div>
       ))}
 
