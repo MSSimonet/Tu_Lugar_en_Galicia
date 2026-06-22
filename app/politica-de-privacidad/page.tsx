@@ -15,7 +15,7 @@ export default function PoliticaDePrivacidadPage() {
   return (
     <>
       {/* Hero pequeño */}
-      <section className="bg-[var(--color-granito)] py-[var(--space-16)] px-[var(--space-6)]">
+      <section className="bg-[var(--color-granito)] pb-[var(--space-16)] px-[var(--space-6)]" style={{ paddingTop: 'calc(64px + 60px)' }}>
         <div className="mx-auto max-w-3xl">
           <h1 className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-niebla)] md:text-[var(--text-3xl)]">
             Política de Privacidad

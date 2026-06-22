@@ -66,7 +66,7 @@ export function CiudadLayout({
       {/* ── HERO ── */}
       <section
         className="relative overflow-hidden"
-        style={{ height: 'clamp(380px, 50vh, 520px)' }}
+        style={{ height: 'clamp(500px, 65vh, 700px)' }}
         aria-label={`Hero de ${nombre}`}
       >
         {/* Fondo: video con fallback a imagen */}
@@ -105,7 +105,7 @@ export function CiudadLayout({
         </div>
 
         {/* Contenido hero */}
-        <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 max-w-5xl">
+        <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 max-w-5xl" style={{ paddingTop: '64px' }}>
           {/* Eyebrow pill */}
           <span
             className="inline-flex self-start items-center px-3 py-1 rounded-full mb-4 font-[family-name:var(--font-mulish)] tracking-widest uppercase text-[var(--color-laton-claro)] border"

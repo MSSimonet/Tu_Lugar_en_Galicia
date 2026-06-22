@@ -28,6 +28,9 @@ function abrirGina() {
   window.dispatchEvent(new CustomEvent('gina:open'))
 }
 
+// Pages with a light/non-photo hero where the transparent header is illegible
+const FORCE_SOLID_PATHS = ['/conocernos']
+
 export function Header() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -36,6 +39,9 @@ export function Header() {
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
+
+  const forceSolid = FORCE_SOLID_PATHS.includes(pathname)
+  const solid = scrolled || forceSolid
 
   useEffect(() => {
     function onScroll() {
@@ -60,11 +66,11 @@ export function Header() {
 
   const headerStyle: React.CSSProperties = {
     height: '64px',
-    background: scrolled
+    background: solid
       ? '#1A1B1E'
       : 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0) 100%)',
-    borderBottom: scrolled ? '0.5px solid rgba(255,255,255,0.07)' : 'none',
-    transition: 'background 300ms ease, border-color 300ms ease',
+    borderBottom: solid ? '0.5px solid rgba(255,255,255,0.07)' : 'none',
+    transition: forceSolid ? 'none' : 'background 300ms ease, border-color 300ms ease',
   }
 
   const ginaStyle: React.CSSProperties = {
@@ -72,12 +78,12 @@ export function Header() {
     alignItems: 'center',
     gap: '6px',
     borderRadius: '20px',
-    padding: scrolled ? '7px 16px' : '8px 18px',
-    fontSize: scrolled ? '0.77rem' : '0.8rem',
+    padding: solid ? '7px 16px' : '8px 18px',
+    fontSize: solid ? '0.77rem' : '0.8rem',
     fontFamily: 'var(--font-ui)',
-    color: scrolled ? 'rgba(255,255,255,0.8)' : 'white',
+    color: solid ? 'rgba(255,255,255,0.8)' : 'white',
     background: 'transparent',
-    border: scrolled ? '0.5px solid rgba(255,255,255,0.25)' : '0.5px solid rgba(255,255,255,0.5)',
+    border: solid ? '0.5px solid rgba(255,255,255,0.25)' : '0.5px solid rgba(255,255,255,0.5)',
     cursor: 'pointer',
     letterSpacing: '0.03em',
     transition: 'all 300ms ease',
@@ -88,8 +94,8 @@ export function Header() {
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: '20px',
-    padding: scrolled ? '7px 16px' : '8px 18px',
-    fontSize: scrolled ? '0.77rem' : '0.8rem',
+    padding: solid ? '7px 16px' : '8px 18px',
+    fontSize: solid ? '0.77rem' : '0.8rem',
     fontFamily: 'var(--font-ui)',
     color: 'white',
     background: '#8F722B',
@@ -124,7 +130,7 @@ export function Header() {
               color: 'white',
               textDecoration: 'none',
               letterSpacing: '0.03em',
-              textShadow: scrolled ? 'none' : '0 1px 8px rgba(0,0,0,0.6)',
+              textShadow: solid ? 'none' : '0 1px 8px rgba(0,0,0,0.6)',
             }}
           >
             {SITE_NAME}
@@ -144,11 +150,11 @@ export function Header() {
                     fontSize: '0.83rem',
                     letterSpacing: '0.07em',
                     textTransform: 'uppercase',
-                    color: active ? 'white' : scrolled ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.65)',
+                    color: active ? 'white' : solid ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.65)',
                     fontWeight: active ? 500 : 400,
                     textDecoration: 'none',
                     fontFamily: 'var(--font-ui)',
-                    textShadow: scrolled ? 'none' : '0 1px 4px rgba(0,0,0,0.5)',
+                    textShadow: solid ? 'none' : '0 1px 4px rgba(0,0,0,0.5)',
                     transition: 'color 300ms ease',
                   }}
                 >
@@ -162,7 +168,7 @@ export function Header() {
                         left: 0,
                         right: 0,
                         height: '1.5px',
-                        background: scrolled ? '#8F722B' : '#D4B96A',
+                        background: solid ? '#8F722B' : '#D4B96A',
                         borderRadius: '1px',
                         transition: 'background 300ms ease',
                       }}

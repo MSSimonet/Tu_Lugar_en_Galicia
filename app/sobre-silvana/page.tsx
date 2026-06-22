@@ -36,7 +36,7 @@ export default function SobreSilvanaPage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-[var(--color-granito)] py-[var(--space-16)] px-[var(--space-6)]">
+      <section className="bg-[var(--color-granito)] pb-[var(--space-16)] px-[var(--space-6)]" style={{ paddingTop: 'calc(64px + 60px)' }}>
         <div className="mx-auto max-w-4xl">
           <div className="flex flex-col gap-[var(--space-8)] md:flex-row-reverse md:items-center md:gap-[var(--space-12)]">
             {/* Foto */}

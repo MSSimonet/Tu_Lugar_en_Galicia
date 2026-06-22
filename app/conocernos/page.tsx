@@ -9,7 +9,7 @@ export default function ConocernosPage() {
     <div className="min-h-screen bg-[var(--color-blanco)]">
       {/* Hero de la página */}
       <div className="bg-[var(--color-niebla)] border-b border-[var(--color-arena)]">
-        <div className="max-w-2xl mx-auto px-[var(--space-6)] py-[var(--space-16)]">
+        <div className="max-w-2xl mx-auto px-[var(--space-6)] pb-[var(--space-16)]" style={{ paddingTop: 'calc(64px + 60px)' }}>
           <h1 className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] md:text-[var(--text-3xl)] text-[var(--color-granito)] font-semibold leading-[var(--leading-titulo)] mb-[var(--space-6)]">
             Vamos a conocernos
           </h1>
