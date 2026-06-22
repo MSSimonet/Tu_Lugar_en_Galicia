@@ -9,6 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.2.11",
+    "@fontsource/dm-sans": "^5.2.8",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/mulish": "^5.2.8",
+    "@fontsource/source-sans-3": "^5.2.9",
     "next": "16.2.6",
     "react": "19.2.4",
     "react-dom": "19.2.4"
