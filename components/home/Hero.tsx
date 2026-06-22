@@ -52,7 +52,7 @@ export function Hero() {
         <div
           className="animate-hero-content"
           style={{
-            maxWidth: "560px",
+            maxWidth: "1100px",
             paddingLeft: "clamp(28px, 7vw, 104px)",
             paddingRight: "clamp(20px, 4vw, 48px)",
             paddingTop: "clamp(48px, 6vw, 80px)",
@@ -85,13 +85,13 @@ export function Hero() {
             style={{
               fontFamily: "var(--font-cormorant)",
               fontWeight: 400,
-              fontSize: "clamp(2.5rem, 4.6vw, 4.1rem)",
+              fontSize: "clamp(2.8rem, 5vw, 4.5rem)",
               lineHeight: 1.15,
               color: "#F7F4ED",
               marginBottom: "1.25rem",
             }}
           >
-            Tu nueva vida en Galicia empieza con una{" "}
+            Tu nueva vida en Galicia<br />empieza con una{" "}
             <em style={{ fontStyle: "italic", color: "#E7D29C" }}>
               puerta abierta...
             </em>
@@ -101,7 +101,7 @@ export function Hero() {
           <div
             aria-hidden="true"
             style={{
-              width: "46px",
+              width: "600px",
               height: "1px",
               backgroundColor: "#C9A961",
               marginBottom: "1.25rem",
@@ -113,9 +113,10 @@ export function Hero() {
             style={{
               fontFamily: "var(--font-mulish)",
               fontWeight: 300,
+              fontSize: "1.05rem",
               lineHeight: 1.78,
               color: "#e6e9e7",
-              maxWidth: "40ch",
+              maxWidth: "600px",
               marginBottom: "2rem",
             }}
           >
