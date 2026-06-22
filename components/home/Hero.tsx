@@ -92,7 +92,7 @@ export function Hero() {
             }}
           >
             Tu nueva vida en Galicia<br />empieza con una{" "}
-            <em style={{ fontStyle: "italic", color: "#E7D29C" }}>
+            <em style={{ fontStyle: "italic", color: "#B88400" }}>
               puerta abierta...
             </em>
           </h1>
