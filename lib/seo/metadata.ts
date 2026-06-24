@@ -27,7 +27,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
   vigo: {
     title: 'Relocation Vigo para familias emigrantes | Tu Lugar en Galicia',
     description:
-      'Buscamos tu piso en Vigo antes de que llegues. Servicio de relocation especializado para familias latinoamericanas. Conocé precios y cómo funciona.',
+      'Buscamos tu piso en Vigo antes de que llegues. Servicio de relocation especializado para familias latinoamericanas. Conoce precios y cómo funciona.',
     keywords: [
       'relocation vigo',
       'alquiler emigrantes vigo',
@@ -40,7 +40,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
   aCoruna: {
     title: 'Relocation A Coruña para familias emigrantes | Tu Lugar en Galicia',
     description:
-      'Encontrá piso en A Coruña sin estar en España. Servicio de relocation personalizado para familias latinoamericanas. Consultanos sin compromiso.',
+      'Encuentra piso en A Coruña sin estar en España. Servicio de relocation personalizado para familias latinoamericanas. Contáctanos sin compromiso.',
     keywords: [
       'relocation a coruña',
       'alquiler a coruña emigrantes',
@@ -92,7 +92,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
   comoFunciona: {
     title: 'Cómo funciona el servicio de relocation en Galicia | Tu Lugar en Galicia',
     description:
-      'Conocé los 6 pasos de nuestro servicio de relocation: desde el primer contacto hasta la entrega de llaves. Transparente, personal y sin sorpresas.',
+      'Conoce los 6 pasos de nuestro servicio de relocation: desde el primer contacto hasta la entrega de llaves. Transparente, personal y sin sorpresas.',
     keywords: [
       'cómo funciona relocation galicia',
       'proceso alquiler emigrantes españa',
@@ -105,7 +105,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
   sobreSilvana: {
     title: 'Sobre Silvana Lorenzo — Fundadora de Tu Lugar en Galicia',
     description:
-      'Silvana es gallega de corazón y emigrante de experiencia. Conocé su historia y por qué creó el primer servicio de relocation especializado en Galicia.',
+      'Silvana es gallega de corazón y emigrante de experiencia. Conoce su historia y por qué creó el primer servicio de relocation especializado en Galicia.',
     keywords: [
       'silvana lorenzo relocation galicia',
       'fundadora tu lugar en galicia',

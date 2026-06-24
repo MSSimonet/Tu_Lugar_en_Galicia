@@ -204,7 +204,7 @@ export function Footer() {
             letterSpacing: '0.03em',
           }}
         >
-          © 2026 Tu Lugar en Galicia · Todos los derechos reservados
+          © {new Date().getFullYear()} Tu Lugar en Galicia · Todos los derechos reservados
         </p>
         <Link
           href="/politica-de-privacidad"
