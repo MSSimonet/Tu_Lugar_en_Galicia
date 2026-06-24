@@ -8,7 +8,7 @@ const pasos = [
     tiempo: '48 horas hábiles',
     nombre: 'Cuéntanos tu caso',
     texto:
-      'Completás el formulario con tu situación real — dónde estás, cuándo pensás viajar, qué documentación tenés. Nuestro equipo lo lee personalmente y evalúa si puede ayudarte. No todos los casos son viables de entrada, y preferimos decirte la verdad desde el principio.',
+      'Completas el formulario con tu situación real — dónde estás, cuándo piensas viajar, qué documentación tienes. Nuestro equipo lo lee personalmente y evalúa si puede ayudarte. No todos los casos son viables de entrada, y preferimos decirte la verdad desde el principio.',
   },
   {
     numero: '02',
@@ -22,14 +22,14 @@ const pasos = [
     tiempo: '1–3 semanas · El corazón del servicio',
     nombre: 'Buscamos activamente',
     texto:
-      'Recorremos el mercado completo — agencias, particulares, grupos privados — y te presentamos las opciones reales que encajan con tu perfil. Vos decidís cuál es tu casa. Nosotros nos encargamos de que esa opción exista.',
+      'Recorremos el mercado completo — agencias, particulares, grupos privados — y te presentamos las opciones reales que encajan con tu perfil. Tú decides cuál es tu casa. Nosotros nos encargamos de que esa opción exista.',
   },
   {
     numero: '04',
     tiempo: 'A distancia',
     nombre: 'Negociamos y cerramos',
     texto:
-      'Cuando encontrás el piso, gestionamos la negociación con el propietario y el proceso de firma. Firmás el contrato desde tu país, antes de volar. Tu casa ya está esperándote cuando llegues.',
+      'Cuando encuentras el piso, gestionamos la negociación con el propietario y el proceso de firma. Firmas el contrato desde tu país, antes de volar. Tu casa ya está esperándote cuando llegues.',
   },
   {
     numero: '05',
@@ -43,7 +43,7 @@ const pasos = [
 const noSomos = [
   {
     titulo: 'No somos una inmobiliaria',
-    texto: 'Trabajamos para vos, no para el propietario.',
+    texto: 'Trabajamos para ti, no para el propietario.',
   },
   {
     titulo: 'No cobramos al propietario',

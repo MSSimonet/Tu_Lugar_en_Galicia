@@ -10,7 +10,7 @@ export function CTAFinal() {
       <div className="mx-auto max-w-2xl text-center animate-fade-in-up">
         <h2
           id="cta-final-heading"
-          className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-niebla)] md:text-[var(--text-3xl)]"
+          className="font-[family-name:var(--font-titular)] [font-size:var(--text-2xl)] leading-[var(--leading-titulo)] [color:var(--color-niebla)] md:[font-size:var(--text-3xl)]"
         >
           ¿Listo para encontrar tu lugar en{" "}
           <span className="text-[var(--color-laton-claro)]">Galicia</span>?

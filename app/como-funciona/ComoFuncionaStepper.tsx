@@ -64,6 +64,13 @@ export default function ComoFuncionaStepper() {
   }
 
   return (
+    <>
+    <style>{`
+      @media (max-width: 767px) {
+        .stepper-image-col { display: none !important; }
+        .stepper-content-col { padding: 48px 24px 40px !important; }
+      }
+    `}</style>
     <div
       style={{
         display: 'flex',
@@ -76,7 +83,7 @@ export default function ComoFuncionaStepper() {
     >
 
       {/* ── Columna izquierda (47%) — imagen ─────────────────────── */}
-      <div style={{
+      <div className="stepper-image-col" style={{
         width: '47%',
         flexShrink: 0,
         position: 'relative',
@@ -104,7 +111,7 @@ export default function ComoFuncionaStepper() {
       </div>
 
       {/* ── Columna derecha (53%) — contenido ───────────────────── */}
-      <div style={{
+      <div className="stepper-content-col" style={{
         flex: 1,
         minWidth: 0,
         background: '#EFEADE',
@@ -247,5 +254,6 @@ export default function ComoFuncionaStepper() {
 
       </div>
     </div>
+    </>
   )
 }

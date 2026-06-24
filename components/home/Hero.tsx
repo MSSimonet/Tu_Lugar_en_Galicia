@@ -93,7 +93,7 @@ export function Hero() {
             }}
           >
             Tu nueva vida en Galicia<br />empieza con una{" "}
-            <em style={{ fontStyle: "italic", color: "#B88400" }}>
+            <em style={{ fontStyle: "italic", color: "#E8C97A", textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
               puerta abierta...
             </em>
           </h1>
@@ -199,40 +199,46 @@ export function Hero() {
         </div>
       </div>
 
-      {/* ── Datos — anclados abajo a la derecha ── */}
-      <dl
-        className="absolute z-10 flex gap-[clamp(20px,3vw,40px)]"
-        style={{ right: "48px", bottom: "48px" }}
+      {/* ── Fila de datos — anclada al pie del hero ── */}
+      <div
+        className="relative z-10"
+        style={{
+          borderTop: "1px solid rgba(255, 255, 255, 0.12)",
+          padding:
+            "clamp(14px, 2.2vw, 22px) clamp(28px, 7vw, 104px)",
+        }}
       >
-        {STATS.map(({ value, label }) => (
-          <div key={label} style={{ textAlign: "right" }}>
-            <dt
-              style={{
-                fontFamily: "var(--font-cormorant)",
-                fontWeight: 500,
-                fontSize: "clamp(1.5rem, 2.4vw, 2rem)",
-                color: "#E7D29C",
-                lineHeight: 1.1,
-              }}
-            >
-              {value}
-            </dt>
-            <dd
-              style={{
-                fontFamily: "var(--font-mulish)",
-                fontWeight: 500,
-                fontSize: "0.6rem",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#a4ada9",
-                marginTop: "0.2rem",
-              }}
-            >
-              {label}
-            </dd>
-          </div>
-        ))}
-      </dl>
+        <dl className="flex gap-[clamp(28px,5vw,72px)]">
+          {STATS.map(({ value, label }) => (
+            <div key={label}>
+              <dt
+                style={{
+                  fontFamily: "var(--font-cormorant)",
+                  fontWeight: 500,
+                  fontSize: "clamp(1.5rem, 2.4vw, 2rem)",
+                  color: "#E7D29C",
+                  lineHeight: 1.1,
+                }}
+              >
+                {value}
+              </dt>
+              <dd
+                style={{
+                  fontFamily: "var(--font-mulish)",
+                  fontWeight: 500,
+                  fontSize: "0.6rem",
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "#a4ada9",
+                  marginTop: "0.2rem",
+                }}
+              >
+                {label}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </section>
   )
 }

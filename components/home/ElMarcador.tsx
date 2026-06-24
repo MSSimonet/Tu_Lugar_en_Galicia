@@ -58,7 +58,7 @@ export function ElMarcador() {
           En tiempo real
         </h2>
         <p
-          className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] md:text-[var(--text-2xl)]"
+          className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] md:[font-size:var(--text-2xl)]"
           style={{ color: '#FFFFFF' }}
         >
           El Marcador
@@ -75,13 +75,13 @@ export function ElMarcador() {
                 />
               ) : (
                 <span
-                  className="block font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)]"
+                  className="block font-[family-name:var(--font-titular)] [font-size:var(--text-2xl)] leading-[var(--leading-titulo)]"
                   style={{ color: '#FFFFFF' }}
                   aria-label={`${display[key]}${unidad ? " " + unidad : ""} — ${etiqueta}`}
                 >
                   {display[key]}
                   {unidad && (
-                    <span className="text-[var(--text-lg)]"> {unidad}</span>
+                    <span className="[font-size:var(--text-lg)]"> {unidad}</span>
                   )}
                 </span>
               )}

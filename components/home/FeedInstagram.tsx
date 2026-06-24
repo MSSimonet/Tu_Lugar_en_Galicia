@@ -44,7 +44,15 @@ export function FeedInstagram() {
         </ul>
 
         <p className="mt-[var(--space-8)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)] opacity-70">
-          Feed de Instagram — se conecta en Fase 2
+          Seguimos en Instagram como{' '}
+          <a
+            href="https://instagram.com/tulugarengalicia"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'var(--color-mar)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
+          >
+            @tulugarengalicia
+          </a>
         </p>
       </div>
     </section>

@@ -29,7 +29,7 @@ function abrirGina() {
 }
 
 // Pages with a light/non-photo hero where the transparent header is illegible
-const FORCE_SOLID_PATHS = ['/conocernos', '/como-funciona']
+const FORCE_SOLID_PATHS = ['/conocernos', '/como-funciona', '/faq', '/politica-de-privacidad']
 
 export function Header() {
   const pathname = usePathname()

@@ -52,7 +52,7 @@ export function ComoFuncionaResumen() {
         >
           El proceso
         </h2>
-        <p className="mb-[var(--space-3)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] md:text-[var(--text-2xl)]">
+        <p className="mb-[var(--space-3)] text-center font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] md:[font-size:var(--text-2xl)]">
           Cómo funciona
         </p>
         <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-pizarra)]">
@@ -63,7 +63,7 @@ export function ComoFuncionaResumen() {
           {pasos.map(({ numero, nombre, descripcion }) => (
             <li key={numero} className="flex gap-[var(--space-4)]">
               <span
-                className="flex-shrink-0 font-[family-name:var(--font-titular)] font-bold text-[var(--text-2xl)] md:text-[var(--text-3xl)] leading-none text-[var(--color-laton)]"
+                className="flex-shrink-0 font-[family-name:var(--font-titular)] font-bold [font-size:var(--text-2xl)] md:[font-size:var(--text-3xl)] leading-none [color:var(--color-laton)]"
                 aria-hidden="true"
               >
                 {numero}

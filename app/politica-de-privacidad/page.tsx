@@ -17,7 +17,7 @@ export default function PoliticaDePrivacidadPage() {
       {/* Hero pequeño */}
       <section className="bg-[var(--color-granito)] pb-[var(--space-16)] px-[var(--space-6)]" style={{ paddingTop: 'calc(64px + 60px)' }}>
         <div className="mx-auto max-w-3xl">
-          <h1 className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-niebla)] md:text-[var(--text-3xl)]">
+          <h1 className="font-[family-name:var(--font-titular)] [font-size:var(--text-2xl)] leading-[var(--leading-titulo)] [color:var(--color-niebla)] md:[font-size:var(--text-3xl)]">
             Política de Privacidad
           </h1>
           <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-arena)] leading-[var(--leading-cuerpo)]">
@@ -34,7 +34,7 @@ export default function PoliticaDePrivacidadPage() {
           <section aria-labelledby="responsable">
             <h2
               id="responsable"
-              className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
             >
               1. Responsable del tratamiento
             </h2>
@@ -64,7 +64,7 @@ export default function PoliticaDePrivacidadPage() {
           <section aria-labelledby="finalidad">
             <h2
               id="finalidad"
-              className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
             >
               2. Finalidad del tratamiento
             </h2>
@@ -95,7 +95,7 @@ export default function PoliticaDePrivacidadPage() {
           <section aria-labelledby="base-legal">
             <h2
               id="base-legal"
-              className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
             >
               3. Base legal del tratamiento
             </h2>
@@ -118,7 +118,7 @@ export default function PoliticaDePrivacidadPage() {
           <section aria-labelledby="conservacion">
             <h2
               id="conservacion"
-              className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
             >
               4. Conservación de los datos
             </h2>
@@ -139,7 +139,7 @@ export default function PoliticaDePrivacidadPage() {
           <section aria-labelledby="destinatarios">
             <h2
               id="destinatarios"
-              className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
             >
               5. Destinatarios de los datos
             </h2>
@@ -161,7 +161,7 @@ export default function PoliticaDePrivacidadPage() {
           <section aria-labelledby="derechos">
             <h2
               id="derechos"
-              className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
             >
               6. Tus derechos
             </h2>
@@ -205,7 +205,7 @@ export default function PoliticaDePrivacidadPage() {
           <section aria-labelledby="cambios">
             <h2
               id="cambios"
-              className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
             >
               7. Cambios en esta política
             </h2>

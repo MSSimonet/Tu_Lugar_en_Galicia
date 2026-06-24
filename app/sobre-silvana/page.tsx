@@ -52,7 +52,7 @@ export default function SobreSilvanaPage() {
             </div>
             {/* Título */}
             <div>
-              <h1 className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-niebla)] md:text-[var(--text-3xl)]">
+              <h1 className="font-[family-name:var(--font-titular)] [font-size:var(--text-2xl)] leading-[var(--leading-titulo)] [color:var(--color-niebla)] md:[font-size:var(--text-3xl)]">
                 Hola, soy Silvana. Y yo también hice este camino.
               </h1>
               <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
@@ -108,7 +108,7 @@ export default function SobreSilvanaPage() {
       {/* Por qué confiar en mí */}
       <section className="bg-[var(--color-niebla)] py-[var(--space-16)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl">
-          <h2 className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] leading-[var(--leading-titulo)] mb-[var(--space-8)]">
+          <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] leading-[var(--leading-titulo)] mb-[var(--space-8)]">
             Por qué confiar en mí
           </h2>
           <ul className="space-y-[var(--space-6)]" role="list">

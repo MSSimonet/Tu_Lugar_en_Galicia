@@ -166,7 +166,7 @@ export default function FAQPage() {
       {/* Hero */}
       <section className="bg-[var(--color-granito)] pb-[var(--space-16)] px-[var(--space-6)]" style={{ paddingTop: 'calc(64px + 60px)' }}>
         <div className="mx-auto max-w-3xl">
-          <h1 className="font-[family-name:var(--font-titular)] text-[var(--text-2xl)] leading-[var(--leading-titulo)] text-[var(--color-niebla)] md:text-[var(--text-3xl)]">
+          <h1 className="font-[family-name:var(--font-titular)] [font-size:var(--text-2xl)] leading-[var(--leading-titulo)] [color:var(--color-niebla)] md:[font-size:var(--text-3xl)]">
             ¿Tienes dudas?
           </h1>
           <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
@@ -190,7 +190,7 @@ export default function FAQPage() {
         <div className="mx-auto max-w-3xl space-y-[var(--space-12)]">
           {categorias.map((cat) => (
             <div key={cat.titulo}>
-              <h2 className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-6)]">
+              <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-6)]">
                 {cat.titulo}
               </h2>
               <FAQAccordion faqs={cat.faqs} />
@@ -202,7 +202,7 @@ export default function FAQPage() {
       {/* CTA al final */}
       <section className="bg-[var(--color-arena)] py-[var(--space-16)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] leading-[var(--leading-titulo)] mb-[var(--space-4)]">
+          <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] leading-[var(--leading-titulo)] mb-[var(--space-4)]">
             ¿No encontraste tu respuesta?
           </h2>
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">

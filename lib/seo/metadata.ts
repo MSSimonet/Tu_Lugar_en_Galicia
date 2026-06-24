@@ -167,7 +167,7 @@ export function getNextMetadata(page: keyof typeof PAGE_METADATA): Metadata {
   const meta = PAGE_METADATA[page]
   const og = buildOpenGraph(page)
   return {
-    title: meta.title,
+    title: { absolute: meta.title },
     description: meta.description,
     keywords: meta.keywords,
     alternates: {
