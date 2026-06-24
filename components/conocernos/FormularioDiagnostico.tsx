@@ -471,7 +471,7 @@ export function FormularioDiagnostico() {
           Recibimos tu consulta
         </h2>
         <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
-          Anotamos tus datos y Silvana se va a comunicar contigo a la brevedad.
+          Anotamos tus datos y nuestro equipo se va a comunicar contigo a la brevedad.
           Si no recibes noticias en <strong>48 horas hábiles</strong>, escríbenos
           directamente por WhatsApp.
         </p>
@@ -1163,7 +1163,7 @@ export function FormularioDiagnostico() {
                 aria-describedby={errors.comprendeServicio ? 'comprendeServicio-error' : undefined}
               />
               <span className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
-                Entiendo que Tu Lugar en Galicia es un servicio de consultoría y búsqueda personalizada, con honorarios propios aparte del alquiler y la fianza. Silvana actúa en nombre de mi familia, no del propietario.
+                Entiendo que Tu Lugar en Galicia es un servicio de consultoría y búsqueda personalizada, con honorarios propios aparte del alquiler y la fianza. Tu Lugar en Galicia actúa en nombre de mi familia, no del propietario.
                 <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </span>
             </label>

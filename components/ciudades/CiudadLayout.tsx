@@ -85,7 +85,7 @@ export function CiudadLayout({
             muted
             loop
             playsInline
-            poster={posterSrc}
+            preload="auto"
             className="absolute inset-0 w-full h-full object-cover"
             style={{ objectPosition }}
             aria-hidden="true"

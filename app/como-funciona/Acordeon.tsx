@@ -8,14 +8,14 @@ const pasos = [
     tiempo: '48 horas hábiles',
     nombre: 'Cuéntanos tu caso',
     texto:
-      'Completás el formulario con tu situación real — dónde estás, cuándo pensás viajar, qué documentación tenés. Silvana lo lee personalmente y evalúa si puede ayudarte. No todos los casos son viables de entrada, y preferimos decirte la verdad desde el principio.',
+      'Completás el formulario con tu situación real — dónde estás, cuándo pensás viajar, qué documentación tenés. Nuestro equipo lo lee personalmente y evalúa si puede ayudarte. No todos los casos son viables de entrada, y preferimos decirte la verdad desde el principio.',
   },
   {
     numero: '02',
     tiempo: '45–60 minutos',
     nombre: 'Nos conocemos en persona',
     texto:
-      'Videollamada con Silvana. Te escucha, te hace las preguntas necesarias y te explica exactamente cómo funciona el proceso, qué vas a conseguir y cuánto cuesta el servicio. No hay letra chica. Esta llamada es el cimiento de todo lo que viene.',
+      'Videollamada con nuestro equipo. Te escucha, te hace las preguntas necesarias y te explica exactamente cómo funciona el proceso, qué vas a conseguir y cuánto cuesta el servicio. No hay letra chica. Esta llamada es el cimiento de todo lo que viene.',
   },
   {
     numero: '03',
@@ -36,7 +36,7 @@ const pasos = [
     tiempo: 'Día de llegada',
     nombre: 'Llegás y abrís tu puerta',
     texto:
-      'Silvana te espera en Galicia. Te acompaña el primer día, te muestra el barrio y te deja instalada. Tu única tarea en todo este proceso fue hacer las valijas.',
+      'Nuestro equipo te espera en Galicia. Te acompaña el primer día, te muestra el barrio y te deja con todo en orden. Tu única tarea en todo este proceso fue hacer las valijas.',
   },
 ] as const
 

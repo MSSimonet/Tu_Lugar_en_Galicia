@@ -8,7 +8,7 @@ const testimonios = [
     ciudadOrigen: "Bogotá, Colombia",
     ciudadGalicia: "Vigo",
     texto:
-      "Yo no creía que fuera posible alquilar sin estar presente. Silvana nos mandó videos de los departamentos, nos explicó el barrio, habló con el propietario y cuando llegamos con las valijas, las llaves ya nos esperaban. No imaginaba que el primer día en Galicia pudiera ser tan tranquilo.",
+      "Yo no creía que fuera posible alquilar sin estar presente. El equipo nos mandó videos de los departamentos, nos explicó el barrio, habló con el propietario y cuando llegamos con las valijas, las llaves ya nos esperaban. No imaginaba que el primer día en Galicia pudiera ser tan tranquilo.",
     avatar: "https://placehold.co/80x80/1A5247/F2F0EB?text=VR",
   },
   {
@@ -16,7 +16,7 @@ const testimonios = [
     ciudadOrigen: "Montevideo, Uruguay",
     ciudadGalicia: "A Coruña",
     texto:
-      "Llevábamos meses mirando Idealista sin entender nada. Los propietarios no contestaban, no sabíamos qué documentación pedir. Contratamos a Silvana y en tres semanas teníamos piso. Nos ahorró meses de angustia. Vale cada euro.",
+      "Llevábamos meses mirando Idealista sin entender nada. Los propietarios no contestaban, no sabíamos qué documentación pedir. Contratamos a Tu Lugar en Galicia y en tres semanas teníamos piso. Nos ahorró meses de angustia. Vale cada euro.",
     avatar: "https://placehold.co/80x80/1A5247/F2F0EB?text=MF",
   },
   {
@@ -24,7 +24,7 @@ const testimonios = [
     ciudadOrigen: "Buenos Aires, Argentina",
     ciudadGalicia: "Santiago de Compostela",
     texto:
-      "Lo que más me sorprendió fue que Silvana entendía exactamente lo que estábamos viviendo. Ella misma pasó por lo mismo. No era una agencia fría dando respuestas de manual — era alguien que realmente quería que nos instaláramos bien. Y lo logramos.",
+      "Lo que más me sorprendió fue que el equipo entendía exactamente lo que estábamos viviendo. No era una agencia fría dando respuestas de manual — era gente que realmente quería que nos instaláramos bien. Y lo logramos.",
     avatar: "https://placehold.co/80x80/1A5247/F2F0EB?text=DC",
   },
 ];

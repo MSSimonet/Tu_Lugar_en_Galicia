@@ -16,7 +16,7 @@ export default function AgendaPage() {
             Agenda tu videollamada
           </h1>
           <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
-            Gratuita, sin compromiso. Silvana te va a escuchar y decirte si puede ayudarte.
+            Gratuita, sin compromiso. Nuestro equipo te va a escuchar y decirte si puede ayudarte.
           </p>
         </div>
       </section>
@@ -25,7 +25,7 @@ export default function AgendaPage() {
       <section className="bg-[var(--color-niebla)] py-[var(--space-8)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl">
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-granito)] leading-[var(--leading-cuerpo)]">
-            La videollamada dura aproximadamente 30 minutos. En esa charla, Silvana escucha tu
+            La videollamada dura aproximadamente 30 minutos. En esa charla, nuestro equipo escucha tu
             situación, responde tus dudas sobre el proceso de búsqueda de vivienda en Galicia, y
             evalúa si el servicio es el indicado para tu caso. Sin presión, sin compromiso de
             contratación. Es simplemente una conversación para conocernos.

@@ -14,7 +14,7 @@ export default function ConocernosPage() {
             Vamos a conocernos
           </h1>
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] md:text-[var(--text-md)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-4)]">
-            ¿Prefieres escribir antes de chatear? Este formulario recoge exactamente la misma información que Gina, nuestra asistente virtual. Cuéntanos sobre tu familia y tu situación para que Silvana pueda entender tu caso y ver cómo puede acompañarte.
+            ¿Prefieres escribir antes de chatear? Este formulario recoge exactamente la misma información que Gina, nuestra asistente virtual. Cuéntanos sobre tu familia y tu situación para que nuestro equipo pueda entender tu caso y ver cómo puede acompañarte.
           </p>
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)] opacity-80">
             Tus datos se usan solo para evaluar tu caso. No los compartimos con nadie.
