@@ -74,8 +74,7 @@ export default function ComoFuncionaStepper() {
     <div
       style={{
         display: 'flex',
-        minHeight: 'calc(100vh - 64px)',
-        height: 'auto',
+        height: 'calc(100vh - 68px)',
         overflow: 'hidden',
       }}
       onMouseEnter={() => { pausedRef.current = true }}
@@ -121,31 +120,31 @@ export default function ComoFuncionaStepper() {
         background: '#EFEADE',
         display: 'flex',
         flexDirection: 'column',
-        padding: '80px 56px 0',
-        paddingBottom: '48px',
+        padding: '32px 44px 0',
+        paddingBottom: '24px',
       }}>
 
         {/* Encabezado */}
-        <div style={{ flexShrink: 0, marginBottom: '28px' }}>
+        <div style={{ flexShrink: 0, marginBottom: '12px' }}>
           <p style={{
             fontFamily: 'var(--font-mulish), sans-serif',
             fontSize: '10px',
             letterSpacing: '0.15em',
             textTransform: 'uppercase',
             color: '#8F722B',
-            margin: '0 0 14px',
+            margin: '0 0 6px',
           }}>
             Cómo funciona
           </p>
 
           <h1 style={{
-            fontFamily: 'var(--font-cormorant), serif',
-            fontWeight: 600,
-            fontSize: 'clamp(2rem, 3.5vw, 50px)',
-            lineHeight: 1.05,
-            letterSpacing: '-0.02em',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontWeight: 400,
+            fontSize: 'clamp(24px, 3vw, 40px)',
+            lineHeight: 1.15,
+            letterSpacing: '-0.01em',
             color: '#1B2A24',
-            margin: '0 0 14px',
+            margin: '0 0 6px',
           }}>
             Tu hogar en Galicia{' '}
             <em style={{ fontStyle: 'italic', fontWeight: 500, color: '#8F722B' }}>
@@ -157,11 +156,11 @@ export default function ComoFuncionaStepper() {
 
           <p style={{
             fontFamily: 'var(--font-mulish), sans-serif',
-            fontSize: '15px',
+            fontSize: '12px',
             color: 'rgba(42,43,46,0.85)',
             lineHeight: 1.6,
             margin: 0,
-            maxWidth: '380px',
+            maxWidth: '361px',
           }}>
             Un acompañamiento cercano y a medida, del primer mensaje al día en que abres tu puerta.
           </p>
@@ -212,11 +211,11 @@ export default function ComoFuncionaStepper() {
                   style={{
                     fontFamily: 'var(--font-cormorant), serif',
                     fontStyle: 'italic',
-                    fontSize: '38px',
+                    fontSize: '28px',
                     fontWeight: 400,
                     lineHeight: 1,
-                    color: isAct ? '#8F722B' : '#C4A45A',
-                    minWidth: '56px',
+                    color: isAct ? '#8F722B' : '#8A6F2E',
+                    minWidth: '48px',
                     flexShrink: 0,
                     transition: 'color .3s ease',
                     userSelect: 'none',
@@ -226,10 +225,10 @@ export default function ComoFuncionaStepper() {
                 </span>
 
                 {/* Nombre + descripción */}
-                <div style={{ flex: 1, minWidth: 0, padding: '10px 0' }}>
+                <div style={{ flex: 1, minWidth: 0, padding: '6px 0' }}>
                   <div style={{
                     fontFamily: 'var(--font-cormorant), serif',
-                    fontSize: '19px',
+                    fontSize: '18px',
                     fontWeight: isAct ? 600 : 500,
                     lineHeight: 1.2,
                     color: isAct ? '#1B2A24' : '#3A3530',
@@ -239,9 +238,9 @@ export default function ComoFuncionaStepper() {
                   </div>
                   <div style={{
                     fontFamily: 'var(--font-mulish), sans-serif',
-                    fontSize: '15px',
+                    fontSize: '14px',
                     lineHeight: 1.55,
-                    color: isAct ? 'rgba(42,43,46,0.85)' : 'rgba(42,43,46,0.62)',
+                    color: isAct ? 'rgba(42,43,46,0.92)' : 'rgba(42,43,46,0.80)',
                     marginTop: '3px',
                     transition: 'color .3s ease',
                   }}>

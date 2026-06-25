@@ -74,27 +74,16 @@ export function Header() {
           <Link
             href="/"
             aria-label="Tu Lugar en Galicia — inicio"
-            style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}
+            style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
           >
             <Image
-              src="/Logo TLG.jpeg"
+              src="/images/logo.jpeg"
               alt="Tu Lugar en Galicia"
-              width={36}
-              height={36}
-              style={{ borderRadius: '50%', objectFit: 'cover' }}
+              width={56}
+              height={56}
+              style={{ objectFit: 'contain', borderRadius: '4px' }}
               priority
             />
-            <span style={{
-              fontFamily: 'var(--font-cormorant)',
-              fontSize: '20px',
-              fontWeight: 400,
-              fontStyle: 'italic',
-              color: '#D4AF6A',
-              letterSpacing: '0.04em',
-              lineHeight: 1,
-            }}>
-              Tu Lugar en Galicia
-            </span>
           </Link>
 
           {/* Navegación escritorio */}

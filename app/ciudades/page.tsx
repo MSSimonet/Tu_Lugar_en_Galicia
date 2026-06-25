@@ -154,8 +154,8 @@ export default function CiudadesIndexPage() {
           Relocation especializado · Galicia
         </span>
         <h1
-          className="font-[family-name:var(--font-cormorant)] text-white font-normal leading-tight mb-4"
-          style={{ fontSize: 'clamp(2.4rem, 6vw, 3.5rem)' }}
+          className="font-[family-name:var(--font-cormorant)] text-white font-normal mb-4"
+          style={{ fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 400, lineHeight: 1.15, letterSpacing: '-0.01em' }}
         >
           Elige tu ciudad
         </h1>

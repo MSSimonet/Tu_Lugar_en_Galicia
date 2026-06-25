@@ -36,7 +36,7 @@ export default function SobreSilvanaPage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-[var(--color-granito)] pb-[var(--space-16)] px-[var(--space-6)]" style={{ paddingTop: 'calc(64px + 60px)' }}>
+      <section className="bg-[var(--color-granito)]" style={{ padding: '48px 80px' }}>
         <div className="mx-auto max-w-4xl">
           <div className="flex flex-col gap-[var(--space-8)] md:flex-row-reverse md:items-center md:gap-[var(--space-12)]">
             {/* Foto */}
@@ -61,7 +61,7 @@ export default function SobreSilvanaPage() {
                 letterSpacing: '-0.01em',
                 margin: '0 0 24px 0',
               }}>
-                Hola, soy Silvana. Y yo también hice este camino.
+                Hice tu mismo camino,<br />te entiendo muy bien…
               </h1>
               <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
                 Fundadora de Tu Lugar en Galicia — emigrante argentina con raíces gallegas
