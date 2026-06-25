@@ -10,97 +10,146 @@ export const metadata: Metadata = {
 
 const CIUDADES = [
   {
-    slug: 'vigo',
     nombre: 'Vigo',
+    tag: 'La ría se abre al Atlántico y la ciudad nunca para.',
+    slug: 'vigo',
     imagen: '/images/ciudades/card_vigo.jpg',
-    descripcion: 'Donde la ría se abre al Atlántico y la ciudad nunca para.',
   },
   {
-    slug: 'a-coruna',
     nombre: 'A Coruña',
-    imagen: '/images/ciudades/card_coruna.jpg',
-    descripcion: 'Viento, faro y una luz que no se parece a ninguna otra.',
+    tag: 'Viento, faro y una luz que no se parece a ninguna otra.',
+    slug: 'a-coruna',
+    imagen: '/images/ciudades/card_coruna2.jpg',
   },
   {
-    slug: 'santiago-de-compostela',
     nombre: 'Santiago de Compostela',
-    imagen: '/images/ciudades/card_santiago.jpg',
-    descripcion: 'La ciudad que lleva siglos esperando a quien llega.',
+    tag: 'La ciudad que lleva siglos esperando a quien llega.',
+    slug: 'santiago-de-compostela',
+    imagen: '/images/ciudades/card_santiago 2.jpg',
   },
   {
-    slug: 'pontevedra',
     nombre: 'Pontevedra',
+    tag: 'Piedra, silencio y la vida que pasa despacio.',
+    slug: 'pontevedra',
     imagen: '/images/ciudades/card_pontevedra.jpg',
-    descripcion: 'Piedra, silencio y la vida que pasa despacio.',
   },
   {
-    slug: 'lugo',
     nombre: 'Lugo',
+    tag: 'Dos mil años de muralla y todo el tiempo del mundo.',
+    slug: 'lugo',
     imagen: '/images/ciudades/card_lugo.jpg',
-    descripcion: 'Dos mil años de muralla y todo el tiempo del mundo.',
   },
 ]
 
-function CiudadCard({ ciudad }: { ciudad: typeof CIUDADES[number] }) {
+function CiudadCard({ nombre, tag, slug, imagen }: typeof CIUDADES[number]) {
   return (
-    <Link
-      href={`/ciudades/${ciudad.slug}`}
-      className="group block relative overflow-hidden rounded-2xl"
-      style={{ aspectRatio: '3/2' }}
-    >
-      <Image
-        src={ciudad.imagen}
-        alt={ciudad.nombre}
-        fill
-        className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-        sizes="(max-width: 768px) 100vw, 33vw"
-      />
-      {/* Overlay gradiente */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.18) 55%, rgba(0,0,0,0) 100%)',
-        }}
-        aria-hidden="true"
-      />
-      {/* Texto */}
-      <div className="absolute bottom-0 left-0 right-0 p-5">
-        <p
-          className="font-[family-name:var(--font-cormorant)] text-white font-normal leading-tight mb-1"
-          style={{ fontSize: 'clamp(1.5rem, 3vw, 1.8rem)' }}
-        >
-          {ciudad.nombre}
-        </p>
-        <p
-          className="font-[family-name:var(--font-mulish)] text-white/75 leading-snug"
-          style={{ fontSize: '0.9rem' }}
-        >
-          {ciudad.descripcion}
-        </p>
+    <Link href={`/ciudades/${slug}`} className="ciudad-card-link">
+      <div className="ciudad-card">
+        <Image
+          src={imagen}
+          alt={nombre}
+          fill
+          className="ciudad-img"
+          style={{ objectFit: 'cover' }}
+          sizes="(max-width: 768px) 100vw, 20vw"
+        />
+        {/* Gradiente oscuro inferior */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 45%, transparent 72%)',
+            zIndex: 1,
+          }}
+        />
+        {/* Texto superpuesto */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '20px 16px 18px', zIndex: 2 }}>
+          <p style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontSize: '26px',
+            fontWeight: 400,
+            fontStyle: 'italic',
+            color: '#F0EDE6',
+            margin: '0 0 7px 0',
+            lineHeight: 1.2,
+          }}>
+            {nombre}
+          </p>
+          <p style={{
+            fontFamily: 'var(--font-ui)',
+            fontSize: '13px',
+            fontWeight: 300,
+            color: 'rgba(240,237,230,0.75)',
+            margin: 0,
+            lineHeight: 1.5,
+          }}>
+            {tag}
+          </p>
+        </div>
+        {/* Borde dorado inferior — siempre visible */}
+        <div aria-hidden="true" style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '2px',
+          background: '#B8943F',
+          zIndex: 3,
+        }} />
+        {/* Borde dorado completo — aparece en hover via CSS */}
+        <div aria-hidden="true" className="ciudad-border" style={{
+          position: 'absolute',
+          inset: 0,
+          border: '1.5px solid #B8943F',
+          borderRadius: '3px',
+          zIndex: 3,
+          pointerEvents: 'none',
+        }} />
       </div>
     </Link>
   )
 }
 
 export default function CiudadesIndexPage() {
-  const [fila1, fila2] = [CIUDADES.slice(0, 3), CIUDADES.slice(3)]
-
   return (
     <>
+      <style>{`
+        .ciudad-card-link { text-decoration: none; display: block; }
+        .ciudad-card {
+          position: relative;
+          height: 320px;
+          overflow: hidden;
+          border-radius: 3px;
+          cursor: pointer;
+        }
+        .ciudad-img { transition: transform 500ms ease !important; }
+        .ciudad-border { opacity: 0; transition: opacity 250ms ease; }
+        .ciudad-card:hover .ciudad-img { transform: scale(1.05) !important; }
+        .ciudad-card:hover .ciudad-border { opacity: 1; }
+        .ciudades-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 10px;
+          padding: 0 80px 80px;
+        }
+        @media (max-width: 768px) {
+          .ciudades-grid {
+            grid-template-columns: 1fr !important;
+            padding: 0 20px 48px !important;
+          }
+          .ciudad-card { height: 220px !important; }
+        }
+      `}</style>
+
       {/* Hero */}
       <section
         className="bg-[var(--color-granito)] flex flex-col items-center justify-center text-center px-6 md:px-12"
-        style={{ minHeight: '320px' }}
+        style={{ padding: '40px 48px' }}
       >
-        {/* Eyebrow pill */}
         <span
           className="inline-flex items-center px-3 py-1 rounded-full mb-5 font-[family-name:var(--font-mulish)] tracking-widest uppercase text-[var(--color-laton-claro)] border"
-          style={{
-            fontSize: '10px',
-            background: 'rgba(0,0,0,0.42)',
-            borderColor: 'rgba(255,255,255,0.18)',
-          }}
+          style={{ fontSize: '10px', background: 'rgba(0,0,0,0.42)', borderColor: 'rgba(255,255,255,0.18)' }}
         >
           Relocation especializado · Galicia
         </span>
@@ -118,21 +167,12 @@ export default function CiudadesIndexPage() {
         </p>
       </section>
 
-      {/* Grid de ciudades */}
-      <section className="bg-[var(--color-niebla)] px-6 md:px-8 py-10">
-        <div className="max-w-7xl mx-auto space-y-4">
-          {/* Fila 1: 3 columnas */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {fila1.map(ciudad => (
-              <CiudadCard key={ciudad.slug} ciudad={ciudad} />
-            ))}
-          </div>
-          {/* Fila 2: 2 columnas centradas */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:w-2/3 md:mx-auto">
-            {fila2.map(ciudad => (
-              <CiudadCard key={ciudad.slug} ciudad={ciudad} />
-            ))}
-          </div>
+      {/* Grid 5 columnas */}
+      <section className="bg-[var(--color-granito)]" style={{ paddingTop: '10px' }}>
+        <div className="ciudades-grid">
+          {CIUDADES.map(ciudad => (
+            <CiudadCard key={ciudad.slug} {...ciudad} />
+          ))}
         </div>
       </section>
     </>

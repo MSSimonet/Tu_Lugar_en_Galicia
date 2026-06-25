@@ -19,16 +19,9 @@ const FALLBACK: MarcadorData = {
 const cifras: { key: keyof MarcadorData; etiqueta: string; unidad?: string }[] =
   [
     { key: "anunciosContactados", etiqueta: "Anuncios contactados" },
-    {
-      key: "propietariosDijeronNo",
-      etiqueta: "Propietarios que dijeron no",
-    },
+    { key: "propietariosDijeronNo", etiqueta: "Propietarios que dijeron no" },
     { key: "familiasUbicadas", etiqueta: "Familias ubicadas este mes" },
-    {
-      key: "tiempoMedioSemanas",
-      etiqueta: "Semanas de tiempo medio",
-      unidad: "sem",
-    },
+    { key: "tiempoMedioSemanas", etiqueta: "Semanas de tiempo medio", unidad: "sem" },
   ];
 
 export function ElMarcador() {
@@ -46,55 +39,105 @@ export function ElMarcador() {
   const display = data ?? FALLBACK;
 
   return (
-    <section
-      className="bg-[var(--color-atlantico)] px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
-      aria-label="El marcador — cifras en tiempo real"
-    >
-      <div className="mx-auto max-w-4xl">
-        <h2
-          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] uppercase"
-          style={{ color: 'var(--color-niebla)' }}
-        >
-          En tiempo real
-        </h2>
-        <p
-          className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] md:[font-size:var(--text-2xl)]"
-          style={{ color: '#FFFFFF' }}
-        >
-          El Marcador
-        </p>
+    <>
+      <style>{`
+        .marcador-section { padding: 32px 80px; }
+        .marcador-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        @media (max-width: 640px) {
+          .marcador-section { padding: 24px 20px; }
+          .marcador-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        }
+      `}</style>
+      <section
+        className="marcador-section bg-[var(--color-atlantico)]"
+        aria-label="El marcador — cifras en tiempo real"
+      >
+        <div className="mx-auto max-w-4xl">
+          <h2
+            style={{
+              marginBottom: '6px',
+              textAlign: 'center',
+              fontFamily: 'var(--font-ui)',
+              fontSize: '10px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: 'var(--color-niebla)',
+            }}
+          >
+            En tiempo real
+          </h2>
+          <p
+            style={{
+              marginBottom: '24px',
+              textAlign: 'center',
+              fontFamily: 'var(--font-titular)',
+              fontSize: '32px',
+              lineHeight: 1.1,
+              color: '#FFFFFF',
+            }}
+          >
+            El Marcador
+          </p>
 
-        <ul className="grid grid-cols-2 gap-[var(--space-6)] md:grid-cols-4 md:gap-[var(--space-8)]">
-          {cifras.map(({ key, etiqueta, unidad }) => (
-            <li key={key} className="text-center rounded-[var(--radius-card)] bg-white/10 px-[var(--space-4)] py-[var(--space-6)]">
-              {loading ? (
-                /* Skeleton */
-                <div
-                  className="mx-auto mb-[var(--space-3)] h-12 w-24 animate-pulse rounded-[var(--radius-card)] bg-[var(--color-atlantico-claro)]"
-                  aria-hidden="true"
-                />
-              ) : (
-                <span
-                  className="block font-[family-name:var(--font-titular)] [font-size:var(--text-2xl)] leading-[var(--leading-titulo)]"
-                  style={{ color: '#FFFFFF' }}
-                  aria-label={`${display[key]}${unidad ? " " + unidad : ""} — ${etiqueta}`}
-                >
-                  {display[key]}
-                  {unidad && (
-                    <span className="[font-size:var(--text-lg)]"> {unidad}</span>
-                  )}
-                </span>
-              )}
-              <span
-                className="mt-[var(--space-2)] block font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] uppercase"
-                style={{ color: 'var(--color-niebla)', opacity: 0.8 }}
+          <ul className="marcador-grid" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+            {cifras.map(({ key, etiqueta, unidad }) => (
+              <li
+                key={key}
+                style={{
+                  textAlign: 'center',
+                  borderRadius: 'var(--radius-card)',
+                  background: 'rgba(255,255,255,0.10)',
+                  padding: '20px 16px',
+                }}
               >
-                {etiqueta}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
+                {loading ? (
+                  <div
+                    style={{
+                      margin: '0 auto 8px',
+                      height: '40px',
+                      width: '80px',
+                      borderRadius: 'var(--radius-card)',
+                      background: 'var(--color-atlantico-claro)',
+                      animation: 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite',
+                    }}
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <span
+                    style={{
+                      display: 'block',
+                      fontFamily: 'var(--font-titular)',
+                      fontSize: '40px',
+                      lineHeight: 1,
+                      color: '#FFFFFF',
+                    }}
+                    aria-label={`${display[key]}${unidad ? " " + unidad : ""} — ${etiqueta}`}
+                  >
+                    {display[key]}
+                    {unidad && (
+                      <span style={{ fontSize: '24px' }}> {unidad}</span>
+                    )}
+                  </span>
+                )}
+                <span
+                  style={{
+                    marginTop: '6px',
+                    display: 'block',
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: '10px',
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    color: 'var(--color-niebla)',
+                    opacity: 0.8,
+                  }}
+                >
+                  {etiqueta}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </>
   );
 }

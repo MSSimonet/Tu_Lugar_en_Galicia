@@ -52,7 +52,15 @@ export default function SobreSilvanaPage() {
             </div>
             {/* Título */}
             <div>
-              <h1 className="font-[family-name:var(--font-titular)] [font-size:var(--text-2xl)] leading-[var(--leading-titulo)] [color:var(--color-niebla)] md:[font-size:var(--text-3xl)]">
+              <h1 style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: 'clamp(36px, 5vw, 64px)',
+                fontWeight: 400,
+                color: '#F0EDE6',
+                lineHeight: 1.15,
+                letterSpacing: '-0.01em',
+                margin: '0 0 24px 0',
+              }}>
                 Hola, soy Silvana. Y yo también hice este camino.
               </h1>
               <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">

@@ -1,16 +1,16 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
-import { SITE_NAME } from '@/lib/config/site'
 
 const navLinks = [
-  { label: 'Inicio', href: '/' },
-  { label: 'Cómo funciona', href: '/como-funciona' },
-  { label: 'Ciudades', href: '/ciudades' },
-  { label: 'Sobre Silvana', href: '/sobre-silvana' },
-  { label: '¿Tienes dudas?', href: '/faq' },
+  { label: 'Inicio',         href: '/'              },
+  { label: 'Cómo funciona',  href: '/como-funciona' },
+  { label: 'Ciudades',       href: '/ciudades'       },
+  { label: 'Sobre Silvana',  href: '/sobre-silvana'  },
+  { label: '¿Tienes dudas?', href: '/faq'            },
 ]
 
 const SPARKLES_PATH =
@@ -28,29 +28,13 @@ function abrirGina() {
   window.dispatchEvent(new CustomEvent('gina:open'))
 }
 
-// Pages with a light/non-photo hero where the transparent header is illegible
-const FORCE_SOLID_PATHS = ['/conocernos', '/como-funciona', '/faq', '/politica-de-privacidad']
-
 export function Header() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const hamburgerRef = useRef<HTMLButtonElement>(null)
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
-
-  const forceSolid = FORCE_SOLID_PATHS.includes(pathname)
-  const solid = scrolled || forceSolid
-
-  useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY >= 50)
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -64,80 +48,57 @@ export function Header() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [menuOpen])
 
-  const headerStyle: React.CSSProperties = {
-    height: '64px',
-    background: solid
-      ? '#1A1B1E'
-      : 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0) 100%)',
-    borderBottom: solid ? '0.5px solid rgba(255,255,255,0.07)' : 'none',
-    transition: forceSolid ? 'none' : 'background 300ms ease, border-color 300ms ease',
-  }
-
-  const ginaStyle: React.CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '6px',
-    borderRadius: '20px',
-    padding: solid ? '7px 16px' : '8px 18px',
-    fontSize: solid ? '0.77rem' : '0.8rem',
-    fontFamily: 'var(--font-ui)',
-    color: solid ? 'rgba(255,255,255,0.8)' : 'white',
-    background: 'transparent',
-    border: solid ? '0.5px solid rgba(255,255,255,0.25)' : '0.5px solid rgba(255,255,255,0.5)',
-    cursor: 'pointer',
-    letterSpacing: '0.03em',
-    transition: 'all 300ms ease',
-  }
-
-  const agendaStyle: React.CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '20px',
-    padding: solid ? '7px 16px' : '8px 18px',
-    fontSize: solid ? '0.77rem' : '0.8rem',
-    fontFamily: 'var(--font-ui)',
-    color: 'white',
-    background: '#8F722B',
-    border: 'none',
-    textDecoration: 'none',
-    textTransform: 'uppercase' as const,
-    fontWeight: 600,
-    letterSpacing: '0.05em',
-    transition: 'all 300ms ease',
-  }
-
   return (
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--color-laton)] focus:text-white focus:rounded-lg focus:font-[family-name:var(--font-ui)]"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#B8943F] focus:text-white focus:rounded-lg focus:font-[family-name:var(--font-ui)]"
       >
         Ir al contenido principal
       </a>
 
-      <header className="fixed top-0 left-0 right-0 z-40" style={headerStyle}>
-        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+      <header style={{
+        background: '#111111',
+        borderBottom: '1px solid #B8943F',
+        height: '68px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+      }}>
+        <div
+          className="max-w-7xl mx-auto h-full flex items-center justify-between"
+          style={{ padding: '0 80px' }}
+        >
 
           {/* Logo */}
           <Link
             href="/"
             aria-label="Tu Lugar en Galicia — inicio"
-            style={{
-              fontFamily: 'var(--font-cormorant)',
-              fontSize: '1.4rem',
-              fontWeight: 400,
-              color: 'white',
-              textDecoration: 'none',
-              letterSpacing: '0.03em',
-              textShadow: solid ? 'none' : '0 1px 8px rgba(0,0,0,0.6)',
-            }}
+            style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}
           >
-            {SITE_NAME}
+            <Image
+              src="/Logo TLG.jpeg"
+              alt="Tu Lugar en Galicia"
+              width={36}
+              height={36}
+              style={{ borderRadius: '50%', objectFit: 'cover' }}
+              priority
+            />
+            <span style={{
+              fontFamily: 'var(--font-cormorant)',
+              fontSize: '20px',
+              fontWeight: 400,
+              fontStyle: 'italic',
+              color: '#D4AF6A',
+              letterSpacing: '0.04em',
+              lineHeight: 1,
+            }}>
+              Tu Lugar en Galicia
+            </span>
           </Link>
 
           {/* Navegación escritorio */}
-          <nav aria-label="Navegación principal" className="hidden md:flex items-center gap-6">
+          <nav aria-label="Navegación principal" className="hidden md:flex items-center gap-8">
             {navLinks.map(({ label, href }) => {
               const active = isActive(href)
               return (
@@ -147,16 +108,17 @@ export function Header() {
                   aria-current={active ? 'page' : undefined}
                   style={{
                     position: 'relative',
-                    fontSize: '0.83rem',
-                    letterSpacing: '0.07em',
-                    textTransform: 'uppercase',
-                    color: active ? 'white' : solid ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.65)',
-                    fontWeight: active ? 500 : 400,
-                    textDecoration: 'none',
                     fontFamily: 'var(--font-ui)',
-                    textShadow: solid ? 'none' : '0 1px 4px rgba(0,0,0,0.5)',
-                    transition: 'color 300ms ease',
+                    fontSize: '12px',
+                    fontWeight: 300,
+                    color: active ? '#F0EDE6' : '#A8A8A8',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    textDecoration: 'none',
+                    transition: 'color 200ms ease',
                   }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#F0EDE6' }}
+                  onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#A8A8A8' }}
                 >
                   {label}
                   {active && (
@@ -167,10 +129,8 @@ export function Header() {
                         bottom: '-4px',
                         left: 0,
                         right: 0,
-                        height: '1.5px',
-                        background: solid ? '#8F722B' : '#D4B96A',
-                        borderRadius: '1px',
-                        transition: 'background 300ms ease',
+                        height: '1px',
+                        background: '#B8943F',
                       }}
                     />
                   )}
@@ -178,12 +138,53 @@ export function Header() {
               )
             })}
 
-            <button type="button" onClick={abrirGina} aria-label="Hablar con Gina, abrir asistente" style={ginaStyle}>
-              <SparklesIcon color="#D4B96A" />
+            <Link
+              href="/chat"
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontSize: '12px',
+                fontWeight: 700,
+                color: '#0D0D0D',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '7px',
+                background: '#B8943F',
+                padding: '9px 18px',
+                borderRadius: '999px',
+                letterSpacing: '0.06em',
+                transition: 'background 200ms ease',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#D4AF6A')}
+              onMouseLeave={e => (e.currentTarget.style.background = '#B8943F')}
+            >
+              <span style={{ fontSize: '13px', lineHeight: '1' }}>✦</span>
               Hablar con Gina
-            </button>
+            </Link>
 
-            <Link href="/agenda" style={agendaStyle}>
+            <Link
+              href="/agenda"
+              style={{
+                fontFamily: 'var(--font-cormorant)',
+                fontSize: '13px',
+                fontWeight: 500,
+                color: '#D4AF6A',
+                border: '1px solid #B8943F',
+                padding: '9px 22px',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                textDecoration: 'none',
+                transition: 'background 200ms ease, color 200ms ease',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#B8943F'
+                e.currentTarget.style.color = '#0D0D0D'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.color = '#D4AF6A'
+              }}
+            >
               Agenda
             </Link>
           </nav>
@@ -192,11 +193,11 @@ export function Header() {
           <button
             ref={hamburgerRef}
             type="button"
-            onClick={() => setMenuOpen((prev) => !prev)}
+            onClick={() => setMenuOpen(prev => !prev)}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-            className="md:hidden flex flex-col justify-center gap-1.5 w-8 h-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+            className="md:hidden flex flex-col justify-center gap-1.5 w-8 h-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B8943F]"
           >
             <span className={['block h-0.5 w-6 bg-white transition-transform duration-200', menuOpen ? 'translate-y-2 rotate-45' : ''].join(' ')} />
             <span className={['block h-0.5 w-6 bg-white transition-opacity duration-200', menuOpen ? 'opacity-0' : ''].join(' ')} />
@@ -209,8 +210,8 @@ export function Header() {
           <nav
             id="mobile-menu"
             aria-label="Navegación móvil"
-            className="md:hidden px-6 py-4 flex flex-col gap-4"
-            style={{ background: '#1A1B1E', borderTop: '0.5px solid rgba(255,255,255,0.08)' }}
+            className="md:hidden px-6 py-5 flex flex-col gap-5"
+            style={{ background: '#111111', borderTop: '1px solid rgba(184,148,63,0.3)' }}
           >
             {navLinks.map(({ label, href }) => {
               const active = isActive(href)
@@ -221,13 +222,13 @@ export function Header() {
                   onClick={() => setMenuOpen(false)}
                   aria-current={active ? 'page' : undefined}
                   style={{
-                    fontSize: '0.85rem',
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                    color: active ? 'white' : 'rgba(255,255,255,0.6)',
-                    fontWeight: active ? 500 : 400,
-                    textDecoration: 'none',
                     fontFamily: 'var(--font-ui)',
+                    fontSize: '12px',
+                    fontWeight: 300,
+                    color: active ? '#F0EDE6' : '#A8A8A8',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    textDecoration: 'none',
                   }}
                 >
                   {label}
@@ -240,15 +241,21 @@ export function Header() {
               onClick={() => { abrirGina(); setMenuOpen(false) }}
               aria-label="Hablar con Gina, abrir asistente"
               style={{
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                gap: '6px', borderRadius: '20px', padding: '8px 18px',
-                fontSize: '0.85rem', fontFamily: 'var(--font-ui)',
-                color: 'white', background: 'rgba(255,255,255,0.1)',
-                border: '0.5px solid rgba(255,255,255,0.3)', cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontFamily: 'var(--font-ui)',
+                fontSize: '12px',
+                fontWeight: 300,
+                color: '#A8A8A8',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
                 letterSpacing: '0.03em',
+                padding: 0,
               }}
             >
-              <SparklesIcon color="#D4B96A" />
+              <SparklesIcon color="#B8943F" />
               Hablar con Gina
             </button>
 
@@ -256,12 +263,18 @@ export function Header() {
               href="/agenda"
               onClick={() => setMenuOpen(false)}
               style={{
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                borderRadius: '20px', padding: '8px 18px',
-                fontSize: '0.85rem', fontFamily: 'var(--font-ui)',
-                color: 'white', background: '#8F722B',
-                border: 'none', textDecoration: 'none',
-                textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'var(--font-cormorant)',
+                fontSize: '13px',
+                fontWeight: 500,
+                color: '#D4AF6A',
+                border: '1px solid #B8943F',
+                padding: '9px 22px',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                textDecoration: 'none',
               }}
             >
               Agenda

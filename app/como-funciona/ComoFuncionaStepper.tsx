@@ -104,6 +104,10 @@ export default function ComoFuncionaStepper() {
               backgroundPosition: 'center',
               opacity: i === active ? 1 : 0,
               transition: 'opacity 0.85s ease',
+              transform: 'scale(0.90)',
+              transformOrigin: 'center center',
+              borderRadius: '20px',
+              overflow: 'hidden',
             }}
           />
         ))}
