@@ -19,14 +19,20 @@ type Props = {
 }
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const REGEX_TELEFONO = /^\+?[1-9]\d{6,14}$/
+const REGEX_TELEFONO = /^\+?[1-9][\d\s\-()+]{5,17}$/
+
+const esValidoTelefono = (v: string) => {
+  if (!REGEX_TELEFONO.test(v)) return false
+  const soloDigitos = v.replace(/\D/g, '')
+  return soloDigitos.length >= 7 && soloDigitos.length <= 15
+}
 
 function validar(valor: string, tipo?: TipoValidacion): string | null {
   if (!valor.trim()) return 'Por favor, escribe tu respuesta.'
   if (tipo === 'email' && !REGEX_EMAIL.test(valor.trim())) {
     return 'El formato del email no es válido (ej: nombre@correo.com).'
   }
-  if (tipo === 'telefono' && !REGEX_TELEFONO.test(valor.trim())) {
+  if (tipo === 'telefono' && !esValidoTelefono(valor.trim())) {
     return 'El teléfono debe incluir el prefijo de país (ej: +54 11 1234-5678).'
   }
   return null
