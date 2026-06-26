@@ -168,14 +168,28 @@ export function Footer() {
           <div className="flex flex-col gap-5 items-center text-center md:items-start md:text-left">
 
             {/* Logo footer */}
-            <Image
-              src="/images/logo_footer.png"
-              alt="Tu Lugar en Galicia"
-              width={152}
-              height={76}
-              style={{ objectFit: 'contain', mixBlendMode: 'lighten' }}
-              priority={false}
-            />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '18px', marginBottom: '24px' }}>
+              <Image
+                src="/images/aldaba.svg"
+                alt=""
+                width={72}
+                height={93}
+                style={{ objectFit: 'contain', display: 'block', flexShrink: 0 }}
+                priority
+              />
+              <span style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: '24px',
+                fontWeight: 400,
+                fontStyle: 'italic',
+                color: '#D4AF6A',
+                letterSpacing: '0.06em',
+                lineHeight: 1.2,
+                whiteSpace: 'nowrap',
+              }}>
+                Tu Lugar<br />en Galicia
+              </span>
+            </div>
 
             {/* Tagline — C4: serif itálico dorado */}
             <p

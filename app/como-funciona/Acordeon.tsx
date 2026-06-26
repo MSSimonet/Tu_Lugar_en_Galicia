@@ -36,7 +36,7 @@ const pasos = [
     tiempo: 'Día de llegada',
     nombre: 'Llegas y abres tu puerta',
     texto:
-      'Nuestro equipo te espera en Galicia. Te acompaña el primer día, te muestra el barrio y te deja con todo en orden. Tu única tarea en todo este proceso fue hacer las valijas.',
+      'Nuestro equipo te espera en Galicia. Te acompaña el primer día, te muestra el barrio y te deja con todo en orden. Tu única tarea en todo este proceso fue hacer las maletas.',
   },
 ] as const
 

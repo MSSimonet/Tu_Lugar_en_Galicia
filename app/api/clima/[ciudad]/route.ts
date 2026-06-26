@@ -27,8 +27,7 @@ interface DiaPred {
   estadoCielo?: EstadoCielo[]
   precipitacion?: PeriodoValor[]
   humedadRelativa?: PeriodoValor[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  vientoAndRachaMax?: any[]
+  vientoAndRachaMax?: unknown[]
 }
 
 function entradaMasCercana<T extends PeriodoValor>(arr: T[] | undefined, hora: number): T | null {

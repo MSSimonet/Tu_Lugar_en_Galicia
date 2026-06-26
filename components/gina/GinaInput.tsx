@@ -19,7 +19,7 @@ type Props = {
 }
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const REGEX_TELEFONO = /^\+?[\d\s\-().]{6,20}$/
+const REGEX_TELEFONO = /^\+?[1-9]\d{6,14}$/
 
 function validar(valor: string, tipo?: TipoValidacion): string | null {
   if (!valor.trim()) return 'Por favor, escribe tu respuesta.'

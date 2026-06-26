@@ -58,7 +58,7 @@ export function Header() {
       </a>
 
       <header
-        className="h-16 md:h-[78px]"
+        className="h-16 md:h-[92px]"
         style={{
           background: '#111111',
           borderBottom: '1px solid #B8943F',
@@ -67,29 +67,57 @@ export function Header() {
           zIndex: 50,
         }}
       >
+        {/*
+          Grid 1fr auto 1fr: col izquierda y derecha iguales → nav centrado sin overlap.
+          El gap del nav baja a 16px para que 1fr ≥ 285px (ancho de los CTAs).
+        */}
         <div
-          className="max-w-7xl mx-auto h-full flex items-center justify-between"
-          style={{ padding: '0 80px' }}
+          className="max-w-7xl mx-auto h-full grid items-center"
+          style={{ padding: '0 24px', gridTemplateColumns: '1fr auto 1fr' }}
         >
 
-          {/* Logo */}
-          <Link
-            href="/"
-            aria-label="Tu Lugar en Galicia — inicio"
-            style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
-          >
-            <Image
-              src="/images/logo_nav.png"
-              alt="Tu Lugar en Galicia"
-              width={136}
-              height={68}
-              style={{ objectFit: 'contain', mixBlendMode: 'lighten' }}
-              priority
-            />
-          </Link>
+          {/* Col 1: Logo — izquierda */}
+          <div className="flex items-center">
+            <Link
+              href="/"
+              aria-label="Tu Lugar en Galicia — inicio"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                textDecoration: 'none',
+                flexShrink: 0,
+              }}
+            >
+              <Image
+                src="/images/aldaba.svg"
+                alt=""
+                width={54}
+                height={70}
+                style={{ objectFit: 'contain', display: 'block' }}
+                priority
+              />
+              <span style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: '20px',
+                fontWeight: 400,
+                fontStyle: 'italic',
+                color: '#D4AF6A',
+                letterSpacing: '0.05em',
+                lineHeight: 1.15,
+                whiteSpace: 'nowrap',
+              }}>
+                Tu Lugar<br />en Galicia
+              </span>
+            </Link>
+          </div>
 
-          {/* Navegación escritorio */}
-          <nav aria-label="Navegación principal" className="hidden md:flex items-center gap-8">
+          {/* Col 2: Nav links — centro exacto (md+) */}
+          <nav
+            aria-label="Navegación principal"
+            className="hidden md:flex items-center"
+            style={{ gap: '20px' }}
+          >
             {navLinks.map(({ label, href }) => {
               const active = isActive(href)
               return (
@@ -100,10 +128,10 @@ export function Header() {
                   style={{
                     position: 'relative',
                     fontFamily: 'var(--font-ui)',
-                    fontSize: '13px',
+                    fontSize: '11px',
                     fontWeight: 300,
                     color: active ? '#F0EDE6' : '#A8A8A8',
-                    letterSpacing: '0.08em',
+                    letterSpacing: '0.05em',
                     textTransform: 'uppercase',
                     textDecoration: 'none',
                     transition: 'color 200ms ease',
@@ -128,72 +156,79 @@ export function Header() {
                 </Link>
               )
             })}
-
-            <Link
-              href="/chat"
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: '13px',
-                fontWeight: 700,
-                color: '#0D0D0D',
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '7px',
-                background: '#B8943F',
-                padding: '9px 18px',
-                borderRadius: '999px',
-                letterSpacing: '0.06em',
-                transition: 'background 200ms ease',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#D4AF6A')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#B8943F')}
-            >
-              <span style={{ fontSize: '13px', lineHeight: '1' }}>✦</span>
-              Hablar con Gina
-            </Link>
-
-            <Link
-              href="/agenda"
-              style={{
-                fontFamily: 'var(--font-cormorant)',
-                fontSize: '13px',
-                fontWeight: 500,
-                color: '#D4AF6A',
-                border: '1px solid #B8943F',
-                padding: '9px 22px',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                transition: 'background 200ms ease, color 200ms ease',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = '#B8943F'
-                e.currentTarget.style.color = '#0D0D0D'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = 'transparent'
-                e.currentTarget.style.color = '#D4AF6A'
-              }}
-            >
-              Agenda
-            </Link>
           </nav>
 
-          {/* Hamburguesa móvil */}
-          <button
-            ref={hamburgerRef}
-            type="button"
-            onClick={() => setMenuOpen(prev => !prev)}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
-            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-            className="md:hidden flex flex-col justify-center gap-1.5 w-8 h-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B8943F]"
-          >
-            <span className={['block h-0.5 w-6 bg-white transition-transform duration-200', menuOpen ? 'translate-y-2 rotate-45' : ''].join(' ')} />
-            <span className={['block h-0.5 w-6 bg-white transition-opacity duration-200', menuOpen ? 'opacity-0' : ''].join(' ')} />
-            <span className={['block h-0.5 w-6 bg-white transition-transform duration-200', menuOpen ? '-translate-y-2 -rotate-45' : ''].join(' ')} />
-          </button>
+          {/* Col 3: CTAs (md+) + Hamburger (mobile) — derecha */}
+          <div className="flex items-center justify-end">
+
+            {/* CTAs — solo desktop */}
+            <div className="hidden md:flex items-center gap-3">
+              <Link
+                href="/chat"
+                style={{
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: '#0D0D0D',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '7px',
+                  background: '#B8943F',
+                  padding: '9px 18px',
+                  borderRadius: '999px',
+                  letterSpacing: '0.06em',
+                  transition: 'background 200ms ease',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#D4AF6A')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#B8943F')}
+              >
+                <span style={{ fontSize: '13px', lineHeight: '1' }}>✦</span>
+                Hablar con Gina
+              </Link>
+
+              <Link
+                href="/agenda"
+                style={{
+                  fontFamily: 'var(--font-cormorant)',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: '#D4AF6A',
+                  border: '1px solid #B8943F',
+                  padding: '9px 22px',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  textDecoration: 'none',
+                  transition: 'background 200ms ease, color 200ms ease',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#B8943F'
+                  e.currentTarget.style.color = '#0D0D0D'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.color = '#D4AF6A'
+                }}
+              >
+                Agenda
+              </Link>
+            </div>
+
+            {/* Hamburger — solo mobile */}
+            <button
+              ref={hamburgerRef}
+              type="button"
+              onClick={() => setMenuOpen(prev => !prev)}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+              aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              className="md:hidden flex flex-col justify-center gap-1.5 w-8 h-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B8943F]"
+            >
+              <span className={['block h-0.5 w-6 bg-white transition-transform duration-200', menuOpen ? 'translate-y-2 rotate-45' : ''].join(' ')} />
+              <span className={['block h-0.5 w-6 bg-white transition-opacity duration-200', menuOpen ? 'opacity-0' : ''].join(' ')} />
+              <span className={['block h-0.5 w-6 bg-white transition-transform duration-200', menuOpen ? '-translate-y-2 -rotate-45' : ''].join(' ')} />
+            </button>
+          </div>
         </div>
 
         {/* Menú móvil */}

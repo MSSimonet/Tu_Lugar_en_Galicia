@@ -174,26 +174,27 @@ export default function ComoFuncionaStepper() {
           {data.map((d, i) => {
             const isAct = i === active
             return (
-              <div
+              <button
                 key={i}
+                type="button"
                 onClick={() => pick(i)}
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
-                role="button"
-                tabIndex={0}
                 aria-pressed={i === selected}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') pick(i) }}
                 style={{
                   flex: 1,
                   display: 'flex',
                   alignItems: 'center',
+                  width: '100%',
+                  border: 'none',
                   borderTop: '1px solid #D4C9B8',
                   paddingLeft: '16px',
                   cursor: 'pointer',
                   position: 'relative',
-                  outline: 'none',
                   background: isAct ? 'rgba(143,114,43,0.05)' : 'transparent',
                   transition: 'background .3s ease',
+                  textAlign: 'left',
+                  font: 'inherit',
                 }}
               >
                 {/* Barra izquierda brass */}
@@ -248,7 +249,7 @@ export default function ComoFuncionaStepper() {
                   </div>
                 </div>
 
-              </div>
+              </button>
             )
           })}
           {/* Borde inferior de la última fila */}
