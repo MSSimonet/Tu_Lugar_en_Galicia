@@ -131,7 +131,7 @@ export default function ComoFuncionaStepper() {
             fontSize: '10px',
             letterSpacing: '0.15em',
             textTransform: 'uppercase',
-            color: '#8F722B',
+            color: '#705D1E',
             margin: '0 0 6px',
           }}>
             Cómo funciona
