@@ -312,7 +312,6 @@ export function Footer() {
                 href="https://www.instagram.com/tulugarengalicia/"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Síguenos en Instagram"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -334,7 +333,6 @@ export function Footer() {
                 href="https://www.facebook.com/p/Tu-lugar-en-Galicia-100075983977059/"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Síguenos en Facebook"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
