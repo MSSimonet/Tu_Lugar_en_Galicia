@@ -57,14 +57,16 @@ export function Header() {
         Ir al contenido principal
       </a>
 
-      <header style={{
-        background: '#111111',
-        borderBottom: '1px solid #B8943F',
-        height: '68px',
-        position: 'sticky',
-        top: 0,
-        zIndex: 50,
-      }}>
+      <header
+        className="h-16 md:h-[78px]"
+        style={{
+          background: '#111111',
+          borderBottom: '1px solid #B8943F',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+        }}
+      >
         <div
           className="max-w-7xl mx-auto h-full flex items-center justify-between"
           style={{ padding: '0 80px' }}
@@ -77,11 +79,11 @@ export function Header() {
             style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
           >
             <Image
-              src="/images/logo.jpeg"
+              src="/images/logo_nav.png"
               alt="Tu Lugar en Galicia"
-              width={56}
-              height={56}
-              style={{ objectFit: 'contain', borderRadius: '4px' }}
+              width={136}
+              height={68}
+              style={{ objectFit: 'contain', mixBlendMode: 'lighten' }}
               priority
             />
           </Link>
@@ -98,7 +100,7 @@ export function Header() {
                   style={{
                     position: 'relative',
                     fontFamily: 'var(--font-ui)',
-                    fontSize: '12px',
+                    fontSize: '13px',
                     fontWeight: 300,
                     color: active ? '#F0EDE6' : '#A8A8A8',
                     letterSpacing: '0.08em',
@@ -131,7 +133,7 @@ export function Header() {
               href="/chat"
               style={{
                 fontFamily: 'var(--font-ui)',
-                fontSize: '12px',
+                fontSize: '13px',
                 fontWeight: 700,
                 color: '#0D0D0D',
                 textDecoration: 'none',
@@ -212,7 +214,7 @@ export function Header() {
                   aria-current={active ? 'page' : undefined}
                   style={{
                     fontFamily: 'var(--font-ui)',
-                    fontSize: '12px',
+                    fontSize: '13px',
                     fontWeight: 300,
                     color: active ? '#F0EDE6' : '#A8A8A8',
                     letterSpacing: '0.08em',
@@ -234,7 +236,7 @@ export function Header() {
                 alignItems: 'center',
                 gap: '6px',
                 fontFamily: 'var(--font-ui)',
-                fontSize: '12px',
+                fontSize: '13px',
                 fontWeight: 300,
                 color: '#A8A8A8',
                 background: 'transparent',

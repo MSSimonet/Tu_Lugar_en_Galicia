@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -59,7 +61,7 @@ function NavLink({
   const style: React.CSSProperties = {
     fontSize: '0.84rem',
     fontWeight: 300,
-    color: '#6B6B6B',
+    color: '#A8A8A8',
     textDecoration: 'none',
     lineHeight: 1.5,
     fontFamily: 'var(--font-ui)',
@@ -91,8 +93,8 @@ function NavLink({
 function InstagramIcon() {
   return (
     <svg
-      width="19"
-      height="19"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -111,8 +113,8 @@ function InstagramIcon() {
 function FacebookIcon() {
   return (
     <svg
-      width="19"
-      height="19"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -150,7 +152,7 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer style={{ background: '#0D0D0D', fontFamily: 'var(--font-ui)' }}>
+    <footer style={{ background: '#141414', fontFamily: 'var(--font-ui)' }}>
 
       {/* Separador dorado superior */}
       <div style={{ height: '1px', background: '#B8943F', opacity: 0.7 }} />
@@ -158,118 +160,95 @@ export function Footer() {
       {/* ── Cuerpo principal ─────────────────────────────── */}
       <div
         className="mx-auto max-w-7xl"
-        style={{ padding: '4rem 2.5rem', paddingBottom: '3.5rem' }}
+        style={{ padding: '4rem 5rem 3.5rem' }}
       >
         <div className="grid grid-cols-1 gap-12 md:gap-10 lg:gap-14 md:grid-cols-[2.1fr_1.1fr_1.1fr_1.5fr]">
 
           {/* ── Columna 1 — Marca ────────────────────────── */}
           <div className="flex flex-col gap-5 items-center text-center md:items-start md:text-left">
 
-            {/* Logo */}
+            {/* Logo footer */}
             <Image
-              src="/Logo TLG.jpeg"
+              src="/images/logo_footer.png"
               alt="Tu Lugar en Galicia"
-              width={68}
-              height={68}
-              style={{ borderRadius: '4px', objectFit: 'contain' }}
+              width={152}
+              height={76}
+              style={{ objectFit: 'contain', mixBlendMode: 'lighten' }}
               priority={false}
             />
 
-            {/* Nombre y tagline */}
+            {/* Tagline — C4: serif itálico dorado */}
+            <p
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: '15px',
+                fontWeight: 400,
+                fontStyle: 'italic',
+                color: '#D4AF6A',
+                letterSpacing: '0.06em',
+                margin: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              La primera agencia de relocation de Galicia
+            </p>
+
+            {/* Descripción — C1: "+200" en línea propia */}
             <div>
               <p
                 style={{
-                  fontFamily: 'var(--font-cormorant)',
-                  fontSize: '1.55rem',
-                  fontWeight: 400,
-                  color: '#D4AF6A',
-                  letterSpacing: '0.015em',
-                  lineHeight: 1.15,
+                  fontSize: '14px',
+                  fontWeight: 300,
+                  color: '#9A9A9A',
+                  lineHeight: 1.8,
+                  margin: '0 0 8px 0',
+                  maxWidth: '300px',
                 }}
               >
-                Tu Lugar en Galicia
+                Ayudamos a familias latinoamericanas a conseguir su hogar en
+                Galicia antes de llegar.
               </p>
               <p
                 style={{
-                  fontFamily: 'var(--font-cormorant)',
-                  fontSize: '0.67rem',
-                  fontWeight: 500,
-                  color: '#B8943F',
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                  marginTop: '0.4rem',
-                  lineHeight: 1.4,
+                  fontSize: '14px',
+                  fontWeight: 400,
+                  color: '#D4AF6A',
+                  margin: 0,
                 }}
               >
-                La primera agencia de relocation de Galicia
-              </p>
-            </div>
-
-            {/* Descripción */}
-            <p
-              style={{
-                fontSize: '0.82rem',
-                fontWeight: 300,
-                color: '#6B6B6B',
-                lineHeight: 1.8,
-                maxWidth: '21rem',
-              }}
-            >
-              Ayudamos a familias latinoamericanas a conseguir su hogar en
-              Galicia antes de llegar.{' '}
-              <span style={{ color: '#F0EDE6', fontWeight: 400 }}>
                 +200 familias reubicadas.
-              </span>
-            </p>
-
-            {/* Íconos RRSS */}
-            <div className="flex items-center gap-4" style={{ marginTop: '0.25rem' }}>
-              <a
-                href="https://instagram.com/tulugarengalicia"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Síguenos en Instagram"
-                style={{ color: '#6B6B6B', transition: 'color 200ms ease' }}
-                className="hover:text-[#B8943F]"
-              >
-                <InstagramIcon />
-              </a>
-              <a
-                href="https://facebook.com/tulugarengalicia"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Síguenos en Facebook"
-                style={{ color: '#6B6B6B', transition: 'color 200ms ease' }}
-                className="hover:text-[#B8943F]"
-              >
-                <FacebookIcon />
-              </a>
+              </p>
             </div>
           </div>
 
-          {/* ── Columna 2 — Servicios ────────────────────── */}
-          <nav aria-label="Servicios">
-            <ColTitle>Servicios</ColTitle>
-            <ul className="flex flex-col gap-[0.85rem]">
-              {serviceLinks.map(({ label, href }) => (
-                <li key={href}>
-                  <NavLink href={href}>{label}</NavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          {/* ── Columnas 2 y 3 — Servicios + Legal (C3: 2 col en mobile) */}
+          <div className="grid grid-cols-2 gap-8 md:contents">
 
-          {/* ── Columna 3 — Legal ────────────────────────── */}
-          <nav aria-label="Información legal">
-            <ColTitle>Legal</ColTitle>
-            <ul className="flex flex-col gap-[0.85rem]">
-              {legalLinks.map(({ label, href }) => (
-                <li key={href}>
-                  <NavLink href={href}>{label}</NavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
+            {/* Columna 2 — Servicios */}
+            <nav aria-label="Servicios">
+              <ColTitle>Servicios</ColTitle>
+              <ul className="flex flex-col gap-[0.85rem]">
+                {serviceLinks.map(({ label, href }) => (
+                  <li key={href}>
+                    <NavLink href={href}>{label}</NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {/* Columna 3 — Legal */}
+            <nav aria-label="Información legal">
+              <ColTitle>Legal</ColTitle>
+              <ul className="flex flex-col gap-[0.85rem]">
+                {legalLinks.map(({ label, href }) => (
+                  <li key={href}>
+                    <NavLink href={href}>{label}</NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+          </div>
 
           {/* ── Columna 4 — Contacto ─────────────────────── */}
           <div>
@@ -282,7 +261,7 @@ export function Footer() {
                 style={{
                   fontSize: '0.82rem',
                   fontWeight: 300,
-                  color: '#6B6B6B',
+                  color: '#A8A8A8',
                   textDecoration: 'none',
                   fontFamily: 'var(--font-ui)',
                   transition: 'color 200ms ease',
@@ -303,7 +282,7 @@ export function Footer() {
                   gap: '0.45rem',
                   fontSize: '0.82rem',
                   fontWeight: 300,
-                  color: '#6B6B6B',
+                  color: '#A8A8A8',
                   textDecoration: 'none',
                   fontFamily: 'var(--font-ui)',
                   transition: 'color 200ms ease',
@@ -312,6 +291,51 @@ export function Footer() {
               >
                 <MessageIcon />
                 Escríbenos por WhatsApp
+              </a>
+
+              {/* C2: RRSS con nombre de usuario */}
+              <a
+                href="https://www.instagram.com/tulugarengalicia/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Síguenos en Instagram"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '14px',
+                  fontWeight: 400,
+                  color: '#A8A8A8',
+                  textDecoration: 'none',
+                  transition: 'color 200ms ease',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#D4AF6A')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#A8A8A8')}
+              >
+                <InstagramIcon />
+                <span>@tulugarengalicia</span>
+              </a>
+
+              <a
+                href="https://www.facebook.com/p/Tu-lugar-en-Galicia-100075983977059/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Síguenos en Facebook"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '14px',
+                  fontWeight: 400,
+                  color: '#A8A8A8',
+                  textDecoration: 'none',
+                  transition: 'color 200ms ease',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#D4AF6A')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#A8A8A8')}
+              >
+                <FacebookIcon />
+                <span>Tu Lugar en Galicia</span>
               </a>
 
               {/* Divisor fino */}
@@ -357,13 +381,13 @@ export function Footer() {
       <div style={{ borderTop: '1px solid #2A2A2A' }}>
         <div
           className="mx-auto max-w-7xl flex flex-col gap-1 text-center md:flex-row md:justify-between md:items-center md:text-left"
-          style={{ padding: '1.1rem 2.5rem' }}
+          style={{ padding: '1.1rem 5rem' }}
         >
           <p
             style={{
               fontSize: '0.71rem',
               fontWeight: 300,
-              color: '#6B6B6B',
+              color: '#7A7A7A',
               letterSpacing: '0.025em',
             }}
           >
@@ -373,7 +397,7 @@ export function Footer() {
             style={{
               fontSize: '0.71rem',
               fontWeight: 300,
-              color: '#6B6B6B',
+              color: '#7A7A7A',
               letterSpacing: '0.025em',
             }}
           >
