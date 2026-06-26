@@ -401,7 +401,7 @@ export function Footer() {
             style={{
               fontSize: '0.71rem',
               fontWeight: 300,
-              color: '#7A7A7A',
+              color: '#A8A8A8',
               letterSpacing: '0.025em',
             }}
           >
@@ -411,7 +411,7 @@ export function Footer() {
             style={{
               fontSize: '0.71rem',
               fontWeight: 300,
-              color: '#7A7A7A',
+              color: '#A8A8A8',
               letterSpacing: '0.025em',
             }}
           >
