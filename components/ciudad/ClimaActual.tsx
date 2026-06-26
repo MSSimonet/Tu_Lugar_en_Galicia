@@ -72,7 +72,7 @@ export function ClimaActual({ slug }: { slug: string }) {
         className="rounded-2xl bg-[var(--color-niebla)] p-5 flex items-center justify-center min-h-[120px]"
         role="status"
       >
-        <p className="font-[family-name:var(--font-mulish)] text-[var(--text-xs)] text-[var(--color-pizarra)] opacity-60">
+        <p className="font-[family-name:var(--font-mulish)] text-[var(--text-xs)] text-[var(--color-pizarra)]">
           Clima no disponible
         </p>
       </div>
