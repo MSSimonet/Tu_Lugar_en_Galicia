@@ -152,11 +152,25 @@ export async function GET(
         },
       },
     )
-  } catch (err) {
-    console.error('[api/clima]', ciudad, err)
+  } catch {
     return NextResponse.json(
-      { error: 'No se pudo obtener el clima' },
-      { status: 502 },
+      {
+        ciudad,
+        temperatura: null,
+        tempMin: null,
+        tempMax: null,
+        descripcion: null,
+        precipitacion: null,
+        viento: null,
+        humedad: null,
+        actualizadoEn: new Date().toISOString(),
+      },
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        },
+      },
     )
   }
 }
