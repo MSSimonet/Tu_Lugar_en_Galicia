@@ -43,7 +43,7 @@ export function FeedInstagram() {
           ))}
         </ul>
 
-        <p className="mt-[var(--space-8)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)] opacity-70">
+        <p className="mt-[var(--space-8)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)]">
           Seguimos en Instagram como{' '}
           <a
             href="https://instagram.com/tulugarengalicia"
