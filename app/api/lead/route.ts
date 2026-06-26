@@ -16,6 +16,16 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { saveLead, type LeadData } from '@/lib/leads'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
+const ratelimit = process.env.UPSTASH_REDIS_REST_URL
+  ? new Ratelimit({
+      redis: Redis.fromEnv(),
+      limiter: Ratelimit.slidingWindow(10, '1 h'),
+      analytics: false,
+    })
+  : null
 
 // ---------------------------------------------------------------------------
 // Valores permitidos — fuente de verdad alineada con Airtable y flow.json
@@ -118,7 +128,7 @@ const EMAIL_REGEX = /.+@.+\..+/
 // Helpers
 // ---------------------------------------------------------------------------
 
-const COMMON_HEADERS = { 'X-RateLimit-Policy': '1 req/s per IP' }
+const COMMON_HEADERS = {}
 
 function errorResponse(message: string, status: number): NextResponse {
   return NextResponse.json({ error: message }, { status, headers: COMMON_HEADERS })
@@ -137,6 +147,25 @@ function successResponse(): NextResponse {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // 0. Rate limiting
+    if (ratelimit) {
+      const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
+      const { success, limit, remaining, reset } = await ratelimit.limit(ip)
+      if (!success) {
+        return NextResponse.json(
+          { error: 'Demasiadas solicitudes. Inténtalo más tarde.' },
+          {
+            status: 429,
+            headers: {
+              'X-RateLimit-Limit': String(limit),
+              'X-RateLimit-Remaining': String(remaining),
+              'X-RateLimit-Reset': String(reset),
+            },
+          }
+        )
+      }
+    }
+
     // 1. Parsear body JSON
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let body: Record<string, any>
