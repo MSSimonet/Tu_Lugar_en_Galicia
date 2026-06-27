@@ -170,7 +170,7 @@ export default function FAQPage() {
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontSize: 'clamp(36px, 5vw, 64px)',
             fontWeight: 400,
-            color: '#F0EDE6',
+            color: 'var(--color-niebla)',
             lineHeight: 1.15,
             letterSpacing: '-0.01em',
             margin: '0 0 24px 0',

@@ -44,6 +44,7 @@ export function Header() {
 
   // Sincroniza isDark con el tema que aplicó el script anti-flash antes de hidratar
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDark(document.documentElement.classList.contains('dark'))
   }, [])
 
@@ -56,6 +57,7 @@ export function Header() {
   // Inicializa idioma desde localStorage (post-hidratación, sin SSR mismatch)
   useEffect(() => {
     const saved = localStorage.getItem('tlg-lang') as Lang | null
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (saved && (LANGS as readonly string[]).includes(saved)) setLang(saved)
   }, [])
 

@@ -74,6 +74,7 @@ export function GinaWidget() {
     if (!guardada) return
     try {
       const paso = obtenerPaso(guardada.pasoActualId)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSesion(guardada.sesion)
       setPasoActual(paso)
       setMensajes([
@@ -84,7 +85,6 @@ export function GinaWidget() {
       // El paso guardado ya no existe en flow.json (actualización del flujo) → empezar limpio
       limpiarSesionLocal()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Guarda el estado tras cada paso respondido.

@@ -438,6 +438,7 @@ function PlanDocument({
       {/* ── Portada ── */}
       <Page size="A4" style={S.pageCover}>
         <View style={S.coverInner}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           {logo ? <Image src={logo} style={S.coverLogo} /> : null}
           <View style={S.coverBar} />
           <Text style={S.coverTitle}>Tu Plan hacia Galicia</Text>

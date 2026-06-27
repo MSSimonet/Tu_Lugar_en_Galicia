@@ -128,7 +128,7 @@ export function GinaConversation({
         setCargando(false)
       }
     },
-    [], // sin dependencias: solo usa setters estables de useState
+    [setMensajes, setPasoActual, setSesion],
   )
 
   // ── Procesar respuesta del usuario ──
@@ -234,7 +234,7 @@ export function GinaConversation({
         setCargando(false)
       }
     },
-    [sesion, pasoActual, cargando, inputDeshabilitado, avanzarPasoVirtual],
+    [sesion, pasoActual, cargando, inputDeshabilitado, avanzarPasoVirtual, setMensajes, setPasoActual, setSesion],
   )
 
   // ── Manejar botón "Cerrar" en paso final ──

@@ -16,7 +16,7 @@ type VistaEnVivoProps = {
   descripcionUbicacion?: string
 }
 
-export function VistaEnVivo({ nombreCiudad, descripcionUbicacion }: VistaEnVivoProps) {
+export function VistaEnVivo({ descripcionUbicacion }: VistaEnVivoProps) {
   return (
     <div style={{
       position: 'relative',

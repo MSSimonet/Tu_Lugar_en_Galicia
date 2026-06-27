@@ -70,7 +70,7 @@ function CiudadCard({ nombre, tag, slug, imagen }: typeof CIUDADES[number]) {
             fontSize: '26px',
             fontWeight: 400,
             fontStyle: 'italic',
-            color: '#F0EDE6',
+            color: 'var(--color-niebla)',
             margin: '0 0 7px 0',
             lineHeight: 1.2,
           }}>

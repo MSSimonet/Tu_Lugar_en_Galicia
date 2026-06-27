@@ -25,13 +25,6 @@ function tieneNota(plan: PlanArmado, fragmento: string): boolean {
     .some(i => (i as { tipo: 'nota'; texto: string }).texto.includes(fragmento))
 }
 
-function checkEsperado(generados: number[], numero: number): string {
-  return generados.includes(numero) ? '✅' : '❌ FALTA'
-}
-
-function checkAusente(generados: number[], numero: number): string {
-  return generados.includes(numero) ? '❌ INCLUIDO ERRÓNEAMENTE' : '✅ ausente'
-}
 
 function sep(titulo: string) {
   console.log('\n' + '─'.repeat(70))

@@ -31,7 +31,7 @@ export function MuroLlavesPreview() {
         <ul className="grid grid-cols-2 gap-[var(--space-4)] md:grid-cols-3">
           {llaves.map(({ n, alt }) => (
             <li key={n}>
-              <div className="relative aspect-square overflow-hidden rounded-[var(--radius-card)] shadow-md transition-shadow duration-300 hover:shadow-lg">
+              <div className="relative overflow-hidden rounded-[var(--radius-card)] shadow-md transition-shadow duration-300 hover:shadow-lg" style={{ paddingBottom: '100%' }}>
                 <Image
                   src={`https://placehold.co/300x300/9A7A2E/FFFFFF?text=Llave+${n}`}
                   alt={alt}
