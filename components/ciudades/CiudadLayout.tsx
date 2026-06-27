@@ -151,12 +151,12 @@ export function CiudadLayout({
       </section>
 
       {/* ── CUERPO ── */}
-      <div className="bg-white px-6 md:px-8 py-7 space-y-5 max-w-7xl mx-auto w-full">
+      <div className="bg-[var(--color-blanco)] px-6 md:px-8 py-7 space-y-5 max-w-7xl mx-auto w-full">
 
         {/* Fila 1: Descripción + Clima */}
         <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-5">
           {/* Descripción larga */}
-          <div className="bg-white rounded-2xl border border-[var(--color-arena)] p-6">
+          <div className="bg-[var(--color-niebla)] rounded-2xl border border-[var(--color-arena)] p-6">
             <p
               className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[#7A5F22] mb-4"
             >
@@ -207,7 +207,7 @@ export function CiudadLayout({
               {alquileres.map((a, i) => (
                 <li
                   key={i}
-                  className="flex justify-between items-center bg-white rounded-xl px-3 py-2"
+                  className="flex justify-between items-center bg-[var(--color-blanco)] rounded-xl px-3 py-2"
                 >
                   <span className="font-[family-name:var(--font-mulish)] text-xs text-[var(--color-pizarra)]">
                     {a.habitaciones}
@@ -233,7 +233,7 @@ export function CiudadLayout({
         </div>
 
         {/* Fila 3: FAQ ancho completo */}
-        <div className="bg-white rounded-2xl border border-[var(--color-arena)] p-6">
+        <div className="bg-[var(--color-niebla)] rounded-2xl border border-[var(--color-arena)] p-6">
           <h2
             className="font-[family-name:var(--font-cormorant)] text-[var(--color-granito)] text-2xl font-normal mb-5"
           >
