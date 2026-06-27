@@ -9,7 +9,7 @@ export async function GET(
 ) {
   const { recordId } = await params
 
-  if (!recordId || !/^[a-zA-Z0-9]{10,20}$/.test(recordId)) {
+  if (!recordId || !/^rec[a-zA-Z0-9]{14}$/.test(recordId)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
