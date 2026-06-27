@@ -72,7 +72,7 @@ export function Header() {
           El gap del nav baja a 16px para que 1fr ≥ 285px (ancho de los CTAs).
         */}
         <div
-          className="max-w-7xl mx-auto h-full grid items-center"
+          className="max-w-7xl mx-auto h-full flex justify-between items-center md:grid"
           style={{ padding: '0 24px', gridTemplateColumns: '1fr auto 1fr' }}
         >
 
@@ -94,6 +94,7 @@ export function Header() {
                 alt=""
                 width={54}
                 height={70}
+                className="h-10 w-auto md:h-[70px]"
                 style={{ objectFit: 'contain', display: 'block' }}
                 priority
               />
