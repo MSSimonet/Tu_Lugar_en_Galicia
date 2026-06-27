@@ -18,6 +18,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { saveLead, type LeadData } from '@/lib/leads'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import {
+  VALID_ADULTOS, VALID_MENORES_COUNT, VALID_MASCOTA_TIPO, VALID_MASCOTA_PESO,
+  VALID_DOCUMENTACION, VALID_SITUACION_LABORAL, VALID_INGRESOS, VALID_GARANTIAS,
+  VALID_CIUDAD_DESTINO, VALID_TIPO_INMUEBLE, VALID_PRESUPUESTO, VALID_HABITACIONES,
+  VALID_AMUEBLADO, VALID_IMPRESCINDIBLES, VALID_COMODIDADES, VALID_NECESIDADES_ESPECIALES,
+  VALID_FECHA_LLEGADA, VALID_COMO_NOS_CONOCISTE, EMAIL_REGEX,
+} from '@/lib/validation'
 
 const ratelimit = process.env.UPSTASH_REDIS_REST_URL
   ? new Ratelimit({
@@ -26,103 +33,6 @@ const ratelimit = process.env.UPSTASH_REDIS_REST_URL
       analytics: false,
     })
   : null
-
-// ---------------------------------------------------------------------------
-// Valores permitidos — fuente de verdad alineada con Airtable y flow.json
-// ---------------------------------------------------------------------------
-const VALID_ADULTOS = ['1', '2', '3', '4+'] as const
-const VALID_MENORES_COUNT = ['0', '1', '2', '3+'] as const
-const VALID_MASCOTA_TIPO = ['perro', 'gato', 'otro'] as const
-const VALID_MASCOTA_PESO = ['0-5 kg', '5-10 kg', '+10 kg'] as const
-
-const VALID_DOCUMENTACION = [
-  'espanol',
-  'ue-otro',
-  'residencia-aprobada',
-  'en-tramite',
-  'nacionalidad-en-tramite',
-  'turista',
-] as const
-
-const VALID_SITUACION_LABORAL = [
-  'cuenta-ajena',
-  'autonomo',
-  'teletrabajo-extranjero',
-  'rentista',
-  'jubilado',
-  'estudiante',
-  'busca-empleo',
-] as const
-
-const VALID_INGRESOS = [
-  'menos-1500',
-  '1500-2500',
-  '2500-4000',
-  'mas-4000',
-  'sin-ingresos',
-] as const
-
-const VALID_GARANTIAS = ['garantia-adicional', 'aval-bancario', 'avalista', 'seguro-impago', 'ninguna'] as const
-
-const VALID_CIUDAD_DESTINO = [
-  'vigo',
-  'a-coruna',
-  'santiago',
-  'pontevedra',
-  'lugo',
-  'indiferente',
-] as const
-
-const VALID_TIPO_INMUEBLE = [
-  'habitacion',
-  'estudio',
-  'piso',
-  'casa',
-  'co-living',
-] as const
-
-const VALID_PRESUPUESTO = ['menos-700', '700-1000', '1000-1400', 'mas-1400'] as const
-
-const VALID_HABITACIONES = ['1', '2', '3', '4+'] as const
-
-const VALID_AMUEBLADO = ['si', 'no', 'indiferente'] as const
-
-const VALID_IMPRESCINDIBLES = [
-  'ascensor',
-  'garaje',
-  'calefaccion',
-  'terraza',
-  'no',
-] as const
-
-const VALID_COMODIDADES = [
-  'transporte',
-  'zona-tranquila',
-  'cerca-colegios',
-  'internet',
-  'ninguna',
-] as const
-
-const VALID_NECESIDADES_ESPECIALES = ['si', 'no'] as const
-
-const VALID_FECHA_LLEGADA = [
-  'menos-1-mes',
-  '1-3-meses',
-  '3-6-meses',
-  'mas-6-meses',
-  'sin-fecha',
-] as const
-
-const VALID_COMO_NOS_CONOCISTE = [
-  'instagram',
-  'facebook',
-  'tiktok',
-  'google',
-  'recomendacion',
-  'otro',
-] as const
-
-const EMAIL_REGEX = /.+@.+\..+/
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -147,7 +57,21 @@ function successResponse(): NextResponse {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // 0. Rate limiting
+    // 0. Verificación de origen
+    const origin = request.headers.get('origin')
+    const allowedOrigins = [
+      'https://tu-lugar-en-galicia.vercel.app',
+      process.env.NEXT_PUBLIC_SITE_URL,
+    ].filter((x): x is string => Boolean(x))
+
+    if (origin && !allowedOrigins.includes(origin)) {
+      return NextResponse.json(
+        { error: 'Origen no permitido' },
+        { status: 403 }
+      )
+    }
+
+    // 1. Rate limiting
     if (ratelimit) {
       const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
       const { success, limit, remaining, reset } = await ratelimit.limit(ip)

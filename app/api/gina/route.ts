@@ -24,6 +24,19 @@ type RequestBody = {
 }
 
 export async function POST(req: NextRequest) {
+  const origin = req.headers.get('origin')
+  const allowedOrigins = [
+    'https://tu-lugar-en-galicia.vercel.app',
+    process.env.NEXT_PUBLIC_SITE_URL,
+  ].filter((x): x is string => Boolean(x))
+
+  if (origin && !allowedOrigins.includes(origin)) {
+    return NextResponse.json(
+      { error: 'Origen no permitido' },
+      { status: 403 },
+    )
+  }
+
   let body: RequestBody
   try {
     body = (await req.json()) as RequestBody
