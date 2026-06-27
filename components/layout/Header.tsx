@@ -163,8 +163,9 @@ export function Header() {
 
             {/* CTAs — solo desktop */}
             <div className="hidden md:flex items-center gap-3">
-              <Link
-                href="/chat"
+              <button
+                type="button"
+                onClick={abrirGina}
                 style={{
                   fontFamily: 'var(--font-ui)',
                   fontSize: '13px',
@@ -179,13 +180,15 @@ export function Header() {
                   borderRadius: '999px',
                   letterSpacing: '0.06em',
                   transition: 'background 200ms ease',
+                  border: 'none',
+                  cursor: 'pointer',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#D4AF6A')}
                 onMouseLeave={e => (e.currentTarget.style.background = '#B8943F')}
               >
                 <span style={{ fontSize: '13px', lineHeight: '1' }}>✦</span>
                 Hablar con Gina
-              </Link>
+              </button>
 
               <Link
                 href="/agenda"
