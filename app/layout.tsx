@@ -59,8 +59,11 @@ export default function RootLayout({
     <html
       lang="es"
       className={`${fraunces.variable} ${plusJakarta.variable} ${cormorant.variable} ${mulish.variable} ${spaceMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-[family-name:var(--font-ui)]">
+        {/* Anti-flash: primer elemento del body, ejecuta síncrono antes del primer paint */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){const s=localStorage.getItem('tlg-theme');const p=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',s?s==='dark':p);})();` }} />
         <Header />
         <main id="main-content" className="flex-1">{children}</main>
         <Footer />

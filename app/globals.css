@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Modo oscuro activado por clase .dark en <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* === PALETA DE COLOR === */
 
@@ -168,4 +171,16 @@ details > dd {
     opacity: 1;
     transform: none;
   }
+}
+
+/* ── Dark mode — override de variables CSS ───────────────────────────────────
+   Reutiliza valores existentes de la paleta swapeando fondo/texto.
+   El Header (#111111 hardcodeado) ya es oscuro — no necesita cambios.
+   ─────────────────────────────────────────────────────────────────────────── */
+.dark {
+  --color-blanco:  #1E1F22;   /* superficie oscura principal (tono granito profundo) */
+  --color-granito: #F2F0EB;   /* texto claro (valor de niebla) */
+  --color-niebla:  #2A2B2E;   /* superficie elevada (valor de granito) */
+  --color-arena:   #4A4E54;   /* bordes oscuros (valor de pizarra) */
+  --color-pizarra: #A8ABB0;   /* texto secundario aclarado */
 }
