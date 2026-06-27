@@ -161,6 +161,20 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
     keywords: ['política de privacidad', 'RGPD', 'protección de datos'],
     canonical: `${SITE_URL}/politica-de-privacidad`,
   },
+  guiaLlegada: {
+    title: 'Guía de Apps Esenciales para vivir en Galicia | Tu Lugar en Galicia',
+    description:
+      'Kit de supervivencia digital para recién llegados a Galicia. Certificado digital, SERGAS, transporte y más.',
+    keywords: [
+      'apps para vivir en galicia',
+      'certificado digital españa',
+      'ésaúde galicia',
+      'clave pin españa',
+      'apps emigrantes galicia',
+      'kit digital recién llegados españa',
+    ],
+    canonical: `${SITE_URL}/guia-llegada`,
+  },
 }
 
 export function getNextMetadata(page: keyof typeof PAGE_METADATA): Metadata {
