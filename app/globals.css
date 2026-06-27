@@ -178,9 +178,12 @@ details > dd {
    El Header (#111111 hardcodeado) ya es oscuro — no necesita cambios.
    ─────────────────────────────────────────────────────────────────────────── */
 .dark {
-  --color-blanco:  #1E1F22;   /* superficie oscura principal (tono granito profundo) */
-  --color-granito: #F2F0EB;   /* texto claro (valor de niebla) */
-  --color-niebla:  #2A2B2E;   /* superficie elevada (valor de granito) */
-  --color-arena:   #4A4E54;   /* bordes oscuros (valor de pizarra) */
-  --color-pizarra: #A8ABB0;   /* texto secundario aclarado */
+  /* Fondos — grafito cálido */
+  --color-blanco:  #1A1917;
+  --color-niebla:  #252320;
+  --color-arena:   #3A3530;
+
+  /* Texto */
+  --color-granito: #EDE9E3;
+  --color-pizarra: #9A9690;
 }

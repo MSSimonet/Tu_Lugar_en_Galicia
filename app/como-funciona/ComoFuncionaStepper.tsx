@@ -117,7 +117,7 @@ export default function ComoFuncionaStepper() {
       <div className="stepper-content-col" style={{
         flex: 1,
         minWidth: 0,
-        background: '#EFEADE',
+        background: 'var(--color-niebla)',
         display: 'flex',
         flexDirection: 'column',
         padding: '32px 44px 0',
@@ -131,7 +131,7 @@ export default function ComoFuncionaStepper() {
             fontSize: '10px',
             letterSpacing: '0.15em',
             textTransform: 'uppercase',
-            color: '#705D1E',
+            color: 'var(--color-laton)',
             margin: '0 0 6px',
           }}>
             Cómo funciona
@@ -143,7 +143,7 @@ export default function ComoFuncionaStepper() {
             fontSize: 'clamp(24px, 3vw, 40px)',
             lineHeight: 1.15,
             letterSpacing: '-0.01em',
-            color: '#1B2A24',
+            color: 'var(--color-granito)',
             margin: '0 0 6px',
           }}>
             Tu hogar en Galicia{' '}
@@ -157,7 +157,7 @@ export default function ComoFuncionaStepper() {
           <p style={{
             fontFamily: 'var(--font-mulish), sans-serif',
             fontSize: '12px',
-            color: 'rgba(42,43,46,0.85)',
+            color: 'var(--color-pizarra)',
             lineHeight: 1.6,
             margin: 0,
             maxWidth: '361px',
@@ -167,7 +167,7 @@ export default function ComoFuncionaStepper() {
         </div>
 
         {/* Divisor */}
-        <div style={{ height: '1px', background: '#D4C9B8', flexShrink: 0, marginBottom: '4px' }} />
+        <div style={{ height: '1px', background: 'var(--color-arena)', flexShrink: 0, marginBottom: '4px' }} />
 
         {/* 5 filas */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -187,7 +187,7 @@ export default function ComoFuncionaStepper() {
                   alignItems: 'center',
                   width: '100%',
                   border: 'none',
-                  borderTop: '1px solid #D4C9B8',
+                  borderTop: '1px solid var(--color-arena)',
                   paddingLeft: '16px',
                   cursor: 'pointer',
                   position: 'relative',
@@ -232,7 +232,7 @@ export default function ComoFuncionaStepper() {
                     fontSize: '18px',
                     fontWeight: isAct ? 600 : 500,
                     lineHeight: 1.2,
-                    color: isAct ? '#1B2A24' : '#3A3530',
+                    color: isAct ? 'var(--color-granito)' : 'var(--color-pizarra)',
                     transition: 'color .3s ease',
                   }}>
                     {d.title}
@@ -241,7 +241,7 @@ export default function ComoFuncionaStepper() {
                     fontFamily: 'var(--font-mulish), sans-serif',
                     fontSize: '14px',
                     lineHeight: 1.55,
-                    color: isAct ? 'rgba(42,43,46,0.92)' : 'rgba(42,43,46,0.80)',
+                    color: 'var(--color-pizarra)',
                     marginTop: '3px',
                     transition: 'color .3s ease',
                   }}>
@@ -253,7 +253,7 @@ export default function ComoFuncionaStepper() {
             )
           })}
           {/* Borde inferior de la última fila */}
-          <div style={{ height: '1px', background: '#D4C9B8', flexShrink: 0 }} />
+          <div style={{ height: '1px', background: 'var(--color-arena)', flexShrink: 0 }} />
         </div>
 
       </div>
