@@ -45,13 +45,17 @@ function resolverTextoUsuario(respuesta: string | string[], opciones?: Opcion[])
   return labelPorValue[respuesta] ?? respuesta
 }
 
+const TYPING_DELAY_MIN_MS = 500
+const TYPING_DELAY_MAX_MS = 1200
+const TYPING_CHARS_PER_MS = 8
+
 /**
  * Retardo de escritura natural antes de mostrar cada mensaje de Gina.
  * Proporcional al largo del texto: 8 ms por carácter, mínimo 500 ms, máximo 1 200 ms.
  * Durante este tiempo `cargando` sigue en true, manteniendo el indicador de puntitos.
  */
 function typingDelay(texto: string): Promise<void> {
-  const ms = Math.min(1200, Math.max(500, texto.length * 8))
+  const ms = Math.min(TYPING_DELAY_MAX_MS, Math.max(TYPING_DELAY_MIN_MS, texto.length * TYPING_CHARS_PER_MS))
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
