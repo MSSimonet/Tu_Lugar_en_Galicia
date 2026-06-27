@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
+import { Sun, Moon } from 'lucide-react'
 
 const navLinks = [
   { label: 'Inicio',         href: '/'              },
@@ -15,6 +16,9 @@ const navLinks = [
 
 const SPARKLES_PATH =
   'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z'
+
+const LANGS = ['ES', 'GL', 'EN'] as const
+type Lang = typeof LANGS[number]
 
 function SparklesIcon({ color }: { color: string }) {
   return (
@@ -31,10 +35,40 @@ function abrirGina() {
 export function Header() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [isDark, setIsDark] = useState(false)
+  const [lang, setLang] = useState<Lang>('ES')
   const hamburgerRef = useRef<HTMLButtonElement>(null)
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
+
+  // Sincroniza isDark con el tema que aplicó el script anti-flash antes de hidratar
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'))
+  }, [])
+
+  const toggleTheme = () => {
+    const newIsDark = document.documentElement.classList.toggle('dark')
+    localStorage.setItem('tlg-theme', newIsDark ? 'dark' : 'light')
+    setIsDark(newIsDark)
+  }
+
+  // Inicializa idioma desde localStorage (post-hidratación, sin SSR mismatch)
+  useEffect(() => {
+    const saved = localStorage.getItem('tlg-lang') as Lang | null
+    if (saved && (LANGS as readonly string[]).includes(saved)) setLang(saved)
+  }, [])
+
+  const cycleLang = () => {
+    const next = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length]
+    setLang(next)
+    localStorage.setItem('tlg-lang', next)
+  }
+
+  const setLangTo = (l: Lang) => {
+    setLang(l)
+    localStorage.setItem('tlg-lang', l)
+  }
 
   useEffect(() => {
     if (!menuOpen) return
@@ -47,6 +81,20 @@ export function Header() {
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [menuOpen])
+
+  // Estilos compartidos para botones de utilidad (tema + idioma)
+  const utilBtnBase: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '36px',
+    border: '1px solid #B8943F',
+    background: 'rgba(184,148,63,0.12)',
+    cursor: 'pointer',
+    color: '#D4AF6A',
+    transition: 'background 200ms ease, color 200ms ease',
+    flexShrink: 0,
+  }
 
   return (
     <>
@@ -69,7 +117,6 @@ export function Header() {
       >
         {/*
           Grid 1fr auto 1fr: col izquierda y derecha iguales → nav centrado sin overlap.
-          El gap del nav baja a 16px para que 1fr ≥ 285px (ancho de los CTAs).
         */}
         <div
           className="max-w-7xl mx-auto h-full flex justify-between items-center md:grid"
@@ -162,35 +209,54 @@ export function Header() {
           {/* Col 3: CTAs (md+) + Hamburger (mobile) — derecha */}
           <div className="flex items-center justify-end">
 
-            {/* CTAs — solo desktop */}
+            {/* ── CTAs desktop — orden: [🌙/☀️] [ES|GL|EN] [Agenda] [Hablar con Gina] ── */}
             <div className="hidden md:flex items-center gap-3">
+
+              {/* 1. Toggle tema claro/oscuro */}
               <button
                 type="button"
-                onClick={abrirGina}
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  color: '#0D0D0D',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '7px',
-                  background: '#B8943F',
-                  padding: '9px 18px',
-                  borderRadius: '999px',
-                  letterSpacing: '0.06em',
-                  transition: 'background 200ms ease',
-                  border: 'none',
-                  cursor: 'pointer',
+                onClick={toggleTheme}
+                aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
+                style={{ ...utilBtnBase, width: '36px', borderRadius: '50%' }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'rgba(184,148,63,0.28)'
+                  e.currentTarget.style.color = '#F0D898'
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#D4AF6A')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#B8943F')}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'rgba(184,148,63,0.12)'
+                  e.currentTarget.style.color = '#D4AF6A'
+                }}
               >
-                <span style={{ fontSize: '13px', lineHeight: '1' }}>✦</span>
-                Hablar con Gina
+                {isDark ? <Sun size={16} strokeWidth={1.8} /> : <Moon size={16} strokeWidth={1.8} />}
               </button>
 
+              {/* 2. Selector de idioma — cicla ES → GL → EN → ES */}
+              <button
+                type="button"
+                onClick={cycleLang}
+                aria-label={`Idioma activo: ${lang}. Click para cambiar`}
+                style={{
+                  ...utilBtnBase,
+                  padding: '0 11px',
+                  borderRadius: '6px',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '0.08em',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'rgba(184,148,63,0.28)'
+                  e.currentTarget.style.color = '#F0D898'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'rgba(184,148,63,0.12)'
+                  e.currentTarget.style.color = '#D4AF6A'
+                }}
+              >
+                {lang}
+              </button>
+
+              {/* 3. Agenda */}
               <Link
                 href="/agenda"
                 style={{
@@ -216,6 +282,33 @@ export function Header() {
               >
                 Agenda
               </Link>
+
+              {/* 4. Hablar con Gina */}
+              <button
+                type="button"
+                onClick={abrirGina}
+                style={{
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: '#0D0D0D',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '7px',
+                  background: '#B8943F',
+                  padding: '9px 18px',
+                  borderRadius: '999px',
+                  letterSpacing: '0.06em',
+                  transition: 'background 200ms ease',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#D4AF6A')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#B8943F')}
+              >
+                <span style={{ fontSize: '13px', lineHeight: '1' }}>✦</span>
+                Hablar con Gina
+              </button>
             </div>
 
             {/* Hamburger — solo mobile */}
@@ -243,6 +336,7 @@ export function Header() {
             className="md:hidden px-6 py-5 flex flex-col gap-5"
             style={{ background: '#111111', borderTop: '1px solid rgba(184,148,63,0.3)' }}
           >
+            {/* Nav links */}
             {navLinks.map(({ label, href }) => {
               const active = isActive(href)
               return (
@@ -266,6 +360,7 @@ export function Header() {
               )
             })}
 
+            {/* Hablar con Gina */}
             <button
               type="button"
               onClick={() => { abrirGina(); setMenuOpen(false) }}
@@ -289,6 +384,7 @@ export function Header() {
               Hablar con Gina
             </button>
 
+            {/* Agenda */}
             <Link
               href="/agenda"
               onClick={() => setMenuOpen(false)}
@@ -309,6 +405,63 @@ export function Header() {
             >
               Agenda
             </Link>
+
+            {/* ── Utilidades: tema + idioma ── */}
+            <div style={{ borderTop: '1px solid rgba(184,148,63,0.2)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+
+              {/* Toggle tema */}
+              <button
+                type="button"
+                onClick={() => { toggleTheme(); setMenuOpen(false) }}
+                aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '13px',
+                  fontWeight: 300,
+                  color: '#A8A8A8',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  letterSpacing: '0.03em',
+                  padding: 0,
+                }}
+              >
+                {isDark
+                  ? <><Sun size={14} strokeWidth={1.8} /><span>Modo claro</span></>
+                  : <><Moon size={14} strokeWidth={1.8} /><span>Modo oscuro</span></>
+                }
+              </button>
+
+              {/* Selector de idioma mobile: [ES] [GL] [EN] con activo resaltado */}
+              <div role="group" aria-label="Seleccionar idioma" style={{ display: 'flex', gap: '8px' }}>
+                {LANGS.map(l => (
+                  <button
+                    key={l}
+                    type="button"
+                    onClick={() => setLangTo(l)}
+                    aria-pressed={lang === l}
+                    style={{
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '0.08em',
+                      color: lang === l ? '#D4AF6A' : '#A8A8A8',
+                      border: lang === l ? '1px solid #B8943F' : '1px solid rgba(184,148,63,0.3)',
+                      background: lang === l ? 'rgba(184,148,63,0.14)' : 'transparent',
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      transition: 'all 150ms ease',
+                    }}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
           </nav>
         )}
       </header>
