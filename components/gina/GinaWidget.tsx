@@ -1,19 +1,18 @@
 'use client'
 
 /**
- * GinaWidget.tsx — Widget flotante del asistente Gina.
+ * GinaWidget.tsx — Shell del widget flotante del asistente Gina.
  *
- * - Botón flotante en esquina inferior derecha
- * - Panel de chat responsive: 90vw/80vh en mobile, 380×560px en desktop
- * - Gestiona el estado completo de la sesión y el historial de mensajes
- * - Llama a /api/gina para procesar cada respuesta
+ * Gestiona apertura/cierre, estado de sesión, persistencia en localStorage
+ * y el markup del panel (cabecera + diálogo). El flujo de conversación y la
+ * lógica de edición viven en GinaConversation y useGinaEditor respectivamente.
  */
 
-import { useState, useEffect, useRef, useCallback, useId } from 'react'
-import { GinaMessages, type Mensaje } from './GinaMessages'
-import { GinaInput } from './GinaInput'
+import { useState, useEffect, useRef, useId } from 'react'
+import { GinaConversation } from './GinaConversation'
+import { type Mensaje } from './GinaMessages'
 import { crearSesion, type GinaSession } from '@/lib/gina/session'
-import { obtenerPaso, personalizarTexto, INGRESOS_RIESGO, type Paso, type Opcion } from '@/lib/gina/flowEngine'
+import { obtenerPaso, personalizarTexto, type Paso } from '@/lib/gina/flowEngine'
 import { guardarSesionLocal, cargarSesionLocal, limpiarSesionLocal } from '@/lib/gina/sessionStorage'
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -25,120 +24,6 @@ function generarId(): string {
 /** Busca el primer paso del flujo (siempre "bienvenida") */
 function obtenerPrimerPaso(): Paso {
   return obtenerPaso('bienvenida')
-}
-
-/**
- * Convierte una respuesta de value interno al texto legible que ve el usuario.
- * - Pasos de botones: busca el label en las opciones del paso (ej. "a-coruna" → "A Coruña").
- * - Multiselect: lista los labels separados por comas.
- * - Texto libre (input/llm): devuelve el texto tal cual lo escribió el usuario.
- */
-function resolverTextoUsuario(respuesta: string | string[], opciones?: Opcion[]): string {
-  if (!opciones || opciones.length === 0) {
-    return Array.isArray(respuesta) ? respuesta.join(', ') : respuesta
-  }
-  const labelPorValue: Record<string, string> = {}
-  for (const o of opciones) labelPorValue[o.value] = o.label
-  if (Array.isArray(respuesta)) {
-    return respuesta.map((v) => labelPorValue[v] ?? v).join(', ')
-  }
-  return labelPorValue[respuesta] ?? respuesta
-}
-
-const TYPING_DELAY_MIN_MS = 500
-const TYPING_DELAY_MAX_MS = 1200
-const TYPING_CHARS_PER_MS = 8
-
-/**
- * Retardo de escritura natural antes de mostrar cada mensaje de Gina.
- * Proporcional al largo del texto: 8 ms por carácter, mínimo 500 ms, máximo 1 200 ms.
- * Durante este tiempo `cargando` sigue en true, manteniendo el indicador de puntitos.
- */
-function typingDelay(texto: string): Promise<void> {
-  const ms = Math.min(TYPING_DELAY_MAX_MS, Math.max(TYPING_DELAY_MIN_MS, texto.length * TYPING_CHARS_PER_MS))
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-// ── Edición de respuestas ──────────────────────────────────────────────────
-
-type ConfirmEdicion = {
-  pasoId: string
-  /** Número de respuestas posteriores que se perderían al editar */
-  posterioresCount: number
-}
-
-/**
- * Trunca el historial de mensajes y la sesión al punto de edición.
- *
- * Elimina el mensaje de usuario para `pasoId` y todos los posteriores.
- * Re-deriva todos los campos computados de la sesión (nombre, origenResidencia,
- * etiqueta, completado) a partir de las respuestas que sobreviven al truncado.
- *
- * Campos computados cubiertos (todos los de GinaSession en Fase 1):
- *   • nombre           ← respuestas['nombreCompleto'] (p1_nombre)
- *   • origenResidencia ← respuestas['paisResidencia'] (p3_origen)
- *   • etiqueta         ← respuestas['garantias'] + respuestas['ingresosMensuales'] (p11_garantias)
- *   • completado       ← siempre false al editar
- */
-function truncarHastaEdicion(
-  mensajes: Mensaje[],
-  pasoId: string,
-  sesion: GinaSession,
-): { nuevosMensajes: Mensaje[]; nuevaSesion: GinaSession } {
-  const idxRespuesta = mensajes.findIndex((m) => m.de === 'usuario' && m.pasoId === pasoId)
-  if (idxRespuesta === -1) return { nuevosMensajes: mensajes, nuevaSesion: sesion }
-
-  const mensajesRestantes = mensajes.slice(0, idxRespuesta)
-  const mensajesEliminados = mensajes.slice(idxRespuesta)
-
-  // Limpiar campos de sesion.respuestas correspondientes a los mensajes eliminados
-  const nuevasRespuestas = { ...sesion.respuestas }
-  for (const m of mensajesEliminados) {
-    if (m.de === 'usuario' && m.campo) {
-      delete nuevasRespuestas[m.campo]
-    }
-  }
-
-  // ── Re-derivar campos computados ─────────────────────────────────────────
-
-  // 1. nombre — primer token del nombre completo
-  const nombreCompleto =
-    typeof nuevasRespuestas['nombreCompleto'] === 'string'
-      ? nuevasRespuestas['nombreCompleto']
-      : ''
-  const nombre = nombreCompleto.trim().split(/\s+/)[0] ?? ''
-
-  // 2. origenResidencia — value de p3_origen almacenado como paisResidencia
-  const paisResidencia = nuevasRespuestas['paisResidencia']
-  let origenResidencia: GinaSession['origenResidencia'] = null
-  if (typeof paisResidencia === 'string' && paisResidencia !== '') {
-    origenResidencia = paisResidencia === 'en_espana' ? 'en_espana' : 'fuera'
-  }
-
-  // 3. etiqueta — único valor posible en Fase 1: 'lead-en-preparacion'
-  //    Solo se re-aplica si AMBOS campos fuente siguen presentes tras el truncado.
-  let etiqueta: GinaSession['etiqueta'] = undefined
-  const garantias = nuevasRespuestas['garantias']
-  const ingresos = nuevasRespuestas['ingresosMensuales']
-  if (Array.isArray(garantias) && typeof ingresos === 'string') {
-    const sinGarantias = (garantias as string[]).includes('ninguna')
-    if (sinGarantias && INGRESOS_RIESGO.has(ingresos)) {
-      etiqueta = 'lead-en-preparacion'
-    }
-  }
-
-  // 4. completado — siempre false al retomar la edición
-  const nuevaSesion: GinaSession = {
-    ...sesion,
-    respuestas: nuevasRespuestas,
-    pasoActual: pasoId,
-    nombre,
-    origenResidencia,
-    etiqueta,
-    completado: false,
-  }
-
-  return { nuevosMensajes: mensajesRestantes, nuevaSesion }
 }
 
 // ── Componente ─────────────────────────────────────────────────────────────
@@ -160,9 +45,6 @@ export function GinaWidget() {
       },
     ]
   })
-  const [cargando, setCargando] = useState(false)
-  const [inputDeshabilitado, setInputDeshabilitado] = useState(false)
-  const [confirmEdicion, setConfirmEdicion] = useState<ConfirmEdicion | null>(null)
 
   const botonCerrarRef = useRef<HTMLButtonElement>(null)
 
@@ -181,14 +63,6 @@ export function GinaWidget() {
       setTimeout(() => botonCerrarRef.current?.focus(), 100)
     }
   }, [abierto])
-
-  // ── Trap de foco dentro del diálogo ──
-
-  function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    if (e.key === 'Escape') {
-      setAbierto(false)
-    }
-  }
 
   // ── Persistencia en localStorage ──────────────────────────────────────────
 
@@ -221,229 +95,15 @@ export function GinaWidget() {
     guardarSesionLocal(sesion, mensajes, pasoActual.id)
   }, [sesion, mensajes, pasoActual])
 
-  // ── Avanzar paso virtual (declarado antes de procesarRespuesta para evitar hoisting) ──
+  // ── Trap de foco dentro del diálogo ──
 
-  /**
-   * Avanza automáticamente un paso virtual (sin texto y sin opciones).
-   * Se llama cuando el motor devuelve un paso vacío como p11_check o p18_check_origen.
-   */
-  const avanzarPasoVirtual = useCallback(
-    async (sesionVirtual: GinaSession) => {
-      setCargando(true)
-      try {
-        const res = await fetch('/api/gina', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          // Respuesta vacía — el motor resuelve el paso virtual por lógica interna
-          body: JSON.stringify({ sesion: sesionVirtual, respuesta: '' }),
-        })
-
-        if (!res.ok) throw new Error(`Error ${res.status}`)
-
-        const data = (await res.json()) as {
-          sesionActualizada: GinaSession
-          siguientePaso: Paso
-        }
-
-        setSesion(data.sesionActualizada)
-        setPasoActual(data.siguientePaso)
-
-        const textoGina = personalizarTexto(
-          data.siguientePaso.texto,
-          data.sesionActualizada.nombre,
-        )
-        if (textoGina.trim()) {
-          await typingDelay(textoGina)
-          setMensajes((prev) => [
-            ...prev,
-            { id: generarId(), de: 'gina', texto: textoGina, pasoId: data.siguientePaso.id },
-          ])
-        }
-
-        if (!data.sesionActualizada.completado) {
-          setInputDeshabilitado(false)
-        }
-      } catch (err) {
-        console.error('[GinaWidget] Error en paso virtual:', err)
-      } finally {
-        setCargando(false)
-      }
-    },
-    [], // sin dependencias: solo usa setters estables de useState
-  )
-
-  // ── Procesar respuesta del usuario ──
-
-  const procesarRespuesta = useCallback(
-    async (respuesta: string | string[]) => {
-      if (cargando || inputDeshabilitado) return
-
-      // Texto legible para la burbuja: label humano en botones, texto crudo en campos libres
-      const textoUsuario = resolverTextoUsuario(respuesta, pasoActual.opciones)
-
-      // Añadir burbuja del usuario — taggeada con pasoId y campo para poder truncar al editar
-      setMensajes((prev) => [
-        ...prev,
-        {
-          id: generarId(),
-          de: 'usuario',
-          texto: textoUsuario,
-          pasoId: pasoActual.id,
-          campo: pasoActual.campo,
-        },
-      ])
-      setCargando(true)
-      setInputDeshabilitado(true)
-
-      try {
-        const res = await fetch('/api/gina', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sesion, respuesta }),
-        })
-
-        if (!res.ok) {
-          throw new Error(`Error ${res.status}`)
-        }
-
-        const data = (await res.json()) as {
-          sesionActualizada: GinaSession
-          siguientePaso: Paso
-          guardado?: boolean
-        }
-
-        const { sesionActualizada, siguientePaso } = data
-
-        // Si el guardado falló tras 3 reintentos, mostrar error y no avanzar a despedida
-        if (data.guardado === false) {
-          await typingDelay('Hubo un problema guardando tu información.')
-          setMensajes((prev) => [
-            ...prev,
-            {
-              id: generarId(),
-              de: 'gina',
-              texto:
-                'Hubo un problema guardando tu información. Por favor, escríbenos directamente a hola@tulugarengalicia.com para que podamos ayudarte.',
-            },
-          ])
-          setInputDeshabilitado(true)
-          return
-        }
-
-        setSesion(sesionActualizada)
-        setPasoActual(siguientePaso)
-
-        // Si el paso es un paso virtual sin texto (p11_check, p18_check_origen),
-        // no agregar burbuja y procesar automáticamente con respuesta vacía
-        if (!siguientePaso.texto || siguientePaso.texto.trim() === '') {
-          setCargando(false)
-          setInputDeshabilitado(false)
-          // El motor ya resolvió el siguiente; necesitamos ir un paso más
-          await avanzarPasoVirtual(sesionActualizada)
-          return
-        }
-
-        // Mostrar texto de Gina personalizado con retardo de escritura natural
-        const textoGina = personalizarTexto(
-          siguientePaso.texto,
-          sesionActualizada.nombre,
-        )
-        await typingDelay(textoGina)
-        setMensajes((prev) => [
-          ...prev,
-          { id: generarId(), de: 'gina', texto: textoGina, pasoId: siguientePaso.id },
-        ])
-
-        // Si la sesión terminó, deshabilitar permanentemente
-        if (sesionActualizada.completado) {
-          setInputDeshabilitado(true)
-        } else {
-          setInputDeshabilitado(false)
-        }
-      } catch (err) {
-        console.error('[GinaWidget] Error al procesar respuesta:', err)
-        setMensajes((prev) => [
-          ...prev,
-          {
-            id: generarId(),
-            de: 'gina',
-            texto: 'Ups, algo no salió bien. ¿Puedes intentarlo de nuevo?',
-          },
-        ])
-        setInputDeshabilitado(false)
-      } finally {
-        setCargando(false)
-      }
-    },
-    [sesion, pasoActual, cargando, inputDeshabilitado, avanzarPasoVirtual],
-  )
-
-  // ── Edición de respuestas anteriores ──
-
-  /**
-   * Ejecuta la edición: trunca el historial, reconstruye la sesión y re-muestra
-   * el mensaje de Gina para que el usuario vuelva a responder ese paso.
-   */
-  function ejecutarEdicion(pasoId: string) {
-    const { nuevosMensajes, nuevaSesion } = truncarHastaEdicion(mensajes, pasoId, sesion)
-    // nuevosMensajes ya contiene el mensaje de Gina que hizo la pregunta (es el elemento
-    // inmediatamente anterior a la respuesta del usuario). No se agrega de nuevo: hacerlo
-    // causaría que la misma pregunta apareciera duplicada en el historial.
-    setMensajes(nuevosMensajes)
-    setSesion(nuevaSesion)
-    setPasoActual(obtenerPaso(pasoId))
-    setInputDeshabilitado(false)
-    setCargando(false)
-    setConfirmEdicion(null)
-  }
-
-  /**
-   * Inicia el proceso de edición:
-   * - Si no hay respuestas posteriores: edita directamente (sin aviso).
-   * - Si las hay: muestra confirmación antes de truncar.
-   */
-  function iniciarEdicion(pasoId: string) {
-    const idxRespuesta = mensajes.findIndex((m) => m.de === 'usuario' && m.pasoId === pasoId)
-    if (idxRespuesta === -1) return
-
-    const posterioresCount = mensajes
-      .slice(idxRespuesta + 1)
-      .filter((m) => m.de === 'usuario')
-      .length
-
-    if (posterioresCount === 0) {
-      ejecutarEdicion(pasoId)
-    } else {
-      setConfirmEdicion({ pasoId, posterioresCount })
-    }
-  }
-
-  // ── Manejar botón "Cerrar" en paso final ──
-
-  function onOpcionSeleccionada(valor: string | string[]) {
-    const valorSimple = Array.isArray(valor) ? valor[0] : valor
-    if (valorSimple === 'cerrar') {
+  function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.key === 'Escape') {
       setAbierto(false)
-      return
     }
-    procesarRespuesta(valor)
   }
 
   // ── Render ──
-
-  // Los botones se renderizan inline en GinaMessages, no en la barra inferior.
-  // El campo de texto siempre es visible: deshabilitado en pasos de botones,
-  // habilitado en pasos de texto libre (input / llm).
-  const esPasoBotones = pasoActual.tipo === 'botones'
-
-  const inputEsDeshabilitado =
-    cargando || inputDeshabilitado || esPasoBotones || sesion.completado
-
-  const inputPlaceholder = sesion.completado
-    ? 'Conversación finalizada'
-    : esPasoBotones
-      ? 'Elige una opción de arriba 👆'
-      : undefined  // GinaInput usará el placeholder según pasoActual.validacion
 
   return (
     <>
@@ -535,116 +195,16 @@ export function GinaWidget() {
           </button>
         </div>
 
-        {/* Mensajes + botones inline (cuando el paso es tipo "botones") */}
-        <GinaMessages
+        {/* Conversación — historial, flujo y lógica de edición */}
+        <GinaConversation
+          sesion={sesion}
+          setSesion={setSesion}
+          pasoActual={pasoActual}
+          setPasoActual={setPasoActual}
           mensajes={mensajes}
-          cargando={cargando}
-          opciones={esPasoBotones ? pasoActual.opciones : undefined}
-          multiselect={pasoActual.multiselect}
-          exclusivaValue={pasoActual.exclusivaValue}
-          deshabilitadoBotones={cargando}
-          onSeleccion={onOpcionSeleccionada}
-          onEditarRespuesta={iniciarEdicion}
-          editarDeshabilitado={cargando || sesion.completado || confirmEdicion !== null}
+          setMensajes={setMensajes}
+          onCerrar={() => setAbierto(false)}
         />
-
-        {/* Botón secundario "Descargar tu Plan" — solo en despedida y si hay recordId */}
-        {pasoActual.id === 'despedida' && sesion.airtableRecordId && (
-          <div
-            className="shrink-0 px-4 py-3 border-t"
-            style={{ borderColor: 'var(--color-arena)', backgroundColor: '#FFFFFF' }}
-          >
-            <a
-              href={`/api/plan/${sesion.airtableRecordId}/pdf`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium border transition-brand"
-              style={{
-                borderColor: 'var(--color-laton)',
-                color: 'var(--color-laton-oscuro)',
-                backgroundColor: 'transparent',
-              }}
-            >
-              <svg
-                className="w-4 h-4 shrink-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.8}
-                aria-hidden="true"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-              </svg>
-              Descargar tu Plan
-            </a>
-          </div>
-        )}
-
-        {/* Aviso de confirmación de edición — aparece entre mensajes e input */}
-        {confirmEdicion !== null && (
-          <div
-            role="alertdialog"
-            aria-labelledby="gina-confirm-titulo"
-            className="shrink-0 px-4 py-3 border-t"
-            style={{
-              borderColor: 'var(--color-laton)',
-              backgroundColor: 'var(--color-niebla)',
-            }}
-          >
-            <p
-              id="gina-confirm-titulo"
-              className="text-xs leading-snug mb-3"
-              style={{ color: 'var(--color-granito)' }}
-            >
-              Si cambias esto, tendrás que responder de nuevo{' '}
-              {confirmEdicion.posterioresCount === 1
-                ? 'la pregunta siguiente'
-                : `las ${confirmEdicion.posterioresCount} preguntas siguientes`
-              }.
-            </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setConfirmEdicion(null)}
-                className="flex-1 py-2 rounded-xl text-xs font-medium border transition-brand cursor-pointer"
-                style={{
-                  borderColor: 'var(--color-laton)',
-                  color: 'var(--color-granito)',
-                  backgroundColor: '#FFFFFF',
-                }}
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={() => ejecutarEdicion(confirmEdicion.pasoId)}
-                className="flex-1 py-2 rounded-xl text-xs font-semibold transition-brand cursor-pointer"
-                style={{
-                  backgroundColor: 'var(--color-laton)',
-                  color: '#FFFFFF',
-                }}
-              >
-                Sí, editar →
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Campo de texto — siempre visible; deshabilitado en pasos de botones */}
-        <div
-          className="shrink-0 border-t px-0 pb-0"
-          style={{
-            borderColor: 'var(--color-arena)',
-            backgroundColor: 'var(--color-arena)',
-          }}
-        >
-          <GinaInput
-            validacion={!esPasoBotones ? pasoActual.validacion : undefined}
-            placeholder={inputPlaceholder}
-            deshabilitado={inputEsDeshabilitado}
-            onEnvio={(val) => procesarRespuesta(val)}
-          />
-        </div>
       </div>
     </>
   )
