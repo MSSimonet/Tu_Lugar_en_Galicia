@@ -226,4 +226,4 @@ NEXT_PUBLIC_SITE_URL             — tulugarengalicia.com (cuando llegue el domi
 | 6 — Expiración + alertas | ✅ hecho |
 | 7 — Webhook Cal.com | ⏳ pendiente |
 | 8 — Recordatorio Silvana 1h antes | ⏳ pendiente |
-| 9 — Validación dinámica /agenda | ⏳ pendiente (hoy es array hardcodeado) |
+| 9 — Validación dinámica /agenda | ✅ hecho |

@@ -1,7 +1,8 @@
 import { getNextMetadata } from '@/lib/seo/metadata'
 import { CalEmbed } from '@/components/shared/CalEmbed'
 import { AgendaPublica } from '@/components/agenda/AgendaPublica'
-import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE, AGENDA_VALID_CODES } from '@/lib/config/site'
+import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from '@/lib/config/site'
+import { validateCodigoAgenda } from '@/lib/admin/airtable'
 
 export const metadata = getNextMetadata('agenda')
 
@@ -12,7 +13,14 @@ interface PageProps {
 export default async function AgendaPage({ searchParams }: PageProps) {
   const params = await searchParams
   const rawCode = typeof params.code === 'string' ? params.code : (params.code?.[0] ?? '')
-  const isValid = AGENDA_VALID_CODES.includes(rawCode.toUpperCase())
+
+  let isValid = false
+  try {
+    isValid = rawCode ? await validateCodigoAgenda(rawCode) : false
+  } catch {
+    // Airtable no disponible — fail closed (mostrar página pública)
+    isValid = false
+  }
 
   if (!isValid) {
     return <AgendaPublica />

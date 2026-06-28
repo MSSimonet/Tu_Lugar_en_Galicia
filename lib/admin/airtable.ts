@@ -85,6 +85,33 @@ export async function listAllRecords(): Promise<AirtableRecord[]> {
   return records
 }
 
+/**
+ * Verifica si un código de agenda es válido: existe en Airtable y no está expirado.
+ * Usa filterByFormula para hacer una sola consulta sin traer toda la tabla.
+ * Devuelve false si el código tiene formato inválido, no existe o está expirado.
+ * Devuelve false también si Airtable falla (fail-closed).
+ */
+export async function validateCodigoAgenda(code: string): Promise<boolean> {
+  // Solo alfanumérico A-Z 0-9, longitud razonable — previene inyección de fórmula
+  if (!code || !/^[A-Z0-9]{1,20}$/i.test(code)) return false
+
+  const { apiKey, baseUrl } = config()
+  // UPPER() para comparación case-insensitive; excluir 'expirado' explícitamente
+  const formula = `AND(UPPER({codigoAgenda})=UPPER("${code}"),{codigoAgenda}!="expirado")`
+
+  const params = new URLSearchParams({ filterByFormula: formula, maxRecords: '1' })
+  params.append('fields[]', 'codigoAgenda')
+
+  const res = await fetch(`${baseUrl}?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${apiKey}` },
+    cache: 'no-store',
+  })
+  if (!res.ok) throw new Error(`Airtable validate ${res.status}`)
+
+  const data = (await res.json()) as { records: unknown[] }
+  return data.records.length > 0
+}
+
 /** Actualiza solo los campos indicados de un registro existente (PATCH). */
 export async function patchRecord(
   recordId: string,

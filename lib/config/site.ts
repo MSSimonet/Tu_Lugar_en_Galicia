@@ -20,6 +20,5 @@ export const SITE_URL = "https://tulugarengalicia.com"
 // Número de WhatsApp formateado para mostrar en footer/about
 export const WHATSAPP_DISPLAY = "+34 XXX XXX XXX"
 
-// Códigos de acceso para /agenda — temporales hasta integrar Resend (generación dinámica)
-// Añadir aquí los códigos que Silvana envíe a leads aprobados.
-export const AGENDA_VALID_CODES: readonly string[] = ['TEST123']
+// La validación de códigos de agenda es ahora dinámica via Airtable.
+// Ver: lib/admin/airtable.ts → validateCodigoAgenda()
