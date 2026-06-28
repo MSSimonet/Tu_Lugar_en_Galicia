@@ -146,6 +146,9 @@ Si el código expiró sin que el cliente agendara:
 
 Si el cliente no abrió el mail en 48hs (detectable con Resend tracking):
 - En el mail diario de Silvana aparece una alerta suave: *"[nombre] aún no abrió el mail con su código."*
+- **Pendiente de activar con dominio propio:** requiere webhook de Resend (eventos `email.opened`).
+  Crear campo `mailAbierto` (Single line text) en Airtable. El webhook escribe la fecha de apertura.
+  El cron lee ese campo para incluir la alerta en el resumen.
 
 ---
 
@@ -220,7 +223,7 @@ NEXT_PUBLIC_SITE_URL             — tulugarengalicia.com (cuando llegue el domi
 | 3 — Página perfil `/admin/lead/` | ✅ hecho |
 | 4 — Endpoint habilitar-agenda | ✅ hecho |
 | 5 — Mail cálido al cliente | ✅ hecho (template en `lib/admin/email.ts`) |
-| 6 — Expiración + alertas | ⏳ pendiente |
+| 6 — Expiración + alertas | ✅ hecho |
 | 7 — Webhook Cal.com | ⏳ pendiente |
 | 8 — Recordatorio Silvana 1h antes | ⏳ pendiente |
 | 9 — Validación dinámica /agenda | ⏳ pendiente (hoy es array hardcodeado) |

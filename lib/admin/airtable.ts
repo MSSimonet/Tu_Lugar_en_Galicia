@@ -37,6 +37,26 @@ export async function getRecord(recordId: string): Promise<Record<string, unknow
   return { ...data.fields, _createdTime: data.createdTime }
 }
 
+const EXPIRACION_MS = 7 * 24 * 60 * 60 * 1000 // 7 días en milisegundos
+
+/**
+ * Devuelve leads con código de agenda activo (no vacío, no 'expirado')
+ * cuya fechaHabilitacion tiene más de 7 días de antigüedad.
+ * Estos son candidatos a marcar como 'expirado'.
+ */
+export async function getLeadsConCodigoActivo(): Promise<AirtableRecord[]> {
+  const records = await listAllRecords()
+  const ahora   = Date.now()
+  return records.filter(r => {
+    const codigo = r.fields.codigoAgenda
+    if (typeof codigo !== 'string' || !codigo || codigo === 'expirado') return false
+    const fechaHab = r.fields.fechaHabilitacion
+    if (typeof fechaHab !== 'string' || !fechaHab) return false
+    const ms = new Date(fechaHab).getTime()
+    return !isNaN(ms) && ahora - ms > EXPIRACION_MS
+  })
+}
+
 /** Lista todos los registros de la tabla, paginando automáticamente (máx. 100/página). */
 export async function listAllRecords(): Promise<AirtableRecord[]> {
   const { apiKey, baseUrl } = config()

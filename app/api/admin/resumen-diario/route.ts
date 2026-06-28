@@ -1,33 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { timingSafeEqual } from 'crypto'
-import { listAllRecords, type AirtableRecord } from '@/lib/admin/airtable'
+import { isAuthorized } from '@/lib/admin/auth'
+import { listAllRecords, patchRecord, type AirtableRecord } from '@/lib/admin/airtable'
 import { generateAdminToken } from '@/lib/admin/tokens'
 import { sendEmail } from '@/lib/admin/email'
 
-// ── Auth ──────────────────────────────────────────────────────────────────────
-// Acepta INTERNAL_API_SECRET (llamadas manuales) o CRON_SECRET (Vercel Cron).
-// En Vercel, configurar CRON_SECRET con el mismo valor que INTERNAL_API_SECRET
-// para que el cron diario quede autenticado automáticamente.
+// ── Constantes ────────────────────────────────────────────────────────────────
 
-function isAuthorized(req: NextRequest): boolean {
-  const auth = req.headers.get('authorization') ?? ''
-  if (!auth.startsWith('Bearer ')) return false
-  const provided = auth.slice(7)
-
-  function matches(expected: string): boolean {
-    try {
-      const a = Buffer.from(expected)
-      const b = Buffer.from(provided)
-      return a.length === b.length && timingSafeEqual(a, b)
-    } catch {
-      return false
-    }
-  }
-
-  const secret    = process.env.INTERNAL_API_SECRET
-  const cronSecret = process.env.CRON_SECRET
-  return (!!secret && matches(secret)) || (!!cronSecret && matches(cronSecret))
-}
+const EXPIRACION_MS = 7 * 24 * 60 * 60 * 1000
 
 // ── Agrupación por calificación ───────────────────────────────────────────────
 
@@ -69,12 +48,12 @@ const PRESUPUESTO: Record<string, string> = {
 }
 
 const DOCS: Record<string, string> = {
-  'espanol':             'pasaporte ES',
-  'ue':                  'pasaporte UE',
-  'nie-residente':       'NIE residente',
-  'nie-no-lucrativa':    'NIE no lucrativa',
-  'visado-solicitado':   'visado solicitado',
-  'sin-documentacion':   'sin docs UE',
+  'espanol':           'pasaporte ES',
+  'ue':                'pasaporte UE',
+  'nie-residente':     'NIE residente',
+  'nie-no-lucrativa':  'NIE no lucrativa',
+  'visado-solicitado': 'visado solicitado',
+  'sin-documentacion': 'sin docs UE',
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -107,7 +86,7 @@ function buildSummary(fields: Record<string, unknown>): string {
   return parts.join(' · ') || '(sin datos de resumen)'
 }
 
-// ── Tarjeta HTML por lead ─────────────────────────────────────────────────────
+// ── Tarjeta de lead (secciones principales) ───────────────────────────────────
 
 function buildCard(record: AirtableRecord, siteUrl: string): string {
   const f       = record.fields
@@ -174,6 +153,57 @@ function buildCard(record: AirtableRecord, siteUrl: string): string {
 </div>`
 }
 
+// ── Tarjeta de seguimiento (código expirado) ──────────────────────────────────
+
+function buildSeguimientoCard(record: AirtableRecord, siteUrl: string): string {
+  const f          = record.fields
+  const nombre     = str(f.nombreCompleto)
+  const email      = str(f.email)
+  const token      = generateAdminToken(record.id)
+  const profileUrl = `${siteUrl}/admin/lead/${record.id}?token=${encodeURIComponent(token)}`
+  const fechaHab   = typeof f.fechaHabilitacion === 'string' ? f.fechaHabilitacion : record.createdTime
+  const diasExp    = diasDesde(fechaHab)
+
+  return `
+<div style="background:#fff8f0;border:1px solid #ffe0b2;border-radius:8px;padding:16px 20px;margin-bottom:10px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+    <tr>
+      <td>
+        <strong style="font-size:14px;color:#1E1C19;font-family:Arial,sans-serif;">${nombre}</strong>
+        <span style="font-size:12px;color:#888480;margin-left:8px;font-family:Arial,sans-serif;">${email}</span>
+      </td>
+      <td align="right" style="white-space:nowrap;">
+        <span style="font-size:11px;color:#e65100;font-family:Arial,sans-serif;font-weight:500;">
+          Código expirado (${diasExp} d&iacute;as sin agendar)
+        </span>
+      </td>
+    </tr>
+  </table>
+  <table cellpadding="0" cellspacing="0">
+    <tr>
+      <td style="padding-right:8px;">
+        <a href="${profileUrl}#habilitar"
+           style="display:inline-block;padding:8px 16px;background:#e65100;color:#ffffff;
+                  text-decoration:none;border-radius:4px;font-size:12px;font-weight:600;
+                  letter-spacing:0.04em;font-family:Arial,sans-serif;">
+          Regenerar c&oacute;digo &rarr;
+        </a>
+      </td>
+      <td>
+        <a href="${profileUrl}"
+           style="display:inline-block;padding:8px 16px;background:#f5f0e8;color:#1E1C19;
+                  text-decoration:none;border-radius:4px;font-size:12px;font-weight:500;
+                  font-family:Arial,sans-serif;">
+          Ver perfil &rarr;
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>`
+}
+
+// ── Section header ────────────────────────────────────────────────────────────
+
 function buildSectionHeader(title: string, count: number, bg: string): string {
   return `
 <div style="background:${bg};border-radius:6px;padding:10px 16px;margin-bottom:12px;">
@@ -190,6 +220,7 @@ function buildSectionHeader(title: string, count: number, bg: string): string {
 function buildEmail(
   potencial:    AirtableRecord[],
   enDesarrollo: AirtableRecord[],
+  seguimiento:  AirtableRecord[],
   noCalifica:   number,
   siteUrl:      string,
 ): string {
@@ -212,6 +243,12 @@ function buildEmail(
     : `<p style="font-family:Arial,sans-serif;font-size:13px;color:#888480;margin-bottom:16px;">
          No hay leads en desarrollo hoy.
        </p>`
+
+  const seguimientoHtml = seguimiento.length > 0
+    ? `<div style="height:20px;"></div>
+       ${buildSectionHeader('Seguimiento pendiente', seguimiento.length, '#fff3e0')}
+       ${seguimiento.map(r => buildSeguimientoCard(r, siteUrl)).join('\n')}`
+    : ''
 
   const noCalificaHtml = noCalifica > 0
     ? `<p style="font-family:Arial,sans-serif;font-size:13px;color:#888480;
@@ -256,6 +293,8 @@ function buildEmail(
 
               ${desarrolloHtml}
 
+              ${seguimientoHtml}
+
               ${noCalificaHtml}
 
               <p style="font-family:Arial,sans-serif;font-size:11px;color:#B0ADA8;
@@ -296,6 +335,32 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Error consultando Airtable' }, { status: 500 })
   }
 
+  // ── 1. Expirar códigos vencidos (>7 días) antes de construir el mail ─────────
+  const ahora       = Date.now()
+  const seguimiento: AirtableRecord[] = []
+
+  const toExpire = records.filter(r => {
+    const codigo = r.fields.codigoAgenda
+    if (typeof codigo !== 'string' || !codigo || codigo === 'expirado') return false
+    const fechaHab = r.fields.fechaHabilitacion
+    if (typeof fechaHab !== 'string' || !fechaHab) return false
+    const ms = new Date(fechaHab).getTime()
+    return !isNaN(ms) && ahora - ms > EXPIRACION_MS
+  })
+
+  await Promise.allSettled(
+    toExpire.map(async r => {
+      try {
+        await patchRecord(r.id, { codigoAgenda: 'expirado' })
+        r.fields.codigoAgenda = 'expirado' // actualizar en memoria
+        seguimiento.push(r)
+      } catch (err) {
+        console.error(`[resumen-diario] Error expirando ${r.id}:`, err)
+      }
+    })
+  )
+
+  // ── 2. Agrupar por calificación ───────────────────────────────────────────────
   const potencial:    AirtableRecord[] = []
   const enDesarrollo: AirtableRecord[] = []
   let noCalifica = 0
@@ -307,18 +372,18 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     else                                noCalifica++
   }
 
-  // Más urgentes primero (más días transcurridos)
   const sortByAge = (a: AirtableRecord, b: AirtableRecord) =>
     new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime()
   potencial.sort(sortByAge)
   enDesarrollo.sort(sortByAge)
 
+  // ── 3. Construir y enviar mail ────────────────────────────────────────────────
   const fechaCorta = new Date().toLocaleDateString('es-ES', {
     day: 'numeric', month: 'long', year: 'numeric',
     timeZone: 'Europe/Madrid',
   })
 
-  const html = buildEmail(potencial, enDesarrollo, noCalifica, siteUrl)
+  const html = buildEmail(potencial, enDesarrollo, seguimiento, noCalifica, siteUrl)
 
   try {
     await sendEmail({
@@ -332,5 +397,5 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   const total = potencial.length + enDesarrollo.length
-  return NextResponse.json({ ok: true, enviados: total })
+  return NextResponse.json({ ok: true, enviados: total, expirados: seguimiento.length })
 }
