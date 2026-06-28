@@ -135,6 +135,13 @@ Antes de ejecutar cualquier tarea, el agente principal actúa como **orquestador
 
 Esto aplica a **todas las tareas sin excepción** — sin necesidad de que el usuario lo pida cada vez.
 
+## 9. Inicio de sesión
+
+Al abrir cada sesión, el hook `SessionStart` inyecta automáticamente el estado de `docs/` y la memoria.
+Ante ese mensaje `[inicio-sesion]`: invocar `anthropic-skills:consolidate-memory` y reportar en ≤3 líneas qué cambió.
+
+---
+
 ## Simplificación automática post-implementación
 
 Después de cada feature o refactor significativo, invocar `/simplify` sobre los archivos modificados para:

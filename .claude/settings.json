@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\Users\\ACER\\Tu_Lugar_en_Galicia\\.claude\\session-start.ps1"
+          }
+        ]
+      }
+    ]
+  }
+}
