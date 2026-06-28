@@ -156,3 +156,12 @@ Esto aplica a **todas las tareas sin excepción** — sin necesidad de que el us
 - Skills: `voz-tu-lugar-en-galicia`, `code-review`, `verify`, `simplify`, `security-review`, y todas las `anthropic-skills:*`
 - MCP Servers: Claude Preview, Claude in Chrome, computer-use, visualize, ccd_session, scheduled-tasks
 - Herramientas nativas: Read, Edit, Write, Glob, Grep, Bash, Agent, Skill
+
+## Simplificación automática post-implementación
+
+Después de cada feature o refactor significativo, invocar `/simplify` sobre los archivos modificados para:
+- Eliminar código innecesario
+- Reducir abstracciones prematuras
+- Asegurar que cada línea justifica su existencia
+
+Esto aplica automáticamente — sin que el usuario lo pida.
