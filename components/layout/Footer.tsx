@@ -11,7 +11,7 @@ import {
 
 const CALCOM_PLACEHOLDER = 'https://cal.com/tu-usuario'
 const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
-const ctaHref = CALCOM_URL !== CALCOM_PLACEHOLDER ? CALCOM_URL : waHref
+const ctaHref = (CALCOM_URL as string) !== CALCOM_PLACEHOLDER ? CALCOM_URL : waHref
 
 const serviceLinks = [
   { label: 'Cómo funciona',       href: '/como-funciona' },
