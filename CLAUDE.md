@@ -138,3 +138,21 @@ para **dos cosas distintas**:
 - El mapa de familias (Fase 5) solo muestra a quien dio permiso explícito; nunca calle ni número exacto.
 - El scraping de supermercados (Fase 3) debe revisar términos de uso de cada sitio antes de activarse.
 - Ante cualquier duda de datos personales, invocar al `Legal Compliance Checker`.
+
+---
+
+## 8. Modo de operación — Orquestador siempre activo
+
+Antes de ejecutar cualquier tarea, el agente principal actúa como **orquestador**:
+
+1. Evalúa qué combinación de subagentes, skills, MCP servers y herramientas es óptima para la tarea
+2. Invoca los recursos necesarios en paralelo cuando sea posible
+3. Coordina los resultados y entrega la solución óptima
+
+Esto aplica a **todas las tareas sin excepción** — sin necesidad de que el usuario lo pida cada vez.
+
+**Recursos disponibles a invocar:**
+- Subagentes especializados: `Frontend Developer`, `UI Designer`, `Brand Guardian`, `SEO Specialist`, `Accessibility Auditor`, `Performance Benchmarker`, `Security Engineer`, `Legal Compliance Checker`, `AI Engineer`, `Backend Architect`, `Code Reviewer`, `Agents Orchestrator`, y ~100 más
+- Skills: `voz-tu-lugar-en-galicia`, `code-review`, `verify`, `simplify`, `security-review`, y todas las `anthropic-skills:*`
+- MCP Servers: Claude Preview, Claude in Chrome, computer-use, visualize, ccd_session, scheduled-tasks
+- Herramientas nativas: Read, Edit, Write, Glob, Grep, Bash, Agent, Skill
