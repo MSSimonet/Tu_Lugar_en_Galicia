@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/admin/resumen-diario",
+      "schedule": "0 7 * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

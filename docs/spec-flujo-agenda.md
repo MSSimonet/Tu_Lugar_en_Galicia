@@ -216,8 +216,8 @@ NEXT_PUBLIC_SITE_URL             — tulugarengalicia.com (cuando llegue el domi
 | Pieza | Estado |
 |---|---|
 | 1 — Calificación Airtable | ✅ hecho |
-| 2 — Mail diario Silvana | ⏳ pendiente |
-| 3 — Página perfil `/admin/lead/` | ⏳ pendiente |
+| 2 — Mail diario Silvana | ✅ hecho |
+| 3 — Página perfil `/admin/lead/` | ✅ hecho |
 | 4 — Endpoint habilitar-agenda | ✅ hecho |
 | 5 — Mail cálido al cliente | ✅ hecho (template en `lib/admin/email.ts`) |
 | 6 — Expiración + alertas | ⏳ pendiente |

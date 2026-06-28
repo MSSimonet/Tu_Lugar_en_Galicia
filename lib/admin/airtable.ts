@@ -4,6 +4,12 @@
  * Usa las mismas variables de entorno que lib/leads.ts.
  */
 
+export interface AirtableRecord {
+  id: string
+  createdTime: string
+  fields: Record<string, unknown>
+}
+
 function config() {
   const apiKey  = process.env.AIRTABLE_API_KEY
   const baseId  = process.env.AIRTABLE_BASE_ID
@@ -29,6 +35,34 @@ export async function getRecord(recordId: string): Promise<Record<string, unknow
   if (!res.ok) throw new Error(`Airtable GET ${res.status}`)
   const data = (await res.json()) as { fields: Record<string, unknown>; createdTime?: string }
   return { ...data.fields, _createdTime: data.createdTime }
+}
+
+/** Lista todos los registros de la tabla, paginando automáticamente (máx. 100/página). */
+export async function listAllRecords(): Promise<AirtableRecord[]> {
+  const { apiKey, baseUrl } = config()
+  const records: AirtableRecord[] = []
+  let offset: string | undefined
+
+  do {
+    const url = new URL(baseUrl)
+    url.searchParams.set('pageSize', '100')
+    if (offset) url.searchParams.set('offset', offset)
+
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      cache: 'no-store',
+    })
+    if (!res.ok) throw new Error(`Airtable list ${res.status}`)
+
+    const data = (await res.json()) as {
+      records: Array<{ id: string; createdTime: string; fields: Record<string, unknown> }>
+      offset?: string
+    }
+    records.push(...data.records)
+    offset = data.offset
+  } while (offset)
+
+  return records
 }
 
 /** Actualiza solo los campos indicados de un registro existente (PATCH). */
