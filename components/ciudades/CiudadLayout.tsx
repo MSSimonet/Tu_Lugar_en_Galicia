@@ -242,6 +242,28 @@ export function CiudadLayout({
           <FAQAccordion faqs={faqsMapped} />
         </div>
 
+        {/* Fila 4: Guía de apps para recién llegados */}
+        <div className="bg-[var(--color-niebla)] rounded-2xl border border-[var(--color-arena)] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-2">
+              Para tu llegada
+            </p>
+            <p className="font-[family-name:var(--font-mulish)] font-semibold text-sm text-[var(--color-granito)] mb-1">
+              ¿Ya tienes las apps que vas a necesitar desde el primer día?
+            </p>
+            <p className="font-[family-name:var(--font-mulish)] text-xs text-[var(--color-pizarra)] leading-snug">
+              Transporte, salud, banca y trámites — las apps esenciales para recién llegados en Galicia.
+            </p>
+          </div>
+          <Link
+            href="/guia-llegada"
+            className="font-[family-name:var(--font-mulish)] text-xs font-semibold uppercase tracking-wide whitespace-nowrap shrink-0 px-4 py-2 rounded-full border transition-opacity hover:opacity-70"
+            style={{ color: 'var(--color-laton-text)', borderColor: 'var(--color-laton)' }}
+          >
+            Ver la guía →
+          </Link>
+        </div>
+
       </div>
 
       {/* ── OTRAS CIUDADES ── */}

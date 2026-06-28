@@ -218,6 +218,14 @@ Pasos para activar el feed dinámico de Instagram en la home:
 
 ---
 
+## Guía de llegada — revisión de contenido
+- [ ] Revisar si hay apps útiles para recién llegados que no están en lib/config/apps.ts
+      Categorías a repasar: identidad/trámites, salud SERGAS, transporte, hogar, burocracia
+      Responsable: Silvana (conoce las consultas reales de los clientes)
+      Prioridad: media — antes de que la página tenga tráfico real
+
+---
+
 ## Checklist de lanzamiento
 
 - [ ] Número de WhatsApp real en `lib/config/site.ts`
