@@ -202,6 +202,22 @@ Fuentes de referencia: `/docs/gina-flujo.md` y `/docs/gina-barandas.md`.
 
 ---
 
+## Feed de Instagram (Behold)
+
+**Hablar con Silvana antes de activar.**
+
+Pasos para activar el feed dinámico de Instagram en la home:
+
+1. Silvana entra a behold.so con su cuenta de Instagram Business
+2. Crea un widget → copia el `BEHOLD_WIDGET_ID`
+3. Añadir en `.env.local` y en Vercel: `NEXT_PUBLIC_BEHOLD_WIDGET_ID=xxxxx`
+4. `FeedInstagram.tsx` ya tiene el TODO preparado — cambio de 10 minutos una vez que se tiene el token
+
+**Requisito:** cuenta de Instagram debe ser tipo Business o Creator (no personal).
+**Costo:** Behold.so tiene plan gratuito para 1 widget.
+
+---
+
 ## Checklist de lanzamiento
 
 - [ ] Número de WhatsApp real en `lib/config/site.ts`
