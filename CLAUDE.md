@@ -20,9 +20,6 @@ Contexto completo del negocio, marca, competencia y producto en:
 - `/docs/gina-flujo.md` — flujo conversacional de Gina (fuente de verdad del cuestionario)
 - `/docs/gina-barandas.md` — reglas de control del system prompt y arquitectura del widget de Gina
 - `/docs/contexto-estrategico.md` — contexto de negocio, marca y competencia
-  (⚠️ DESACTUALIZADO en dos cosas: describe la voz de marca en "vos" rioplatense y menciona la
-  API de Claude para Gina. Las reglas vigentes están en §2 (IA = Gemini) y §6 (voz = "tú" neutro).
-  Si editás ese doc, corregí sus ejemplos de copy a "tú" neutro y la mención de IA a Gemini.)
 - `/docs/gina-recursos-preparacion.md` — material de apoyo y recursos del asistente Gina
 - `/docs/legal-terminos-privacidad.md` — fuente de la política de privacidad real (datos fiscales pendientes de completar)
 
@@ -111,22 +108,9 @@ Ejemplo real:
 - Variables de entorno (claves) nunca en el código ni en el cliente: solo en `.env.local` y
   en las variables de entorno de Vercel.
 
-### 6.1. Dos registros de voz que NUNCA se cruzan
+### 6.1. Voz de marca
 
-Esta es la regla que evita la contradicción histórica del proyecto. Hay **dos voces distintas**
-para **dos cosas distintas**:
-
-- **Voz de MARCA — todo lo que se PUBLICA → "tú" neutro.**
-  Español internacional, cálido y cercano. Aplica a: la web, el copy de las páginas, los captions
-  de Instagram, el blog y **todos los mensajes que Gina le muestra al cliente**.
-  Nunca "vos", nunca "vosotros", nunca corporativo ni frío.
-  Motivo: el público es argentino, venezolano y brasileño mezclado; el "tú" neutro no deja a nadie afuera.
-
-- **Voz de TRABAJO — la conversación con el humano → "vos" rioplatense.**
-  Es cómo los agentes le hablan a Silvana / al equipo dentro de Claude Code o del chat.
-  **NUNCA aparece en nada publicado, ni en el producto, ni en la salida de Gina.**
-
-> 🧭 Regla mnemotécnica: **lo que ve el cliente = "tú"; lo que hablás conmigo = "vos".**
+Todo texto publicado: aplicar skill `voz-tu-lugar-en-galicia`. Cliente = **"tú" neutro**. Nunca "vos" con el cliente.
 
 - Idioma del sitio: español (futuro: + portugués + inglés en Fase 6).
 
@@ -150,12 +134,6 @@ Antes de ejecutar cualquier tarea, el agente principal actúa como **orquestador
 3. Coordina los resultados y entrega la solución óptima
 
 Esto aplica a **todas las tareas sin excepción** — sin necesidad de que el usuario lo pida cada vez.
-
-**Recursos disponibles a invocar:**
-- Subagentes especializados: `Frontend Developer`, `UI Designer`, `Brand Guardian`, `SEO Specialist`, `Accessibility Auditor`, `Performance Benchmarker`, `Security Engineer`, `Legal Compliance Checker`, `AI Engineer`, `Backend Architect`, `Code Reviewer`, `Agents Orchestrator`, y ~100 más
-- Skills: `voz-tu-lugar-en-galicia`, `code-review`, `verify`, `simplify`, `security-review`, y todas las `anthropic-skills:*`
-- MCP Servers: Claude Preview, Claude in Chrome, computer-use, visualize, ccd_session, scheduled-tasks
-- Herramientas nativas: Read, Edit, Write, Glob, Grep, Bash, Agent, Skill
 
 ## Simplificación automática post-implementación
 

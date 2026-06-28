@@ -120,7 +120,7 @@ Dice: "Encontrá tu lugar... Buscamos tu nuevo 🏡 En 4 años hemos conseguido 
 - No tiene link a WhatsApp con mensaje predefinido
 
 ### Bio propuesta
-"La primera agencia de relocation de Galicia. Conseguimos tu alquiler antes de que llegues. +200 familias con sus llaves. Escribinos ahora →" + link WhatsApp con mensaje predefinido: "Hola, vengo desde Instagram de Tu Lugar en Galicia y quiero información sobre relocation."
+"La primera agencia de relocation de Galicia. Conseguimos tu alquiler antes de que llegues. +200 familias con sus llaves. Escríbenos ahora →" + link WhatsApp con mensaje predefinido: "Hola, vengo desde Instagram de Tu Lugar en Galicia y quiero información sobre relocation."
 
 ---
 
@@ -196,14 +196,14 @@ No es hacer lo mismo que todos pero mejor — es ser el único especialista con 
 |---|---|---|
 | Canal | WhatsApp Business API (Meta) | Gratis hasta 1.000 conv./mes |
 | Automatización | Manychat | 15€ |
-| Cerebro IA | Claude API (Anthropic) | ~10-20€ |
+| Cerebro IA | API de Gemini (Google) | ~10-20€ |
 | CRM | Airtable (gratuito) | 0€ |
 | Agenda | Cal.com (gratuito) | 0€ |
 | **Total básico** | | **~25-35€/mes** |
 
 ### Personalidad del agente
 - Nombre: Asistente de Tu Lugar en Galicia
-- Tono: cálido, directo, rioplatense (usa "vos", "ustedes", "che" con naturalidad)
+- Tono: cálido, directo, "tú" neutro (español internacional; nunca "vos" ni "che")
 - Nunca revela que es IA a menos que le pregunten directamente
 - Si le preguntan, responde honestamente: "Soy el asistente virtual de Silvana, trabajo para asegurarme de que nadie quede sin respuesta"
 - Siempre termina ofreciendo la videollamada con Silvana como siguiente paso
@@ -277,7 +277,7 @@ tulugarengalicia.com/
 9. **CTA final:** WhatsApp flotante en toda la web + formulario de diagnóstico
 
 ### Formulario de diagnóstico (en lugar de formulario de contacto)
-Preguntas: ¿De dónde venís? / ¿Cuándo planean llegar? / ¿Presupuesto mensual de alquiler? / ¿Venís solos, en pareja o con familia? / ¿Tenés trabajo confirmado en Galicia?
+Preguntas: ¿De dónde son? / ¿Cuándo planean llegar? / ¿Cuál es su presupuesto mensual de alquiler? / ¿Vienen solos, en pareja o con familia? / ¿Tienen trabajo confirmado en Galicia?
 
 ---
 
@@ -306,10 +306,10 @@ Preguntas: ¿De dónde venís? / ¿Cuándo planean llegar? / ¿Presupuesto mensu
 - 30-45 segundos grabado con móvil desde adentro del piso
 - Voz en off de Silvana: ciudad, barrio, metros, habitaciones, precio
 - Sin edición compleja — la autenticidad es la clave
-- CTA al final: "¿Querés que busquemos uno así para vos?"
+- CTA al final: "¿Quieres que busquemos uno así para ti?"
 
 **Carrusel educativo (el más compartido):**
-- Títulos: "Lo que nadie te dice antes de alquilar en Galicia", "Los 5 documentos que necesitás para firmar un contrato", "Mejores barrios de Vigo para familias con niños"
+- Títulos: "Lo que nadie te dice antes de alquilar en Galicia", "Los 5 documentos que necesitas para firmar un contrato", "Mejores barrios de Vigo para familias con niños"
 - Formato: problema → solución → llamada a la acción
 
 ### Estructura de highlights recomendada
@@ -385,11 +385,11 @@ Preguntas: ¿De dónde venís? / ¿Cuándo planean llegar? / ¿Presupuesto mensu
 Actúas como consultor estratégico digital y asistente de contenido para Tu Lugar en Galicia. Conocés en profundidad el negocio, el mercado, la competencia y la estrategia definida en este documento.
 
 ### Tono y voz de marca
-- Cálido, cercano, rioplatense con naturalidad (usás "vos", "ustedes")
+- Cálido, cercano, **"tú" neutro** (español internacional; nunca "vos", nunca "vosotros")
 - Directo y sin rodeos — el cliente emigrante no tiene tiempo para textos largos
-- Empático — sabés lo que es emigrar y lo difícil que es encontrar piso siendo extranjero
+- Empático — entiende lo que es emigrar y lo difícil que es encontrar piso siendo extranjero
 - Nunca corporativo, nunca frío, nunca genérico
-- Los textos para Instagram y la web hablan en segunda persona del plural: "Les buscamos", "Los esperamos", "Están en el lugar correcto"
+- Los textos para Instagram y la web hablan en segunda persona del singular: "Te buscamos", "Te esperamos", "Estás en el lugar correcto"
 
 ### Qué podés hacer
 - Redactar posts de Instagram (carruseles, captions de reels, stories)
