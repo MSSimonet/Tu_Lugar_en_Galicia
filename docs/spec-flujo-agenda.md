@@ -152,29 +152,58 @@ Si el cliente no abrió el mail en 48hs (detectable con Resend tracking):
 
 ---
 
-## Pieza 7 — Flujo Cal.com
+## Pieza 7 — Webhook Cal.com ✅
+
+**Archivo:** `app/api/webhooks/calcom/route.ts`
 
 **Configuración en panel Cal.com (no requiere código):**
 - Recordatorio automático 24hs antes → mail al cliente con fecha, hora y link
 - Recordatorio automático 1 hora antes → mail breve al cliente
 - Notificación a Silvana al confirmar cita → mail automático de Cal.com
 
-**Webhook Cal.com → `/api/webhooks/calcom`:**
-Cuando se confirma una reserva:
-- Actualiza Airtable: campo `citaAgendada: true`, `fechaCita`, `horaCita`
-- Envía a Silvana un mail con el resumen del perfil del cliente 1 hora antes de la cita (Resend)
+**Webhook Cal.com → `POST /api/webhooks/calcom`:**
+- Verifica firma HMAC-SHA256 via header `X-Cal-Signature-256` con `CALCOM_WEBHOOK_SECRET`
+- Solo procesa eventos `BOOKING_CREATED`; devuelve `{ ok: true }` para el resto
+- Extrae nombre, email, `startTime` y `location` del payload
+- Busca el lead en Airtable por email (`findLeadByEmail`)
+- PATCH: `citaAgendada: 'true'`, `fechaCita` (ISO timestamp), `horaCita`, `plataformaVideollamada`
+- Envía mail de confirmación a Silvana con nombre, fecha, hora, plataforma y link al perfil
+- Siempre devuelve `{ ok: true }` — nunca bloquea Cal.com ante errores internos
+
+**Variable de entorno nueva:** `CALCOM_WEBHOOK_SECRET`
+- Obtener en: Cal.com → Settings → Developer → Webhooks → crear webhook
+- URL: `https://tulugarengalicia.com/api/webhooks/calcom`
+- Eventos: `BOOKING_CREATED`
+
+**Campos nuevos en Airtable** (Silvana los crea manualmente, tipo Single line text):
+| Campo | Descripción |
+|---|---|
+| `citaAgendada` | `'true'` cuando el cliente reservó; vacío si no |
+| `fechaCita` | ISO timestamp del `startTime` de Cal.com (para comparación en recordatorio) |
+| `horaCita` | Hora formateada en hora España (ej: `10:00`) |
+| `plataformaVideollamada` | Meet / Zoom / URL / WhatsApp — puede editarse en Airtable |
 
 ---
 
-## Pieza 8 — Recordatorio a Silvana antes de la videollamada
+## Pieza 8 — Recordatorio a Silvana 1h antes ✅
 
-**Cuándo:** 1 hora antes de cada cita confirmada (disparado por el webhook de Cal.com o por cron).
+**Archivo:** `app/api/admin/recordatorio-silvana/route.ts`
 
-**Contenido del mail a Silvana:**
-- Nombre del cliente
-- Resumen compacto del perfil (ciudad, origen, plazo, presupuesto, situación)
-- Link al perfil completo `/admin/lead/[recordId]`
-- Plataforma de videollamada (campo configurable en Airtable: `plataformaVideollamada` → Meet / Zoom / WhatsApp)
+**Cuándo:** cron horario `0 * * * *` (minuto 0 de cada hora UTC).
+
+**Lógica:**
+- `getLeadsConCitaProxima()` en `lib/admin/airtable.ts`: filtra leads con `citaAgendada === 'true'` cuya `fechaCita` (ISO) cae entre `Date.now()` y `Date.now() + 75 minutos`
+- Si no hay citas próximas: devuelve `{ ok: true, enviados: 0 }` sin enviar mail
+- Si hay citas: envía mail a Silvana con tarjeta por cada lead
+
+**Contenido de cada tarjeta:**
+- Nombre del cliente, email
+- Minutos exactos hasta la cita
+- Fecha larga y hora (hora España)
+- Ciudad destino, país origen, plazo de llegada, presupuesto
+- Situación laboral
+- Plataforma de videollamada (con link clicable si es URL)
+- Botón "Ver perfil completo →" con token HMAC válido 72h
 
 ---
 
@@ -192,8 +221,10 @@ Sin cambios en el comportamiento actual. Solo actualizar:
 SILVANA_EMAIL                    — email de Silvana para mails internos
 INTERNAL_API_SECRET              — ya existe, se reutiliza para auth de endpoints admin
 RESEND_API_KEY                   — ya existe
-CALCOM_API_KEY                   — nuevo, para webhooks y configuración via API
+CALCOM_API_KEY                   — para webhooks y configuración via API
+CALCOM_WEBHOOK_SECRET            — nuevo (Pieza 7): firma HMAC del webhook de Cal.com
 NEXT_PUBLIC_SITE_URL             — tulugarengalicia.com (cuando llegue el dominio)
+CRON_SECRET                      — ya existe: Vercel lo inyecta en crons
 ```
 
 ---
@@ -224,6 +255,6 @@ NEXT_PUBLIC_SITE_URL             — tulugarengalicia.com (cuando llegue el domi
 | 4 — Endpoint habilitar-agenda | ✅ hecho |
 | 5 — Mail cálido al cliente | ✅ hecho (template en `lib/admin/email.ts`) |
 | 6 — Expiración + alertas | ✅ hecho |
-| 7 — Webhook Cal.com | ⏳ pendiente |
-| 8 — Recordatorio Silvana 1h antes | ⏳ pendiente |
+| 7 — Webhook Cal.com | ✅ hecho (`app/api/webhooks/calcom/route.ts`) |
+| 8 — Recordatorio Silvana 1h antes | ✅ hecho (`app/api/admin/recordatorio-silvana/route.ts`) |
 | 9 — Validación dinámica /agenda | ✅ hecho |

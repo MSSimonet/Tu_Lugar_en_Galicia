@@ -112,6 +112,47 @@ export async function validateCodigoAgenda(code: string): Promise<boolean> {
   return data.records.length > 0
 }
 
+/**
+ * Busca un lead por su email usando filterByFormula.
+ * Devuelve null si no existe. Lanza si Airtable falla.
+ */
+export async function findLeadByEmail(email: string): Promise<AirtableRecord | null> {
+  const { apiKey, baseUrl } = config()
+  // Sanitizar para evitar inyección de fórmula Airtable
+  const safe    = email.replace(/['"\\]/g, '').toLowerCase()
+  const formula = `LOWER({email})="${safe}"`
+  const params  = new URLSearchParams({ filterByFormula: formula, maxRecords: '1' })
+
+  const res = await fetch(`${baseUrl}?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${apiKey}` },
+    cache: 'no-store',
+  })
+  if (!res.ok) throw new Error(`Airtable findByEmail ${res.status}`)
+
+  const data = (await res.json()) as {
+    records: Array<{ id: string; createdTime: string; fields: Record<string, unknown> }>
+  }
+  return data.records[0] ?? null
+}
+
+/**
+ * Devuelve leads con cita confirmada cuya fechaCita (ISO string de Cal.com)
+ * cae entre ahora y ahora + 75 minutos. Usado por el recordatorio horario.
+ */
+export async function getLeadsConCitaProxima(): Promise<AirtableRecord[]> {
+  const records = await listAllRecords()
+  const ahora   = Date.now()
+  const limite  = ahora + 75 * 60 * 1000
+
+  return records.filter(r => {
+    if (r.fields.citaAgendada !== 'true') return false
+    const fecha = r.fields.fechaCita
+    if (typeof fecha !== 'string' || !fecha) return false
+    const ms = new Date(fecha).getTime()
+    return !isNaN(ms) && ms >= ahora && ms <= limite
+  })
+}
+
 /** Actualiza solo los campos indicados de un registro existente (PATCH). */
 export async function patchRecord(
   recordId: string,
