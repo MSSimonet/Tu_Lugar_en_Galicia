@@ -61,7 +61,7 @@ export function ElMarcador() {
               fontSize: '10px',
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              color: 'var(--color-niebla)',
+              color: 'rgba(245,240,232,0.75)',
             }}
           >
             En tiempo real
@@ -127,8 +127,8 @@ export function ElMarcador() {
                     fontSize: '10px',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
-                    color: 'var(--color-niebla)',
-                    opacity: 0.8,
+                    color: 'rgba(245,240,232,0.75)',
+                    opacity: 1,
                   }}
                 >
                   {etiqueta}

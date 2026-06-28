@@ -11,7 +11,8 @@ export function FeedInstagram() {
       <div className="mx-auto max-w-4xl">
         <h2
           id="instagram-heading"
-          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] uppercase"
+          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] uppercase"
+          style={{ color: 'var(--color-granito)' }}
         >
           Seguinos
         </h2>
@@ -49,7 +50,7 @@ export function FeedInstagram() {
             href="https://instagram.com/tulugarengalicia"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: 'var(--color-mar)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
+            style={{ color: 'var(--color-granito)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
           >
             @tulugarengalicia
           </a>

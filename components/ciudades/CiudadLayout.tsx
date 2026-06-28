@@ -158,7 +158,7 @@ export function CiudadLayout({
           {/* Descripción larga */}
           <div className="bg-[var(--color-niebla)] rounded-2xl border border-[var(--color-arena)] p-6">
             <p
-              className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[#7A5F22] mb-4"
+              className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4"
             >
               La ciudad
             </p>
@@ -181,7 +181,7 @@ export function CiudadLayout({
 
           {/* Barrios más buscados */}
           <div className="bg-[var(--color-niebla)] rounded-2xl p-5">
-            <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[#7A5F22] mb-4">
+            <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4">
               Los barrios más buscados
             </p>
             <ul className="space-y-0 divide-y divide-[var(--color-arena)]">
@@ -200,7 +200,7 @@ export function CiudadLayout({
 
           {/* Alquileres orientativos */}
           <div className="bg-[var(--color-niebla)] rounded-2xl p-5">
-            <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[#7A5F22] mb-4">
+            <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4">
               Alquileres orientativos · 2025
             </p>
             <ul className="space-y-2">
@@ -218,7 +218,7 @@ export function CiudadLayout({
                 </li>
               ))}
             </ul>
-            <p className="font-[family-name:var(--font-mulish)] text-[#616669] mt-3 leading-snug" style={{ fontSize: '10px' }}>
+            <p className="font-[family-name:var(--font-mulish)] text-[var(--color-pizarra)] mt-3 leading-snug" style={{ fontSize: '10px' }}>
               Orientativos. Varían según barrio y estado del inmueble.
             </p>
           </div>
@@ -250,7 +250,7 @@ export function CiudadLayout({
         return (
           <section className="bg-[var(--color-niebla)] px-6 md:px-8 py-7">
             <div className="max-w-7xl mx-auto">
-              <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[#7A5F22] mb-5">
+              <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-5">
                 Otras ciudades
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

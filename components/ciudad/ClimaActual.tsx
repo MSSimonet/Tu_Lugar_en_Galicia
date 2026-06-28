@@ -146,7 +146,7 @@ export function ClimaActual({ slug }: { slug: string }) {
       )}
 
       {/* Footer */}
-      <p className="font-[family-name:var(--font-mulish)] text-[#616669] leading-none" style={{ fontSize: '10px' }}>
+      <p className="font-[family-name:var(--font-mulish)] text-[var(--color-pizarra)] leading-none" style={{ fontSize: '10px' }}>
         AEMET · actualizado cada 6h
       </p>
     </div>

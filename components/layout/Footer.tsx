@@ -170,7 +170,7 @@ export function Footer() {
             {/* Logo footer */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '18px', marginBottom: '24px' }}>
               <Image
-                src="/images/aldaba.svg"
+                src="/images/aldaba.png"
                 alt=""
                 width={72}
                 height={93}

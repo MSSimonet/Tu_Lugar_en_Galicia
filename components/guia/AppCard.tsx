@@ -85,7 +85,7 @@ const CATEGORIA_CONFIG: Record<
   App['categoria'],
   { icon: React.ReactNode; color: string; bgColor: string }
 > = {
-  identidad:  { icon: <IconIdentidad />,  color: 'var(--color-laton)',      bgColor: 'color-mix(in srgb, var(--color-laton) 12%, transparent)'      },
+  identidad:  { icon: <IconIdentidad />,  color: 'var(--color-laton-text)',      bgColor: 'color-mix(in srgb, var(--color-laton) 12%, transparent)'      },
   salud:      { icon: <IconSalud />,      color: 'var(--color-atlantico)',   bgColor: 'color-mix(in srgb, var(--color-atlantico) 12%, transparent)'   },
   transporte: { icon: <IconTransporte />, color: 'var(--color-mar)',         bgColor: 'color-mix(in srgb, var(--color-mar) 12%, transparent)'         },
   hogar:      { icon: <IconHogar />,      color: 'var(--color-atlantico-claro)', bgColor: 'color-mix(in srgb, var(--color-atlantico-claro) 12%, transparent)' },

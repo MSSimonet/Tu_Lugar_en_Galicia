@@ -144,31 +144,31 @@ export default function CiudadesIndexPage() {
 
       {/* Hero */}
       <section
-        className="bg-[var(--color-granito)] flex flex-col items-center justify-center text-center px-6 md:px-12"
+        className="bg-[var(--color-blanco)] flex flex-col items-center justify-center text-center px-6 md:px-12"
         style={{ padding: '40px 48px' }}
       >
         <span
-          className="inline-flex items-center px-3 py-1 rounded-full mb-5 font-[family-name:var(--font-mulish)] tracking-widest uppercase text-[var(--color-laton-claro)] border"
-          style={{ fontSize: '10px', background: 'rgba(0,0,0,0.42)', borderColor: 'rgba(255,255,255,0.18)' }}
+          className="inline-flex items-center px-3 py-1 rounded-full mb-5 font-[family-name:var(--font-mulish)] tracking-widest uppercase text-[var(--color-laton)] border border-[var(--color-arena)]"
+          style={{ fontSize: '10px', background: 'var(--color-niebla)' }}
         >
           Relocation especializado · Galicia
         </span>
         <h1
-          className="font-[family-name:var(--font-cormorant)] text-white font-normal mb-4"
+          className="font-[family-name:var(--font-cormorant)] text-[var(--color-granito)] font-normal mb-4"
           style={{ fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 400, lineHeight: 1.15, letterSpacing: '-0.01em' }}
         >
           Elige tu ciudad
         </h1>
         <p
-          className="font-[family-name:var(--font-mulish)] leading-relaxed max-w-[480px] mx-auto"
-          style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.70)' }}
+          className="font-[family-name:var(--font-mulish)] leading-relaxed max-w-[480px] mx-auto text-[var(--color-pizarra)]"
+          style={{ fontSize: '1rem' }}
         >
           Cada ciudad de Galicia tiene su carácter. Encuentra la que mejor se adapta a lo que buscas.
         </p>
       </section>
 
       {/* Grid 5 columnas */}
-      <section className="bg-[var(--color-granito)]" style={{ paddingTop: '10px' }}>
+      <section className="bg-[var(--color-blanco)]" style={{ paddingTop: '10px' }}>
         <div className="ciudades-grid">
           {CIUDADES.map(ciudad => (
             <CiudadCard key={ciudad.slug} {...ciudad} />

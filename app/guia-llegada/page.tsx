@@ -121,7 +121,7 @@ export default function GuiaLlegadaPage() {
           </h2>
           <p
             className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
-            style={{ color: 'var(--color-pizarra)' }}
+            style={{ color: 'var(--color-granito)' }}
           >
             Las apps son el kit digital, pero encontrar el piso es el primer paso real.
             Cuéntanos tu caso y buscamos juntos tu hogar en Galicia.
@@ -142,7 +142,7 @@ export default function GuiaLlegadaPage() {
               className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium uppercase tracking-[var(--tracking-ui)] transition-brand focus-visible:outline-2 focus-visible:outline-offset-2"
               style={{
                 borderColor: 'var(--color-laton)',
-                color: 'var(--color-laton)',
+                color: 'var(--color-granito)',
                 outlineColor: 'var(--color-laton)',
               }}
             >

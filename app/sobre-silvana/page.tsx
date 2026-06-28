@@ -63,7 +63,7 @@ export default function SobreSilvanaPage() {
               }}>
                 Hice tu mismo camino,<br />te entiendo muy bien…
               </h1>
-              <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
+              <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] leading-[var(--leading-cuerpo)]" style={{ fontSize: 'var(--text-sm)', color: 'var(--color-laton-claro)' }}>
                 Fundadora de Tu Lugar en Galicia — emigrante argentina con raíces gallegas
               </p>
             </div>

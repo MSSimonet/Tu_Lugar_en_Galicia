@@ -11,23 +11,24 @@
   --color-laton:        #8F722B;
   --color-laton-claro:  #D4B96A;
   --color-laton-oscuro: #8A6E2A;
+  --color-laton-text:   #7A5F22; /* laton oscurecido para texto AA sobre niebla/blanco */
 
   /* Acento territorial — verde atlántico */
   --color-atlantico:       #1A5247;
   --color-atlantico-claro: #2E7A68;
 
   /* Estructura y fondos */
-  --color-granito: #2A2B2E;
-  --color-pizarra: #4A4E54;
-  --color-niebla:  #F2F0EB;
-  --color-arena:   #E5DDD0;
+  --color-granito: #1E1C19;
+  --color-pizarra: #696560;
+  --color-niebla:  #F5F0E8;
+  --color-arena:   #E8E0D2;
 
   /* Acentos funcionales */
   --color-mar:   #1E5F7A;
   --color-coral: #D4694F;
 
   /* Base */
-  --color-blanco: #FFFFFF;
+  --color-blanco: #FFFCF7;
 
   /* === TIPOGRAFÍA === */
 
@@ -179,11 +180,12 @@ details > dd {
    ─────────────────────────────────────────────────────────────────────────── */
 .dark {
   /* Fondos — grafito cálido */
-  --color-blanco:  #1A1917;
-  --color-niebla:  #252320;
-  --color-arena:   #3A3530;
+  --color-blanco:  #141210;
+  --color-niebla:  #1E1B18;
+  --color-arena:   #302B25;
 
   /* Texto */
-  --color-granito: #EDE9E3;
-  --color-pizarra: #9A9690;
+  --color-granito:    #F0EBE2;
+  --color-pizarra:    #8C8278;
+  --color-laton-text: #D4AF6A; /* laton claro para texto AA sobre fondos oscuros */
 }

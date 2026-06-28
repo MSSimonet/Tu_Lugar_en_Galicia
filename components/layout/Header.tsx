@@ -90,11 +90,11 @@ export function Header() {
     alignItems: 'center',
     justifyContent: 'center',
     height: '36px',
-    border: '1px solid #B8943F',
-    background: 'rgba(184,148,63,0.12)',
+    border: '1px solid rgba(212,175,106,0.3)',
+    background: 'transparent',
     cursor: 'pointer',
     color: '#D4AF6A',
-    transition: 'background 200ms ease, color 200ms ease',
+    transition: 'background 200ms ease',
     flexShrink: 0,
   }
 
@@ -122,7 +122,7 @@ export function Header() {
         */}
         <div
           className="max-w-7xl mx-auto h-full flex justify-between items-center md:grid"
-          style={{ padding: '0 24px', gridTemplateColumns: '1fr auto 1fr' }}
+          style={{ padding: '0 24px', gridTemplateColumns: '1fr auto 1fr', columnGap: '32px' }}
         >
 
           {/* Col 1: Logo — izquierda */}
@@ -139,7 +139,7 @@ export function Header() {
               }}
             >
               <Image
-                src="/images/aldaba.svg"
+                src="/images/aldaba.png"
                 alt=""
                 width={54}
                 height={70}
@@ -166,7 +166,7 @@ export function Header() {
           <nav
             aria-label="Navegación principal"
             className="hidden md:flex items-center"
-            style={{ gap: '20px' }}
+            style={{ gap: '28px' }}
           >
             {navLinks.map(({ label, href }) => {
               const active = isActive(href)
@@ -177,16 +177,16 @@ export function Header() {
                   aria-current={active ? 'page' : undefined}
                   style={{
                     position: 'relative',
-                    fontFamily: 'var(--font-ui)',
-                    fontSize: '11px',
-                    fontWeight: 300,
-                    color: active ? '#F0EDE6' : '#A8A8A8',
-                    letterSpacing: '0.05em',
+                    fontFamily: 'var(--font-cormorant)',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    color: active ? '#D4AF6A' : '#A8A8A8',
+                    letterSpacing: '0.1em',
                     textTransform: 'uppercase',
                     textDecoration: 'none',
                     transition: 'color 200ms ease',
                   }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#F0EDE6' }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#D4AF6A' }}
                   onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#A8A8A8' }}
                 >
                   {label}
@@ -211,28 +211,80 @@ export function Header() {
           {/* Col 3: CTAs (md+) + Hamburger (mobile) — derecha */}
           <div className="flex items-center justify-end">
 
-            {/* ── CTAs desktop — orden: [🌙/☀️] [ES|GL|EN] [Agenda] [Hablar con Gina] ── */}
-            <div className="hidden md:flex items-center gap-3">
+            {/* ── CTAs desktop — orden: [Agenda] [✦ Hablar con Gina] [🌙/☀️] [ES|GL|EN] ── */}
+            <div className="hidden md:flex items-center" style={{ gap: '10px' }}>
 
-              {/* 1. Toggle tema claro/oscuro */}
+              {/* 1. Agenda */}
+              <Link
+                href="/agenda"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '36px',
+                  padding: '0 18px',
+                  fontFamily: 'var(--font-cormorant)',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: '#D4AF6A',
+                  border: '1px solid rgba(212,175,106,0.5)',
+                  background: 'transparent',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  textDecoration: 'none',
+                  transition: 'background 200ms ease',
+                  flexShrink: 0,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,175,106,0.08)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+              >
+                Agenda
+              </Link>
+
+              {/* 2. Hablar con Gina */}
+              <button
+                type="button"
+                onClick={abrirGina}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '7px',
+                  height: '36px',
+                  padding: '0 20px',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  color: '#ffffff',
+                  background: 'var(--color-laton)',
+                  borderRadius: '999px',
+                  border: 'none',
+                  letterSpacing: '0.06em',
+                  cursor: 'pointer',
+                  transition: 'background 200ms ease',
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-laton-oscuro)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'var(--color-laton)')}
+              >
+                <span style={{ fontSize: '12px', lineHeight: '1' }}>✦</span>
+                Hablar con Gina
+              </button>
+
+              {/* 3. Toggle tema claro/oscuro */}
               <button
                 type="button"
                 onClick={toggleTheme}
                 aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
                 style={{ ...utilBtnBase, width: '36px', borderRadius: '50%' }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(184,148,63,0.28)'
-                  e.currentTarget.style.color = '#F0D898'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'rgba(184,148,63,0.12)'
-                  e.currentTarget.style.color = '#D4AF6A'
-                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,175,106,0.08)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
               >
-                {isDark ? <Sun size={16} strokeWidth={1.8} /> : <Moon size={16} strokeWidth={1.8} />}
+                {isDark ? <Sun size={15} strokeWidth={1.6} /> : <Moon size={15} strokeWidth={1.6} />}
               </button>
 
-              {/* 2. Selector de idioma — cicla ES → GL → EN → ES */}
+              {/* 4. Selector de idioma — cicla ES → GL → EN → ES */}
               <button
                 type="button"
                 onClick={cycleLang}
@@ -244,72 +296,12 @@ export function Header() {
                   fontFamily: 'var(--font-ui)',
                   fontSize: '11px',
                   fontWeight: 600,
-                  letterSpacing: '0.08em',
+                  letterSpacing: '0.1em',
                 }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(184,148,63,0.28)'
-                  e.currentTarget.style.color = '#F0D898'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'rgba(184,148,63,0.12)'
-                  e.currentTarget.style.color = '#D4AF6A'
-                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,175,106,0.08)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
               >
                 {lang}
-              </button>
-
-              {/* 3. Agenda */}
-              <Link
-                href="/agenda"
-                style={{
-                  fontFamily: 'var(--font-cormorant)',
-                  fontSize: '13px',
-                  fontWeight: 500,
-                  color: '#D4AF6A',
-                  border: '1px solid #B8943F',
-                  padding: '9px 22px',
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  textDecoration: 'none',
-                  transition: 'background 200ms ease, color 200ms ease',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = '#B8943F'
-                  e.currentTarget.style.color = '#0D0D0D'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'transparent'
-                  e.currentTarget.style.color = '#D4AF6A'
-                }}
-              >
-                Agenda
-              </Link>
-
-              {/* 4. Hablar con Gina */}
-              <button
-                type="button"
-                onClick={abrirGina}
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  color: '#0D0D0D',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '7px',
-                  background: '#B8943F',
-                  padding: '9px 18px',
-                  borderRadius: '999px',
-                  letterSpacing: '0.06em',
-                  transition: 'background 200ms ease',
-                  border: 'none',
-                  cursor: 'pointer',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#D4AF6A')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#B8943F')}
-              >
-                <span style={{ fontSize: '13px', lineHeight: '1' }}>✦</span>
-                Hablar con Gina
               </button>
             </div>
 
