@@ -17,7 +17,8 @@ function config() {
   }
 }
 
-/** Lee todos los campos de un registro por su recordId. */
+/** Lee todos los campos de un registro por su recordId.
+ *  Incluye `_createdTime` (ISO string) como campo especial de metadata. */
 export async function getRecord(recordId: string): Promise<Record<string, unknown>> {
   const { apiKey, baseUrl } = config()
   const res = await fetch(`${baseUrl}/${recordId}`, {
@@ -26,8 +27,8 @@ export async function getRecord(recordId: string): Promise<Record<string, unknow
   })
   if (res.status === 404) throw new Error(`Registro ${recordId} no encontrado en Airtable`)
   if (!res.ok) throw new Error(`Airtable GET ${res.status}`)
-  const data = (await res.json()) as { fields: Record<string, unknown> }
-  return data.fields
+  const data = (await res.json()) as { fields: Record<string, unknown>; createdTime?: string }
+  return { ...data.fields, _createdTime: data.createdTime }
 }
 
 /** Actualiza solo los campos indicados de un registro existente (PATCH). */
