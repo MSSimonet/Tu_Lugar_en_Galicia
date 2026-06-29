@@ -1,0 +1,15 @@
+name: Recordatorio Silvana — cita próxima
+on:
+  schedule:
+    - cron: '0 * * * *'  # cada hora UTC
+  workflow_dispatch:      # permite disparo manual desde GitHub UI
+
+jobs:
+  recordatorio:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar endpoint recordatorio
+        run: |
+          curl -f -X GET \
+            -H "Authorization: Bearer ${{ secrets.INTERNAL_API_SECRET }}" \
+            https://tu-lugar-en-galicia.vercel.app/api/admin/recordatorio-silvana

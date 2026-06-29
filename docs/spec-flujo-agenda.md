@@ -191,6 +191,11 @@ Si el cliente no abrió el mail en 48hs (detectable con Resend tracking):
 
 **Cuándo:** cron horario `0 * * * *` (minuto 0 de cada hora UTC).
 
+> **Trigger:** GitHub Actions — `.github/workflows/recordatorio-silvana.yml`.
+> El cron ya no vive en `vercel.json` (Vercel Hobby solo permite crons diarios).
+> El secret `INTERNAL_API_SECRET` debe estar configurado en:
+> GitHub → Settings → Secrets and variables → Actions → New repository secret.
+
 **Lógica:**
 - `getLeadsConCitaProxima()` en `lib/admin/airtable.ts`: filtra leads con `citaAgendada === 'true'` cuya `fechaCita` (ISO) cae entre `Date.now()` y `Date.now() + 75 minutos`
 - Si no hay citas próximas: devuelve `{ ok: true, enviados: 0 }` sin enviar mail

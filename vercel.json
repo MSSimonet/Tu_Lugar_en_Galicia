@@ -3,10 +3,6 @@
     {
       "path": "/api/admin/resumen-diario",
       "schedule": "0 7 * * *"
-    },
-    {
-      "path": "/api/admin/recordatorio-silvana",
-      "schedule": "0 * * * *"
     }
   ],
   "headers": [
