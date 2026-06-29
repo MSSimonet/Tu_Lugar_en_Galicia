@@ -5,6 +5,7 @@ import { HabilitarAgendaButton } from '@/components/admin/HabilitarAgendaButton'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
+  referrer: 'no-referrer',
 }
 
 // ── Etiquetas legibles para cada campo de Airtable ──────────────────────────

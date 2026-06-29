@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export function middleware() {
+export function middleware(req: NextRequest) {
   const response = NextResponse.next()
+  const { pathname } = req.nextUrl
 
   const csp = [
     "default-src 'self'",
@@ -18,10 +19,18 @@ export function middleware() {
     "upgrade-insecure-requests",
   ].join('; ')
 
+  const isSensitiveRoute =
+    pathname.startsWith('/admin/') ||
+    pathname.startsWith('/api/admin/') ||
+    pathname.startsWith('/api/webhooks/')
+
   response.headers.set('Content-Security-Policy', csp)
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-Frame-Options', 'DENY')
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  response.headers.set(
+    'Referrer-Policy',
+    isSensitiveRoute ? 'no-referrer' : 'strict-origin-when-cross-origin',
+  )
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
   return response
 }
