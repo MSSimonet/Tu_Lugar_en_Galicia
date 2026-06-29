@@ -89,6 +89,7 @@ export function FormularioDiagnostico() {
           className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] text-[var(--text-sm)]"
         >
           Escríbenos por WhatsApp
+          <span className="sr-only">(abre en nueva pestaña)</span>
         </a>
         <Link
           href="/"
@@ -124,7 +125,7 @@ export function FormularioDiagnostico() {
         >
           <strong>Algo salió mal al enviar tu consulta.</strong> Por favor intenta de nuevo o{' '}
           <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">
-            escríbenos por WhatsApp
+            escríbenos por WhatsApp<span className="sr-only">(abre en nueva pestaña)</span>
           </a>.
         </div>
       )}
@@ -471,7 +472,7 @@ export function FormularioDiagnostico() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  política de privacidad
+                  política de privacidad<span className="sr-only">(abre en nueva pestaña)</span>
                 </Link>.
                 <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </span>

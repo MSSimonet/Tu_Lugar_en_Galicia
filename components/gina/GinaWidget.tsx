@@ -139,6 +139,7 @@ export function GinaWidget() {
         role="dialog"
         aria-label="Asistente Gina — Tu Lugar en Galicia"
         aria-modal="true"
+        aria-hidden={!abierto}
         onKeyDown={onKeyDown}
         className={`
           fixed bottom-6 right-6 z-50

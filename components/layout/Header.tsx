@@ -335,7 +335,7 @@ export function Header() {
               type="button"
               onClick={() => setMenuOpen(prev => !prev)}
               aria-expanded={menuOpen}
-              aria-controls="mobile-menu"
+              aria-controls={menuOpen ? 'mobile-menu' : undefined}
               aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
               className="md:hidden flex flex-col justify-center gap-1.5 w-8 h-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B8943F]"
             >

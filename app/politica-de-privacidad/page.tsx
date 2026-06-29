@@ -193,7 +193,7 @@ export default function PoliticaDePrivacidadPage() {
                 rel="noopener noreferrer"
                 className="text-[var(--color-mar)] underline-offset-4 hover:no-underline underline"
               >
-                aepd.es
+                aepd.es<span className="sr-only">(abre en nueva pestaña)</span>
               </a>
               .
             </p>

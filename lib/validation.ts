@@ -90,4 +90,4 @@ export const VALID_COMO_NOS_CONOCISTE = [
   'otro',
 ] as const
 
-export const EMAIL_REGEX = /.+@.+\..+/
+export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/

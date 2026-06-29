@@ -135,7 +135,7 @@ export function GinaMessages({
                 <button
                   type="button"
                   onClick={() => onEditarRespuesta(msg.pasoId!)}
-                  aria-label={msg.pasoId ? `Editar respuesta: ${msg.pasoId}` : 'Editar esta respuesta'}
+                  aria-label={msg.texto ? `Editar tu respuesta: "${msg.texto}"` : 'Editar esta respuesta'}
                   className="text-xs underline underline-offset-2 cursor-pointer hover:no-underline transition-colors"
                   style={{ color: 'var(--color-mar)' }}
                 >

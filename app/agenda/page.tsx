@@ -85,7 +85,7 @@ export default async function AgendaPage({ searchParams }: PageProps) {
               rel="noopener noreferrer"
               className="text-[var(--color-mar)] underline hover:no-underline"
             >
-              WhatsApp
+              WhatsApp<span className="sr-only">(abre en nueva pestaña)</span>
             </a>
             .
           </p>

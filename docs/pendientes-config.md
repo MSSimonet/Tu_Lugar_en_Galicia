@@ -3,7 +3,7 @@
 Lista de revisión para pasar del scaffold al sitio real en producción.
 Cada ítem tiene su estado actual, qué hay que hacer y dónde se hace.
 
-**Última actualización:** 2026-05-31
+**Última actualización:** 2026-06-28
 
 ---
 
@@ -223,6 +223,25 @@ Pasos para activar el feed dinámico de Instagram en la home:
       Categorías a repasar: identidad/trámites, salud SERGAS, transporte, hogar, burocracia
       Responsable: Silvana (conoce las consultas reales de los clientes)
       Prioridad: media — antes de que la página tenga tráfico real
+
+---
+
+## Rotación de INTERNAL_API_SECRET — 2026-06-28
+
+**Estado:** ✅ Rotado localmente. Pendiente de actualizar en Vercel y GitHub Actions.
+
+El secret fue rotado como parte de la auditoría de seguridad (Fase F).
+El valor nuevo está en `.env.local` (gitignoreado — no se expone en el repo).
+
+**Acciones manuales pendientes (Silvana / equipo técnico):**
+
+| Dónde | Qué hacer |
+|---|---|
+| Vercel → Settings → Environment Variables | Actualizar `INTERNAL_API_SECRET` con el nuevo valor de `.env.local` |
+| Vercel → Settings → Environment Variables | Actualizar `CRON_SECRET` si tiene valor diferente (o usar el mismo que `INTERNAL_API_SECRET`) |
+| GitHub → repo → Settings → Secrets → Actions | Actualizar secret `INTERNAL_API_SECRET` con el mismo valor |
+
+> ⚠️ Hasta que no se actualice en Vercel y GitHub, el endpoint de recordatorio-silvana y el cron de resumen-diario fallarán en producción.
 
 ---
 

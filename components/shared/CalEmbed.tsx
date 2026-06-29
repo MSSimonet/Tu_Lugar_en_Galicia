@@ -97,6 +97,7 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
           }}
         >
           Escribirnos por WhatsApp
+          <span className="sr-only">(abre en nueva pestaña)</span>
         </a>
       </div>
     )

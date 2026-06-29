@@ -53,6 +53,7 @@ export function FeedInstagram() {
             style={{ color: 'var(--color-granito)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
           >
             @tulugarengalicia
+            <span className="sr-only">(abre en nueva pestaña)</span>
           </a>
         </p>
       </div>

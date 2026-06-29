@@ -70,6 +70,7 @@ function NavLink({
         className="hover:text-[#D4AF6A]"
       >
         {children}
+        <span className="sr-only">(abre en nueva pestaña)</span>
       </a>
     )
   }
@@ -278,6 +279,7 @@ export function Footer() {
               >
                 <InstagramIcon />
                 <span>@tulugarengalicia</span>
+                <span className="sr-only">(abre en nueva pestaña)</span>
               </a>
 
               <a
@@ -299,6 +301,7 @@ export function Footer() {
               >
                 <FacebookIcon />
                 <span>Tu Lugar en Galicia</span>
+                <span className="sr-only">(abre en nueva pestaña)</span>
               </a>
 
             </div>

@@ -160,6 +160,7 @@ export function AppCard({ app }: Props) {
             >
               <IconApple />
               iOS
+              <span className="sr-only">(abre en nueva pestaña)</span>
             </a>
           )}
           {app.links.android && (
@@ -176,6 +177,7 @@ export function AppCard({ app }: Props) {
             >
               <IconAndroid />
               Android
+              <span className="sr-only">(abre en nueva pestaña)</span>
             </a>
           )}
           {app.links.web && (
@@ -192,6 +194,7 @@ export function AppCard({ app }: Props) {
             >
               <IconGlobe />
               Web
+              <span className="sr-only">(abre en nueva pestaña)</span>
             </a>
           )}
         </div>

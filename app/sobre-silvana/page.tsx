@@ -71,6 +71,9 @@ export default function SobreSilvanaPage() {
       {/* Historia en primera persona */}
       <section className="bg-[var(--color-blanco)] py-[var(--space-16)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl space-y-[var(--space-6)]">
+          <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] leading-[var(--leading-titulo)]">
+            Mi historia
+          </h2>
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-relaxed">
             Nací en Argentina y crecí sabiendo que en algún momento iba a cruzar el Atlántico. Mi
             familia tiene raíces gallegas — como tantas familias latinoamericanas — y Galicia siempre
