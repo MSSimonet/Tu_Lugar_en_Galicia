@@ -91,6 +91,13 @@ export function GinaInput({ validacion, placeholder, deshabilitado, onEnvio }: P
             onKeyDown={onKeyDown}
             disabled={deshabilitado}
             placeholder={placeholderTexto}
+            aria-label={
+              validacion === 'email'
+                ? 'Tu correo electrónico'
+                : validacion === 'telefono'
+                  ? 'Tu número de teléfono con código de país'
+                  : placeholder ?? 'Escribe tu respuesta'
+            }
             aria-invalid={error ? 'true' : 'false'}
             aria-describedby={error ? 'gina-input-error' : undefined}
             className="

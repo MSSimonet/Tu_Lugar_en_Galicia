@@ -192,7 +192,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const attendee = attendees?.[0]
 
   if (!attendee?.email || !startTime) {
-    console.error('[calcom] Payload BOOKING_CREATED incompleto:', JSON.stringify(data.payload).slice(0, 300))
+    console.error('[calcom] Payload BOOKING_CREATED incompleto — faltan campos: startTime o attendees')
     return NextResponse.json({ ok: true }) // no bloquear Cal.com
   }
 
@@ -238,7 +238,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       )
     }
   } else {
-    console.warn(`[calcom] Lead no encontrado para email: ${clientEmail}`)
+    console.warn(`[calcom] Lead no encontrado para email: ${clientEmail.substring(0, 3)}***`)
     if (silvanaEmail) {
       tasks.push(
         sendEmail({

@@ -7,28 +7,27 @@ import { sendEmail } from '@/lib/admin/email'
 // ── Etiquetas legibles (subconjunto necesario para el mail de recordatorio) ──
 
 const SITUACION: Record<string, string> = {
-  'teletrabajo-extranjero': 'teletrabajo (extranjero)',
+  'cuenta-ajena':           'cuenta ajena',
   'autonomo':               'autónomo/a',
-  'empleado-espana':        'empleado/a en España',
-  'busca-empleo':           'busca empleo',
+  'teletrabajo-extranjero': 'teletrabajo (extranjero)',
+  'rentista':               'rentista',
   'jubilado':               'jubilado/a',
   'estudiante':             'estudiante',
+  'busca-empleo':           'busca empleo',
 }
 
 const PLAZO: Record<string, string> = {
-  'menos-1-mes':   'menos de 1 mes',
-  '1-3-meses':     '1 a 3 meses',
-  '3-6-meses':     '3 a 6 meses',
-  '6-12-meses':    '6 a 12 meses',
-  'mas-12-meses':  'más de 12 meses',
-  'ya-en-galicia': 'ya en Galicia',
+  'menos-1-mes': 'menos de 1 mes',
+  '1-3-meses':   '1 a 3 meses',
+  '3-6-meses':   '3 a 6 meses',
+  'mas-6-meses': 'más de 6 meses',
+  'sin-fecha':   'sin fecha definida',
 }
 
 const PRESUPUESTO: Record<string, string> = {
-  'menos-600': 'hasta €600/mes',
-  '600-900':   '€600–900/mes',
-  '900-1200':  '€900–1200/mes',
-  '1200-1400': '€1200–1400/mes',
+  'menos-700': 'hasta €700/mes',
+  '700-1000':  '€700–1000/mes',
+  '1000-1400': '€1000–1400/mes',
   'mas-1400':  '+€1400/mes',
 }
 

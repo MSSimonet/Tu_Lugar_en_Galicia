@@ -7,7 +7,7 @@ export const inputBase =
   'rounded-[var(--radius-card)] px-[var(--space-4)] py-[var(--space-3)] ' +
   'font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-granito)] ' +
   'outline-none focus:ring-2 focus:ring-[var(--color-laton)] focus:border-transparent ' +
-  'transition-all duration-150 placeholder:text-[var(--color-arena)]'
+  'transition-all duration-150 placeholder:text-[var(--color-pizarra)]'
 
 export const inputError = 'border-[var(--color-coral)] focus:ring-[var(--color-coral)]'
 

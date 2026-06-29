@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getLead } from '@/lib/leads'
 import { armarPlan } from '@/lib/plan/armador'
 import { generarPlanPdf } from '@/lib/plan/generarPdf'
+import { verifyAdminToken } from '@/lib/admin/tokens'
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ recordId: string }> },
 ) {
   const { recordId } = await params
@@ -13,13 +14,23 @@ export async function GET(
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
+  const token = req.nextUrl.searchParams.get('token') ?? ''
+  try {
+    verifyAdminToken(recordId, token)
+  } catch {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+
   let lead
   try {
     lead = await getLead(recordId)
   } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Error al leer el lead'
+    const msg = err instanceof Error ? err.message : ''
     const status = msg.includes('HTTP 404') ? 404 : 500
-    return NextResponse.json({ error: msg }, { status })
+    return NextResponse.json(
+      { error: status === 404 ? 'Lead no encontrado' : 'Error interno' },
+      { status },
+    )
   }
 
   const planArmado = armarPlan({

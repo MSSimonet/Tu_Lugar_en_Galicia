@@ -15,8 +15,19 @@ import type { GinaSession } from '@/lib/gina/session'
 import { saveLead } from '@/lib/leads'
 import type { LeadData } from '@/lib/leads'
 import { calcularCalificacion } from '@/lib/gina/scoring'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
 
 export const runtime = 'edge'
+
+const ratelimit =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Ratelimit({
+        redis: Redis.fromEnv(),
+        limiter: Ratelimit.slidingWindow(30, '10 m'),
+        analytics: false,
+      })
+    : null
 
 type RequestBody = {
   sesion: GinaSession
@@ -24,6 +35,19 @@ type RequestBody = {
 }
 
 export async function POST(req: NextRequest) {
+  if (!ratelimit) {
+    return NextResponse.json({ error: 'Servicio no disponible' }, { status: 503 })
+  }
+
+  const ip = req.headers.get('x-forwarded-for') ?? 'anonymous'
+  const { success } = await ratelimit.limit(ip)
+  if (!success) {
+    return NextResponse.json(
+      { error: 'Demasiadas solicitudes. Inténtalo más tarde.' },
+      { status: 429 },
+    )
+  }
+
   const origin = req.headers.get('origin')
   const allowedOrigins = [
     'https://tu-lugar-en-galicia.vercel.app',
