@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { findLeadByEmail, patchRecord } from '@/lib/admin/airtable'
 import { generateAdminToken } from '@/lib/admin/tokens'
 import { sendEmail } from '@/lib/admin/email'
+import { TIMEZONE } from '@/lib/config/site'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tu-lugar-en-galicia.vercel.app'
 
@@ -39,14 +40,14 @@ interface CalPayload {
 function formatFechaLarga(iso: string): string {
   return new Date(iso).toLocaleDateString('es-ES', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    timeZone: 'Europe/Madrid',
+    timeZone: TIMEZONE,
   })
 }
 
 function formatHora(iso: string): string {
   return new Date(iso).toLocaleTimeString('es-ES', {
     hour: '2-digit', minute: '2-digit',
-    timeZone: 'Europe/Madrid',
+    timeZone: TIMEZONE,
   })
 }
 

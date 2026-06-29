@@ -157,11 +157,11 @@ export function CiudadLayout({
         <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-5">
           {/* Descripción larga */}
           <div className="bg-[var(--color-niebla)] rounded-2xl border border-[var(--color-arena)] p-6">
-            <p
+            <h2
               className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4"
             >
               La ciudad
-            </p>
+            </h2>
             <p className="font-[family-name:var(--font-mulish)] text-[var(--color-granito)] text-sm leading-[1.75] mb-4">
               {descripcionLarga}
             </p>
@@ -181,9 +181,9 @@ export function CiudadLayout({
 
           {/* Barrios más buscados */}
           <div className="bg-[var(--color-niebla)] rounded-2xl p-5">
-            <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4">
+            <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4">
               Los barrios más buscados
-            </p>
+            </h2>
             <ul className="space-y-0 divide-y divide-[var(--color-arena)]">
               {barrios.map((b, i) => (
                 <li key={i} className="py-3 first:pt-0 last:pb-0">
@@ -200,9 +200,9 @@ export function CiudadLayout({
 
           {/* Alquileres orientativos */}
           <div className="bg-[var(--color-niebla)] rounded-2xl p-5">
-            <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4">
+            <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4">
               Alquileres orientativos · 2025
-            </p>
+            </h2>
             <ul className="space-y-2">
               {alquileres.map((a, i) => (
                 <li
@@ -245,9 +245,9 @@ export function CiudadLayout({
         {/* Fila 4: Guía de apps para recién llegados */}
         <div className="bg-[var(--color-niebla)] rounded-2xl border border-[var(--color-arena)] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-2">
+            <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-2">
               Para tu llegada
-            </p>
+            </h2>
             <p className="font-[family-name:var(--font-mulish)] font-semibold text-sm text-[var(--color-granito)] mb-1">
               ¿Ya tienes las apps que vas a necesitar desde el primer día?
             </p>
@@ -272,9 +272,9 @@ export function CiudadLayout({
         return (
           <section className="bg-[var(--color-niebla)] px-6 md:px-8 py-7">
             <div className="max-w-7xl mx-auto">
-              <p className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-5">
+              <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-5">
                 Otras ciudades
-              </p>
+              </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {otras.map(ciudad => (
                   <Link

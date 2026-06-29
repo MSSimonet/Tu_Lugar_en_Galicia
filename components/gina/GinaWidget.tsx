@@ -8,7 +8,7 @@
  * lógica de edición viven en GinaConversation y useGinaEditor respectivamente.
  */
 
-import { useState, useEffect, useRef, useId } from 'react'
+import { useState, useEffect, useRef, useId, useCallback } from 'react'
 import { GinaConversation } from './GinaConversation'
 import { type Mensaje } from './GinaMessages'
 import { crearSesion, type GinaSession } from '@/lib/gina/session'
@@ -47,6 +47,7 @@ export function GinaWidget() {
   })
 
   const botonCerrarRef = useRef<HTMLButtonElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   // ── Apertura mediante evento global (permite abrirlo desde cualquier componente) ──
 
@@ -97,11 +98,35 @@ export function GinaWidget() {
 
   // ── Trap de foco dentro del diálogo ──
 
-  function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+  const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
       setAbierto(false)
+      return
     }
-  }
+    if (e.key === 'Tab') {
+      const el = dialogRef.current
+      if (!el) return
+      const focusable = Array.from(
+        el.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      )
+      if (!focusable.length) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+  }, [])
 
   // ── Render ──
 
@@ -109,6 +134,7 @@ export function GinaWidget() {
     <>
       {/* Panel del chat */}
       <div
+        ref={dialogRef}
         id={dialogId}
         role="dialog"
         aria-label="Asistente Gina — Tu Lugar en Galicia"

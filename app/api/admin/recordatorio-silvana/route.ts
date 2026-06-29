@@ -3,6 +3,7 @@ import { isAuthorized } from '@/lib/admin/auth'
 import { getLeadsConCitaProxima, type AirtableRecord } from '@/lib/admin/airtable'
 import { generateAdminToken } from '@/lib/admin/tokens'
 import { sendEmail } from '@/lib/admin/email'
+import { TIMEZONE } from '@/lib/config/site'
 
 // ── Etiquetas legibles (subconjunto necesario para el mail de recordatorio) ──
 
@@ -40,14 +41,14 @@ function str(v: unknown): string {
 function formatHoraEspana(iso: string): string {
   return new Date(iso).toLocaleTimeString('es-ES', {
     hour: '2-digit', minute: '2-digit',
-    timeZone: 'Europe/Madrid',
+    timeZone: TIMEZONE,
   })
 }
 
 function formatFechaLarga(iso: string): string {
   const f = new Date(iso).toLocaleDateString('es-ES', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    timeZone: 'Europe/Madrid',
+    timeZone: TIMEZONE,
   })
   return f.charAt(0).toUpperCase() + f.slice(1)
 }
@@ -170,7 +171,7 @@ function buildRecordatorio(record: AirtableRecord, profileUrl: string): string {
 function buildEmail(records: AirtableRecord[], siteUrl: string): string {
   const hora = new Date().toLocaleTimeString('es-ES', {
     hour: '2-digit', minute: '2-digit',
-    timeZone: 'Europe/Madrid',
+    timeZone: TIMEZONE,
   })
 
   const cartas = records.map(r => {
@@ -252,7 +253,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const hora = new Date().toLocaleTimeString('es-ES', {
     hour: '2-digit', minute: '2-digit',
-    timeZone: 'Europe/Madrid',
+    timeZone: TIMEZONE,
   })
 
   const html = buildEmail(records, siteUrl)

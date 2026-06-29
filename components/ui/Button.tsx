@@ -16,8 +16,8 @@ const variantClasses: Record<Variant, string> = {
   secundario:
     "bg-[var(--color-coral)] text-white hover:bg-[color-mix(in_srgb,var(--color-coral)_85%,#000)]",
   fantasma:
-    "border border-[var(--color-laton)] text-[var(--color-laton)] " +
-    "hover:bg-[var(--color-laton)] hover:text-white",
+    "border border-[var(--color-laton)] text-[var(--color-laton-text)] " +
+    "hover:bg-[var(--color-laton-text)] hover:text-white",
 };
 
 const sizeClasses: Record<Size, string> = {

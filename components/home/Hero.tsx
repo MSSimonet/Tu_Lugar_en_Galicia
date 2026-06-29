@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useRef } from 'react'
 import Link from 'next/link'
 
 const POSTER = "/images/home/hero-lanzada-poster.jpg"
@@ -16,6 +17,16 @@ function abrirGina() {
 }
 
 export function Hero() {
+  const [paused, setPaused] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  const togglePause = () => {
+    const v = videoRef.current
+    if (!v) return
+    if (paused) { v.play().catch(() => undefined); setPaused(false) }
+    else { v.pause(); setPaused(true) }
+  }
+
   return (
     <section
       className="relative flex flex-col"
@@ -25,6 +36,7 @@ export function Hero() {
       {/* ── Capa de fondo: video + degradado esfumado ── */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         <video
+          ref={videoRef}
           autoPlay
           muted
           loop
@@ -46,6 +58,29 @@ export function Hero() {
         {/* Sombreado esfumado lateral (desktop) / desde abajo (móvil) */}
         <div className="absolute inset-0 hero-lateral-gradient" style={{ pointerEvents: "none" }} />
       </div>
+
+      {/* Botón pausa/reproducción del vídeo de fondo */}
+      <button
+        type="button"
+        onClick={togglePause}
+        aria-label={paused ? 'Reproducir vídeo de fondo' : 'Pausar vídeo de fondo'}
+        className="absolute bottom-[4.5rem] right-4 z-20 flex items-center justify-center w-9 h-9 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E7D29C]"
+        style={{
+          background: 'rgba(0,0,0,0.45)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          color: '#e6e9e7',
+        }}
+      >
+        {paused ? (
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        ) : (
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+          </svg>
+        )}
+      </button>
 
       {/* ── Contenido principal — centrado vertical, alineado a la izquierda ── */}
       <div className="relative z-10 flex flex-1 items-center">

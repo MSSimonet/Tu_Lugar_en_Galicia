@@ -78,6 +78,30 @@ export function Header() {
       if (e.key === 'Escape') {
         setMenuOpen(false)
         hamburgerRef.current?.focus()
+        return
+      }
+      if (e.key === 'Tab') {
+        const menu = document.getElementById('mobile-menu')
+        if (!menu) return
+        const focusable = Array.from(
+          menu.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        )
+        if (!focusable.length) return
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault()
+            last.focus()
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault()
+            first.focus()
+          }
+        }
       }
     }
     document.addEventListener('keydown', handleKeyDown)

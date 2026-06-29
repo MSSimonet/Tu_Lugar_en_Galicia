@@ -142,6 +142,8 @@ export function FormularioDiagnostico() {
               onChange={(e) => set('nombreCompleto', e.target.value)}
               className={`${inputBase} ${errors.nombreCompleto ? inputError : ''}`}
               autoComplete="name"
+              required
+              aria-required="true"
               aria-describedby={errors.nombreCompleto ? 'nombreCompleto-error' : undefined}
             />
           </FieldWrapper>
@@ -154,6 +156,8 @@ export function FormularioDiagnostico() {
               onChange={(e) => set('email', e.target.value)}
               className={`${inputBase} ${errors.email ? inputError : ''}`}
               autoComplete="email"
+              required
+              aria-required="true"
               aria-describedby={errors.email ? 'email-error' : undefined}
             />
           </FieldWrapper>
@@ -167,6 +171,8 @@ export function FormularioDiagnostico() {
               placeholder="+54 9 11 1234-5678"
               className={`${inputBase} ${errors.telefono ? inputError : ''}`}
               autoComplete="tel"
+              required
+              aria-required="true"
               aria-describedby={errors.telefono ? 'telefono-error' : undefined}
             />
           </FieldWrapper>
@@ -179,6 +185,8 @@ export function FormularioDiagnostico() {
               onChange={(e) => set('paisResidencia', e.target.value)}
               className={`${inputBase} ${errors.paisResidencia ? inputError : ''}`}
               autoComplete="country-name"
+              required
+              aria-required="true"
               aria-describedby={errors.paisResidencia ? 'paisResidencia-error' : undefined}
             />
           </FieldWrapper>

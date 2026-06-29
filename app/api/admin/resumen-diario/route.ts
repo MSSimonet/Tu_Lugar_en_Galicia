@@ -3,6 +3,7 @@ import { isAuthorized } from '@/lib/admin/auth'
 import { listAllRecords, patchRecord, type AirtableRecord } from '@/lib/admin/airtable'
 import { generateAdminToken } from '@/lib/admin/tokens'
 import { sendEmail } from '@/lib/admin/email'
+import { TIMEZONE } from '@/lib/config/site'
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -225,7 +226,7 @@ function buildEmail(
 ): string {
   const fechaLarga = new Date().toLocaleDateString('es-ES', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    timeZone: 'Europe/Madrid',
+    timeZone: TIMEZONE,
   })
   const fecha = fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1)
 
@@ -318,6 +319,12 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
+  // Defense in depth: if CRON_SECRET used, require the x-vercel-cron header
+  const cronSecret = process.env.CRON_SECRET
+  const auth = req.headers.get('authorization') ?? ''
+  if (cronSecret && auth === `Bearer ${cronSecret}` && req.headers.get('x-vercel-cron') !== '1') {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
 
   const silvanaEmail = process.env.SILVANA_EMAIL
   if (!silvanaEmail) {
@@ -379,7 +386,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   // ── 3. Construir y enviar mail ────────────────────────────────────────────────
   const fechaCorta = new Date().toLocaleDateString('es-ES', {
     day: 'numeric', month: 'long', year: 'numeric',
-    timeZone: 'Europe/Madrid',
+    timeZone: TIMEZONE,
   })
 
   const html = buildEmail(potencial, enDesarrollo, seguimiento, noCalifica, siteUrl)

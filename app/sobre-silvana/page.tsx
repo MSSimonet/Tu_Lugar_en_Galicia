@@ -126,9 +126,9 @@ export default function SobreSilvanaPage() {
                   ✓
                 </span>
                 <div>
-                  <p className="font-[family-name:var(--font-ui)] font-semibold text-[var(--text-sm)] text-[var(--color-granito)]">
+                  <h3 className="font-[family-name:var(--font-ui)] font-semibold text-[var(--text-sm)] text-[var(--color-granito)]">
                     {item.titulo}
-                  </p>
+                  </h3>
                   <p className="mt-[var(--space-1)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
                     {item.texto}
                   </p>

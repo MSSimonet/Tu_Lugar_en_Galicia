@@ -211,7 +211,7 @@ async function guardarEnAirtable(
     // Siempre presentes (nombre y email se capturan antes de cualquier guardado)
     nombreCompleto: String(r['nombreCompleto'] ?? ''),
     email: String(r['email'] ?? ''),
-    consentimientoRGPD: true,
+    consentimientoRGPD: sesion.respuestas['rgpd'] === 'acepto',
 
     // Datos personales
     telefono: r['telefono'] ? String(r['telefono']) : undefined,
