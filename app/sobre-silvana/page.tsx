@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { getNextMetadata } from '@/lib/seo/metadata'
-import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from '@/lib/config/site'
 
 export const metadata = getNextMetadata('sobreSilvana')
 
@@ -29,8 +28,6 @@ const confianza = [
       '+200 familias reubicadas. 57 solo en 2025. Testimonios reales de personas que llegaron con las llaves en la mano. No trabajo con promesas — trabajo con resultados.',
   },
 ]
-
-const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 
 export default function SobreSilvanaPage() {
   return (
@@ -149,32 +146,14 @@ export default function SobreSilvanaPage() {
             Si llegaste hasta acá, ya sabes quién soy y por qué hago esto. Ahora lo que me gustaría
             es conocerte, escuchar tu historia y ver si puedo ayudarte.
           </p>
-          <div className="flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
+          <div className="flex justify-center">
             <Link
               href="/conocernos"
               className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
             >
               Vamos a conocernos
             </Link>
-            <Link
-              href="/agenda"
-              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-[var(--color-laton)] tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton)] hover:text-white transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
-            >
-              Agenda una videollamada
-            </Link>
           </div>
-          <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)]">
-            O si prefieres escribirme directamente,{' '}
-            <a
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[var(--color-mar)] underline hover:no-underline"
-            >
-              estoy en WhatsApp
-            </a>
-            . Respondo personalmente.
-          </p>
         </div>
       </section>
     </>

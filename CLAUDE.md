@@ -142,6 +142,38 @@ Ante ese mensaje `[inicio-sesion]`: invocar `anthropic-skills:consolidate-memory
 
 ---
 
+## 10. Auditoría permanente (2026-06-28)
+
+El 2026-06-28 se realizó la primera auditoría total del proyecto (código, seguridad, RGPD, WCAG, env vars, Airtable, Lighthouse). Las incidencias críticas identificadas y sus estados:
+
+### Pendientes de corrección (abrir issue por cada uno antes de siguiente deploy):
+
+| ID | Severidad | Descripción | Archivo |
+|---|---|---|---|
+| A01 | 🔴 Crítico | `/api/plan/[recordId]/pdf` sin auth — IDOR con fuga de PII | `app/api/plan/[recordId]/pdf/route.ts` |
+| A02 | 🔴 Crítico | Email de cliente en logs de producción (RGPD) | `app/api/webhooks/calcom/route.ts:241` |
+| A03 | 🔴 Crítico | `/api/gina` sin rate limiting — Airtable puede saturarse | `app/api/gina/route.ts` |
+| A04 | 🔴 Crítico | Política de Privacidad con TODO sin completar en producción | `app/politica-de-privacidad/page.tsx` |
+| A05 | 🟠 Alto | CSP ausente — sin defensa en profundidad contra XSS | `middleware.ts`, `vercel.json` |
+| A06 | 🟠 Alto | HSTS ausente | `vercel.json` |
+| A07 | 🟠 Alto | consentimientoRGPD hardcodeado en Gina (no viene del usuario) | `app/api/gina/route.ts:190` |
+| A08 | 🟠 Alto | WhatsApp y Cal.com URL con placeholders en config | `lib/config/site.ts` |
+| A09 | 🟡 Medio | Token admin en query string (Referer leak) | `lib/admin/tokens.ts` |
+| A10 | 🟡 Medio | Sanitización de email en filterByFormula por exclusión (frágil) | `lib/admin/airtable.ts:122` |
+| A11 | 🟡 Medio | `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` no están en `.env.local.example` | `.env.local.example` |
+| A12 | 🟡 Medio | `CALCOM_API_KEY` en example pero nunca usada; `OPENWEATHER_API_KEY` obsoleta | `.env.local.example` |
+| A13 | 🟡 Medio | VistaEnVivo widget Windy sin autorización legal de MeteoGalicia | `components/ciudad/VistaEnVivo.tsx` |
+| A14 | 🟡 Medio | Imágenes placeholder en producción (Testimonios, Silvana, MuroLlaves) | múltiples |
+| A15 | 🟡 Medio | TTL token admin 72h — debería ser 24h para acción de alta sensibilidad | `lib/admin/tokens.ts:3` |
+
+### Reglas de auditoría para sesiones futuras:
+- Ante cualquier endpoint nuevo: verificar auth, rate limiting y que no devuelva más PII de lo necesario.
+- Ante cualquier log nuevo: nunca loguear emails, nombres ni datos personales — usar hash/ID.
+- El `Security Engineer` debe revisar todos los cambios en `/app/api/admin/` antes de merge.
+- La `Política de Privacidad` debe estar completa (sin TodoBlock) antes del lanzamiento público.
+
+---
+
 ## Simplificación automática post-implementación
 
 Después de cada feature o refactor significativo, invocar `/simplify` sobre los archivos modificados para:

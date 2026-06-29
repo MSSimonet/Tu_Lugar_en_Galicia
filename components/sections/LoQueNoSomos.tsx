@@ -3,17 +3,14 @@
 export default function LoQueNoSomos() {
   const cards = [
     {
-      num: 'No. 01',
       title: 'Una inmobiliaria',
       body: 'Trabajamos para ti, no para el propietario. Sin carteras propias ni comisiones cruzadas. Nuestra única lealtad es conseguirte el mejor piso posible.',
     },
     {
-      num: 'No. 02',
       title: 'Pagados por el dueño',
       body: 'Sin conflicto de interés. Tu búsqueda es nuestra única prioridad desde el primer mensaje hasta que firmas el contrato.',
     },
     {
-      num: 'No. 03',
       title: 'Un contrato garantizado',
       body: 'Garantizamos la búsqueda activa, el filtro de calidad y el acompañamiento completo. El resultado depende del mercado; el esfuerzo, de nosotros.',
     },
@@ -109,7 +106,7 @@ export default function LoQueNoSomos() {
   )
 }
 
-function Card({ num, title, body }: { num: string; title: string; body: string }) {
+function Card({ title, body }: { title: string; body: string }) {
   return (
     <div
       style={{
@@ -135,12 +132,11 @@ function Card({ num, title, body }: { num: string; title: string; body: string }
       }}
     >
       <span style={{
-        fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif",
-        fontSize: '11px', fontWeight: 500, color: 'var(--lqns-num)',
-        letterSpacing: '0.18em', textTransform: 'uppercase' as const,
-        display: 'block', marginBottom: '20px',
+        fontFamily: 'var(--font-ui)',
+        fontSize: '10px', fontWeight: 600, color: 'var(--lqns-num)',
+        letterSpacing: '0.16em', display: 'block', marginBottom: '10px',
       }}>
-        {num}
+        NO somos
       </span>
 
       <h3 style={{

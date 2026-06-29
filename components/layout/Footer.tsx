@@ -2,16 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import {
-  WHATSAPP_NUMBER,
-  WHATSAPP_MESSAGE,
-  CALCOM_URL,
-  SITE_NAME,
-} from '@/lib/config/site'
-
-const CALCOM_PLACEHOLDER = 'https://cal.com/tu-usuario'
-const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
-const ctaHref = (CALCOM_URL as string) !== CALCOM_PLACEHOLDER ? CALCOM_URL : waHref
+import { SITE_NAME } from '@/lib/config/site'
 
 const serviceLinks = [
   { label: 'Cómo funciona',       href: '/como-funciona' },
@@ -124,24 +115,6 @@ function FacebookIcon() {
       aria-hidden="true"
     >
       <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-    </svg>
-  )
-}
-
-function MessageIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
     </svg>
   )
 }
@@ -285,28 +258,6 @@ export function Footer() {
                 hola@tulugarengalicia.com
               </a>
 
-              {/* WhatsApp */}
-              <a
-                href={waHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  fontSize: '0.82rem',
-                  fontWeight: 300,
-                  color: '#A8A8A8',
-                  textDecoration: 'none',
-                  fontFamily: 'var(--font-ui)',
-                  transition: 'color 200ms ease',
-                }}
-                className="hover:text-[#D4AF6A]"
-              >
-                <MessageIcon />
-                Escríbenos por WhatsApp
-              </a>
-
               {/* C2: RRSS con nombre de usuario */}
               <a
                 href="https://www.instagram.com/tulugarengalicia/"
@@ -350,40 +301,6 @@ export function Footer() {
                 <span>Tu Lugar en Galicia</span>
               </a>
 
-              {/* Divisor fino */}
-              <div
-                style={{
-                  height: '1px',
-                  background: '#2A2A2A',
-                  margin: '0.35rem 0',
-                }}
-              />
-
-              {/* CTA principal */}
-              <a
-                href={ctaHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-block',
-                  padding: '0.75rem 1.5rem',
-                  border: '1px solid #B8943F',
-                  color: '#D4AF6A',
-                  background: 'transparent',
-                  fontSize: '0.73rem',
-                  fontWeight: 500,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  textDecoration: 'none',
-                  fontFamily: 'var(--font-ui)',
-                  textAlign: 'center',
-                  borderRadius: '2px',
-                  transition: 'background 200ms ease, color 200ms ease',
-                }}
-                className="hover:bg-[#B8943F] hover:text-[#0D0D0D]"
-              >
-                Agenda tu videollamada
-              </a>
             </div>
           </div>
         </div>
