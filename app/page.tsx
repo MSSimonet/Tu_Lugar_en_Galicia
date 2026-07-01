@@ -3,9 +3,12 @@ import { localBusinessSchema } from "@/lib/seo/schemas";
 import {
   Hero,
   ElMarcador,
+  ComoFuncionaResumen,
+  CiudadesCards,
   FeedInstagram,
   MuroLlavesPreview,
   Testimonios,
+  CTAFinal,
 } from "@/components/home";
 export const metadata = getNextMetadata("home");
 
@@ -18,9 +21,12 @@ export default function Home() {
       />
       <Hero />
       <ElMarcador />
+      <ComoFuncionaResumen />
+      <CiudadesCards />
       <FeedInstagram />
       <MuroLlavesPreview />
       <Testimonios />
+      <CTAFinal />
     </>
   );
 }
