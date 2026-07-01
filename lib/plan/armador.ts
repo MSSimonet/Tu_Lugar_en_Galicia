@@ -37,6 +37,10 @@ export type RespuestasLead = Pick<LeadData,
   nivelEstudios?: LeadData['nivelEstudios']
   ninos?: LeadData['ninos']
   adolescentes?: LeadData['adolescentes']
+  presupuestoMensual?: LeadData['presupuestoMensual']
+  garantias?: LeadData['garantias']
+  fechaLlegada?: string
+  necesidadesEspeciales?: LeadData['necesidadesEspeciales']
 }
 
 // ─── Tipos de salida ───────────────────────────────────────────────────────────
@@ -109,8 +113,8 @@ const FRASES_PUENTE: Record<number, string> = {
   37: 'Como en la mudanza vienen niños, asegurar su plaza en el colegio es de lo primero:',
   38: 'Para que los estudios que ya cursaron tengan plena validez aquí:',
   39: 'Para que tu título de Formación Profesional sea reconocido en España:',
-  40: 'Tu título universitario merece valer aquí también; si tu profesión es regulada, necesita homologación:',
-  41: 'Y si tu profesión no está regulada, te basta con la declaración de equivalencia, más ágil:',
+  40: 'Si tu profesión en España está regulada, la homologación del título universitario es el trámite obligatorio:',
+  41: 'Y si tu profesión no está regulada, la declaración de equivalencia es más ágil y suficiente:',
   42: 'Al ser tu título de la UE, el reconocimiento es todavía más directo:',
   43: 'Como traes tu licencia de conducir, el primer paso es un sencillo examen médico:',
   44: 'Y como tu país tiene convenio con España, podrás canjearla sin volver a examinarte:',
@@ -237,6 +241,17 @@ export function armarPlan(r: RespuestasLead): PlanArmado {
   // FASE B — Llegada y residencia legal
   // ────────────────────────────────────────────────────────────────────────────
 
+  // Alerta de urgencia: plazo menor a 1 mes
+  if (r.fechaLlegada === 'menos-1-mes') {
+    items.push(n(
+      '⚠️ PLAZO URGENTE — Tienes menos de 1 mes para tu llegada. ' +
+      'Te recomendamos gestionar alojamiento temporal para las primeras semanas ' +
+      '(hotel, apartamento o familiar) mientras se resuelve el contrato de alquiler definitivo. ' +
+      'Prioriza los trámites de las primeras fases: cada día cuenta.',
+      'fase-b-llegada-residencia',
+    ))
+  }
+
   // Nota obligatoria TURISTA: caso que requiere conversación con Silvana
   if (doc === 'turista') {
     items.push(n(
@@ -259,9 +274,11 @@ export function armarPlan(r: RespuestasLead): PlanArmado {
       '(enlaza tu historial de NIE con el nuevo DNI sin cabos sueltos) y luego el primer DNI [46]/[47].',
       'fase-b-llegada-residencia',
     ))
-    // Incluir renovacion y concordancia como trámites del plan
+    // Incluir renovacion, concordancia y primer DNI como trámites del plan
     items.push(t(12, 'fase-b-llegada-residencia'))
     items.push(t(16, 'fase-b-llegada-residencia'))
+    items.push(t(46, 'fase-b-llegada-residencia'))
+    items.push(t(47, 'fase-b-llegada-residencia'))
   }
 
   // [6] Declaración de entrada: en-tramite viniendo de fuera (primeras 72 h)
@@ -269,8 +286,8 @@ export function armarPlan(r: RespuestasLead): PlanArmado {
     items.push(t(6, 'fase-b-llegada-residencia'))
   }
 
-  // [7] NIE: en-tramite y turista (identificación ante la administración española)
-  if (doc === 'en-tramite' || doc === 'turista') {
+  // [7] NIE: solo en-tramite (turista no debe generar trámites adicionales, solo la nota)
+  if (doc === 'en-tramite') {
     items.push(t(7, 'fase-b-llegada-residencia'))
   }
 
@@ -279,8 +296,8 @@ export function armarPlan(r: RespuestasLead): PlanArmado {
     items.push(t(8, 'fase-b-llegada-residencia'))
   }
 
-  // [11] TIE: en-tramite, residencia-aprobada (si no tiene física aún), turista
-  if (doc === 'en-tramite' || doc === 'residencia-aprobada' || doc === 'turista') {
+  // [11] TIE: en-tramite, residencia-aprobada (si no tiene física aún)
+  if (doc === 'en-tramite' || doc === 'residencia-aprobada') {
     items.push(t(11, 'fase-b-llegada-residencia'))
   }
 
@@ -435,6 +452,17 @@ export function armarPlan(r: RespuestasLead): PlanArmado {
     ))
   }
   // espanola / europea: nada (válidas para conducir en España)
+
+  if (r.necesidadesEspeciales === 'si') {
+    items.push(n(
+      'Uno o más miembros de tu hogar tiene necesidades especiales o discapacidad. ' +
+      'En Galicia, el reconocimiento oficial del grado de discapacidad se solicita ante la ' +
+      'Consellería de Política Social da Xunta de Galicia. Este reconocimiento abre el acceso a ' +
+      'ayudas, prestaciones y recursos específicos. Te recomendamos iniciarlo en cuanto estés ' +
+      'empadronado. El equipo puede orientarte en la videollamada.',
+      'fase-f-familia-estudios-conduccion',
+    ))
+  }
 
   return { items, advertencias }
 }

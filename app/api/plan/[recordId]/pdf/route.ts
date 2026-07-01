@@ -34,15 +34,19 @@ export async function GET(
   }
 
   const planArmado = armarPlan({
-    paisResidencia:   lead.paisResidencia,
-    documentacion:    lead.documentacion,
-    situacionLaboral: lead.situacionLaboral,
-    mascotas:         lead.mascotas,
-    ninos:            lead.ninos,
-    adolescentes:     lead.adolescentes,
-    cuentaBancaria:   lead.cuentaBancaria,
-    tipoLicencia:     lead.tipoLicencia,
-    nivelEstudios:    lead.nivelEstudios,
+    paisResidencia:        lead.paisResidencia,
+    documentacion:         lead.documentacion,
+    situacionLaboral:      lead.situacionLaboral,
+    mascotas:              lead.mascotas,
+    ninos:                 lead.ninos,
+    adolescentes:          lead.adolescentes,
+    cuentaBancaria:        lead.cuentaBancaria,
+    tipoLicencia:          lead.tipoLicencia,
+    nivelEstudios:         lead.nivelEstudios,
+    presupuestoMensual:    lead.presupuestoMensual,
+    garantias:             lead.garantias,
+    fechaLlegada:          lead.fechaLlegada,
+    necesidadesEspeciales: lead.necesidadesEspeciales,
   })
 
   let buffer

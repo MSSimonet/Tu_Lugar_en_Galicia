@@ -150,7 +150,7 @@ El 2026-06-28 se realizó la primera auditoría total del proyecto (código, seg
 
 | ID | Severidad | Descripción | Archivo |
 |---|---|---|---|
-| A01 | 🔴 Crítico | `/api/plan/[recordId]/pdf` sin auth — IDOR con fuga de PII | `app/api/plan/[recordId]/pdf/route.ts` |
+| A01 | ✅ Resuelto | `/api/plan/[recordId]/pdf` — auth implementada con `verifyAdminToken` (token HMAC-SHA256 en query param) | `app/api/plan/[recordId]/pdf/route.ts` |
 | A02 | 🔴 Crítico | Email de cliente en logs de producción (RGPD) | `app/api/webhooks/calcom/route.ts:241` |
 | A03 | 🔴 Crítico | `/api/gina` sin rate limiting — Airtable puede saturarse | `app/api/gina/route.ts` |
 | A04 | 🔴 Crítico | Política de Privacidad con TODO sin completar en producción | `app/politica-de-privacidad/page.tsx` |

@@ -69,6 +69,37 @@ const FASES: Record<Fase, string> = {
   'fase-f-familia-estudios-conduccion': 'FAMILIA, ESTUDIOS Y CONDUCCIÓN',
 }
 
+const CIUDADES_LABEL: Record<string, string> = {
+  'vigo':        'Vigo',
+  'a-coruna':    'A Coruña',
+  'santiago':    'Santiago de Compostela',
+  'pontevedra':  'Pontevedra',
+  'lugo':        'Lugo',
+  'indiferente': 'Galicia (ciudad por definir)',
+}
+
+const PLAZOS_LABEL: Record<string, string> = {
+  'menos-1-mes': 'menos de 1 mes',
+  '1-3-meses':   '1 a 3 meses',
+  '3-6-meses':   '3 a 6 meses',
+  'mas-6-meses': 'más de 6 meses',
+  'sin-fecha':   'sin fecha definida aún',
+}
+
+const PRESUPUESTO_LABEL: Record<string, string> = {
+  'menos-700':  'menos de 700 €/mes',
+  '700-1000':   '700–1.000 €/mes',
+  '1000-1400':  '1.000–1.400 €/mes',
+  'mas-1400':   'más de 1.400 €/mes',
+}
+
+const GARANTIAS_LABEL: Record<string, string> = {
+  'garantia-adicional': 'meses de garantía adicional (6–12)',
+  'aval-bancario':      'aval bancario',
+  'avalista':           'avalista con ingresos en España',
+  'seguro-impago':      'seguro de impago',
+}
+
 // ─── Parser de trámites ───────────────────────────────────────────────────────
 
 type TramiteInfo = { nombre: string; resumen: string }
@@ -77,7 +108,7 @@ let _tramiteCache: Map<number, TramiteInfo> | null = null
 function getTramites(): Map<number, TramiteInfo> {
   if (_tramiteCache) return _tramiteCache
 
-  const raw = readFileSync(join(process.cwd(), 'docs', 'tramites-galicia.md'), 'utf-8')
+  const raw = readFileSync(join(process.cwd(), 'docs', 'contenido', 'tramites-galicia.md'), 'utf-8')
     .replace(/\r\n/g, '\n')
   const map = new Map<number, TramiteInfo>()
   const sections = raw.split(/\n(?=### \d+\.)/)
@@ -342,6 +373,32 @@ const S = StyleSheet.create({
     fontWeight: 400,
     color: C.pizarra,
   },
+
+  // Barra de contexto (ciudad + plazo)
+  contextoBar: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    backgroundColor: C.niebla,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginTop: 4,
+    marginBottom: 16,
+    borderLeftWidth: 2.5,
+    borderLeftColor: C.latonClaro,
+  },
+  contextoLabel: {
+    fontSize: 9,
+    fontFamily: 'Mulish',
+    fontWeight: 400,
+    color: C.pizarra,
+  },
+  contextoVal: {
+    fontSize: 9,
+    fontFamily: 'Mulish',
+    fontWeight: 600,
+    color: C.granito,
+    marginRight: 14,
+  },
 })
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -396,7 +453,8 @@ function BloqueTramiте({
 }) {
   const info = tramites.get(item.numero)
   if (!info) return null
-  const puente = item.frasePuente.replace(/\{\{PAIS_ORIGEN\}\}/g, paisOrigen)
+  const origen = paisOrigen && paisOrigen !== 'en_espana' ? paisOrigen : 'tu país de origen'
+  const puente = item.frasePuente.replace(/\{\{PAIS_ORIGEN\}\}/g, origen)
   return (
     <View style={S.tramiteWrap} wrap={false}>
       <Text style={S.tramiteNum}>TRÁMITE {item.numero}</Text>
@@ -428,6 +486,14 @@ function PlanDocument({
   const tramites = getTramites()
   const byFase = groupByFase(planArmado.items)
   const logo = getLogoSrc()
+
+  const ciudadLabel = CIUDADES_LABEL[lead.ciudadDestino] ?? lead.ciudadDestino
+  const plazoLabel  = PLAZOS_LABEL[lead.fechaLlegada]   ?? lead.fechaLlegada
+  const presupuestoLabel = lead.presupuestoMensual ? (PRESUPUESTO_LABEL[lead.presupuestoMensual] ?? null) : null
+  const garantiasActivas = (lead.garantias ?? []).filter(g => g !== 'ninguna')
+  const garantiasLabel = garantiasActivas.length > 0
+    ? garantiasActivas.map(g => GARANTIAS_LABEL[g] ?? g).join(', ')
+    : null
 
   return (
     <Document
@@ -471,6 +537,14 @@ function PlanDocument({
           de tu caso, te recomendamos consultar con un abogado especialista en extranjería.
         </Text>
 
+        {/* Contexto del plan */}
+        <View style={S.contextoBar}>
+          <Text style={S.contextoLabel}>Destino: </Text>
+          <Text style={S.contextoVal}>{ciudadLabel}</Text>
+          <Text style={S.contextoLabel}>Plazo: </Text>
+          <Text style={S.contextoVal}>{plazoLabel}</Text>
+        </View>
+
         {/* Trámites por fase */}
         <Text style={S.sectionTitle}>Tus trámites paso a paso</Text>
         <View style={S.sectionLine} />
@@ -502,6 +576,13 @@ function PlanDocument({
           familias que llegan con ese respaldo preparado encuentran su hogar antes y
           disfrutan mucho más del proceso.
         </Text>
+        {presupuestoLabel && (
+          <Text style={S.bodyText}>
+            Me contaste que tu presupuesto máximo para el alquiler es de {presupuestoLabel}.
+            Con ese rango, tener un colchón de 3 a 4 meses de esa cifra te dará una posición
+            muy sólida para negociar y firmar un contrato sin prisas.
+          </Text>
+        )}
         <Text style={S.bodyText}>
           Si todavía lo estás reuniendo, estás justo donde tienes que estar: es una etapa
           más del camino, no un obstáculo. Este plan te ayuda a organizarla con calma, y
@@ -512,13 +593,21 @@ function PlanDocument({
         <Text style={S.bodyText}>
           En España es habitual que se pidan garantías adicionales a quienes llegan de
           fuera, simplemente porque todavía no tienes un historial local —le ocurre a
-          todo el mundo al principio—. La más común es contar con un avalista propietario
-          de una vivienda en España.
+          todo el mundo al principio—.
         </Text>
+        {garantiasLabel && (
+          <Text style={S.bodyText}>
+            Me indicaste que podrías aportar: {garantiasLabel}.{' '}
+            {garantiasActivas.length >= 2
+              ? 'Tener varias opciones disponibles te pone en una posición muy sólida frente a los propietarios.'
+              : 'Es un buen punto de partida para la negociación.'}
+          </Text>
+        )}
         <Text style={S.bodyText}>
-          Si hoy no lo tienes resuelto, tranquilo: es justo una de las cosas que miraremos
-          juntos, para encontrar contigo la opción que mejor encaje con tu situación. No es
-          algo que tengas que resolver hoy, ni en solitario; para eso estamos a tu lado.
+          Si hoy no lo tienes completamente resuelto, no hay problema: es justo una de las
+          cosas que miraremos juntos, para encontrar contigo la opción que mejor encaje con
+          tu situación. No es algo que tengas que resolver hoy, ni en solitario; para eso
+          estamos a tu lado.
         </Text>
 
         {/* Cierre */}
@@ -531,8 +620,10 @@ function PlanDocument({
           y tú también puedes.
         </Text>
         <Text style={S.bodyText}>
-          Cuando quieras dar el siguiente paso, escríbenos. Tu nuevo hogar en Galicia te
-          está esperando.
+          El siguiente paso concreto es una videollamada con Silvana, donde revisamos juntos
+          tu situación, resolvemos las dudas que dejó este plan, y nos ponemos a buscar
+          tu hogar en Galicia. Cuando estés listo, agenda tu videollamada desde
+          tulugarengalicia.com. Tu nuevo hogar en Galicia te está esperando.
         </Text>
         <View style={S.firma}>
           <Text style={S.firmaNombre}>Tu Lugar en Galicia</Text>
