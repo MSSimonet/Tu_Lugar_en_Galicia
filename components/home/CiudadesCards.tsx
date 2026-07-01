@@ -77,10 +77,10 @@ export function CiudadesCards() {
                   <h3 className="font-[family-name:var(--font-titular)] text-[var(--text-lg)] text-[var(--color-granito)] dark:text-[#F0EBE2]">
                     {nombre}
                   </h3>
-                  <p className="mt-[var(--space-2)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)] text-[var(--color-pizarra)] dark:text-[#8C8278]">
+                  <p className="mt-[var(--space-2)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)] text-[var(--color-pizarra)] dark:text-[var(--color-pizarra)]">
                     {descripcion}
                   </p>
-                  <span className="mt-[var(--space-4)] inline-block font-[family-name:var(--font-ui)] text-[var(--text-xs)] font-medium tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] dark:text-[#A09890] uppercase">
+                  <span className="mt-[var(--space-4)] inline-block font-[family-name:var(--font-ui)] text-[var(--text-xs)] font-medium tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] dark:text-[var(--color-pizarra)] uppercase">
                     Conoce {nombre} →
                   </span>
                 </div>

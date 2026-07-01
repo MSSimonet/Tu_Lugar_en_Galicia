@@ -23,11 +23,11 @@ piedra de granito, rías, lluvia, calidez. Ningún competidor liga su imagen al 
 | `atlantico` (acento territorio) | `#1A5247` | verde atlántico profundo — secciones de territorio, íconos de naturaleza |
 | `atlantico-claro` | `#2E7A68` | hover sobre `atlantico`, estados secundarios |
 | `granito` (fondo oscuro) | `#2A2B2E` | fondo hero en modo oscuro, pie de página — extraído del fondo del logo |
-| `pizarra` (neutro medio) | `#4A4E54` | texto sobre fondos claros, separadores |
+| `pizarra` (neutro medio) | `#585450` (claro) / `#948A7F` (oscuro) | texto sobre fondos claros, separadores — oscurecido en claro y aclarado en oscuro para WCAG AA: 5.73:1 sobre `arena` (antes `#696560`, fallaba); override `.dark` ajustado de `#8C8278` en el mismo re-chequeo (corrección de contraste, 2026-07-01) |
 | `niebla` (fondo claro) | `#F2F0EB` | fondos de sección — cálido, no frío |
 | `arena` | `#E5DDD0` | tarjetas, divisores suaves |
 | `mar` (secundario) | `#1E5F7A` | enlaces, detalles informativos — ajustado a tono más profundo |
-| `coral` (acento cálido) | `#D4694F` | CTA secundario, alertas amables — saturación reducida para no competir con `laton` |
+| `coral` (acento cálido) | `#B8492F` (claro) / `#D4694F` (oscuro, override `.dark`) | CTA secundario, alertas amables — oscurecido en modo claro para WCAG AA: 5.09:1 sobre `blanco` (antes `#D4694F`, 3.46:1, fallaba); se agregó override `.dark` que conserva el `#D4694F` original porque ese tono ya cumplía AA sobre fondos oscuros y el nuevo oscurecía de más (corrección de contraste, 2026-07-01) |
 | `blanco` | `#FFFFFF` | base de contenido |
 
 **Jerarquía de uso:**
@@ -133,13 +133,13 @@ piedra de granito, rías, lluvia, calidez. Ningún competidor liga su imagen al 
 
   /* Estructura y fondos */
   --color-granito: #2A2B2E;   /* fondo oscuro hero / footer */
-  --color-pizarra: #4A4E54;   /* texto sobre claro / separadores */
+  --color-pizarra: #585450;   /* texto sobre claro / separadores (oscurecido para AA — ver §1) */
   --color-niebla:  #F2F0EB;   /* fondo de sección claro */
   --color-arena:   #E5DDD0;   /* tarjetas / divisores */
 
   /* Acentos funcionales */
   --color-mar:   #1E5F7A;   /* enlaces / información */
-  --color-coral: #D4694F;   /* CTA secundario / alertas */
+  --color-coral: #B8492F;   /* CTA secundario / alertas (oscurecido para AA — ver §1; override .dark: #D4694F) */
 
   /* Base */
   --color-blanco: #FFFFFF;

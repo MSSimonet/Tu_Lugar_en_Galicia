@@ -19,13 +19,13 @@
 
   /* Estructura y fondos */
   --color-granito: #1E1C19;
-  --color-pizarra: #696560;
+  --color-pizarra: #585450; /* oscurecido para AA: 5.73:1 sobre arena (antes 4.41:1, fallaba) */
   --color-niebla:  #F5F0E8;
   --color-arena:   #E8E0D2;
 
   /* Acentos funcionales */
   --color-mar:   #1E5F7A;
-  --color-coral: #D4694F;
+  --color-coral: #B8492F; /* oscurecido para AA: 5.09:1 sobre blanco (antes 3.46:1, fallaba) */
 
   /* Base */
   --color-blanco: #FFFCF7;
@@ -186,6 +186,11 @@ details > dd {
 
   /* Texto */
   --color-granito:    #F0EBE2;
-  --color-pizarra:    #8C8278;
+  --color-pizarra:    #948A7F; /* aclarado para AA: 5.06:1 sobre niebla-dark (antes 4.55:1, margen insuficiente) */
   --color-laton-text: #D4AF6A; /* laton claro para texto AA sobre fondos oscuros */
+
+  /* El coral claro (#D4694F) ya cumple AA como texto sobre fondos oscuros (4.80–5.28:1);
+     se mantiene sin oscurecer aquí para no heredar el tono de modo claro (#B8492F),
+     que perdería contraste sobre granito/niebla oscuros. */
+  --color-coral: #D4694F;
 }
