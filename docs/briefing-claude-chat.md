@@ -11,7 +11,7 @@ emigrantes (principalmente de Latinoamérica) que necesitan alquiler antes de ll
 Fundadora: **Silvana Lorenzo**. El sitio capta leads, los cualifica con la IA Gina y agenda
 videollamadas con Silvana.
 
-**Stack BLOQUEADO:** Next.js 15 App Router + TypeScript + Tailwind v4 + Vercel + Airtable.
+**Stack BLOQUEADO:** Next.js 16 App Router + TypeScript + Tailwind v4 + Vercel + Airtable.
 IA: Gemini (no Claude). Sin base de datos hasta Fase 5.
 
 ---

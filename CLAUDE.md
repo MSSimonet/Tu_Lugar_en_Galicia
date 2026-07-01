@@ -125,24 +125,14 @@ Todo texto publicado: aplicar skill `voz-tu-lugar-en-galicia`. Cliente = **"tú"
 
 ---
 
-## 8. Modo de operación — Orquestador siempre activo
-
-Antes de ejecutar cualquier tarea, el agente principal actúa como **orquestador**:
-
-1. Evalúa qué combinación de subagentes, skills, MCP servers y herramientas es óptima para la tarea
-2. Invoca los recursos necesarios en paralelo cuando sea posible
-3. Coordina los resultados y entrega la solución óptima
-
-Esto aplica a **todas las tareas sin excepción** — sin necesidad de que el usuario lo pida cada vez.
-
-## 9. Inicio de sesión
+## 8. Inicio de sesión
 
 Al abrir cada sesión, el hook `SessionStart` inyecta automáticamente el estado de `docs/` y la memoria.
 Ante ese mensaje `[inicio-sesion]`: invocar `anthropic-skills:consolidate-memory` y reportar en ≤3 líneas qué cambió.
 
 ---
 
-## 10. Auditoría permanente (2026-06-28)
+## 9. Auditoría permanente (2026-06-28)
 
 El 2026-06-28 se realizó la primera auditoría total del proyecto (código, seguridad, RGPD, WCAG, env vars, Airtable, Lighthouse). Las incidencias críticas identificadas y sus estados:
 
@@ -185,7 +175,7 @@ Esto aplica automáticamente — sin que el usuario lo pida.
 
 ---
 
-## 11. Orquestación permanente de recursos
+## 10. Orquestación permanente de recursos — Orquestador siempre activo
 
 ### Activación automática de herramientas
 El orquestador está SIEMPRE activo. Antes de ejecutar cualquier tarea evaluar:
@@ -200,7 +190,7 @@ El orquestador está SIEMPRE activo. Antes de ejecutar cualquier tarea evaluar:
 - UI Designer, Brand Guardian → cualquier tarea visual o de componentes
 - Frontend Developer → componentes React/Next.js
 - Backend Architect → APIs, rutas, middleware
-- Security Architect + Senior SecOps → cualquier endpoint nuevo
+- Security Engineer → cualquier endpoint nuevo
 - SEO Specialist → páginas nuevas o cambios de metadata
 - Accessibility Auditor → verificación WCAG en componentes nuevos
 - Code Reviewer → antes de commitear
@@ -233,7 +223,7 @@ search-first → plan → agentes especializados → DESIGN.md → voz skill →
 DESIGN.md → UI Designer + Brand Guardian → frontend-patterns → Accessibility Auditor → modo claro/oscuro → commit
 
 **Endpoint o API:**
-search-first → backend-patterns → security-review → Security Architect → tsc → commit
+search-first → backend-patterns → security-review → Security Engineer → tsc → commit
 
 **Copy o texto:**
 voz-tu-lugar-en-galicia SIEMPRE → nunca escribir copy sin esta skill

@@ -61,7 +61,7 @@ base desplegándose sola.
 **Objetivo:** posicionar en Google y dar pruebas de confianza que se actualizan solas.
 
 **Qué se construye**
-- Blog en MDX (Avoa redacta el borrador, Silvana afina y aprueba).
+- Blog en MDX (Gina redacta el borrador, Silvana afina y aprueba).
 - Clima en vivo por ciudad (OpenWeatherMap).
 - Reseñas de Google embebidas.
 - Rangos de alquiler por zona.
@@ -97,21 +97,21 @@ modelo de datos y acuerdos con cadenas.
 
 ---
 
-## Fase 4 — Capa de IA (Avoa)
+## Fase 4 — Capa de IA (Gina)
 
-**Objetivo:** Avoa responde 24/7, cualifica leads y agenda, en web y WhatsApp.
+**Objetivo:** Gina responde 24/7, cualifica leads y agenda, en web y WhatsApp.
 
 **Fuentes de verdad:**
-- `/docs/avoa-flujo.md` — flujo conversacional (el cuestionario por niveles manda sobre cualquier implementación)
-- `/docs/avoa-barandas.md` — reglas de control del system prompt y arquitectura del widget
+- `/docs/gina-flujo.md` — flujo conversacional (el cuestionario por niveles manda sobre cualquier implementación)
+- `/docs/gina-barandas.md` — reglas de control del system prompt y arquitectura del widget
 
 **Qué se construye**
-- Widget de chat de Avoa en la web con el flujo definido en `avoa-flujo.md` (motor de estados JSON + API de Gemini solo en pasos `llm`).
+- Widget de chat de Gina en la web con el flujo definido en `gina-flujo.md` (motor de estados JSON + API de Gemini solo en pasos `llm`).
 - Traductor de contratos/anuncios (pega texto → explicación simple).
 - Integración con WhatsApp (fase posterior; el flujo JSON y las barandas son portables sin rehacer).
 
 **Agentes, en orden**
-1. `AI Engineer` → endpoint en `/app/api/avoa` + motor de estados del cuestionario según `avoa-flujo.md` y `avoa-barandas.md`.
+1. `AI Engineer` → endpoint en `/app/api/gina` + motor de estados del cuestionario según `gina-flujo.md` y `gina-barandas.md`.
 2. `Security Engineer` → protección de la clave de API y de los datos del lead.
 3. `Frontend Developer` → widget de chat.
 4. `Reality Checker`.
@@ -156,9 +156,9 @@ modelo de datos y acuerdos con cadenas.
 
 **Julio 2026.**
 
-El objetivo es lanzar con **Avoa incluida (Fase 4)**. Si Avoa no está lista a tiempo:
+El objetivo es lanzar con **Gina incluida (Fase 4)**. Si Gina no está lista a tiempo:
 - Se lanza con el formulario de diagnóstico como captación principal (ya construido en Fase 1).
-- Avoa pasa a mejora inmediata post-lanzamiento, sin bloquear la apertura al público.
+- Gina pasa a mejora inmediata post-lanzamiento, sin bloquear la apertura al público.
 
 ---
 
