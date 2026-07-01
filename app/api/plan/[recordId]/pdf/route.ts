@@ -47,6 +47,7 @@ export async function GET(
     garantias:             lead.garantias,
     fechaLlegada:          lead.fechaLlegada,
     necesidadesEspeciales: lead.necesidadesEspeciales,
+    adultos:               lead.adultos,
   })
 
   let buffer

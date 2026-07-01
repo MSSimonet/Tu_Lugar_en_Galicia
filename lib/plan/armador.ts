@@ -41,6 +41,7 @@ export type RespuestasLead = Pick<LeadData,
   garantias?: LeadData['garantias']
   fechaLlegada?: string
   necesidadesEspeciales?: LeadData['necesidadesEspeciales']
+  adultos?: LeadData['adultos']
 }
 
 // ─── Tipos de salida ───────────────────────────────────────────────────────────
@@ -296,6 +297,19 @@ export function armarPlan(r: RespuestasLead): PlanArmado {
     items.push(t(8, 'fase-b-llegada-residencia'))
   }
 
+  // [9] Nota familias mixtas UE/extracomunitario: si hay más de 1 adulto en el grupo
+  // es posible que alguno no tenga pasaporte UE/EEE/Suiza y necesite Tarjeta Familiar [9]
+  if (doc === 'ue-otro' && r.adultos && r.adultos !== '1') {
+    items.push(n(
+      'Si alguno de los adultos de tu grupo familiar no tiene pasaporte de la UE, EEE o Suiza, ' +
+      'necesitará tramitar la Tarjeta de Residencia de Familiar de Ciudadano de la UE [9]. ' +
+      'Este trámite se realiza en España una vez instalado el núcleo familiar y les permite ' +
+      'residir, estudiar y trabajar con las mismas condiciones que un ciudadano comunitario. ' +
+      'El equipo puede orientarte en la videollamada.',
+      'fase-b-llegada-residencia',
+    ))
+  }
+
   // [11] TIE: en-tramite, residencia-aprobada (si no tiene física aún)
   if (doc === 'en-tramite' || doc === 'residencia-aprobada') {
     items.push(t(11, 'fase-b-llegada-residencia'))
@@ -398,6 +412,16 @@ export function armarPlan(r: RespuestasLead): PlanArmado {
     'incluso sin alta en la Seguridad Social española.',
     'fase-e-salud',
   ))
+
+  // [33][34][35] Herramientas digitales de salud — disponibles tras activar la tarjeta SERGAS [27]
+  items.push(n(
+    'Una vez con tu tarjeta sanitaria activa, tres herramientas digitales del SERGAS te ayudarán ' +
+    'a gestionar tu salud desde el móvil o desde casa — todas gratuitas:',
+    'fase-e-salud',
+  ))
+  items.push(t(33, 'fase-e-salud'))
+  items.push(t(34, 'fase-e-salud'))
+  items.push(t(35, 'fase-e-salud'))
 
   // ────────────────────────────────────────────────────────────────────────────
   // FASE F — Familia, estudios y conducción
