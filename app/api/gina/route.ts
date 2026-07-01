@@ -37,6 +37,9 @@ type RequestBody = {
 
 export async function POST(req: NextRequest) {
   if (!ratelimit) {
+    console.error(
+      '[gina] ratelimit no configurado — faltan UPSTASH_REDIS_REST_URL/UPSTASH_REDIS_REST_TOKEN en el entorno',
+    )
     return NextResponse.json({ error: 'Servicio no disponible' }, { status: 503 })
   }
 
@@ -53,6 +56,7 @@ export async function POST(req: NextRequest) {
   const allowedOrigins = [
     'https://tu-lugar-en-galicia.vercel.app',
     process.env.NEXT_PUBLIC_SITE_URL,
+    process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`,
   ].filter((x): x is string => Boolean(x))
 
   if (origin && !allowedOrigins.includes(origin)) {
