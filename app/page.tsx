@@ -3,8 +3,6 @@ import { localBusinessSchema } from "@/lib/seo/schemas";
 import {
   Hero,
   ElMarcador,
-  ComoFuncionaResumen,
-  CiudadesCards,
   FeedInstagram,
   MuroLlavesPreview,
   Testimonios,
@@ -21,8 +19,6 @@ export default function Home() {
       />
       <Hero />
       <ElMarcador />
-      <ComoFuncionaResumen />
-      <CiudadesCards />
       <FeedInstagram />
       <MuroLlavesPreview />
       <Testimonios />

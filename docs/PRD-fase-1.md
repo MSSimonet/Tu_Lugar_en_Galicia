@@ -32,12 +32,15 @@ el sitio, entiende el servicio, lee sobre su ciudad y deja su consulta — sin b
 2. **Métricas:** +200 familias reubicadas · 4 años · 57 familias en 2025.
 3. **El Marcador:** anuncios contactados / propietarios que dijeron no / familias ubicadas este
    mes / tiempo medio. **Lee de una Google Sheet** que Silvana actualiza (sin tocar código).
-4. **Cómo funciona (resumen):** 5-6 pasos con enlace a la página completa.
-5. **Ciudades:** cards de las 5 ciudades.
-6. **Feed de Instagram** embebido (widget tipo Behold o API).
-7. **Muro de llaves (preview):** grilla de fotos de entregas + enlace.
-8. **Testimonios:** con foto, nombre, ciudad de origen y ciudad en Galicia.
-9. **CTA final** + WhatsApp flotante presente en toda la web.
+4. **Feed de Instagram** embebido (widget tipo Behold o API).
+5. **Muro de llaves (preview):** grilla de fotos de entregas + enlace.
+6. **Testimonios:** con foto, nombre, ciudad de origen y ciudad en Galicia.
+7. **CTA final.**
+
+> **Nota (decisión de producto, 2026-07-01):** "Cómo funciona" y "Ciudades" viven únicamente en
+> sus páginas propias (`/como-funciona` y `/ciudades`) y no se duplican en la home; el WhatsApp
+> flotante global fue evaluado y descartado como requisito (WhatsApp sigue disponible como CTA en
+> Hero/CTA final, no como widget flotante en toda la web).
 
 ---
 
@@ -101,7 +104,7 @@ vía `POST /api/lead`. Mensaje de éxito: aviso de respuesta en 48 h hábiles.
 - [ ] Las 11 páginas existen, responden y se ven bien en móvil y escritorio.
 - [ ] El formulario de diagnóstico guarda el lead y muestra confirmación.
 - [ ] El Marcador muestra los números de la Google Sheet sin tocar código.
-- [ ] WhatsApp flotante visible en todas las páginas con mensaje predefinido.
+- [ ] WhatsApp disponible como CTA en Hero y CTA final con mensaje predefinido (no como widget flotante global — descartado, ver §2).
 - [ ] Agenda de Cal.com funciona desde `/agenda` y desde los CTAs.
 - [ ] Lighthouse: SEO ≥ 95, Accesibilidad ≥ 95, Performance ≥ 90 en móvil
       (lo verifica `Performance Benchmarker` + `Accessibility Auditor`).

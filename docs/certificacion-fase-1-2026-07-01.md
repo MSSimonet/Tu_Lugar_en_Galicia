@@ -14,10 +14,10 @@
 
 | # | Criterio | Estado | Notas |
 |---|---|---|---|
-| C1 | Las 11 páginas existen, responden y se ven bien en móvil y escritorio | ✅ **Resuelto** | 11/11 páginas OK; `/diagnostico` renombrado a `/conocernos` (decisión documentada); home completa con 8 secciones PRD §2 (ComoFuncionaResumen, CiudadesCards y CTAFinal agregados) |
+| C1 | Las 11 páginas existen, responden y se ven bien en móvil y escritorio | ✅ **Resuelto** | 11/11 páginas OK; `/diagnostico` renombrado a `/conocernos` (decisión documentada); home con 6 secciones (Hero, ElMarcador, FeedInstagram, MuroLlavesPreview, Testimonios, CTAFinal) — **corrección 2026-07-01: ver nota en §2.C1**, ComoFuncionaResumen/CiudadesCards no van en home |
 | C2 | Formulario de diagnóstico guarda el lead y muestra confirmación | ⚠ Configuración | Código correcto; depende de `AIRTABLE_API_KEY` en Vercel (PL-4) |
 | C3 | El Marcador muestra números de la Google Sheet sin tocar código | ⚠ Configuración | Fallback activo; depende de `SHEET_MARCADOR_ID` (PL-5) |
-| C4 | WhatsApp flotante visible en todas las páginas con mensaje predefinido | ✅ **Resuelto** | `WhatsAppFlotante` importado y renderizado en `app/layout.tsx` — verificado visualmente en home, /ciudades/vigo, /faq, /conocernos |
+| C4 | WhatsApp flotante visible en todas las páginas con mensaje predefinido | ➖ **No aplica** | **Corrección 2026-07-01 (ver §2.C4):** requisito descartado por decisión de producto; WhatsApp queda como CTA en Hero/CTA final, no como widget flotante global |
 | C5 | Agenda de Cal.com funciona desde `/agenda` y desde los CTAs | ⚠ Configuración | `CalEmbed` implementado; `CALCOM_URL` es placeholder en `lib/config/site.ts` (PL-2) |
 | C6 | Lighthouse: SEO ≥ 95, Acc ≥ 95, Performance ≥ 90 en móvil | ⚠ Pendiente | Sin medición real sobre deploy; deuda técnica DT-5,7,12-15 de cert. anterior sigue abierta |
 | C7 | `sitemap.xml` y `robots.txt` accesibles; schema válido | ✅ Cumplido | Los 3 schemas (LocalBusiness, Service, FAQPage) inyectados correctamente |
@@ -28,39 +28,25 @@
 
 ## 2. Detalle de hallazgos nuevos
 
-### 2.C1 — Secciones faltantes en la home (`app/page.tsx`) — ✅ RESUELTO
+### 2.C1 — Secciones faltantes en la home (`app/page.tsx`) — ⚠️ FALSO POSITIVO (corrección 2026-07-01)
 
-**Corrección aplicada el 2026-07-01.** `app/page.tsx` ahora incluye las 8 secciones del PRD §2:
+**Estado original de este informe (2026-07-01, mañana):** se marcó como "resuelto" tras agregar `ComoFuncionaResumen` y `CiudadesCards` a `app/page.tsx`, porque el PRD §2 (versión vigente en ese momento) las listaba como secciones obligatorias de la home.
 
-```tsx
-import {
-  Hero,              // PRD §2.1 + §2.2 (stats en Hero)
-  ElMarcador,        // PRD §2.3
-  ComoFuncionaResumen, // PRD §2.4 — agregado
-  CiudadesCards,     // PRD §2.5 — agregado
-  FeedInstagram,     // PRD §2.6
-  MuroLlavesPreview, // PRD §2.7
-  Testimonios,       // PRD §2.8
-  CTAFinal,          // PRD §2.9 — agregado
-} from "@/components/home";
-```
+**Corrección de producto (2026-07-01, tarde):** el dueño del producto confirmó que esto fue un **falso positivo**. No era una regresión ni un bug: en una decisión de producto anterior (nunca reflejada en el PRD) ya se había resuelto que "Cómo funciona" y "Ciudades" no debían duplicarse en la home — viven únicamente en sus páginas propias (`/como-funciona` y `/ciudades`) para evitar contenido duplicado. El PRD desactualizado hizo que esta re-certificación interpretara la ausencia de esas secciones como un defecto pendiente de corregir, cuando en realidad el código sin esas secciones era el estado correcto.
 
-Verificado visualmente en localhost:3000 — todas las secciones renderizan correctamente.
+`docs/PRD-fase-1.md` §2 fue actualizado para reflejar la decisión real. El código está siendo revertido en paralelo para volver a este estado.
+
+**Estado correcto de la home (6 secciones):** Hero, ElMarcador, FeedInstagram, MuroLlavesPreview, Testimonios, CTAFinal. `ComoFuncionaResumen` y `CiudadesCards` NO van en `app/page.tsx`.
 
 ---
 
-### 2.C4 — WhatsApp flotante ausente del layout — ✅ RESUELTO
+### 2.C4 — WhatsApp flotante ausente del layout — ⚠️ FALSO POSITIVO (corrección 2026-07-01)
 
-**Corrección aplicada el 2026-07-01.** `app/layout.tsx` ahora importa `WhatsAppFlotante` desde `@/components/shared` y lo renderiza junto a `<GinaWidget />`:
+**Estado original de este informe (2026-07-01, mañana):** se marcó como "resuelto" tras agregar `WhatsAppFlotante` a `app/layout.tsx`, porque el PRD §6 y la certificación anterior lo listaban como criterio de aceptación pendiente.
 
-```tsx
-import { WhatsAppFlotante } from "@/components/shared";
-// ...
-<GinaWidget />
-<WhatsAppFlotante />
-```
+**Corrección de producto (2026-07-01, tarde):** el dueño del producto confirmó que esto también fue un **falso positivo**. El WhatsApp flotante renderizado globalmente en todas las páginas fue una decisión de producto ya evaluada y descartada anteriormente, que el PRD nunca reflejó como tal (lo dejó listado como pendiente en vez de como descartado). No era un bug real. WhatsApp sigue disponible como CTA dentro de Hero y CTA final (PRD §2.1 y §2.7), pero no como widget flotante global.
 
-Verificado visualmente en home, /ciudades/vigo, /faq y /conocernos — botón verde visible en esquina inferior derecha en todas las páginas.
+`docs/PRD-fase-1.md` §2 y §6 fueron actualizados para reflejar la decisión real. El código está siendo revertido en paralelo para volver a este estado.
 
 ---
 
@@ -133,14 +119,9 @@ Todos son Fase 2 sin urgencia de lanzamiento.
 
 ### ¿Se puede avanzar a Fase 2? — **SÍ, con condición**
 
-La Fase 1 está **certificada para continuar el desarrollo** de Fase 2. La base de código compila, las 11 rutas del PRD existen (con la reclasificación `/conocernos`), los schemas JSON-LD están inyectados, el formulario tiene validación completa y el flujo de negocio (9 piezas) funciona arquitecturalmente.
+La Fase 1 está **certificada para continuar el desarrollo** de Fase 2. La base de código compila, las 11 rutas del PRD existen (con la reclasificación `/conocernos`), los schemas JSON-LD están inyectados, el formulario tiene validación completa y el flujo de negocio funciona arquitecturalmente.
 
-**Condición cumplida — 2026-07-01:**
-
-Los dos fixes de código han sido aplicados y verificados:
-
-1. ✅ **`WhatsAppFlotante` en layout** — visible en todas las páginas.
-2. ✅ **Home con 8 secciones PRD** — `ComoFuncionaResumen`, `CiudadesCards`, `CTAFinal` agregados.
+**Corrección 2026-07-01 (tarde):** los "dos fixes de código" mencionados originalmente aquí (WhatsApp flotante global en layout y agregado de `ComoFuncionaResumen`/`CiudadesCards` a la home) resultaron ser **falsos positivos** — ver detalle en §2.C1 y §2.C4. No eran condición pendiente: eran decisiones de producto ya descartadas que el PRD no reflejaba. Ambos cambios están siendo revertidos en paralelo. La condición real para el estado "certificado" es simplemente que la home mantenga sus 6 secciones (Hero, ElMarcador, FeedInstagram, MuroLlavesPreview, Testimonios, CTAFinal) y que WhatsApp exista solo como CTA en Hero/CTA final, sin widget flotante global.
 
 ### ¿Se puede lanzar al público? — **NO todavía**
 
@@ -151,11 +132,11 @@ Bloqueantes legales y de experiencia (solo configuración, no código):
 | A04 — Política de Privacidad sin datos del responsable | Legal / RGPD | Silvana (datos fiscales) |
 | A08 — Cal.com URL placeholder | Configuración | Silvana (slug Cal.com) |
 | A14 — Imágenes placeholder visibles | Experiencia | Silvana (fotos reales) |
-| ~~2 fixes de código~~ | ✅ Resueltos 2026-07-01 | — |
+| ~~2 fixes de código~~ | ⚠️ Descartados 2026-07-01 — ver §2.C1/§2.C4 (falsos positivos, no eran pendientes reales) | — |
 
 ### Camino al lanzamiento
 
-1. Fix de 2 ítems de código: `WhatsAppFlotante` en layout + 3 secciones en home (~15 min)
+1. ~~Fix de 2 ítems de código~~ — descartado (falso positivo, ver §2.C1/§2.C4); no hay acción de código pendiente por este punto
 2. Datos fiscales de Silvana → completar A04 en `/politica-de-privacidad`
 3. Configurar Cal.com slug real (PL-2) y WhatsApp number real (PL-1)
 4. Reemplazar imágenes placeholder (A14)
