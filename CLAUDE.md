@@ -182,3 +182,61 @@ Después de cada feature o refactor significativo, invocar `/simplify` sobre los
 - Asegurar que cada línea justifica su existencia
 
 Esto aplica automáticamente — sin que el usuario lo pida.
+
+---
+
+## 11. Orquestación permanente de recursos
+
+### Activación automática de herramientas
+El orquestador está SIEMPRE activo. Antes de ejecutar cualquier tarea evaluar:
+
+**Diseño y UI:**
+- Leer `DESIGN.md` antes de crear o modificar cualquier componente visual
+- Consultar `components/ui/` antes de crear componentes nuevos — reutilizar siempre
+- Aplicar paleta mediterránea (sal, piedra, arena, tierra, dorado) — nunca inventar colores
+- Verificar modo claro y oscuro en todo componente nuevo
+
+**Agentes disponibles (~/.claude/agents/):**
+- UI Designer, Brand Guardian → cualquier tarea visual o de componentes
+- Frontend Developer → componentes React/Next.js
+- Backend Architect → APIs, rutas, middleware
+- Security Architect + Senior SecOps → cualquier endpoint nuevo
+- SEO Specialist → páginas nuevas o cambios de metadata
+- Accessibility Auditor → verificación WCAG en componentes nuevos
+- Code Reviewer → antes de commitear
+- Reality Checker → verificación final antes de push
+
+**Skills globales (~/.claude/skills/):**
+- `search-first` → buscar antes de escribir cualquier código nuevo
+- `security-review` → todo endpoint o dato sensible
+- `verification-loop` → después de cada feature grande
+- `eval-harness` → gates de calidad antes de commits
+- `continuous-learning-v2` → extraer patrones al cerrar sesión
+- `frontend-patterns` → componentes React/Next.js
+- `backend-patterns` → APIs y rutas
+
+**Skills de proyecto (.claude/skills/):**
+- `voz-tu-lugar-en-galicia` → TODO el copy que se escribe — sin excepción
+
+**Rules activas (~/.claude/rules/ecc/):**
+- `common/security.md` → endpoints y datos
+- `common/testing.md` → cobertura mínima
+- `common/git-workflow.md` → commits y branches
+- `typescript/patterns.md` → código TypeScript
+
+### Flujo obligatorio por tipo de tarea
+
+**Feature nueva:**
+search-first → plan → agentes especializados → DESIGN.md → voz skill → verification-loop → eval-harness → commit
+
+**Componente visual:**
+DESIGN.md → UI Designer + Brand Guardian → frontend-patterns → Accessibility Auditor → modo claro/oscuro → commit
+
+**Endpoint o API:**
+search-first → backend-patterns → security-review → Security Architect → tsc → commit
+
+**Copy o texto:**
+voz-tu-lugar-en-galicia SIEMPRE → nunca escribir copy sin esta skill
+
+**Commit:**
+Code Reviewer → Reality Checker → tsc 0 → lint 0 → build exit 0 → push
