@@ -17,6 +17,7 @@ import type { LeadData } from '@/lib/leads'
 import { calcularCalificacion } from '@/lib/gina/scoring'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import { getRealIp } from '@/lib/utils/ip'
 
 export const runtime = 'edge'
 
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Servicio no disponible' }, { status: 503 })
   }
 
-  const ip = req.headers.get('x-forwarded-for') ?? 'anonymous'
+  const ip = getRealIp(req)
   const { success } = await ratelimit.limit(ip)
   if (!success) {
     return NextResponse.json(

@@ -335,7 +335,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   let records: AirtableRecord[]
   try {
-    records = await listAllRecords()
+    records = await listAllRecords(
+      'OR({calificacion}="potencial",{calificacion}="potencial-alto",{calificacion}="en-desarrollo")'
+    )
   } catch (err) {
     console.error('[resumen-diario] Airtable error:', err)
     return NextResponse.json({ error: 'Error consultando Airtable' }, { status: 500 })

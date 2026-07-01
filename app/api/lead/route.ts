@@ -18,6 +18,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { saveLead, type LeadData } from '@/lib/leads'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import { getRealIp } from '@/lib/utils/ip'
 import {
   VALID_ADULTOS, VALID_MENORES_COUNT, VALID_MASCOTA_TIPO, VALID_MASCOTA_PESO,
   VALID_DOCUMENTACION, VALID_SITUACION_LABORAL, VALID_INGRESOS, VALID_GARANTIAS,
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // 1. Rate limiting
     if (ratelimit) {
-      const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
+      const ip = getRealIp(request)
       const { success, limit, remaining, reset } = await ratelimit.limit(ip)
       if (!success) {
         return NextResponse.json(

@@ -134,7 +134,7 @@ export function Header() {
       <header
         className="h-16 md:h-[92px]"
         style={{
-          background: '#111111',
+          background: 'var(--color-granito)',
           borderBottom: '1px solid #B8943F',
           position: 'sticky',
           top: 0,

@@ -45,11 +45,10 @@ const EXPIRACION_MS = 7 * 24 * 60 * 60 * 1000 // 7 días en milisegundos
  * Estos son candidatos a marcar como 'expirado'.
  */
 export async function getLeadsConCodigoActivo(): Promise<AirtableRecord[]> {
-  const records = await listAllRecords()
+  // Filtra en Airtable los registros con código activo (no vacío, no 'expirado')
+  const records = await listAllRecords('AND({codigoAgenda}!="",{codigoAgenda}!="expirado")')
   const ahora   = Date.now()
   return records.filter(r => {
-    const codigo = r.fields.codigoAgenda
-    if (typeof codigo !== 'string' || !codigo || codigo === 'expirado') return false
     const fechaHab = r.fields.fechaHabilitacion
     if (typeof fechaHab !== 'string' || !fechaHab) return false
     const ms = new Date(fechaHab).getTime()
@@ -57,8 +56,9 @@ export async function getLeadsConCodigoActivo(): Promise<AirtableRecord[]> {
   })
 }
 
-/** Lista todos los registros de la tabla, paginando automáticamente (máx. 100/página). */
-export async function listAllRecords(): Promise<AirtableRecord[]> {
+/** Lista registros de la tabla, paginando automáticamente (máx. 100/página).
+ *  Si se pasa filterByFormula, Airtable filtra en origen y se evita descargar toda la tabla. */
+export async function listAllRecords(filterByFormula?: string): Promise<AirtableRecord[]> {
   const { apiKey, baseUrl } = config()
   const records: AirtableRecord[] = []
   let offset: string | undefined
@@ -67,6 +67,7 @@ export async function listAllRecords(): Promise<AirtableRecord[]> {
     const url = new URL(baseUrl)
     url.searchParams.set('pageSize', '100')
     if (offset) url.searchParams.set('offset', offset)
+    if (filterByFormula) url.searchParams.set('filterByFormula', filterByFormula)
 
     const res = await fetch(url.toString(), {
       headers: { Authorization: `Bearer ${apiKey}` },
@@ -140,12 +141,12 @@ export async function findLeadByEmail(email: string): Promise<AirtableRecord | n
  * cae entre ahora y ahora + 75 minutos. Usado por el recordatorio horario.
  */
 export async function getLeadsConCitaProxima(): Promise<AirtableRecord[]> {
-  const records = await listAllRecords()
+  // Filtra en Airtable solo leads con cita confirmada — evita descargar toda la tabla
+  const records = await listAllRecords('{citaAgendada}="true"')
   const ahora   = Date.now()
   const limite  = ahora + 75 * 60 * 1000
 
   return records.filter(r => {
-    if (r.fields.citaAgendada !== 'true') return false
     const fecha = r.fields.fechaCita
     if (typeof fecha !== 'string' || !fecha) return false
     const ms = new Date(fecha).getTime()
