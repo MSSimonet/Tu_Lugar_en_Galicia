@@ -47,3 +47,6 @@ next-env.d.ts
 docs/unlighthouse-tlg8/
 docs/unlighthouse-tlg8-post/
 docs/auditoria-tlg8.md
+
+# marcador de sesión — no commitear
+.claude/.precompact-done

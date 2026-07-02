@@ -1,4 +1,5 @@
 {
+  "autoCompactThreshold": 85,
   "hooks": {
     "SessionStart": [
       {
@@ -6,6 +7,21 @@
           {
             "type": "command",
             "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\Users\\ACER\\Tu_Lugar_en_Galicia\\.claude\\session-start.ps1"
+          },
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"Remove-Item -Force -ErrorAction SilentlyContinue 'C:\\Users\\ACER\\Tu_Lugar_en_Galicia\\.claude\\.precompact-done'\""
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\Users\\ACER\\Tu_Lugar_en_Galicia\\.claude\\pre-compact.ps1"
           }
         ]
       }
