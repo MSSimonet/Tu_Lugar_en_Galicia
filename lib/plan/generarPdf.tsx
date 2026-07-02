@@ -619,12 +619,15 @@ function PlanDocument({
           este plan, vas a llegar. Muchas familias hicieron este mismo viaje antes que tú,
           y tú también puedes.
         </Text>
-        <Text style={S.bodyText}>
-          El siguiente paso concreto es una videollamada con Silvana, donde revisamos juntos
-          tu situación, resolvemos las dudas que dejó este plan, y nos ponemos a buscar
-          tu hogar en Galicia. Cuando estés listo, agenda tu videollamada desde
-          tulugarengalicia.com. Tu nuevo hogar en Galicia te está esperando.
-        </Text>
+        {(lead.calificacion === 'potencial' || (lead.calificacion as string) === 'potencial-alto') && (
+          <Text style={S.bodyText}>
+            El siguiente paso concreto es una videollamada con un integrante de nuestro
+            equipo, donde revisamos juntos tu situación, resolvemos las dudas que dejó
+            este plan, y nos ponemos a buscar tu hogar en Galicia. Nos vamos a poner en
+            contacto para coordinar tu videollamada y darte acceso a la agenda. Tu nuevo
+            hogar en Galicia te está esperando.
+          </Text>
+        )}
         <View style={S.firma}>
           <Text style={S.firmaNombre}>Tu Lugar en Galicia</Text>
           <Text style={S.firmaWeb}>tulugarengalicia.com</Text>

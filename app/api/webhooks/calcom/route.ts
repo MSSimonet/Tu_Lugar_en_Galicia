@@ -239,7 +239,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       )
     }
   } else {
-    console.warn(`[calcom] Lead no encontrado para email: ${clientEmail.substring(0, 3)}***`)
+    console.warn('[calcom] BOOKING_CREATED sin lead asociado en Airtable')
     if (silvanaEmail) {
       tasks.push(
         sendEmail({
