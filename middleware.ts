@@ -12,7 +12,7 @@ export function middleware(req: NextRequest) {
     "img-src 'self' data: blob: https://placehold.co",
     "media-src 'self'",
     "frame-src https://app.cal.com https://cal.com",
-    "connect-src 'self'",
+    "connect-src 'self' https://app.cal.com https://cal.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

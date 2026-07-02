@@ -4,10 +4,25 @@ import { useEffect } from 'react'
 import { CALCOM_URL } from '@/lib/config/site'
 
 const CALCOM_PLACEHOLDER = 'https://cal.com/tu-usuario'
+const CAL_NS = 'tlg'
+
+type CalFn = ((...args: unknown[]) => void) & {
+  q?: unknown[]
+  loaded?: boolean
+  ns?: Record<string, ((...args: unknown[]) => void) & { q?: unknown[] }>
+}
 
 declare global {
   interface Window {
-    Cal?: ((...args: unknown[]) => void) & { q?: unknown[] }
+    Cal?: CalFn
+  }
+}
+
+function calPathFrom(link: string): string {
+  try {
+    return link.startsWith('https://') ? new URL(link).pathname.slice(1) : link
+  } catch {
+    return link
   }
 }
 
@@ -20,38 +35,59 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
   const isConfigured = calLink !== CALCOM_PLACEHOLDER
 
   useEffect(() => {
-    if (!isConfigured) return
-    if (typeof window === 'undefined') return
+    if (!isConfigured || typeof window === 'undefined') return
 
-    const initInline = () => {
-      window.Cal!('init', { origin: 'https://cal.com' })
-      window.Cal!('inline', {
+    const calPath = calPathFrom(calLink)
+
+    const queueCalls = () => {
+      const Cal = window.Cal!
+      Cal('init', CAL_NS, { origin: 'https://app.cal.com' })
+      Cal.ns![CAL_NS]('inline', {
         elementOrSelector: '#cal-inline-embed',
-        calLink,
+        calLink: calPath,
+        layout: 'month_view',
       })
     }
 
-    // Si el SDK ya está cargado (navegación client-side), inicializar directamente
-    if (window.Cal) {
-      initInline()
+    if (window.Cal?.loaded) {
+      // Ya cargado por navegación client-side — re-inicializar directamente
+      queueCalls()
       return
     }
 
-    // Primera carga: inyectar el script y esperar onload
-    const script = document.createElement('script')
-    script.id = 'cal-embed-script'
-    script.src = 'https://app.cal.com/embed/embed.js'
-    script.async = true
-    script.onload = () => {
-      if (window.Cal) {
-        initInline()
-      }
-    }
-    document.body.appendChild(script)
+    // Stub oficial de Cal.com — crea la queue y carga embed.js
+    ;(function (C: Window, A: string, L: string) {
+      const p = (a: CalFn, ar: unknown[]) => { a.q!.push(ar) }
+      const d = C.document
+      C.Cal = C.Cal || (function (...args: unknown[]) {
+        const cal = C.Cal!
+        if (!cal.loaded) {
+          cal.ns = {}
+          cal.q = cal.q || []
+          const s = d.createElement('script')
+          s.src = A
+          d.head.appendChild(s)
+          cal.loaded = true
+        }
+        if (args[0] === L) {
+          const api: CalFn = (...a: unknown[]) => { p(api, a) }
+          const ns = args[1] as string
+          api.q = api.q || []
+          if (typeof ns === 'string') {
+            cal.ns![ns] = cal.ns![ns] || api
+            p(cal.ns![ns], args as unknown[])
+            p(cal, [L, api])
+          } else {
+            p(cal, args as unknown[])
+          }
+          return
+        }
+        p(cal, args as unknown[])
+      } as CalFn)
+    })(window, 'https://app.cal.com/embed/embed.js', 'init')
 
-    return () => {
-      script.onload = null
-    }
+    // Encolar inmediatamente — embed.js procesará la queue al cargar
+    queueCalls()
   }, [calLink, isConfigured])
 
   if (!isConfigured) {
