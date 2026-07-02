@@ -47,6 +47,7 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
         calLink: calPath,
         layout: 'month_view',
       })
+      Cal.ns![CAL_NS]('ui', { hideEventTypeDetails: true })
     }
 
     if (window.Cal?.loaded) {
