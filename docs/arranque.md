@@ -129,6 +129,7 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 | **A02: email cliente en logs** | `app/api/webhooks/calcom/route.ts:241` — email completo del cliente en logs de producción (RGPD). `console.warn` con primeros 3 chars ya existe en otro punto; revisar si línea 241 es un `console.log` o el email en el cuerpo del mail a Silvana (que es intencional). Verificar antes del lanzamiento | RGPD — antes de lanzar |
 | **A09: token admin en query string** | Token HMAC en query param de `/admin/lead/[recordId]` — visible en Referer headers. Considerar mover a header Authorization o cookie httpOnly | Mejora de seguridad |
 | **A15: TTL token admin 72h** | `lib/admin/tokens.ts:3` — reducir a 24h para acciones de alta sensibilidad | Mejora de seguridad |
+| **Calendario propio (reemplazo Cal.com)** | Eliminar branding Cal.com (banner "Pruébalo Gratis", logo, "Powered by Cal.com") sin depender del plan Teams ($12/mes). Implica desarrollo propio de disponibilidad de slots, sincronización de calendario, envío de invitaciones/confirmaciones — no es un ajuste menor. Evaluar cuando el volumen de reservas justifique la inversión. | Backlog / futuro — no urgente |
 
 ---
 
