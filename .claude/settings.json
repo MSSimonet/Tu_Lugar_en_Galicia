@@ -10,5 +10,41 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git log *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(git stash list *)",
+      "Bash(git remote -v)",
+      "Bash(npx --yes vercel env ls *)",
+      "Bash(npx --yes vercel logs *)",
+      "Bash(npx --yes vercel inspect *)",
+      "Bash(npx --yes vercel ls *)",
+      "Bash(npx --yes vercel alias ls)",
+      "Bash(curl -s -o /dev/null -w * https://tu-lugar-en-galicia.vercel.app*)",
+      "Bash(curl -s -o /dev/null -w * http://localhost:*)",
+      "Bash(npm run build *)",
+      "Bash(npm run lint *)",
+      "Bash(npm test *)",
+      "Bash(npx tsc --noEmit *)",
+      "Bash(npx eslint *)",
+      "PowerShell(Get-Content *)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Select-String *)",
+      "PowerShell(Get-Item *)",
+      "PowerShell(Test-Path *)",
+      "PowerShell(Measure-Object *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(dir *)"
+    ]
   }
 }
