@@ -1,7 +1,7 @@
 # Documento de arranque — Tu Lugar en Galicia
 
-> Generado automáticamente el 2026-07-01. Próxima sesión: leer este archivo antes de actuar.
-> Fuentes: CLAUDE.md, docs/spec-flujo-agenda.md, git log, .env.local.example, docs/*.md.
+> Actualizado 2026-07-02. Próxima sesión: leer este archivo antes de actuar.
+> Reglas completas en `CLAUDE.md`.
 
 ---
 
@@ -9,230 +9,178 @@
 
 | Parámetro | Valor |
 |---|---|
-| **Stack** | Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · Vercel |
+| **Stack** | Next.js 16.2.6 (App Router) · TypeScript · Tailwind CSS v4 · Vercel |
 | **URL producción** | `https://tu-lugar-en-galicia.vercel.app` (dominio `tulugarengalicia.com` pendiente) |
-| **Rama activa** | `main` (limpia, sin cambios pendientes) |
+| **Rama activa** | `main` — working tree limpio, sin cambios pendientes |
 | **Auto-deploy** | Vercel ← GitHub `main` |
 | **CDN / DNS / SSL** | Cloudflare (pendiente: apuntar dominio propio) |
 | **CRM / Leads** | Airtable (sin base de datos hasta Fase 5) |
 | **IA (Gina)** | Gemini API (ADR-008 vigente — NO cambiar a Claude sin ADR) |
-| **tsc** | 0 errores (último commit verificado) |
-| **lint (ESLint)** | 0 errores en fuentes |
-| **build** | exit 0 |
-| **Lighthouse / Unlighthouse** | Sin scores recientes registrados — pendiente de correr contra URL producción |
-| **Última sesión** | 2026-07-01 |
+| **tsc** | 0 errores (verificado en fa56ec7) |
+| **build** | exit 0 (verificado en fa56ec7) |
+| **Última sesión** | 2026-07-02 |
 | **Fase actual** | Fase 1 (marketing + Gina + flujo agenda — completados) |
+
+### Commits desde el estado certificado anterior (9b223a7) — 7 en total
+
+```
+fa56ec7  fix: CalEmbed guard client-side nav y rate limit Gina        ← sesión 2026-07-02
+2633d07  chore: reducir prompts de permiso para operaciones de diagnóstico  ← sesión 2026-07-02
+16e045c  fix: contraste WCAG AA en GinaInput y CiudadesCards          ← sesión 2026-07-02
+4f2359c  revert: sacar WhatsApp flotante y secciones duplicadas de home
+a4f4508  fix: agregar URL de deployment al allowlist de origen en /api/gina
+f159d9a  fix: restaurar WhatsApp flotante y secciones faltantes en home
+0358828  docs: corregir referencias Avoa→Gina y desduplicar CLAUDE.md en arranque.md
+```
+
+Todos están en origin/main y auto-desplegados en Vercel. Los 3 marcados como "sesión 2026-07-02" son los que se pushearon en la sesión actual; los 4 restantes ya estaban en origin al inicio de la sesión.
 
 ---
 
-## 2 — Lo que se implementó en las últimas sesiones
+## 2 — Lo que se implementó
 
-### Flujo de agenda — 9 piezas completas
+### Fixes verificados en sesión 2026-07-02
+
+Todos con evidencia concreta (tsc + build + test en producción o revisión de código):
+
+| Commit | Fix | Evidencia |
+|---|---|---|
+| `a4f4508` | **Allowlist de origen `/api/gina`**: `VERCEL_URL` añadido para cubrir URLs de deployment específicas de Vercel (formato `tu-lugar-en-galicia-xxxxx.vercel.app`) | curl deployment URL → 200; curl evil.com → 403 |
+| `16e045c` | **Contraste WCAG AA**: `--color-coral` `#D4694F`→`#B8492F` (3.46:1→5.09:1); `--color-pizarra` `#696560`→`#585450` (4.41:1→5.73:1). Dark mode con overrides independientes. 2 hex hardcodeados en `CiudadesCards.tsx` → `var(--color-pizarra)` | Ratios calculados, tsc 0 errores |
+| `4f2359c` | **Revert WhatsApp flotante + secciones duplicadas**: `WhatsAppFlotante` y `ComoFuncionaResumen`/`CiudadesCards` re-añadidos en `f159d9a` basándose en PRD desactualizado — confirmado como decisión de producto descartada | Home verificada con 6 secciones correctas |
+| `fa56ec7` | **CalEmbed guard client-side nav** (`components/shared/CalEmbed.tsx`): guard `getElementById` → `window.Cal`; extrae `initInline()` reutilizable; añade cleanup `script.onload = null` en return del `useEffect` | Code Reviewer aprobado; build exit 0 |
+| `fa56ec7` | **Rate limit Gina**: `slidingWindow(30, '10 m')` → `slidingWindow(60, '10 m')`. Cálculo: rama más larga del `flow.json` = 44 pasos × 1.25 margen = 60 | AI Engineer mapeó todas las ramas; tsc 0 errores |
+| (sin cambio) | **`fechaHabilitacion` ISO 8601**: confirmado que `app/api/admin/habilitar-agenda/[recordId]/route.ts` ya usa `new Date().toISOString()` — no era bug de código. El registro `"28/6/2026 7:03pm"` en Airtable es dato histórico de una versión anterior | Código verificado en línea 67 del archivo |
+| `0358828` | **Referencias Avoa→Gina** corregidas en roadmap.md y ARCHITECTURE.md | — |
+| `0358828` | **Duplicación de CLAUDE.md** en arranque.md eliminada | — |
+
+### Flujo de agenda — 9 piezas completas (sesiones anteriores)
 
 | Pieza | Commit | Descripción |
 |---|---|---|
 | Pieza 1 — Calificación Airtable | (sesiones anteriores) | Lead guardado con `calificacion` en Airtable |
-| Pieza 2 — Mail diario Silvana | `56b5129` | Cron 08:00 España → `/api/admin/resumen-diario` con tarjetas por lead |
-| Pieza 3 — Perfil `/admin/lead/[recordId]` | `86c505c` | Página privada HMAC, token 72h, todos los campos del lead |
-| Pieza 4 — Endpoint habilitar-agenda | `2e3cba0` | POST `/api/admin/habilitar-agenda/[recordId]` — genera código 8 chars, guarda en Airtable, dispara mail |
-| Pieza 5 — Mail cálido al cliente | `2e3cba0` | Template en `lib/admin/email.ts`, voz Silvana, código personal, link `/agenda?code=` |
-| Pieza 6 — Expiración + alertas | `0e7d320` | Cron diario expira códigos >7 días, alerta en resumen Silvana |
-| Pieza 7 — Webhook Cal.com | `0b18d37` | `app/api/webhooks/calcom/route.ts` — HMAC CALCOM_WEBHOOK_SECRET, procesa BOOKING_CREATED, actualiza Airtable |
-| Pieza 8 — Recordatorio Silvana 1h antes | `0b18d37` + `49d8e3e` | `/api/admin/recordatorio-silvana` · cron horario en **GitHub Actions** (`recordatorio-silvana.yml`) |
-| Pieza 9 — Validación dinámica /agenda | `8796142` | Valida código contra Airtable (no array hardcodeado); verifica no expirado y no usado |
+| Pieza 2 — Mail diario Silvana | `56b5129` | Cron 08:00 España → `/api/admin/resumen-diario` |
+| Pieza 3 — Perfil `/admin/lead/[recordId]` | `86c505c` | Página privada HMAC, token 72h |
+| Pieza 4 — Endpoint habilitar-agenda | `2e3cba0` | Genera código 8 chars, guarda en Airtable, dispara mail |
+| Pieza 5 — Mail cálido al cliente | `2e3cba0` | Template voz Silvana, código personal, link `/agenda?code=` |
+| Pieza 6 — Expiración + alertas | `0e7d320` | Cron diario expira códigos >7 días |
+| Pieza 7 — Webhook Cal.com | `0b18d37` | `app/api/webhooks/calcom/route.ts` — HMAC `CALCOM_WEBHOOK_SECRET` |
+| Pieza 8 — Recordatorio Silvana 1h antes | `0b18d37` + `49d8e3e` | GitHub Actions cron horario |
+| Pieza 9 — Validación dinámica /agenda | `8796142` | Valida código contra Airtable |
 
-### Fixes de auditoría 2026-06-28
-
-| Commit | Severidad | Descripción |
-|---|---|---|
-| `c90cba5` | 🔴 Críticos × 8 | IDOR en `/api/plan/pdf` (auth HMAC), rate limiting fail-closed en Gina, presupuesto lookup corregido en emails |
-| `8fb5d7c` | 🟠 Altos × 13 | CSP + HSTS en `middleware.ts` y `vercel.json`, consentimientoRGPD dinámico, focus traps, aria-labels, botón pausa video hero, contraste Button fantasma, required en formularios |
-| `dd6345d` | 🟡 Medios × 7 | EMAIL_REGEX robusta, sr-only en todos los `target="_blank"`, aria-hidden GinaWidget, aria-controls condicional Header, h2 sobre-silvana, INTERNAL_API_SECRET rotado |
-| `e10e881` | 🔒 Seguridad | Referrer-Policy no-referrer en rutas admin y webhooks |
-
-### Fixes visuales
+### Motor del plan estratégico (sesiones anteriores)
 
 | Commit | Descripción |
 |---|---|
-| `2722e97` | 4 fixes UI — LoQueNoSomos, ciudades dark mode, sobre-silvana, footer |
-
-### Motor del plan estratégico (PDF personalizado)
-
-| Commit | Descripción |
-|---|---|
-| `6478857` | **11 fixes**: path bug `tramites-galicia.md`, trámites [46][47] para `nacionalidad-en-tramite`, sección económica personalizada con presupuesto+garantías, barra contexto en PDF, contradicción turista resuelta, fallback `{{PAIS_ORIGEN}}`, frases [40][41] condicionales, nota urgencia `fechaLlegada < 1 mes`, nota `necesidadesEspeciales`, nota familia mixta UE, CLAUDE.md A01 ✅ |
-| `a14360c` | **2 fixes**: nota familias mixtas UE/extracomunitario para trámite [9], bloque herramientas digitales SERGAS [33][34][35] en Fase E |
-
-### Infraestructura de desarrollo
-
-| Commit | Descripción |
-|---|---|
-| `f9f4e97` | `DESIGN.md` — sistema de diseño completo (paleta, tipografía, componentes, layout, responsive, prompts de agente) |
-| `0631155` | `CLAUDE.md §11` — orquestación permanente de recursos y agentes |
-| `d8f240c` | Hook `SessionStart` — consolidación automática de contexto al iniciar sesión |
-| ECC (sin commit repo) | 148 archivos instalados en `~/.claude/hooks/`, rules/ecc/common + typescript, 8 skills globales |
-| agency-agents (sin commit repo) | 222 agentes instalados en `~/.claude/agents/` |
+| `6478857` | 11 fixes: path bug, trámites condicionales, sección económica personalizada, barra contexto PDF |
+| `a14360c` | 2 fixes: familias mixtas UE, bloque herramientas digitales SERGAS |
 
 ---
 
 ## 3 — Estado del flujo de agenda
 
-**Las 9 piezas están 100% implementadas en código.** Lo que falta son configuraciones manuales.
+**Las 9 piezas están 100% implementadas en código.**
 
-| Pieza | Estado código | Bloqueado por |
+| Pieza | Estado | Bloqueado por |
 |---|---|---|
-| 1 — Calificación Airtable | ✅ Funciona | — |
-| 2 — Mail diario Silvana | ✅ Funciona | `SILVANA_EMAIL` en Vercel · `INTERNAL_API_SECRET` actualizado en Vercel · `RESEND_API_KEY` en Vercel |
-| 3 — Perfil `/admin/lead/[recordId]` | ✅ Funciona | Necesita `INTERNAL_API_SECRET` en Vercel para verificar tokens |
-| 4 — Endpoint habilitar-agenda | ✅ Funciona | `RESEND_API_KEY` + `SILVANA_EMAIL` en Vercel |
-| 5 — Mail cálido al cliente | ✅ Funciona | Dominio propio para remitente `silvana@tulugarengalicia.com` (funciona con dominio Resend como fallback hasta entonces) |
-| 6 — Expiración + alertas | ✅ Funciona | Mismo que Pieza 2 |
-| 7 — Webhook Cal.com | ✅ Funciona | `CALCOM_WEBHOOK_SECRET` en Vercel + configurar webhook en Cal.com apuntando a `https://tulugarengalicia.com/api/webhooks/calcom` |
-| 8 — Recordatorio Silvana 1h | ✅ Funciona | `INTERNAL_API_SECRET` en **GitHub Actions** secrets (Settings → Secrets → Actions) |
-| 9 — Validación dinámica /agenda | ✅ Funciona | `AIRTABLE_API_KEY` + `AIRTABLE_BASE_ID` + `AIRTABLE_TABLE_NAME` en Vercel |
+| 1 — Calificación Airtable | ✅ Funciona en producción | — |
+| 2 — Mail diario Silvana | ✅ Funciona en producción | — |
+| 3 — Perfil `/admin/lead/[recordId]` | ✅ Funciona | `INTERNAL_API_SECRET` debe coincidir entre `.env.local` y Vercel (R3) |
+| 4 — Endpoint habilitar-agenda | ✅ Funciona | — |
+| 5 — Mail cálido al cliente | ✅ Funciona | Dominio propio para remitente definitivo |
+| 6 — Expiración + alertas | ✅ Funciona | — |
+| 7 — Webhook Cal.com | ✅ Código correcto. `CALCOM_WEBHOOK_SECRET` ✅ en Vercel | URL en Cal.com probablemente apunta a `tulugarengalicia.com` (no activo). Ver pendiente C3 |
+| 8 — Recordatorio Silvana 1h | ✅ Funciona | `INTERNAL_API_SECRET` en GitHub Actions secrets (pendiente R3) |
+| 9 — Validación dinámica /agenda | ✅ Funciona. `CalEmbed` bug client-side nav resuelto en `fa56ec7` | — |
 
-**Lo que activa el dominio `tulugarengalicia.com` cuando llegue:**
-1. Cambiar remitente Resend de fallback a `silvana@tulugarengalicia.com` en `lib/admin/email.ts`
-2. Actualizar `NEXT_PUBLIC_SITE_URL` en Vercel a `https://tulugarengalicia.com`
-3. Configurar webhook Cal.com con la URL definitiva (Pieza 7)
-4. Activar tracking de apertura de mails (Pieza 6) vía webhook Resend → campo `mailAbierto` en Airtable
-
-**Campos Airtable que Silvana debe crear manualmente** (todos Single line text):
-`citaAgendada` · `fechaCita` · `horaCita` · `plataformaVideollamada` · `codigoAgenda` · `fechaHabilitacion`
+**Nota sobre Cal.com (auditado 2026-07-02):** `https://cal.com/tu-lugar-en-galicia` existe (HTTP 200). Cero hits a `POST /api/webhooks/calcom` en logs — Cal.com no está disparando el webhook. Causa probable: URL en Cal.com → Settings → Developer → Webhooks apunta al dominio incorrecto.
 
 ---
 
 ## 4 — Pendientes de Silvana
 
-| # | Pendiente | Instrucción exacta | Urgencia |
+Lista consolidada. Nada de código hasta que Silvana confirme.
+
+| # | Pendiente | Acción exacta | Urgencia |
 |---|---|---|---|
-| S1 | **Número de WhatsApp real** | Ir a `lib/config/site.ts` → constante `WHATSAPP_NUMBER` → reemplazar por número real con código de país sin espacios (ej: `34612345678`). Mismo archivo: `WHATSAPP_MESSAGE` | 🔴 Antes de lanzar |
-| S2 | **Cuenta Cal.com + link** | Crear cuenta en cal.com → configurar evento "Videollamada 30 min" → copiar slug → pegar en `lib/config/site.ts` constante `CALCOM_LINK` (ej: `"https://cal.com/silvana-tu-lugar/videollamada"`) | 🔴 Antes de lanzar |
-| S3 | **Variables de entorno en Vercel** | Vercel → proyecto → Settings → Environment Variables → agregar: `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `AIRTABLE_TABLE_NAME`, `RESEND_API_KEY`, `SILVANA_EMAIL`, `INTERNAL_API_SECRET` (valor actual de `.env.local`), `CALCOM_WEBHOOK_SECRET` | 🔴 Antes de lanzar |
-| S4 | **Secret INTERNAL_API_SECRET en GitHub Actions** | GitHub → repo → Settings → Secrets and variables → Actions → New repository secret → nombre: `INTERNAL_API_SECRET` → mismo valor que en `.env.local` | 🔴 Para que funcione el recordatorio horario |
-| S5 | **Campos nuevos en Airtable** | En la tabla de leads de Airtable, crear 6 campos tipo "Single line text": `citaAgendada`, `fechaCita`, `horaCita`, `plataformaVideollamada`, `codigoAgenda`, `fechaHabilitacion` | 🔴 Para que funcione el flujo agenda |
-| S6 | **Webhook en Cal.com** | Cal.com → Settings → Developer → Webhooks → Create Webhook → URL: `https://tu-lugar-en-galicia.vercel.app/api/webhooks/calcom` → Events: BOOKING_CREATED → copiar el secret → pegar en `CALCOM_WEBHOOK_SECRET` de Vercel | 🟠 Cuando Cal.com esté configurado |
-| S7 | **Política de privacidad — datos fiscales** | Ir a `docs/legal-terminos-privacidad.md` → completar todos los campos marcados como `[COMPLETAR]`: nombre, NIF/CIF, dirección, email de contacto, email DPO | 🔴 Antes de lanzar (RGPD) |
-| S8 | **Behold.so — feed Instagram** | Entrar a behold.so con cuenta Instagram Business → crear widget → copiar `BEHOLD_WIDGET_ID` → agregar en Vercel como `NEXT_PUBLIC_BEHOLD_WIDGET_ID` | 🟡 Antes de lanzar |
-| S9 | **Google Sheet El Marcador** | Crear Sheet con 4 celdas: `anuncios_contactados`, `dijeron_no`, `familias_ubicadas`, `tiempo_medio` → copiar ID de la URL → pegar en Vercel como `SHEET_MARCADOR_ID`. Si es privada: Service Account en Google Cloud Console | 🟡 Antes de lanzar |
-| S10 | **Dominio tulugarengalicia.com** | Registrar dominio → ir a Cloudflare DNS → agregar registro A `@` → `76.76.21.21` y CNAME `www` → `cname.vercel-dns.com` → en Vercel: Settings → Domains → Add → esperar "Valid Configuration" → activar proxy Cloudflare (nube naranja) → SSL Full (strict). Guía paso a paso en `docs/ARCHITECTURE.md §6` | 🟠 Cuando esté listo el dominio |
-| S11 | **WhatsApp Business** | Migrar número a WhatsApp Business (app móvil) → configurar mensaje de bienvenida y horario → actualizar número en `lib/config/site.ts` (ítem S1) | 🟡 Recomendado antes de lanzar |
+| PL-1 | **Número real de WhatsApp** | `lib/config/site.ts` → constante `WHATSAPP_NUMBER` → número real con código de país sin espacios (ej: `34612345678`) | 🔴 Antes de lanzar |
+| C3/PL-2 | **Webhook Cal.com** | Cal.com → Settings → Developer → Webhooks → editar/crear webhook: URL `https://tu-lugar-en-galicia.vercel.app/api/webhooks/calcom`, evento `BOOKING_CREATED`. El secret (`CALCOM_WEBHOOK_SECRET`) ya está en Vercel — solo copiar el valor desde Vercel y pegarlo en Cal.com al crear/editar el webhook | 🔴 Para activar el flujo de agenda completo |
+| A04 | **Datos fiscales en Política de Privacidad** | `docs/legal-terminos-privacidad.md` → completar todos los campos `[COMPLETAR]`: nombre, NIF/CIF, dirección, email contacto, email DPO | 🔴 Antes de lanzar (RGPD) |
+| A14 | **Fotos reales** | Reemplazar imágenes placeholder de Testimonios, Silvana y MuroLlaves | 🟠 Antes de lanzar |
+| R3 | **Sincronizar `INTERNAL_API_SECRET`** | Verificar que el valor en Vercel → Settings → Environment Variables → `INTERNAL_API_SECRET` coincide exactamente con el valor en `.env.local`. Si no coincide, actualizarlo en Vercel. Repetir en GitHub Actions secrets. Esto desbloquea: verificación del PDF del plan (hay un lead de prueba `recgLT5e61Im5mrhN`), y el cron de recordatorio Silvana | 🔴 Bloqueante para PDF y recordatorio |
+
+**Pendientes adicionales de Silvana (menor urgencia):**
+
+| # | Pendiente | Acción |
+|---|---|---|
+| S2 | Cuenta Cal.com — event types configurados con disponibilidad real | Cal.com → crear/verificar evento "Videollamada 30 min" con horarios reales |
+| S8 | Feed Instagram (Behold.so) | behold.so → widget ID → `NEXT_PUBLIC_BEHOLD_WIDGET_ID` en Vercel |
+| S9 | Google Sheet El Marcador | Sheet ID → `SHEET_MARCADOR_ID` en Vercel |
+| S10 | Dominio `tulugarengalicia.com` | Registrar → Cloudflare DNS → Vercel Domains |
 
 ---
 
-## 5 — Pendientes de infraestructura
+## 5 — Pendientes técnicos sin resolver
 
-### Upstash Redis
-- **Estado:** variables `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` **no están en Vercel** (auditado en A11).
-- **Qué desbloquea:** rate limiting de `/api/gina` (actualmente fail-closed — devuelve 503 si no hay Redis). Sin Redis, Gina no puede atender requests en producción.
-- **Cómo activar:** crear cuenta en upstash.com → crear base de datos Redis → copiar las dos variables → agregarlas en Vercel.
-- **Urgencia:** 🔴 Crítico antes de lanzar.
-
-### Dominio propio `tulugarengalicia.com`
-- **Estado:** pendiente de registro/apuntado. El sitio usa URL `.vercel.app`.
-- **Qué desbloquea:** (1) remitentes propios en Resend (`silvana@tulugarengalicia.com`, `gina@tulugarengalicia.com`), (2) URL definitiva para webhook Cal.com, (3) tracking de apertura de mails (Pieza 6), (4) confianza del cliente.
-- **Cómo activar:** seguir guía `docs/ARCHITECTURE.md §6` (paso a paso Cloudflare → Vercel).
-- **Urgencia:** 🟠 Alto — no bloquea desarrollo pero sí el lanzamiento real.
-
-### Behold.so (feed Instagram)
-- **Estado:** `FeedInstagram.tsx` tiene el TODO preparado — cambio de 10 minutos una vez con el token.
-- **Qué desbloquea:** feed dinámico de Instagram en la home (reemplaza placeholder).
-- **Requisito:** cuenta Instagram Business o Creator.
-- **Cómo activar:** behold.so → conectar cuenta IG → crear widget → copiar ID → `NEXT_PUBLIC_BEHOLD_WIDGET_ID` en Vercel.
-- **Urgencia:** 🟡 Medio.
-
-### INTERNAL_API_SECRET rotado
-- **Estado:** rotado en `.env.local` (2026-06-28) pero **pendiente de actualizar en Vercel y GitHub Actions**.
-- **Qué bloquea:** el endpoint de recordatorio-silvana y el cron de resumen-diario fallan en producción hasta actualizarlo.
-- **Urgencia:** 🔴 Crítico.
+| # | Pendiente | Detalle |
+|---|---|---|
+| **PDF del plan estratégico** | Verificación bloqueada por R3 — nunca ejecutada esta sesión. Lead de prueba disponible: `recgLT5e61Im5mrhN` (etiqueta: `seguimiento-futuro`, no tiene `codigoAgenda`). Una vez R3 resuelto: generar token con `generateAdminToken` y probar `/admin/lead/recgLT5e61Im5mrhN` | Pendiente de Silvana (R3) |
+| **R2: `sesion.completado = false`** | En el E2E de Gina, `localStorage['gina_session_v1'].sesion.completado` quedó en `false` a pesar de llegar a `pasoActual === 'despedida'`. Posible desincronización entre estado React y localStorage tras el último guardado. No investigado — sin impacto visible en UX confirmado | Técnico, baja urgencia |
+| **A02: email cliente en logs** | `app/api/webhooks/calcom/route.ts:241` — email completo del cliente en logs de producción (RGPD). `console.warn` con primeros 3 chars ya existe en otro punto; revisar si línea 241 es un `console.log` o el email en el cuerpo del mail a Silvana (que es intencional). Verificar antes del lanzamiento | RGPD — antes de lanzar |
+| **A09: token admin en query string** | Token HMAC en query param de `/admin/lead/[recordId]` — visible en Referer headers. Considerar mover a header Authorization o cookie httpOnly | Mejora de seguridad |
+| **A15: TTL token admin 72h** | `lib/admin/tokens.ts:3` — reducir a 24h para acciones de alta sensibilidad | Mejora de seguridad |
 
 ---
 
-## 6 — Herramientas activas del stack de Code
+## 6 — Cambios de configuración de esta sesión (2026-07-02)
 
-### ECC (Agentic OS para Claude Code)
-- **Instalación:** `~/.claude/hooks/` (148 archivos: hooks runtime)
-- **Rules:** `~/.claude/rules/ecc/common/` (10 reglas) + `~/.claude/rules/ecc/typescript/` (5 reglas)
-- **Skills globales** (`~/.claude/skills/`):
-  - `search-first` → buscar antes de escribir código nuevo
-  - `security-review` → endpoints y datos sensibles
-  - `verification-loop` → después de cada feature grande
-  - `eval-harness` → gates de calidad antes de commits
-  - `continuous-learning-v2` → extrae patrones al cerrar sesión
-  - `frontend-patterns` → React/Next.js components
-  - `backend-patterns` → APIs y rutas
-  - `tdd-workflow` → TDD para nuevas features
-- **Cómo usar:** se activan automáticamente según el tipo de tarea (ver §11 de CLAUDE.md)
+### `.claude/settings.json` (versionado en git, commit `2633d07`)
 
-### agency-agents (msitarzewski)
-- **Instalación:** `~/.claude/agents/` — 222 agentes de dominio de negocio
-- **Los más relevantes para este proyecto:**
-  - `Frontend Developer` — componentes React/Next.js
-  - `Backend Architect` — APIs y middleware
-  - `Brand Guardian` — identidad de marca, paleta
-  - `UI Designer` — tokens CSS, componentes visuales
-  - `Security Engineer` — revisión de endpoints
-  - `Accessibility Auditor` — WCAG
-  - `Code Reviewer` — antes de commitear
-  - `Reality Checker` — verificación final antes de push
-  - `SEO Specialist` — páginas nuevas, metadata
-  - `Content Creator` — copy y textos
-- **Cómo usar:** invocar con la fórmula del §5 de CLAUDE.md
+Añade `permissions.allow` con patrones de solo lectura/diagnóstico que ya no piden confirmación:
+- `git log/status/diff/show/branch/stash list/remote -v`
+- `vercel env ls / logs / inspect / ls / alias ls`
+- `curl -s -o /dev/null` acotado a `https://tu-lugar-en-galicia.vercel.app*` y `http://localhost:*`
+- `npm run build/lint/test`, `npx tsc --noEmit`, `npx eslint`
+- PowerShell lectura: `Get-Content`, `Get-ChildItem`, `Select-String`, `Get-Item`, `Test-Path`, `Measure-Object`
+- Unix lectura: `ls`, `cat`, `head`, `tail`, `grep`, `find`, `dir`
 
-### DESIGN.md
-- **Archivo:** `DESIGN.md` en la raíz del proyecto (commit `f9f4e97`)
-- **Qué contiene:** paleta hex exacta, escala tipográfica, variantes de Button, estilos del Header, layout, shadows, do's/don'ts, breakpoints responsive, prompts listos para cada tipo de agente
-- **Cómo usar:** leer SIEMPRE antes de crear o modificar cualquier componente visual
+**Siguen requiriendo confirmación explícita:** `git push`, `git commit`, `git add` (y variantes), `vercel deploy`, `vercel env set/rm`, PowerShell de escritura (`Set-Content`, `Remove-Item`, `New-Item`, `Out-File`), acceso a `.env`.
 
-### Skills de proyecto
-- **`voz-tu-lugar-en-galicia`** (`/.claude/skills/`): reglas de voz de marca — "tú" neutro, nunca "vos". Aplicar a TODO el copy visible sin excepción.
+### `settings.local.json` (no versionado — solo local)
 
-### §11 CLAUDE.md
-- Flujos obligatorios por tipo de tarea (feature nueva, componente visual, endpoint, copy, commit)
-- Mapa completo de agentes, skills globales, skills de proyecto y rules activas
+Eliminadas en esta sesión 4 entradas que auto-aprobaban operaciones de git:
+- `"Bash(git push *)"` — eliminada
+- `"Bash(git add *)"` — eliminada
+- `"Bash(git commit *)"` — eliminada
+- `"Bash(git commit -m ' *)"` — eliminada
+
+**Resultado:** a partir de esta sesión, cualquier `git add`, `git commit` o `git push` requiere confirmación explícita del usuario en el chat. Total actual: 260 entradas en `settings.local.json`.
 
 ---
 
 ## 7 — Roadmap próxima sesión — prioridades
 
-**En este orden exacto:**
+**En este orden:**
 
-### Prioridad 1 — Rediseño páginas de ciudad: tabs + cámara MeteoGalicia
-Las páginas de ciudad (`/ciudades/[ciudad]`) necesitan:
-- Implementar tabs para secciones (Barrios, Clima, Colegios, Transporte, etc.)
-- Integrar cámara en vivo de MeteoGalicia (verificar autorización legal con `Legal Compliance Checker` — auditado en A13 como `VistaEnVivo.tsx` Windy sin autorización)
-- Revisar dark mode en tarjetas de ciudad (fix `2722e97` no resolvió todo)
-- Agentes: `Frontend Developer` (tabs + layout) + `Legal Compliance Checker` (MeteoGalicia) + `Accessibility Auditor`
+### 1. Resolver R3 y verificar PDF (5 min si Silvana lo tiene)
+Si `INTERNAL_API_SECRET` ya está sincronizado: generar token → probar `/admin/lead/recgLT5e61Im5mrhN` → confirmar que el PDF se genera sin errores visuales (colores, fuentes, layout) con los nuevos tokens de color.
 
-### Prioridad 2 — Motor del plan estratégico: completar PDF
-Pendientes en `lib/plan/armador.ts` y `lib/plan/generarPdf.tsx`:
-- Pasada final de tono Carnegie sobre textos fijos (introducción cálida, cierre, sección económica)
-- Integrar `plan-estrategico.md` como fuente de los textos fijos del PDF
-- Verificar que los 55 trámites del catálogo están todos mapeados correctamente
-- Agentes: `AI Engineer` (lógica) + `Content Creator` (tono Carnegie) + `Code Reviewer`
+### 2. Verificar webhook Cal.com tras C3
+Una vez Silvana configure el webhook (C3): hacer una reserva de prueba real → confirmar que `POST /api/webhooks/calcom` aparece en logs con 200 → Airtable actualizado → mail a Silvana enviado.
 
-### Prioridad 3 — Fixes 🟠 restantes de auditoría
-| ID | Pendiente |
-|---|---|
-| A02 | Email de cliente en logs de producción (RGPD) — `app/api/webhooks/calcom/route.ts:241` |
-| A03 | `/api/gina` sin rate limiting funcional hasta que Upstash esté configurado |
-| A04 | Política de Privacidad con TODO sin completar — pendiente datos fiscales de Silvana (S7) |
-| A07 | consentimientoRGPD — verificar que el fix `8fb5d7c` es suficiente |
-| A08 | WhatsApp y Cal.com URL con placeholders — pendiente Silvana (S1, S2) |
-| A09 | Token admin en query string — considerar mover a header o cookie httpOnly |
-| A10 | Sanitización email en filterByFormula — reforzar validación |
-| A14 | Imágenes placeholder en producción (Testimonios, Silvana, MuroLlaves) |
-| A15 | TTL token admin a reducir de 72h a 24h |
+### 3. Rediseño páginas de ciudad: tabs + cámara MeteoGalicia
+- Tabs para secciones (Barrios, Clima, Colegios, Transporte, etc.)
+- Verificar autorización legal de `VistaEnVivo.tsx` (Windy/MeteoGalicia — auditado A13)
+- Agentes: `Frontend Developer` + `Legal Compliance Checker` + `Accessibility Auditor`
 
-### Prioridad 4 — Sección LoQueNoSomos
-- Revisar el fix `2722e97` y verificar si el rediseño fue completo
-- La sección debe comunicar claramente la propuesta diferencial de Silvana vs. portales genéricos
-- Agentes: `Content Creator` + `Brand Guardian` + `Frontend Developer`
+### 4. Motor del plan estratégico: completar PDF
+- Pasada final de tono Carnegie sobre textos fijos
+- Integrar `plan-estrategico.md` como fuente de textos fijos
+- Verificar que los 55 trámites del catálogo están mapeados
+- Agentes: `AI Engineer` + `Content Creator` + `Code Reviewer`
 
-### Prioridad 5 — `/herramientas/contrato`
-- Nueva página: traductor de contratos de alquiler en español jurídico → lenguaje simple
-- IA mínima: Gemini para el parsing del texto legal
-- Agentes: `AI Engineer` + `Frontend Developer` + `Legal Compliance Checker`
+### 5. Fixes de auditoría pendientes (🟠)
+A02 (email en logs), A09 (token en query string), A15 (TTL 72h→24h), A10 (sanitización email Airtable).
 
 ---
 
@@ -240,84 +188,83 @@ Pendientes en `lib/plan/armador.ts` y `lib/plan/generarPdf.tsx`:
 
 | Variable | Propósito | Vercel Prod | GitHub Actions | `.env.local.example` |
 |---|---|---|---|---|
-| `AIRTABLE_API_KEY` | Leads y flujo agenda | ⚠️ Verificar | — | ✅ |
-| `AIRTABLE_BASE_ID` | ID de la base de Airtable | ⚠️ Verificar | — | ✅ |
-| `AIRTABLE_TABLE_NAME` | Nombre de la tabla | ⚠️ Verificar | — | ✅ |
-| `SHEET_MARCADOR_ID` | Google Sheets El Marcador | ⚠️ Verificar | — | ✅ |
-| `GOOGLE_SHEETS_API_KEY` | Leer Sheets públicas | ⚠️ Verificar | — | ✅ |
-| `GEMINI_API_KEY` | IA Gina (servidor only) | ⚠️ Verificar | — | ✅ |
-| `INTERNAL_API_SECRET` | Auth endpoints admin + tokens HMAC | ⚠️ **Rotado — actualizar** | ❌ **Pendiente actualizar** | ✅ |
-| `RESEND_API_KEY` | Envío de emails | ⚠️ Verificar | — | ✅ |
-| `RESEND_FROM_EMAIL` | Remitente mails cliente | ⚠️ Verificar | — | ✅ |
-| `SILVANA_EMAIL` | Destino mails internos | ❌ **Falta configurar** | — | ✅ |
-| `CALCOM_API_KEY` | Cal.com gestión slots | ⚠️ Verificar | — | ✅ |
-| `CALCOM_WEBHOOK_SECRET` | Firma HMAC webhook Cal.com | ❌ **Falta configurar** | — | ✅ |
-| `CRON_SECRET` | Auth cron Vercel | ⚠️ Verificar | — | ✅ |
-| `NEXT_PUBLIC_SITE_URL` | URL pública del sitio | ⚠️ `.vercel.app` por ahora | — | ✅ |
-| `AEMET_API_KEY` | Clima AEMET | ⚠️ Verificar | — | ✅ |
-| `UPSTASH_REDIS_REST_URL` | Rate limiting Gina | ❌ **Falta configurar** | — | ❌ **No está en example** |
-| `UPSTASH_REDIS_REST_TOKEN` | Rate limiting Gina | ❌ **Falta configurar** | — | ❌ **No está en example** |
-| `NEXT_PUBLIC_BEHOLD_WIDGET_ID` | Feed Instagram | ❌ Falta token | — | — |
+| `AIRTABLE_API_KEY` | Leads y flujo agenda | ✅ Configurada | — | ✅ |
+| `AIRTABLE_BASE_ID` | ID base Airtable | ✅ Configurada | — | ✅ |
+| `AIRTABLE_TABLE_NAME` | Nombre tabla | ✅ Configurada | — | ✅ |
+| `GEMINI_API_KEY` | IA Gina (servidor only) | ✅ Verificar vigente | — | ✅ |
+| `INTERNAL_API_SECRET` | Auth endpoints admin + HMAC | ✅ Existe — **⚠️ valor puede no coincidir con .env.local** (R3 pendiente) | ⚠️ Pendiente verificar | ✅ |
+| `RESEND_API_KEY` | Envío de emails | ✅ Configurada | — | ✅ |
+| `SILVANA_EMAIL` | Destino mails internos | ✅ Configurada | — | ✅ |
+| `CALCOM_WEBHOOK_SECRET` | Firma HMAC webhook Cal.com | ✅ Configurada (creada hace ~5 días) | — | ✅ |
+| `CRON_SECRET` | Auth cron Vercel | ✅ Configurada | — | ✅ |
+| `UPSTASH_REDIS_REST_URL` | Rate limiting Gina | ✅ Configurada (sesión 2026-07-02) | — | ⚠️ No está en example (A11) |
+| `UPSTASH_REDIS_REST_TOKEN` | Rate limiting Gina | ✅ Configurada (sesión 2026-07-02) | — | ⚠️ No está en example (A11) |
+| `NEXT_PUBLIC_SITE_URL` | URL pública del sitio | ❌ No configurada | — | ✅ |
+| `AEMET_API_KEY` | Clima AEMET | ✅ Configurada | — | ✅ |
+| `SHEET_MARCADOR_ID` | Google Sheets El Marcador | ⚠️ Pendiente Silvana | — | ✅ |
+| `NEXT_PUBLIC_BEHOLD_WIDGET_ID` | Feed Instagram | ❌ Pendiente Silvana | — | — |
+| `CALCOM_API_KEY` | Cal.com gestión slots (Pieza 7) | ❌ No configurada | — | ✅ (marcada como obsoleta en example) |
 | `DATABASE_URL` | BD (Fase 5 — no usar aún) | — | — | ✅ |
 | `STRIPE_SECRET_KEY` | Pagos (Fase 6) | — | — | ✅ |
 
-> ⚠️ `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` deben añadirse a `.env.local.example` (auditado en A11).
+> ⚠️ `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` deben añadirse a `.env.local.example` (auditado A11 — pendiente técnico menor).
 
 ---
 
-## 9 — Arquitectura clave actualizada
+## 9 — Arquitectura clave
 
 ### Rutas API activas
 
 | Ruta | Método | Auth | Propósito |
 |---|---|---|---|
-| `/api/lead` | POST | Origin check | Guardar lead de FormularioDiagnostico → Airtable |
-| `/api/gina` | POST | Rate limit Upstash (30/10min) | IA Gina → Gemini, guarda lead en Airtable |
+| `/api/gina` | POST | Rate limit Upstash (**60**/10min) + origin allowlist | IA Gina → Gemini, guarda lead en Airtable |
+| `/api/lead` | POST | Origin check | Guardar lead de FormularioDiagnostico |
 | `/api/marcador` | GET | — | Lee Google Sheets → métricas El Marcador |
 | `/api/clima/[ciudad]` | GET | — | Clima por ciudad (AEMET) |
-| `/api/plan/[recordId]/pdf` | GET | `verifyAdminToken(recordId, token)` HMAC-SHA256 | Genera PDF personalizado del plan estratégico |
-| `/api/admin/resumen-diario` | GET | `Authorization: Bearer INTERNAL_API_SECRET` + x-vercel-cron | Cron diario 08:00 → mail a Silvana con leads |
-| `/api/admin/habilitar-agenda/[recordId]` | POST | Token HMAC en query param | Genera código agenda, guarda en Airtable, mail al cliente |
-| `/api/admin/recordatorio-silvana` | GET | `Authorization: Bearer INTERNAL_API_SECRET` | Cron horario → mail recordatorio 1h antes de cita |
-| `/api/admin/expirar-codigos` | GET | `Authorization: Bearer INTERNAL_API_SECRET` | Expira códigos caducados en Airtable |
-| `/api/webhooks/calcom` | POST | HMAC-SHA256 `X-Cal-Signature-256` | Webhook Cal.com → actualiza Airtable → mail Silvana |
+| `/api/plan/[recordId]/pdf` | GET | `verifyAdminToken(recordId, token)` HMAC-SHA256 | Genera PDF personalizado |
+| `/api/admin/resumen-diario` | GET | `Authorization: Bearer INTERNAL_API_SECRET` + x-vercel-cron | Cron diario 08:00 → mail Silvana |
+| `/api/admin/habilitar-agenda/[recordId]` | POST | Token HMAC en query param | Genera código agenda, mail al cliente |
+| `/api/admin/recordatorio-silvana` | GET | `Authorization: Bearer INTERNAL_API_SECRET` | Cron horario → recordatorio 1h antes |
+| `/api/admin/expirar-codigos` | GET | `Authorization: Bearer INTERNAL_API_SECRET` | Expira códigos >7 días |
+| `/api/webhooks/calcom` | POST | HMAC-SHA256 `X-Cal-Signature-256` (`CALCOM_WEBHOOK_SECRET`) | Webhook Cal.com → actualiza Airtable + mail Silvana |
 
-### Componentes añadidos en sesiones recientes
+### Componentes clave
 
-| Componente | Archivo | Propósito |
+| Componente | Archivo | Estado |
 |---|---|---|
-| `AgendaPublica` | `components/agenda/AgendaPublica.tsx` | Página `/agenda?code=` con validación dinámica |
-| `HabilitarAgendaButton` | `components/admin/HabilitarAgendaButton.tsx` | Botón en perfil admin → llama endpoint Pieza 4 |
-| `GinaWidget` | `components/gina/GinaWidget.tsx` | Widget de chat Gina con focus trap, aria-hidden |
-| `LoQueNoSomos` | `components/sections/LoQueNoSomos.tsx` | Sección diferencial de marca |
+| `CalEmbed` | `components/shared/CalEmbed.tsx` | ✅ Guard client-side nav corregido (`fa56ec7`) |
+| `GinaWidget` | `components/gina/GinaWidget.tsx` | ✅ Funciona, ambos triggers (Hero + Header) |
+| `AgendaPublica` | `components/agenda/AgendaPublica.tsx` | ✅ Validación dinámica, código `ZR51P6AI` verificado |
 
 ### Motor del plan estratégico
 
 | Archivo | Propósito |
 |---|---|
-| `lib/plan/armador.ts` | Lógica pura: `RespuestasLead` → `PlanArmado` (items + advertencias). `FRASES_PUENTE` dict por número. 6 fases (A→F). |
-| `lib/plan/generarPdf.tsx` | Renderer React-PDF. Lee `docs/contenido/tramites-galicia.md`. Barras contexto, sección económica personalizada. |
-| `docs/contenido/tramites-galicia.md` | Catálogo de los 55 trámites (fuente de verdad) |
-| `docs/frases-puente.md` | Frases puente por número de trámite |
-| `docs/plan-estrategico.md` | Textos fijos + lógica de armado (este doc) |
+| `lib/plan/armador.ts` | `RespuestasLead` → `PlanArmado`. 6 fases (A→F). |
+| `lib/plan/generarPdf.tsx` | Renderer React-PDF. |
+| `docs/contenido/tramites-galicia.md` | Catálogo 55 trámites (fuente de verdad) |
 
 ### GitHub Actions
 
-| Workflow | Archivo | Trigger | Propósito |
-|---|---|---|---|
-| Recordatorio Silvana | `.github/workflows/recordatorio-silvana.yml` | `cron: '0 * * * *'` | Llama `/api/admin/recordatorio-silvana` cada hora |
-
-### Middleware de seguridad
-
-| Configuración | Archivo | Qué protege |
+| Workflow | Trigger | Propósito |
 |---|---|---|
-| CSP completo | `middleware.ts` | Defensa en profundidad XSS |
-| HSTS | `middleware.ts` + `vercel.json` | Fuerza HTTPS |
-| Referrer-Policy no-referrer | `middleware.ts` | Rutas admin y webhooks |
-| Rate limiting (Upstash) | `app/api/gina/route.ts`, `app/api/lead/route.ts` | Previene saturación Airtable |
+| `.github/workflows/recordatorio-silvana.yml` | `cron: '0 * * * *'` | Recordatorio 1h antes de cita |
 
 ---
 
-## 10 — Instrucciones operativas
+## 10 — Herramientas del stack de Code
+
+### ECC + agency-agents
+- **Rules:** `~/.claude/rules/ecc/common/` (10 reglas) + `~/.claude/rules/ecc/typescript/` (5 reglas)
+- **Skills globales:** `search-first`, `security-review`, `verification-loop`, `eval-harness`, `continuous-learning-v2`, `frontend-patterns`, `backend-patterns`, `tdd-workflow`
+- **Skills de proyecto:** `voz-tu-lugar-en-galicia` — aplicar a TODO el copy visible sin excepción
+- **Agentes más usados:** `Frontend Developer`, `Backend Architect`, `Brand Guardian`, `UI Designer`, `Security Engineer`, `Accessibility Auditor`, `Code Reviewer`, `Reality Checker`, `AI Engineer`, `DevOps Automator`
+
+### DESIGN.md
+Leer **siempre** antes de crear o modificar cualquier componente visual. Paleta hex exacta, tipografía, variantes de Button, layout, do's/don'ts.
+
+---
+
+## 11 — Instrucciones operativas
 
 Reglas completas en `CLAUDE.md` — no duplicar aquí.
