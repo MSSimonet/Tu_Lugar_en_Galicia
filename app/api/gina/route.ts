@@ -25,7 +25,8 @@ const ratelimit =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
     ? new Ratelimit({
         redis: Redis.fromEnv(),
-        limiter: Ratelimit.slidingWindow(30, '10 m'),
+        // Máx. 44 pasos en rama más larga del flow + 25% margen = 60
+        limiter: Ratelimit.slidingWindow(60, '10 m'),
         analytics: false,
       })
     : null
