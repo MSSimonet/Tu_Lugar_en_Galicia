@@ -106,7 +106,7 @@ export type LeadData = {
   comoNosConociste?: 'instagram' | 'facebook' | 'tiktok' | 'google' | 'recomendacion' | 'otro'
 
   // Calificación automática del lead
-  calificacion?: 'potencial' | 'en-desarrollo' | 'bajo'
+  calificacion?: 'potencial' | 'potencial-alto' | 'en-desarrollo' | 'bajo'
 
   // Etiqueta de segmento (Single select en Airtable)
   etiqueta?: 'lead-en-preparacion' | 'seguimiento-futuro' | 'califica' | 'incompleto' | 'contacto-directo'
