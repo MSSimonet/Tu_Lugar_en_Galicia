@@ -25,7 +25,7 @@ export function VistaEnVivo({ descripcionUbicacion }: VistaEnVivoProps) {
       minHeight: '220px',
       borderRadius: '1rem',
       overflow: 'hidden',
-      background: '#0D1F1A',
+      background: 'var(--color-granito)',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -69,7 +69,7 @@ export function VistaEnVivo({ descripcionUbicacion }: VistaEnVivoProps) {
         opacity: 0.55,
         pointerEvents: 'none',
       }}>
-        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#E55' }} />
+        <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-coral)' }} />
         <span style={{ fontSize: 10, color: 'white', fontWeight: 500, letterSpacing: '0.06em' }}>EN VIVO</span>
       </div>
 

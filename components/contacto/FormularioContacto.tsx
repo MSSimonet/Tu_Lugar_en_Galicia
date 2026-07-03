@@ -73,7 +73,7 @@ export function FormularioContacto() {
 
       {status === 'error' && errorMsg && (
         <div
-          className="rounded-[var(--radius-card)] border border-[var(--color-coral)] bg-[#FDF3F1] p-4 text-[var(--text-sm)] text-[#922B21]"
+          className="rounded-[var(--radius-card)] border border-[var(--color-coral)] bg-[var(--color-blanco)] p-4 text-[var(--text-sm)] text-[var(--color-coral)]"
           role="alert"
         >
           {errorMsg}

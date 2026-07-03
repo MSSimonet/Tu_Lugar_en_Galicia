@@ -87,7 +87,7 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
                     ? {
                         borderColor: 'var(--color-laton-oscuro)',
                         backgroundColor: 'var(--color-laton-oscuro)',
-                        color: '#FFFFFF',
+                        color: 'var(--color-sobre-laton)',
                       }
                     : {
                         borderColor: 'var(--color-laton)',
@@ -150,7 +150,7 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
           "
           style={{
             backgroundColor: 'var(--color-laton)',
-            color: '#FFFFFF',
+            color: 'var(--color-sobre-laton)',
             letterSpacing: '0.04em',
           }}
         >
