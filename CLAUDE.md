@@ -230,3 +230,16 @@ voz-tu-lugar-en-galicia SIEMPRE → nunca escribir copy sin esta skill
 
 **Commit:**
 Code Reviewer → Reality Checker → tsc 0 → lint 0 → build exit 0 → push
+
+---
+
+## 11. Aviso de contexto — obligatorio al inicio de cada respuesta
+
+Al inicio de cada respuesta, estimá el uso de contexto actual:
+
+- Si supera el **70%**: incluí al inicio de la respuesta:
+  `⚠️ CONTEXTO AL XX% — Recomendado abrir sesión nueva antes de continuar.`
+- Si supera el **85%**: el aviso es **obligatorio** y va en negrita:
+  **⚠️ CONTEXTO AL XX% — Abrí una sesión nueva antes de continuar.**
+
+El porcentaje se calcula sobre la ventana de contexto del modelo activo.
