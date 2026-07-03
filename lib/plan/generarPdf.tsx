@@ -619,7 +619,7 @@ function PlanDocument({
           este plan, vas a llegar. Muchas familias hicieron este mismo viaje antes que tú,
           y tú también puedes.
         </Text>
-        {(lead.calificacion === 'potencial' || (lead.calificacion as string) === 'potencial-alto') && (
+        {(lead.calificacion === 'potencial' || lead.calificacion === 'potencial-alto') && (
           <Text style={S.bodyText}>
             El siguiente paso concreto es una videollamada con un integrante de nuestro
             equipo, donde revisamos juntos tu situación, resolvemos las dudas que dejó
