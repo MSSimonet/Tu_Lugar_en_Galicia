@@ -39,18 +39,18 @@ export default function LoQueNoSomos() {
 
         /* ── tokens de modo oscuro ── */
         .dark .lqns-section {
-          --lqns-bg:              #0D0D0D;
-          --lqns-card-bg:         #1A1710;
-          --lqns-card-border:     #302B25;
-          --lqns-card-hover-bg:   #221E18;
+          --lqns-bg:              var(--color-blanco);
+          --lqns-card-bg:         var(--color-niebla);
+          --lqns-card-border:     var(--color-arena);
+          --lqns-card-hover-bg:   var(--color-niebla);
           --lqns-accent:          var(--color-laton);
           --lqns-accent-hover:    var(--color-laton-claro);
           --lqns-num:             var(--color-laton-claro);
-          --lqns-title:           #F0EBE2;
-          --lqns-body:            #8C8278;
+          --lqns-title:           var(--color-granito);
+          --lqns-body:            var(--color-pizarra);
           --lqns-em:              var(--color-atlantico-claro);
-          --lqns-badge-text:      #8C8278;
-          --lqns-badge-border:    #302B25;
+          --lqns-badge-text:      var(--color-pizarra);
+          --lqns-badge-border:    var(--color-arena);
           --lqns-dot:             var(--color-atlantico-claro);
         }
 

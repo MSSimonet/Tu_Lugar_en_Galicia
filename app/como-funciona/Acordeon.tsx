@@ -86,7 +86,7 @@ export function Acordeon() {
   }
 
   return (
-    <section style={{ background: '#2A2B2E', overflow: 'hidden' }}>
+    <section style={{ background: 'var(--color-acordeon-bg)', overflow: 'hidden' }}>
 
       {/* ── Header ── */}
       <div style={{ padding: '2.5rem 2rem', borderBottom: '0.5px solid rgba(255,255,255,0.08)' }}>
@@ -95,7 +95,7 @@ export function Acordeon() {
           fontSize: '10px',
           textTransform: 'uppercase',
           letterSpacing: '0.14em',
-          color: '#8F722B',
+          color: 'var(--color-laton)',
           marginBottom: '0.7rem',
         }}>
           Cómo funciona
@@ -175,7 +175,7 @@ export function Acordeon() {
                       fontWeight: 400,
                       minWidth: '60px',
                       lineHeight: 1,
-                      color: isOpen ? '#D4B96A' : 'rgba(255,255,255,0.15)',
+                      color: isOpen ? 'var(--color-laton-claro)' : 'rgba(255,255,255,0.15)',
                       transition: 'color 300ms ease',
                       userSelect: 'none',
                     }}
@@ -207,7 +207,7 @@ export function Acordeon() {
 
                 {/* Derecha: chevron */}
                 <span style={{
-                  color: isOpen ? '#D4B96A' : 'rgba(255,255,255,0.3)',
+                  color: isOpen ? 'var(--color-laton-claro)' : 'rgba(255,255,255,0.3)',
                   transition: 'color 300ms ease',
                   flexShrink: 0,
                 }}>
@@ -236,7 +236,7 @@ export function Acordeon() {
                     color: 'rgba(255,255,255,0.65)',
                     lineHeight: 1.8,
                     margin: 0,
-                    borderLeft: '2px solid #8F722B',
+                    borderLeft: '2px solid var(--color-laton)',
                     paddingLeft: '1.25rem',
                   }}>
                     {paso.texto}

@@ -86,7 +86,7 @@ export default function ComoFuncionaStepper() {
         width: '47%',
         flexShrink: 0,
         position: 'relative',
-        background: '#1A1B1E',
+        background: 'var(--color-granito)',
         overflow: 'hidden',
         alignSelf: 'stretch',
       }}>
@@ -147,7 +147,7 @@ export default function ComoFuncionaStepper() {
             margin: '0 0 6px',
           }}>
             Tu hogar en Galicia{' '}
-            <em style={{ fontStyle: 'italic', fontWeight: 500, color: '#8F722B' }}>
+            <em style={{ fontStyle: 'italic', fontWeight: 500, color: 'var(--color-laton)' }}>
               ya existe.
             </em>
             <br />
@@ -202,7 +202,7 @@ export default function ComoFuncionaStepper() {
                   position: 'absolute',
                   left: 0, top: 0, bottom: 0,
                   width: '3px',
-                  background: isAct ? '#8F722B' : 'transparent',
+                  background: isAct ? 'var(--color-laton)' : 'transparent',
                   transition: 'background .3s ease',
                 }} />
 
@@ -215,7 +215,7 @@ export default function ComoFuncionaStepper() {
                     fontSize: '28px',
                     fontWeight: 400,
                     lineHeight: 1,
-                    color: isAct ? '#8F722B' : '#8A6F2E',
+                    color: isAct ? 'var(--color-laton)' : 'var(--color-laton-oscuro)',
                     minWidth: '48px',
                     flexShrink: 0,
                     transition: 'color .3s ease',

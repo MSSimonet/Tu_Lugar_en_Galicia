@@ -44,6 +44,9 @@
   --color-footer-bg:     #141414; /* fondo del footer */
   --color-footer-border: #2A2A2A; /* separador inferior del footer */
 
+  /* Tokens sección siempre oscura (acordeón) */
+  --color-acordeon-bg:   #2A2B2E; /* fondo del acordeón Cómo funciona */
+
   /* === TIPOGRAFÍA === */
 
   --font-titular: var(--font-cormorant), Georgia, serif;
