@@ -108,7 +108,7 @@ export function GinaInput({ validacion, placeholder, deshabilitado, onEnvio }: P
               focus:outline-none focus:ring-2 focus:ring-[color:var(--color-laton-claro)]
               disabled:opacity-50 disabled:cursor-not-allowed
             "
-            style={{ backgroundColor: deshabilitado ? 'var(--color-niebla)' : '#FFFFFF' }}
+            style={{ backgroundColor: deshabilitado ? 'var(--color-niebla)' : 'var(--color-blanco)' }}
           />
         </div>
 

@@ -91,19 +91,19 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
                       }
                     : {
                         borderColor: 'var(--color-laton)',
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: 'var(--color-blanco)',
                         color: 'var(--color-granito)',
                       }
                 }
                 onMouseEnter={(e) => {
                   if (!activo && !bloqueado) {
                     e.currentTarget.style.backgroundColor = 'var(--color-arena)'
-                    e.currentTarget.style.color = 'var(--color-laton-oscuro)'
+                    e.currentTarget.style.color = 'var(--color-laton-text)'
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!activo && !bloqueado) {
-                    e.currentTarget.style.backgroundColor = '#FFFFFF'
+                    e.currentTarget.style.backgroundColor = 'var(--color-blanco)'
                     e.currentTarget.style.color = 'var(--color-granito)'
                   }
                 }}
@@ -126,7 +126,7 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
                       viewBox="0 0 10 8"
                       stroke="currentColor"
                       strokeWidth={2.5}
-                      style={{ color: 'var(--color-granito)' }}
+                      style={{ color: 'var(--color-header-bg)' }}
                     >
                       <path d="M1 4l3 3 5-6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -176,19 +176,19 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
           "
           style={{
             borderColor: 'var(--color-laton)',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--color-blanco)',
             color: 'var(--color-granito)',
           }}
           onMouseEnter={(e) => {
             if (!deshabilitado) {
               e.currentTarget.style.backgroundColor = 'var(--color-arena)'
-              e.currentTarget.style.color = 'var(--color-laton-oscuro)'
+              e.currentTarget.style.color = 'var(--color-laton-text)'
               e.currentTarget.style.borderColor = 'var(--color-laton-oscuro)'
             }
           }}
           onMouseLeave={(e) => {
             if (!deshabilitado) {
-              e.currentTarget.style.backgroundColor = '#FFFFFF'
+              e.currentTarget.style.backgroundColor = 'var(--color-blanco)'
               e.currentTarget.style.color = 'var(--color-granito)'
               e.currentTarget.style.borderColor = 'var(--color-laton)'
             }

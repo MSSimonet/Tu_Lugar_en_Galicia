@@ -30,6 +30,10 @@
   /* Base */
   --color-blanco: #FFFCF7;
 
+  /* Zona de header — permanece oscura en ambos modos */
+  --color-header-bg:     #1E1C19; /* bg del header (= granito-claro, siempre oscuro) */
+  --color-header-subtle: #C8BDB0; /* texto secundario sobre fondo oscuro del header */
+
   /* === TIPOGRAFÍA === */
 
   --font-titular: var(--font-fraunces), 'Source Serif 4', Georgia, serif;
@@ -176,7 +180,7 @@ details > dd {
 
 /* ── Dark mode — override de variables CSS ───────────────────────────────────
    Reutiliza valores existentes de la paleta swapeando fondo/texto.
-   El Header (#111111 hardcodeado) ya es oscuro — no necesita cambios.
+   El header usa --color-header-bg (siempre oscuro, override abajo).
    ─────────────────────────────────────────────────────────────────────────── */
 .dark {
   /* Fondos — grafito cálido */
@@ -193,4 +197,10 @@ details > dd {
      se mantiene sin oscurecer aquí para no heredar el tono de modo claro (#B8492F),
      que perdería contraste sobre granito/niebla oscuros. */
   --color-coral: #D4694F;
+
+  /* Zona de header — bg sigue oscuro; header-subtle permanece igual (intencional) */
+  --color-header-bg: #141210; /* más oscuro que en claro, mismo efecto: siempre dark */
+
+  /* --color-mar en oscuro: teal claro legible sobre fondos oscuros (7.40:1 sobre niebla-dark) */
+  --color-mar: #52B5D4;
 }

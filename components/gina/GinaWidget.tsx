@@ -144,7 +144,7 @@ export function GinaWidget() {
         className={`
           fixed bottom-6 right-6 z-50
           flex flex-col
-          bg-white rounded-2xl shadow-2xl overflow-hidden
+          bg-[color:var(--color-blanco)] rounded-2xl shadow-2xl overflow-hidden
           transition-all duration-300 ease-in-out
           ${abierto
             ? 'opacity-100 translate-y-0 pointer-events-auto'
@@ -159,7 +159,7 @@ export function GinaWidget() {
         {/* Cabecera */}
         <div
           className="shrink-0 flex items-center justify-between px-4 py-3"
-          style={{ backgroundColor: 'var(--color-granito)' }}
+          style={{ backgroundColor: 'var(--color-header-bg)' }}
         >
           <div className="flex items-center gap-3">
             {/* Avatar cuadrado-redondeado con sparkles — transmite IA, no persona */}
@@ -192,7 +192,7 @@ export function GinaWidget() {
               </p>
               <p
                 className="text-xs leading-tight mt-0.5"
-                style={{ color: 'var(--color-arena)', opacity: 0.8 }}
+                style={{ color: 'var(--color-header-subtle)', opacity: 0.8 }}
               >
                 Asistente virtual · Tu Lugar en Galicia
               </p>
@@ -205,7 +205,7 @@ export function GinaWidget() {
             onClick={() => setAbierto(false)}
             aria-label="Cerrar asistente Gina"
             className="transition-brand cursor-pointer p-1 rounded"
-            style={{ color: 'var(--color-arena)', opacity: 0.7 }}
+            style={{ color: 'var(--color-header-subtle)', opacity: 0.7 }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.7')}
           >

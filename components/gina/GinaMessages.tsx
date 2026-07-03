@@ -147,7 +147,7 @@ export function GinaMessages({
             <div
               className="max-w-[75%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap rounded-2xl rounded-tl-none"
               style={{
-                backgroundColor: '#FFFFFF',
+                backgroundColor: 'var(--color-blanco)',
                 color: 'var(--color-granito)',
                 boxShadow: '0 1px 2px rgba(42,43,46,0.08)',
               }}
@@ -171,7 +171,7 @@ export function GinaMessages({
           <div
             className="px-4 py-3 rounded-2xl rounded-tl-none"
             style={{
-              backgroundColor: '#FFFFFF',
+              backgroundColor: 'var(--color-blanco)',
               boxShadow: '0 1px 2px rgba(42,43,46,0.08)',
             }}
             aria-label="Gina está escribiendo"
