@@ -1,17 +1,9 @@
 import type { Metadata } from "next";
-import { Fraunces, Plus_Jakarta_Sans, Cormorant_Garamond, Mulish, Space_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Cormorant_Garamond, Mulish } from "next/font/google";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { GinaWidget } from "@/components/gina/GinaWidget";
 import { ContactoFlotante } from "@/components/shared/ContactoFlotante";
-
-const fraunces = Fraunces({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin", "latin-ext"],
@@ -35,13 +27,6 @@ const mulish = Mulish({
   display: "swap",
 });
 
-const spaceMono = Space_Mono({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  variable: "--font-space-mono",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL('https://tulugarengalicia.com'),
   title: {
@@ -59,7 +44,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${fraunces.variable} ${plusJakarta.variable} ${cormorant.variable} ${mulish.variable} ${spaceMono.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${cormorant.variable} ${mulish.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-[family-name:var(--font-ui)]">

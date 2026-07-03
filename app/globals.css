@@ -34,9 +34,15 @@
   --color-header-bg:     #1E1C19; /* bg del header (= granito-claro, siempre oscuro) */
   --color-header-subtle: #C8BDB0; /* texto secundario sobre fondo oscuro del header */
 
+  /* Tokens header sin override dark (el header es siempre oscuro) */
+  --color-laton-borde:   #B8943F; /* mid-gold para bordes estructurales del header */
+  --color-nav-muted:     #A8A8A8; /* texto inactivo en nav oscuro */
+  --color-header-active: #F0EDE6; /* texto activo/resaltado en nav oscuro */
+  --color-sobre-laton:   #ffffff; /* texto sobre botón latón (siempre blanco) */
+
   /* === TIPOGRAFÍA === */
 
-  --font-titular: var(--font-fraunces), 'Source Serif 4', Georgia, serif;
+  --font-titular: var(--font-cormorant), Georgia, serif;
   --font-ui:      var(--font-plus-jakarta), 'Inter', system-ui, sans-serif;
 
   /* Escala tipográfica */
@@ -73,6 +79,10 @@
   /* === FORMA === */
   --radius-card: 0.5rem;
   --radius-pill: 999px;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -119,7 +129,9 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-in-up {
+  .animate-fade-in-up,
+  .animate-tlg-up,
+  .animate-tlg-stage {
     animation: none;
     opacity: 1;
     transform: none;

@@ -17,9 +17,6 @@ const navLinks = [
 const SPARKLES_PATH =
   'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z'
 
-const LANGS = ['ES', 'GL', 'EN'] as const
-type Lang = typeof LANGS[number]
-
 function SparklesIcon({ color }: { color: string }) {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} aria-hidden="true">
@@ -36,7 +33,6 @@ export function Header() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [isDark, setIsDark] = useState(false)
-  const [lang, setLang] = useState<Lang>('ES')
   const hamburgerRef = useRef<HTMLButtonElement>(null)
 
   const isActive = (href: string) =>
@@ -52,24 +48,6 @@ export function Header() {
     const newIsDark = document.documentElement.classList.toggle('dark')
     localStorage.setItem('tlg-theme', newIsDark ? 'dark' : 'light')
     setIsDark(newIsDark)
-  }
-
-  // Inicializa idioma desde localStorage (post-hidratación, sin SSR mismatch)
-  useEffect(() => {
-    const saved = localStorage.getItem('tlg-lang') as Lang | null
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (saved && (LANGS as readonly string[]).includes(saved)) setLang(saved)
-  }, [])
-
-  const cycleLang = () => {
-    const next = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length]
-    setLang(next)
-    localStorage.setItem('tlg-lang', next)
-  }
-
-  const setLangTo = (l: Lang) => {
-    setLang(l)
-    localStorage.setItem('tlg-lang', l)
   }
 
   useEffect(() => {
@@ -108,7 +86,7 @@ export function Header() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [menuOpen])
 
-  // Estilos compartidos para botones de utilidad (tema + idioma)
+  // Estilos compartidos para botones de utilidad
   const utilBtnBase: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -117,7 +95,7 @@ export function Header() {
     border: '1px solid rgba(212,175,106,0.3)',
     background: 'transparent',
     cursor: 'pointer',
-    color: '#D4AF6A',
+    color: 'var(--color-laton-claro)',
     transition: 'background 200ms ease',
     flexShrink: 0,
   }
@@ -135,7 +113,7 @@ export function Header() {
         className="h-16 md:h-[92px]"
         style={{
           background: 'var(--color-header-bg)',
-          borderBottom: '1px solid #B8943F',
+          borderBottom: '1px solid var(--color-laton-borde)',
           position: 'sticky',
           top: 0,
           zIndex: 50,
@@ -176,7 +154,7 @@ export function Header() {
                 fontSize: '20px',
                 fontWeight: 400,
                 fontStyle: 'italic',
-                color: '#D4AF6A',
+                color: 'var(--color-laton-claro)',
                 letterSpacing: '0.05em',
                 lineHeight: 1.15,
                 whiteSpace: 'nowrap',
@@ -204,14 +182,14 @@ export function Header() {
                     fontFamily: 'var(--font-cormorant)',
                     fontSize: '13px',
                     fontWeight: 500,
-                    color: active ? '#D4AF6A' : '#A8A8A8',
+                    color: active ? 'var(--color-laton-claro)' : 'var(--color-nav-muted)',
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
                     textDecoration: 'none',
                     transition: 'color 200ms ease',
                   }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#D4AF6A' }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#A8A8A8' }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = 'var(--color-laton-claro)' }}
+                  onMouseLeave={e => { if (!active) e.currentTarget.style.color = 'var(--color-nav-muted)' }}
                 >
                   {label}
                   {active && (
@@ -223,7 +201,7 @@ export function Header() {
                         left: 0,
                         right: 0,
                         height: '1px',
-                        background: '#B8943F',
+                        background: 'var(--color-laton-borde)',
                       }}
                     />
                   )}
@@ -235,7 +213,7 @@ export function Header() {
           {/* Col 3: CTAs (md+) + Hamburger (mobile) — derecha */}
           <div className="flex items-center justify-end">
 
-            {/* ── CTAs desktop — orden: [Agenda] [✦ Hablar con Gina] [🌙/☀️] [ES|GL|EN] ── */}
+            {/* ── CTAs desktop — orden: [Agenda] [✦ Hablar con Gina] [🌙/☀️] ── */}
             <div className="hidden md:flex items-center" style={{ gap: '10px' }}>
 
               {/* 1. Agenda */}
@@ -250,7 +228,7 @@ export function Header() {
                   fontFamily: 'var(--font-cormorant)',
                   fontSize: '13px',
                   fontWeight: 500,
-                  color: '#D4AF6A',
+                  color: 'var(--color-laton-claro)',
                   border: '1px solid rgba(212,175,106,0.5)',
                   background: 'transparent',
                   letterSpacing: '0.1em',
@@ -279,7 +257,7 @@ export function Header() {
                   fontFamily: 'var(--font-ui)',
                   fontSize: '12px',
                   fontWeight: 700,
-                  color: '#ffffff',
+                  color: 'var(--color-sobre-laton)',
                   background: 'var(--color-laton)',
                   borderRadius: '999px',
                   border: 'none',
@@ -308,25 +286,6 @@ export function Header() {
                 {isDark ? <Sun size={15} strokeWidth={1.6} /> : <Moon size={15} strokeWidth={1.6} />}
               </button>
 
-              {/* 4. Selector de idioma — cicla ES → GL → EN → ES */}
-              <button
-                type="button"
-                onClick={cycleLang}
-                aria-label={`Idioma activo: ${lang}. Click para cambiar`}
-                style={{
-                  ...utilBtnBase,
-                  padding: '0 11px',
-                  borderRadius: '6px',
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  letterSpacing: '0.1em',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,175,106,0.08)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
-              >
-                {lang}
-              </button>
             </div>
 
             {/* Hamburger — solo mobile */}
@@ -337,7 +296,7 @@ export function Header() {
               aria-expanded={menuOpen}
               aria-controls={menuOpen ? 'mobile-menu' : undefined}
               aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-              className="md:hidden flex flex-col justify-center gap-1.5 w-8 h-8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B8943F]"
+              className="md:hidden flex flex-col justify-center gap-1.5 w-11 h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton-borde)]"
             >
               <span className={['block h-0.5 w-6 bg-white transition-transform duration-200', menuOpen ? 'translate-y-2 rotate-45' : ''].join(' ')} />
               <span className={['block h-0.5 w-6 bg-white transition-opacity duration-200', menuOpen ? 'opacity-0' : ''].join(' ')} />
@@ -352,7 +311,7 @@ export function Header() {
             id="mobile-menu"
             aria-label="Navegación móvil"
             className="md:hidden px-6 py-5 flex flex-col gap-5"
-            style={{ background: '#111111', borderTop: '1px solid rgba(184,148,63,0.3)' }}
+            style={{ background: 'var(--color-header-bg)', borderTop: '1px solid rgba(184,148,63,0.3)' }}
           >
             {/* Nav links */}
             {navLinks.map(({ label, href }) => {
@@ -367,7 +326,7 @@ export function Header() {
                     fontFamily: 'var(--font-ui)',
                     fontSize: '13px',
                     fontWeight: 300,
-                    color: active ? '#F0EDE6' : '#A8A8A8',
+                    color: active ? 'var(--color-header-active)' : 'var(--color-nav-muted)',
                     letterSpacing: '0.08em',
                     textTransform: 'uppercase',
                     textDecoration: 'none',
@@ -398,7 +357,7 @@ export function Header() {
                 padding: 0,
               }}
             >
-              <SparklesIcon color="#B8943F" />
+              <SparklesIcon color="var(--color-laton-borde)" />
               Hablar con Gina
             </button>
 
@@ -413,8 +372,8 @@ export function Header() {
                 fontFamily: 'var(--font-cormorant)',
                 fontSize: '13px',
                 fontWeight: 500,
-                color: '#D4AF6A',
-                border: '1px solid #B8943F',
+                color: 'var(--color-laton-claro)',
+                border: '1px solid var(--color-laton-borde)',
                 padding: '9px 22px',
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
@@ -424,10 +383,8 @@ export function Header() {
               Agenda
             </Link>
 
-            {/* ── Utilidades: tema + idioma ── */}
-            <div style={{ borderTop: '1px solid rgba(184,148,63,0.2)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-
-              {/* Toggle tema */}
+            {/* ── Utilidades: tema ── */}
+            <div style={{ borderTop: '1px solid rgba(184,148,63,0.2)', paddingTop: '16px' }}>
               <button
                 type="button"
                 onClick={() => { toggleTheme(); setMenuOpen(false) }}
@@ -452,33 +409,6 @@ export function Header() {
                   : <><Moon size={14} strokeWidth={1.8} /><span>Modo oscuro</span></>
                 }
               </button>
-
-              {/* Selector de idioma mobile: [ES] [GL] [EN] con activo resaltado */}
-              <div role="group" aria-label="Seleccionar idioma" style={{ display: 'flex', gap: '8px' }}>
-                {LANGS.map(l => (
-                  <button
-                    key={l}
-                    type="button"
-                    onClick={() => setLangTo(l)}
-                    aria-pressed={lang === l}
-                    style={{
-                      fontFamily: 'var(--font-ui)',
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      letterSpacing: '0.08em',
-                      color: lang === l ? '#D4AF6A' : '#A8A8A8',
-                      border: lang === l ? '1px solid #B8943F' : '1px solid rgba(184,148,63,0.3)',
-                      background: lang === l ? 'rgba(184,148,63,0.14)' : 'transparent',
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      transition: 'all 150ms ease',
-                    }}
-                  >
-                    {l}
-                  </button>
-                ))}
-              </div>
             </div>
           </nav>
         )}
