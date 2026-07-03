@@ -47,6 +47,14 @@
   /* Tokens sección siempre oscura (acordeón) */
   --color-acordeon-bg:   #2A2B2E; /* fondo del acordeón Cómo funciona */
 
+  /* Estados semánticos — feedback y badges de calificación */
+  --color-estado-ok:         #2e7d32; /* texto verde — potencial */
+  --color-estado-ok-bg:      #e8f5e9; /* fondo verde claro — potencial */
+  --color-estado-alerta:     #f57c00; /* texto naranja — en desarrollo */
+  --color-estado-alerta-bg:  #fff8e1; /* fondo ámbar claro — en desarrollo */
+  --color-estado-error:      #b71c1c; /* texto rojo — bajo / no califica */
+  --color-estado-error-bg:   #fce4ec; /* fondo rosa claro — bajo / no califica */
+
   /* === TIPOGRAFÍA === */
 
   --font-titular: var(--font-cormorant), Georgia, serif;

@@ -141,7 +141,7 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
           className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] font-[family-name:var(--font-ui)] font-medium uppercase tracking-[var(--tracking-ui)] transition-colors duration-150"
           style={{
             background: 'var(--color-laton)',
-            color: '#FFFFFF',
+            color: 'var(--color-blanco)',
             padding: '0.75rem 2rem',
             fontSize: 'var(--text-sm)',
           }}

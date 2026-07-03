@@ -73,7 +73,7 @@ export function ElMarcador() {
               fontFamily: 'var(--font-titular)',
               fontSize: '32px',
               lineHeight: 1.1,
-              color: '#FFFFFF',
+              color: 'var(--color-sobre-laton)',
             }}
           >
             El Marcador
@@ -109,7 +109,7 @@ export function ElMarcador() {
                       fontFamily: 'var(--font-titular)',
                       fontSize: '40px',
                       lineHeight: 1,
-                      color: '#FFFFFF',
+                      color: 'var(--color-sobre-laton)',
                     }}
                     aria-label={`${display[key]}${unidad ? " " + unidad : ""} — ${etiqueta}`}
                   >

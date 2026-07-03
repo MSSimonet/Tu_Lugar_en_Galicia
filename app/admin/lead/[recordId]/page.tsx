@@ -98,11 +98,11 @@ function formatFecha(isoDate: string): string {
 
 // ── Colores por calificación ─────────────────────────────────────────────────
 const CALIFICACION_STYLE: Record<string, { bg: string; color: string; label: string }> = {
-  potencial:        { bg: '#e8f5e9', color: '#2e7d32', label: 'Potencial alto' },
-  'potencial-alto': { bg: '#e8f5e9', color: '#2e7d32', label: 'Potencial alto' },
-  'en-desarrollo':  { bg: '#fff8e1', color: '#7A5F22', label: 'En desarrollo' },
-  bajo:             { bg: '#fce4ec', color: '#b71c1c', label: 'Bajo' },
-  'no-califica':    { bg: '#fce4ec', color: '#b71c1c', label: 'No califica' },
+  potencial:        { bg: 'var(--color-estado-ok-bg)', color: 'var(--color-estado-ok)', label: 'Potencial alto' },
+  'potencial-alto': { bg: 'var(--color-estado-ok-bg)', color: 'var(--color-estado-ok)', label: 'Potencial alto' },
+  'en-desarrollo':  { bg: 'var(--color-estado-alerta-bg)', color: 'var(--color-laton-text)', label: 'En desarrollo' },
+  bajo:             { bg: 'var(--color-estado-error-bg)', color: 'var(--color-estado-error)', label: 'Bajo' },
+  'no-califica':    { bg: 'var(--color-estado-error-bg)', color: 'var(--color-estado-error)', label: 'No califica' },
 }
 
 // ── Componentes de UI internos ───────────────────────────────────────────────
@@ -123,12 +123,12 @@ function FieldRow({ label, value }: { label: string; value: string }) {
   return (
     <div style={{
       display: 'grid', gridTemplateColumns: '200px 1fr', gap: '8px',
-      padding: '8px 0', borderBottom: '1px solid #E8E0D2',
+      padding: '8px 0', borderBottom: '1px solid var(--color-arena)',
     }}>
       <span style={{ fontSize: '13px', color: '#696560', fontFamily: 'var(--font-ui)' }}>
         {label}
       </span>
-      <span style={{ fontSize: '14px', color: '#1E1C19', fontFamily: 'var(--font-ui)', fontWeight: value === '—' ? 400 : 500 }}>
+      <span style={{ fontSize: '14px', color: 'var(--color-granito)', fontFamily: 'var(--font-ui)', fontWeight: value === '—' ? 400 : 500 }}>
         {value}
       </span>
     </div>
@@ -138,17 +138,17 @@ function FieldRow({ label, value }: { label: string; value: string }) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{
-      background: '#FFFCF7', border: '1px solid #E8E0D2',
+      background: 'var(--color-blanco)', border: '1px solid var(--color-arena)',
       borderRadius: '8px', overflow: 'hidden', marginBottom: '16px',
     }}>
       <div style={{
-        background: '#F5F0E8', padding: '10px 20px',
-        borderBottom: '1px solid #E8E0D2',
+        background: 'var(--color-niebla)', padding: '10px 20px',
+        borderBottom: '1px solid var(--color-arena)',
       }}>
         <p style={{
           margin: 0, fontSize: '11px', fontWeight: 500,
           letterSpacing: '0.08em', textTransform: 'uppercase',
-          color: '#7A5F22', fontFamily: 'var(--font-ui)',
+          color: 'var(--color-laton-text)', fontFamily: 'var(--font-ui)',
         }}>
           {title}
         </p>
@@ -164,21 +164,21 @@ function ErrorPage({ mensaje }: { mensaje: string }) {
   return (
     <main style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center',
-      justifyContent: 'center', background: '#F5F0E8',
+      justifyContent: 'center', background: 'var(--color-niebla)',
     }}>
       <div style={{
-        background: '#FFFCF7', borderRadius: '8px', padding: '48px 40px',
-        maxWidth: '440px', textAlign: 'center', border: '1px solid #E8E0D2',
+        background: 'var(--color-blanco)', borderRadius: '8px', padding: '48px 40px',
+        maxWidth: '440px', textAlign: 'center', border: '1px solid var(--color-arena)',
       }}>
         <p style={{
           fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em',
-          textTransform: 'uppercase', color: '#7A5F22',
+          textTransform: 'uppercase', color: 'var(--color-laton-text)',
           fontFamily: 'var(--font-ui)', marginBottom: '16px',
         }}>
           Tu Lugar en Galicia — Admin
         </p>
         <h1 style={{
-          fontSize: '22px', color: '#1E1C19', fontFamily: 'var(--font-titular)',
+          fontSize: '22px', color: 'var(--color-granito)', fontFamily: 'var(--font-titular)',
           fontWeight: 400, marginBottom: '12px',
         }}>
           Acceso no disponible
@@ -229,18 +229,18 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
   const etiqueta       = String(fields.etiqueta ?? '')
   const codigoAgenda   = fields.codigoAgenda ? String(fields.codigoAgenda) : undefined
   const createdTime    = typeof fields._createdTime === 'string' ? fields._createdTime : null
-  const calStyle       = CALIFICACION_STYLE[calificacion] ?? { bg: '#F5F0E8', color: '#696560', label: calificacion || 'Sin calificar' }
+  const calStyle       = CALIFICACION_STYLE[calificacion] ?? { bg: 'var(--color-niebla)', color: '#696560', label: calificacion || 'Sin calificar' }
   const dias           = createdTime ? diasDesde(createdTime) : null
 
   return (
-    <main style={{ background: '#F5F0E8', minHeight: '100vh', paddingBottom: '60px' }}>
+    <main style={{ background: 'var(--color-niebla)', minHeight: '100vh', paddingBottom: '60px' }}>
 
       {/* ── Cabecera ────────────────────────────────────────────────────────── */}
-      <header style={{ background: '#1E1C19', padding: '0' }}>
+      <header style={{ background: 'var(--color-granito)', padding: '0' }}>
         <div style={{ maxWidth: '760px', margin: '0 auto', padding: '32px 24px 28px' }}>
           <p style={{
             fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase',
-            color: '#D4B96A', fontFamily: 'var(--font-ui)', marginBottom: '20px',
+            color: 'var(--color-laton-claro)', fontFamily: 'var(--font-ui)', marginBottom: '20px',
           }}>
             Tu Lugar en Galicia — Admin
           </p>
@@ -248,19 +248,19 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <h1 style={{
-                fontSize: '28px', color: '#FFFCF7', fontFamily: 'var(--font-titular)',
+                fontSize: '28px', color: 'var(--color-blanco)', fontFamily: 'var(--font-titular)',
                 fontWeight: 400, marginBottom: '6px', lineHeight: 1.2,
               }}>
                 {nombre}
               </h1>
-              <p style={{ fontSize: '14px', color: '#D4B96A', fontFamily: 'var(--font-ui)', margin: 0 }}>
+              <p style={{ fontSize: '14px', color: 'var(--color-laton-claro)', fontFamily: 'var(--font-ui)', margin: 0 }}>
                 {email}
               </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-end' }}>
               <Badge text={calStyle.label} bg={calStyle.bg} color={calStyle.color} />
               {etiqueta && (
-                <Badge text={etiqueta} bg="#2a2826" color="#D4B96A" />
+                <Badge text={etiqueta} bg="#2a2826" color="var(--color-laton-claro)" />
               )}
             </div>
           </div>
@@ -286,7 +286,7 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
       </header>
 
       {/* ── Botón habilitar ─────────────────────────────────────────────────── */}
-      <div style={{ background: '#FFFCF7', borderBottom: '1px solid #E8E0D2' }}>
+      <div style={{ background: 'var(--color-blanco)', borderBottom: '1px solid var(--color-arena)' }}>
         <div style={{ maxWidth: '760px', margin: '0 auto', padding: '20px 24px' }}>
           <HabilitarAgendaButton
             recordId={recordId}
@@ -299,7 +299,7 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
             rel="noopener noreferrer"
             style={{
               display: 'inline-block', marginTop: '12px',
-              fontSize: '13px', color: '#7A5F22',
+              fontSize: '13px', color: 'var(--color-laton-text)',
               fontFamily: 'var(--font-ui)', textDecoration: 'underline',
             }}
           >

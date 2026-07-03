@@ -62,7 +62,7 @@ export function CiudadesCards() {
             <li key={slug}>
               <Link
                 href={`/ciudades/${slug}`}
-                className="group block overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-[var(--color-blanco)] dark:bg-[#1A1710] dark:border-[#302B25] shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+                className="group block overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-[var(--color-blanco)] dark:bg-[var(--color-niebla)] dark:border-[var(--color-arena)] shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
               >
                 <div className="relative h-48 w-full overflow-hidden">
                   <Image
@@ -74,7 +74,7 @@ export function CiudadesCards() {
                   />
                 </div>
                 <div className="p-[var(--space-6)]">
-                  <h3 className="font-[family-name:var(--font-titular)] text-[var(--text-lg)] text-[var(--color-granito)] dark:text-[#F0EBE2]">
+                  <h3 className="font-[family-name:var(--font-titular)] text-[var(--text-lg)] text-[var(--color-granito)] dark:text-[var(--color-granito)]">
                     {nombre}
                   </h3>
                   <p className="mt-[var(--space-2)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)] text-[var(--color-pizarra)] dark:text-[var(--color-pizarra)]">

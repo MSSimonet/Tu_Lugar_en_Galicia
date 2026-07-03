@@ -15,7 +15,7 @@ export const labelClass =
   'block font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] ' +
   'text-[var(--color-granito)] mb-1.5'
 
-export const errorClass = 'mt-[var(--space-1)] text-[var(--text-xs)] text-[#922B21]'
+export const errorClass = 'mt-[var(--space-1)] text-[var(--text-xs)] text-[var(--color-coral)]'
 
 export const sectionTitleClass =
   'font-[family-name:var(--font-titular)] text-[var(--text-lg)] ' +

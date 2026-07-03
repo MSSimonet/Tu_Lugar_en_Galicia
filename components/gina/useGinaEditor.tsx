@@ -178,7 +178,7 @@ export function useGinaEditor({
           style={{
             borderColor: 'var(--color-laton)',
             color: 'var(--color-granito)',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--color-sobre-laton)',
           }}
         >
           Cancelar
@@ -189,7 +189,7 @@ export function useGinaEditor({
           className="flex-1 py-2 rounded-xl text-xs font-semibold transition-brand cursor-pointer"
           style={{
             backgroundColor: 'var(--color-laton)',
-            color: '#FFFFFF',
+            color: 'var(--color-sobre-laton)',
           }}
         >
           Sí, editar →
