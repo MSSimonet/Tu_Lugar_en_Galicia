@@ -64,9 +64,9 @@ export default async function AgendaPage({ searchParams }: PageProps) {
           <p
             className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-granito)] leading-[var(--leading-cuerpo)]"
           >
-            La videollamada dura aproximadamente 30 minutos. Silvana escucha tu situación,
-            responde tus dudas sobre el proceso en Galicia y evalúa si el servicio es el indicado
-            para ti. Sin presión, sin compromiso. Es simplemente una conversación para conocernos.
+            En esta llamada escuchamos tu situación, respondemos tus dudas sobre el proceso
+            en Galicia y evaluamos si el servicio es el indicado para ti. Sin presión,
+            sin compromiso. Es simplemente una conversación para conocernos.
           </p>
         </div>
       </section>
