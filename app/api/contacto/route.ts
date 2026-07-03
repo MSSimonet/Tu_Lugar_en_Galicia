@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail, buildContactoEmail } from '@/lib/admin/email'
 
-const SILVANA_EMAIL = 'hola@tulugarengalicia.com'
-
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
@@ -82,20 +80,25 @@ export async function POST(req: NextRequest) {
   // ── 2. Notificación a Silvana — best-effort ───────────────────────────────
   // El lead ya está en Airtable. Si el mail falla, el cliente ve éxito igualmente.
   // Log sin PII: no se registra nombre, email ni teléfono (auditoría A02).
-  try {
-    await sendEmail({
-      to: SILVANA_EMAIL,
-      subject: `Nuevo contacto directo: ${nombreLimpio}`,
-      html: buildContactoEmail({
-        nombre: nombreLimpio,
-        email: emailLimpio,
-        telefono: telefonoLimpio,
-        mensaje: mensajeLimpio,
-      }),
-      replyTo: emailLimpio,
-    })
-  } catch (err) {
-    console.error('[contacto] Notificación por mail falló (lead guardado en CRM):', err instanceof Error ? err.message : 'unknown')
+  const adminEmail = process.env.SILVANA_EMAIL
+  if (!adminEmail) {
+    console.error('[contacto] SILVANA_EMAIL no configurado — notificación omitida')
+  } else {
+    try {
+      await sendEmail({
+        to: adminEmail,
+        subject: `Nuevo contacto directo: ${nombreLimpio}`,
+        html: buildContactoEmail({
+          nombre: nombreLimpio,
+          email: emailLimpio,
+          telefono: telefonoLimpio,
+          mensaje: mensajeLimpio,
+        }),
+        replyTo: emailLimpio,
+      })
+    } catch (err) {
+      console.error('[contacto] Notificación por mail falló (lead guardado en CRM):', err instanceof Error ? err.message : 'unknown')
+    }
   }
 
   return NextResponse.json({ ok: true })
