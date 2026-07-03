@@ -293,6 +293,18 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
             token={token}
             codigoExistente={codigoAgenda}
           />
+          <a
+            href={`/api/plan/${recordId}/pdf?token=${encodeURIComponent(token)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-block', marginTop: '12px',
+              fontSize: '13px', color: '#7A5F22',
+              fontFamily: 'var(--font-ui)', textDecoration: 'underline',
+            }}
+          >
+            Ver/descargar plan (PDF)
+          </a>
         </div>
       </div>
 
