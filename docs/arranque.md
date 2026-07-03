@@ -103,7 +103,6 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 
 | # | Pendiente | Acción exacta | Urgencia |
 |---|---|---|---|
-| PL-1 | **Número real de WhatsApp** | `lib/config/site.ts` → constante `WHATSAPP_NUMBER` → número real con código de país sin espacios (ej: `34612345678`) | 🔴 Antes de lanzar |
 | C3/PL-2 | **Webhook Cal.com** | Cal.com → Settings → Developer → Webhooks → editar/crear webhook: URL `https://tu-lugar-en-galicia.vercel.app/api/webhooks/calcom`, evento `BOOKING_CREATED`. El secret (`CALCOM_WEBHOOK_SECRET`) ya está en Vercel — solo copiar el valor desde Vercel y pegarlo en Cal.com al crear/editar el webhook | 🔴 Para activar el flujo de agenda completo |
 | A04 | **Datos fiscales en Política de Privacidad** | `docs/legal-terminos-privacidad.md` → completar todos los campos `[COMPLETAR]`: nombre, NIF/CIF, dirección, email contacto, email DPO | 🔴 Antes de lanzar (RGPD) |
 | A14 | **Fotos reales** | Reemplazar imágenes placeholder de Testimonios, Silvana y MuroLlaves | 🟠 Antes de lanzar |
