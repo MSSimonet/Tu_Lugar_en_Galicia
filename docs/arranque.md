@@ -268,3 +268,33 @@ Leer **siempre** antes de crear o modificar cualquier componente visual. Paleta 
 ## 11 — Instrucciones operativas
 
 Reglas completas en `CLAUDE.md` — no duplicar aquí.
+## Estado técnico al cierre
+
+> Actualizado por pre-compact hook — 2026-07-03 18:30
+
+### Últimos 10 commits
+
+```
+b7ea93b refactor(tokens): tokeniza hex en admin, conocernos, home y shared; agrega tokens de estado semántico
+40ec095 refactor(tokens) + chore(deps): tokeniza hex en como-funciona y LoQueNoSomos; actualiza deps menores
+8263525 refactor(tokens): elimina hex residuales en FormularioContacto, VistaEnVivo, GinaButtons y Header
+82f742f refactor(footer): tokeniza todos los hex crudos en Footer.tsx
+881b2c2 fix(agenda): elimina duración y nombre propio del texto de presentación de la llamada
+c0af5e6 refactor(pdf): elimina cast 'as string' redundante en condición CTA
+d036473 fix(types): agrega 'potencial-alto' al union type de calificacion en LeadData
+b8b1333 fix(ui): aplica auditoría UX/UI completa y elimina toggle de idioma sin implementar
+8253cb1 chore(cleanup): elimina pendiente WhatsApp de arranque.md
+30bd85d chore(skills): instala skill ui-ux-pro-max (MIT) para diseno UI/UX
+```
+
+### Working tree
+
+```
+ M docs/arranque.md
+```
+
+### Pendientes de push (origin/main..HEAD)
+
+```
+(ninguno — origin/main al dia)
+```
