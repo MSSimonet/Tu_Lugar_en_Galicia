@@ -1,2 +1,2 @@
-export { WhatsAppFlotante } from './WhatsAppFlotante'
+export { ContactoFlotante } from './ContactoFlotante'
 export { CalEmbed } from './CalEmbed'

@@ -36,7 +36,11 @@ export function CTAFinal() {
         </div>
 
         <p className="mt-[var(--space-6)] font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-niebla)] opacity-60">
-          O si prefieres, escríbenos directamente por WhatsApp y respondemos hoy.
+          O si prefieres,{' '}
+          <Link href="/contacto" className="underline underline-offset-2 hover:opacity-80 transition-opacity">
+            escríbenos por el formulario de contacto
+          </Link>{' '}
+          y respondemos hoy.
         </p>
       </div>
     </section>

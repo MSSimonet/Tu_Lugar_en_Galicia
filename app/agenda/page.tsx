@@ -1,7 +1,7 @@
 import { getNextMetadata } from '@/lib/seo/metadata'
 import { CalEmbed } from '@/components/shared/CalEmbed'
 import { AgendaPublica } from '@/components/agenda/AgendaPublica'
-import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from '@/lib/config/site'
+
 import { validateCodigoAgenda } from '@/lib/admin/airtable'
 
 export const metadata = getNextMetadata('agenda')
@@ -27,8 +27,6 @@ export default async function AgendaPage({ searchParams }: PageProps) {
   }
 
   // ── Código válido — mostrar calendario ───────────────────────────────────
-  const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
-
   return (
     <>
       {/* Hero */}
@@ -78,14 +76,12 @@ export default async function AgendaPage({ searchParams }: PageProps) {
         <div className="mx-auto max-w-4xl">
           <CalEmbed className="rounded-[var(--radius-card)]" />
           <p className="mt-[var(--space-6)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
-            Si el calendario no carga, escríbenos directamente por{' '}
+            Si el calendario no carga,{' '}
             <a
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/contacto"
               className="text-[var(--color-mar)] underline hover:no-underline"
             >
-              WhatsApp<span className="sr-only">(abre en nueva pestaña)</span>
+              escríbenos por el formulario de contacto
             </a>
             .
           </p>

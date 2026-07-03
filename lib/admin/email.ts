@@ -46,6 +46,75 @@ export async function sendEmail({ to, subject, html, replyTo }: EmailParams): Pr
 }
 
 /**
+ * Template de notificación inmediata a Silvana cuando alguien usa el formulario de contacto.
+ */
+export function buildContactoEmail(params: {
+  nombre: string
+  email: string
+  telefono?: string
+  mensaje: string
+}): string {
+  const { nombre, email, telefono, mensaje } = params
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Nuevo contacto directo — Tu Lugar en Galicia</title>
+</head>
+<body style="margin:0;padding:0;background:#f5f0e8;font-family:Georgia,serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f0e8;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0"
+               style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
+          <tr>
+            <td style="background:#141210;padding:28px 40px;text-align:center;">
+              <span style="font-family:Georgia,serif;font-size:22px;font-weight:400;font-style:italic;color:#D4AF6A;letter-spacing:0.06em;">
+                Tu Lugar en Galicia
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px 40px;color:#2D2926;font-size:15px;line-height:1.7;">
+              <p style="margin:0 0 8px;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#B8943F;">
+                Contacto directo — formulario web
+              </p>
+              <table cellpadding="0" cellspacing="0" style="width:100%;margin:20px 0;border:1px solid #E8E0D2;border-radius:6px;overflow:hidden;">
+                <tr style="background:#F5F0E8;">
+                  <td style="padding:10px 16px;font-size:12px;color:#696560;width:120px;">Nombre</td>
+                  <td style="padding:10px 16px;font-size:14px;font-weight:500;color:#1E1C19;">${nombre}</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;font-size:12px;color:#696560;border-top:1px solid #E8E0D2;">Email</td>
+                  <td style="padding:10px 16px;font-size:14px;font-weight:500;color:#1E1C19;border-top:1px solid #E8E0D2;">${email}</td>
+                </tr>
+                ${telefono ? `<tr style="background:#F5F0E8;">
+                  <td style="padding:10px 16px;font-size:12px;color:#696560;border-top:1px solid #E8E0D2;">Teléfono</td>
+                  <td style="padding:10px 16px;font-size:14px;font-weight:500;color:#1E1C19;border-top:1px solid #E8E0D2;">${telefono}</td>
+                </tr>` : ''}
+              </table>
+              <p style="margin:20px 0 8px;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#696560;">Mensaje</p>
+              <div style="background:#F5F0E8;border-radius:6px;padding:16px 20px;font-size:14px;line-height:1.7;color:#1E1C19;white-space:pre-wrap;">${mensaje}</div>
+              <p style="margin:28px 0 0;font-size:13px;color:#696560;">
+                Puedes responder directamente a este mail para contactar a ${nombre}.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#f5f0e8;padding:16px 40px;text-align:center;font-size:11px;color:#696560;font-family:Georgia,serif;">
+              Formulario de contacto — Tu Lugar en Galicia
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
+}
+
+/**
  * Template del mail de habilitación de agenda al cliente.
  * Voz de Silvana, tú neutro (brand voice — voz-tu-lugar-en-galicia skill).
  */

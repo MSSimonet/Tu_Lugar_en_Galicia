@@ -34,7 +34,6 @@ export function FormularioDiagnostico() {
     toggleImprescindible,
     toggleComodidad,
     handleSubmit,
-    whatsappUrl,
     formRef,
   } = useFormulario()
 
@@ -80,17 +79,14 @@ export function FormularioDiagnostico() {
         <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
           Anotamos tus datos y nuestro equipo se va a comunicar contigo a la brevedad.
           Si no recibes noticias en <strong>48 horas hábiles</strong>, escríbenos
-          directamente por WhatsApp.
+          a través del formulario de contacto.
         </p>
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          href="/contacto"
           className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] text-[var(--text-sm)]"
         >
-          Escríbenos por WhatsApp
-          <span className="sr-only">(abre en nueva pestaña)</span>
-        </a>
+          Contáctanos
+        </Link>
         <Link
           href="/"
           className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-mar)] underline-offset-4 hover:underline"
@@ -124,9 +120,9 @@ export function FormularioDiagnostico() {
           aria-live="assertive"
         >
           <strong>Algo salió mal al enviar tu consulta.</strong> Por favor intenta de nuevo o{' '}
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">
-            escríbenos por WhatsApp<span className="sr-only">(abre en nueva pestaña)</span>
-          </a>.
+          <Link href="/contacto" className="underline hover:no-underline">
+            escríbenos por el formulario de contacto
+          </Link>.
         </div>
       )}
 

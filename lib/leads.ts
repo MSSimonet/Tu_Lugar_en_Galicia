@@ -109,7 +109,10 @@ export type LeadData = {
   calificacion?: 'potencial' | 'en-desarrollo' | 'bajo'
 
   // Etiqueta de segmento (Single select en Airtable)
-  etiqueta?: 'lead-en-preparacion' | 'seguimiento-futuro' | 'califica' | 'incompleto'
+  etiqueta?: 'lead-en-preparacion' | 'seguimiento-futuro' | 'califica' | 'incompleto' | 'contacto-directo'
+
+  // Mensaje libre del formulario de contacto (requiere columna "notasContacto" en Airtable)
+  notasContacto?: string
 
   // Modalidad de búsqueda según origen (Single select — "ya-en-espana" requiere crearse en Airtable)
   modalidad?: 'antes-de-viajar' | 'ya-en-espana'

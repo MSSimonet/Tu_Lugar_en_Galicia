@@ -3,6 +3,7 @@ import { Fraunces, Plus_Jakarta_Sans, Cormorant_Garamond, Mulish, Space_Mono } f
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { GinaWidget } from "@/components/gina/GinaWidget";
+import { ContactoFlotante } from "@/components/shared/ContactoFlotante";
 
 const fraunces = Fraunces({
   subsets: ["latin", "latin-ext"],
@@ -68,6 +69,7 @@ export default function RootLayout({
         <main id="main-content" className="flex-1">{children}</main>
         <Footer />
         <GinaWidget />
+        <ContactoFlotante />
       </body>
     </html>
   );

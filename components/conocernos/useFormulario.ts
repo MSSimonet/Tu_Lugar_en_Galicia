@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, type FormEvent } from 'react'
-import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from '@/lib/config/site'
+
 import type { LeadData } from '@/lib/leads'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -160,8 +160,6 @@ export function useFormulario() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [status, setStatus] = useState<FormStatus>('idle')
   const formRef = useRef<HTMLFormElement>(null)
-
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 
   function set<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -325,7 +323,6 @@ export function useFormulario() {
     toggleImprescindible,
     toggleComodidad,
     handleSubmit,
-    whatsappUrl,
     formRef,
   }
 }

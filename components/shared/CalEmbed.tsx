@@ -132,14 +132,12 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
             className="font-[family-name:var(--font-ui)] max-w-sm"
             style={{ fontSize: 'var(--text-sm)', color: 'var(--color-pizarra)', lineHeight: 1.6 }}
           >
-            Escríbenos por WhatsApp y coordinamos un horario que te sea cómodo.
+            Escríbenos a través de nuestro formulario y coordinamos un horario que te sea cómodo.
             La llamada es gratuita y sin compromiso.
           </p>
         </div>
         <a
-          href={`https://wa.me/34605421661?text=${encodeURIComponent('Hola, quiero agendar una videollamada para conocer el servicio de relocation en Galicia.')}`}
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/contacto"
           className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] font-[family-name:var(--font-ui)] font-medium uppercase tracking-[var(--tracking-ui)] transition-colors duration-150"
           style={{
             background: 'var(--color-laton)',
@@ -148,8 +146,7 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
             fontSize: 'var(--text-sm)',
           }}
         >
-          Escribirnos por WhatsApp
-          <span className="sr-only">(abre en nueva pestaña)</span>
+          Contáctanos
         </a>
       </div>
     )

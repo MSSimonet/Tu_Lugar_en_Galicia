@@ -243,6 +243,9 @@ export function Footer() {
             <ColTitle>Contacto</ColTitle>
             <div className="flex flex-col gap-4">
 
+              {/* Contacto */}
+              <NavLink href="/contacto">Contáctanos</NavLink>
+
               {/* Email */}
               <a
                 href="mailto:hola@tulugarengalicia.com"

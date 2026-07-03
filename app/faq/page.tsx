@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { getNextMetadata } from '@/lib/seo/metadata'
 import { faqSchema } from '@/lib/seo/schemas'
 import { FAQAccordion } from '@/components/ciudades/FAQAccordion'
-import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from '@/lib/config/site'
 
 export const metadata = getNextMetadata('faq')
 
@@ -153,8 +152,6 @@ const categorias = [
 const allFaqs = categorias.flatMap((cat) => cat.faqs)
 const schema = faqSchema(allFaqs)
 
-const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
-
 export default function FAQPage() {
   return (
     <>
@@ -214,8 +211,7 @@ export default function FAQPage() {
             ¿No encontraste tu respuesta?
           </h2>
           <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
-            Cuéntanos tu caso o escríbenos directamente por WhatsApp. Respondemos
-            hoy.
+            Cuéntanos tu caso y te respondemos hoy.
           </p>
           <div className="flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
             <Link
@@ -224,15 +220,12 @@ export default function FAQPage() {
             >
               Vamos a conocernos
             </Link>
-            <a
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/contacto"
               className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-[var(--color-laton)] tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton)] hover:text-white transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
             >
-              Escríbenos por WhatsApp
-              <span className="sr-only">(abre en nueva pestaña)</span>
-            </a>
+              Contáctanos
+            </Link>
           </div>
         </div>
       </section>
