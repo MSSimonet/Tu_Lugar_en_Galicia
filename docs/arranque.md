@@ -85,12 +85,12 @@ Todos con evidencia concreta (tsc + build + test en producción o revisión de c
 |---|---|---|
 | 1 — Calificación Airtable | ✅ Funciona en producción | — |
 | 2 — Mail diario Silvana | ✅ Funciona en producción | — |
-| 3 — Perfil `/admin/lead/[recordId]` | ✅ Funciona | `INTERNAL_API_SECRET` debe coincidir entre `.env.local` y Vercel (R3) |
+| 3 — Perfil `/admin/lead/[recordId]` | ✅ Funciona | — |
 | 4 — Endpoint habilitar-agenda | ✅ Funciona | — |
 | 5 — Mail cálido al cliente | ✅ Funciona | Dominio propio para remitente definitivo |
 | 6 — Expiración + alertas | ✅ Funciona | — |
-| 7 — Webhook Cal.com | ✅ Código correcto. `CALCOM_WEBHOOK_SECRET` ✅ en Vercel | URL en Cal.com probablemente apunta a `tulugarengalicia.com` (no activo). Ver pendiente C3 |
-| 8 — Recordatorio Silvana 1h | ✅ Funciona | `INTERNAL_API_SECRET` en GitHub Actions secrets (pendiente R3) |
+| 7 — Webhook Cal.com | ✅ Funciona en producción | Cal.com configurado y verificado con ping test 200 (C3 resuelto sesión 2026-07-03) |
+| 8 — Recordatorio Silvana 1h | ✅ Funciona | — |
 | 9 — Validación dinámica /agenda | ✅ Funciona. `CalEmbed` bug client-side nav resuelto en `fa56ec7` | — |
 
 **Nota sobre Cal.com (auditado 2026-07-02):** `https://cal.com/tu-lugar-en-galicia` existe (HTTP 200). Cero hits a `POST /api/webhooks/calcom` en logs — Cal.com no está disparando el webhook. Causa probable: URL en Cal.com → Settings → Developer → Webhooks apunta al dominio incorrecto.
@@ -103,10 +103,10 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 
 | # | Pendiente | Acción exacta | Urgencia |
 |---|---|---|---|
-| C3/PL-2 | **Webhook Cal.com** | Cal.com → Settings → Developer → Webhooks → editar/crear webhook: URL `https://tu-lugar-en-galicia.vercel.app/api/webhooks/calcom`, evento `BOOKING_CREATED`. El secret (`CALCOM_WEBHOOK_SECRET`) ya está en Vercel — solo copiar el valor desde Vercel y pegarlo en Cal.com al crear/editar el webhook | 🔴 Para activar el flujo de agenda completo |
-| A04 | **Datos fiscales en Política de Privacidad** | `docs/legal-terminos-privacidad.md` → completar todos los campos `[COMPLETAR]`: nombre, NIF/CIF, dirección, email contacto, email DPO | 🔴 Antes de lanzar (RGPD) |
-| A14 | **Fotos reales** | Reemplazar imágenes placeholder de Testimonios, Silvana y MuroLlaves | 🟠 Antes de lanzar |
-| R3 | **Sincronizar `INTERNAL_API_SECRET`** | Verificar que el valor en Vercel → Settings → Environment Variables → `INTERNAL_API_SECRET` coincide exactamente con el valor en `.env.local`. Si no coincide, actualizarlo en Vercel. Repetir en GitHub Actions secrets. Esto desbloquea: verificación del PDF del plan (hay un lead de prueba `recgLT5e61Im5mrhN`), y el cron de recordatorio Silvana | 🔴 Bloqueante para PDF y recordatorio |
+| ~~C3/PL-2~~ | ~~**Webhook Cal.com**~~ | ✅ **RESUELTO** — endpoint sano, Cal.com configurado y verificado con ping test 200, embed funcionando en producción (sesión 2026-07-03) | ✅ |
+| A04 | **Datos fiscales en Política de Privacidad** | `docs/legal-terminos-privacidad.md` → completar todos los campos `[COMPLETAR]`: nombre, NIF/CIF, dirección, email contacto, email DPO — en revisión legal | 🔴 Antes de lanzar (RGPD) |
+| A14 | **Fotos reales** | Reemplazar imágenes placeholder de Testimonios, Silvana y MuroLlaves — dato real requerido | 🟠 Antes de lanzar |
+| ~~R3~~ | ~~**Sincronizar `INTERNAL_API_SECRET`**~~ | ✅ **RESUELTO** — secreto rotado y verificado con HTTP 200 en producción (sesión 2026-07-03) | ✅ |
 
 **Pendientes adicionales de Silvana (menor urgencia):**
 
@@ -123,7 +123,7 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 
 | # | Pendiente | Detalle |
 |---|---|---|
-| **PDF del plan estratégico** | Verificación bloqueada por R3 — nunca ejecutada esta sesión. Lead de prueba disponible: `recgLT5e61Im5mrhN` (etiqueta: `seguimiento-futuro`, no tiene `codigoAgenda`). Una vez R3 resuelto: generar token con `generateAdminToken` y probar `/admin/lead/recgLT5e61Im5mrhN` | Pendiente de Silvana (R3) |
+| **PDF del plan estratégico** | R3 resuelto (sesión 2026-07-03). Lead de prueba disponible: `recgLT5e61Im5mrhN` (etiqueta: `seguimiento-futuro`, no tiene `codigoAgenda`). Generar token con `generateAdminToken` y probar `/admin/lead/recgLT5e61Im5mrhN` | Pendiente verificación visual |
 | **R2: `sesion.completado = false`** | En el E2E de Gina, `localStorage['gina_session_v1'].sesion.completado` quedó en `false` a pesar de llegar a `pasoActual === 'despedida'`. Posible desincronización entre estado React y localStorage tras el último guardado. No investigado — sin impacto visible en UX confirmado | Técnico, baja urgencia |
 | **A02: email cliente en logs** | `app/api/webhooks/calcom/route.ts:241` — email completo del cliente en logs de producción (RGPD). `console.warn` con primeros 3 chars ya existe en otro punto; revisar si línea 241 es un `console.log` o el email en el cuerpo del mail a Silvana (que es intencional). Verificar antes del lanzamiento | RGPD — antes de lanzar |
 | **A09: token admin en query string** | Token HMAC en query param de `/admin/lead/[recordId]` — visible en Referer headers. Considerar mover a header Authorization o cookie httpOnly | Mejora de seguridad |
@@ -162,11 +162,11 @@ Eliminadas en esta sesión 4 entradas que auto-aprobaban operaciones de git:
 
 **En este orden:**
 
-### 1. Resolver R3 y verificar PDF (5 min si Silvana lo tiene)
-Si `INTERNAL_API_SECRET` ya está sincronizado: generar token → probar `/admin/lead/recgLT5e61Im5mrhN` → confirmar que el PDF se genera sin errores visuales (colores, fuentes, layout) con los nuevos tokens de color.
+### 1. ~~Resolver R3 y~~ Verificar PDF ✅ R3 resuelto
+Generar token → probar `/admin/lead/recgLT5e61Im5mrhN` → confirmar que el PDF se genera sin errores visuales (colores, fuentes, layout) con los nuevos tokens de color.
 
-### 2. Verificar webhook Cal.com tras C3
-Una vez Silvana configure el webhook (C3): hacer una reserva de prueba real → confirmar que `POST /api/webhooks/calcom` aparece en logs con 200 → Airtable actualizado → mail a Silvana enviado.
+### 2. ~~Verificar webhook Cal.com tras C3~~ ✅ C3 resuelto
+Cal.com configurado y funcionando. Próximo paso: reserva real de prueba end-to-end → confirmar que `POST /api/webhooks/calcom` actualiza Airtable y dispara mail a Silvana.
 
 ### 3. Rediseño páginas de ciudad: tabs + cámara MeteoGalicia
 - Tabs para secciones (Barrios, Clima, Colegios, Transporte, etc.)
@@ -192,7 +192,7 @@ A02 (email en logs), A09 (token en query string), A15 (TTL 72h→24h), A10 (sani
 | `AIRTABLE_BASE_ID` | ID base Airtable | ✅ Configurada | — | ✅ |
 | `AIRTABLE_TABLE_NAME` | Nombre tabla | ✅ Configurada | — | ✅ |
 | `GEMINI_API_KEY` | IA Gina (servidor only) | ✅ Verificar vigente | — | ✅ |
-| `INTERNAL_API_SECRET` | Auth endpoints admin + HMAC | ✅ Existe — **⚠️ valor puede no coincidir con .env.local** (R3 pendiente) | ⚠️ Pendiente verificar | ✅ |
+| `INTERNAL_API_SECRET` | Auth endpoints admin + HMAC | ✅ Rotado y verificado HTTP 200 producción (R3 resuelto 2026-07-03) | ✅ Verificado | ✅ |
 | `RESEND_API_KEY` | Envío de emails | ✅ Configurada | — | ✅ |
 | `SILVANA_EMAIL` | Destino mails internos | ✅ Configurada | — | ✅ |
 | `CALCOM_WEBHOOK_SECRET` | Firma HMAC webhook Cal.com | ✅ Configurada (creada hace ~5 días) | — | ✅ |
