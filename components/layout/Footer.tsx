@@ -31,7 +31,7 @@ function ColTitle({ children }: { children: React.ReactNode }) {
         fontWeight: 300,
         letterSpacing: '0.2em',
         textTransform: 'uppercase',
-        color: '#B8943F',
+        color: 'var(--color-laton-borde)',
         marginBottom: '1.25rem',
       }}
     >
@@ -52,7 +52,7 @@ function NavLink({
   const style: React.CSSProperties = {
     fontSize: '0.84rem',
     fontWeight: 300,
-    color: '#A8A8A8',
+    color: 'var(--color-nav-muted)',
     textDecoration: 'none',
     lineHeight: 1.5,
     fontFamily: 'var(--font-ui)',
@@ -67,7 +67,7 @@ function NavLink({
         target="_blank"
         rel="noopener noreferrer"
         style={style}
-        className="hover:text-[#D4AF6A]"
+        className="hover:text-[var(--color-laton-claro)]"
       >
         {children}
         <span className="sr-only">(abre en nueva pestaña)</span>
@@ -76,7 +76,7 @@ function NavLink({
   }
 
   return (
-    <Link href={href} style={style} className="hover:text-[#D4AF6A]">
+    <Link href={href} style={style} className="hover:text-[var(--color-laton-claro)]">
       {children}
     </Link>
   )
@@ -126,10 +126,10 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer style={{ background: '#141414', fontFamily: 'var(--font-ui)' }}>
+    <footer style={{ background: 'var(--color-footer-bg)', fontFamily: 'var(--font-ui)' }}>
 
       {/* Separador dorado superior */}
-      <div style={{ height: '1px', background: '#B8943F', opacity: 0.7 }} />
+      <div style={{ height: '1px', background: 'var(--color-laton-borde)', opacity: 0.7 }} />
 
       {/* ── Cuerpo principal ─────────────────────────────── */}
       <div
@@ -156,7 +156,7 @@ export function Footer() {
                 fontSize: '24px',
                 fontWeight: 400,
                 fontStyle: 'italic',
-                color: '#D4AF6A',
+                color: 'var(--color-laton-claro)',
                 letterSpacing: '0.06em',
                 lineHeight: 1.2,
                 whiteSpace: 'nowrap',
@@ -172,7 +172,7 @@ export function Footer() {
                 fontSize: '15px',
                 fontWeight: 400,
                 fontStyle: 'italic',
-                color: '#D4AF6A',
+                color: 'var(--color-laton-claro)',
                 letterSpacing: '0.06em',
                 margin: 0,
                 lineHeight: 1.4,
@@ -187,7 +187,7 @@ export function Footer() {
                 style={{
                   fontSize: '14px',
                   fontWeight: 300,
-                  color: '#9A9A9A',
+                  color: 'var(--color-nav-muted)',
                   lineHeight: 1.8,
                   margin: '0 0 8px 0',
                   maxWidth: '300px',
@@ -200,7 +200,7 @@ export function Footer() {
                 style={{
                   fontSize: '14px',
                   fontWeight: 400,
-                  color: '#D4AF6A',
+                  color: 'var(--color-laton-claro)',
                   margin: 0,
                 }}
               >
@@ -252,12 +252,12 @@ export function Footer() {
                 style={{
                   fontSize: '0.82rem',
                   fontWeight: 300,
-                  color: '#A8A8A8',
+                  color: 'var(--color-nav-muted)',
                   textDecoration: 'none',
                   fontFamily: 'var(--font-ui)',
                   transition: 'color 200ms ease',
                 }}
-                className="hover:text-[#D4AF6A]"
+                className="hover:text-[var(--color-laton-claro)]"
               >
                 hola@tulugarengalicia.com
               </a>
@@ -273,12 +273,12 @@ export function Footer() {
                   gap: '10px',
                   fontSize: '14px',
                   fontWeight: 400,
-                  color: '#A8A8A8',
+                  color: 'var(--color-nav-muted)',
                   textDecoration: 'none',
                   transition: 'color 200ms ease',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#D4AF6A')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#A8A8A8')}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-laton-claro)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-nav-muted)')}
               >
                 <InstagramIcon />
                 <span>@tulugarengalicia</span>
@@ -295,12 +295,12 @@ export function Footer() {
                   gap: '10px',
                   fontSize: '14px',
                   fontWeight: 400,
-                  color: '#A8A8A8',
+                  color: 'var(--color-nav-muted)',
                   textDecoration: 'none',
                   transition: 'color 200ms ease',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#D4AF6A')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#A8A8A8')}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-laton-claro)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-nav-muted)')}
               >
                 <FacebookIcon />
                 <span>Tu Lugar en Galicia</span>
@@ -313,7 +313,7 @@ export function Footer() {
       </div>
 
       {/* ── Banda inferior ───────────────────────────────── */}
-      <div style={{ borderTop: '1px solid #2A2A2A' }}>
+      <div style={{ borderTop: '1px solid var(--color-footer-border)' }}>
         <div
           className="mx-auto max-w-7xl flex flex-col gap-1 text-center md:flex-row md:justify-between md:items-center md:text-left"
           style={{ padding: '1.1rem 5rem' }}
@@ -322,7 +322,7 @@ export function Footer() {
             style={{
               fontSize: '0.71rem',
               fontWeight: 300,
-              color: '#A8A8A8',
+              color: 'var(--color-nav-muted)',
               letterSpacing: '0.025em',
             }}
           >
@@ -332,7 +332,7 @@ export function Footer() {
             style={{
               fontSize: '0.71rem',
               fontWeight: 300,
-              color: '#A8A8A8',
+              color: 'var(--color-nav-muted)',
               letterSpacing: '0.025em',
             }}
           >
