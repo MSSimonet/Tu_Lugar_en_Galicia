@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { prefetchCiudadVideo } from "@/lib/ciudades/videoPrefetch";
 
 const ciudades = [
   {
@@ -62,6 +65,7 @@ export function CiudadesCards() {
             <li key={slug}>
               <Link
                 href={`/ciudades/${slug}`}
+                onMouseEnter={() => prefetchCiudadVideo(slug)}
                 className="group block overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-[var(--color-blanco)] dark:bg-[var(--color-niebla)] dark:border-[var(--color-arena)] shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
               >
                 <div className="relative h-48 w-full overflow-hidden">

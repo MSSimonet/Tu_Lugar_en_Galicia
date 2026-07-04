@@ -6,6 +6,7 @@ import { FAQAccordion } from '@/components/ciudades/FAQAccordion'
 import { ClimaActual } from '@/components/ciudad/ClimaActual'
 import { VistaEnVivo } from '@/components/ciudad/VistaEnVivo'
 import { faqSchema } from '@/lib/seo/schemas'
+import { prefetchCiudadVideo } from '@/lib/ciudades/videoPrefetch'
 
 export interface CiudadLayoutProps {
   nombre: string
@@ -280,6 +281,7 @@ export function CiudadLayout({
                   <Link
                     key={ciudad.slug}
                     href={`/ciudades/${ciudad.slug}`}
+                    onMouseEnter={() => prefetchCiudadVideo(ciudad.slug)}
                     className="group block rounded-xl overflow-hidden relative"
                     style={{ aspectRatio: '4/3' }}
                   >

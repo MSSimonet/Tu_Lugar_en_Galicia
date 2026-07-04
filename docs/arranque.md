@@ -198,15 +198,15 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 
 | ID | Severidad | Pendiente | Archivo |
 |---|---|---|---|
-| A1 | 🟠 Alto | `/api/contacto` sin rate limiting ni verificación de origen — a diferencia de `/api/lead` y `/api/gina` | `app/api/contacto/route.ts` |
-| A2 | 🟠 Alto | Rate limit "fail-open" en `/api/lead`: si falta `UPSTASH_REDIS_REST_URL`, el chequeo se salta silenciosamente sin log ni error (contraste: `/api/gina` responde 503 fail-closed en el mismo caso) | `app/api/lead/route.ts:30-36,76` |
+| ~~A1~~ | ~~🟠 Alto~~ | ✅ **RESUELTO** (`c873534`) — rate limiting + verificación de origen agregados a `/api/contacto` | `app/api/contacto/route.ts` |
+| ~~A2~~ | ~~🟠 Alto~~ | ✅ **RESUELTO** (`c873534`) — `/api/lead` ahora falla cerrado si falta config de Upstash, igual que `/api/gina` | `app/api/lead/route.ts` |
 | A3 | 🟠 Alto | CSP con `'unsafe-inline'` en `script-src` — anula gran parte del valor de la CSP como mitigación XSS | `middleware.ts:9` |
-| A4 | 🟠 Alto | Sin límite de tamaño en respuestas tipo array de Gina (`respuesta: string[]`) — el chequeo de 2000 caracteres solo aplica si `respuesta` es string | `app/api/gina/route.ts:84-89` |
+| ~~A4~~ | ~~🟠 Alto~~ | ✅ **RESUELTO** (`c873534`) — límite de tamaño agregado para respuestas tipo array en `/api/gina` | `app/api/gina/route.ts` |
 | M1 | 🟡 Medio | Sin rate limiting en endpoints de token admin (`plan/pdf`, `habilitar-agenda`) — riesgo bajo porque el token no es adivinable, pero sin freno si llegara a filtrarse | `app/api/plan/[recordId]/pdf/route.ts`, `app/api/admin/habilitar-agenda/[recordId]/route.ts` |
 | M2 | 🟡 Medio | Posible conflicto de precedencia entre `vercel.json` (`Referrer-Policy: strict-origin-when-cross-origin` para todas las rutas) y `middleware.ts` (`no-referrer` específico para rutas admin) — **sin verificar con una request real en producción** | `vercel.json`, `middleware.ts` |
 | M3 | 🟡 Medio | Mensajes de error internos expuestos al cliente en `/api/gina` (`(e as Error).message` de `obtenerPaso()` revela nombres de pasos de `flow.json`) | `app/api/gina/route.ts:96-99,114-117` |
 | M4 | 🟡 Medio | 2 vulnerabilidades moderadas en dependencias (`next`→`postcss` interno del build, XSS en stringify) — bajo riesgo real, es tooling de build no runtime servido al usuario | `package.json` (npm audit) |
-| — | 🟡 Medio | `app/api/admin/recordatorio-silvana/route.ts:78-80` tiene el mismo patrón de HTML sin escapar que C2 (`plataformaHtml` interpola `plataforma` de Airtable) — no estaba en el alcance del fix de C2 de esta sesión, documentado desde 2026-07-01 | `app/api/admin/recordatorio-silvana/route.ts` |
+| ~~—~~ | ~~🟡 Medio~~ | ✅ **RESUELTO** (`c873534`) — `app/api/admin/recordatorio-silvana/route.ts` tenía el mismo patrón de HTML sin escapar que C2 (`plataformaHtml`); ya usa `escapeHtml()` | `app/api/admin/recordatorio-silvana/route.ts` |
 
 ### 5.3 — Auditoría UX/UI (sesión 2026-07-04) — pendientes
 
@@ -256,10 +256,10 @@ Eliminadas en esta sesión 4 entradas que auto-aprobaban operaciones de git:
 **En este orden:**
 
 ### 1. Fixes de auditoría de seguridad pendientes (🟠 Alto)
-A1 (rate limit `/api/contacto`), A2 (fail-open en `/api/lead`), A3 (CSP `unsafe-inline`), A4 (límite de tamaño en respuestas array de Gina). Ver detalle completo en §5.2. Agentes: `Security Engineer` + `Backend Architect`.
+✅ A1, A2, A4 resueltos en `c873534`. Queda **A3** (CSP `unsafe-inline`) sin tocar. Ver detalle completo en §5.2. Agentes: `Security Engineer` + `Backend Architect`.
 
-### 2. XSS pendiente en `recordatorio-silvana` (mismo patrón que C2, no cubierto)
-`app/api/admin/recordatorio-silvana/route.ts:78-80` — aplicar `escapeHtml()` (ya existe en `lib/admin/email.ts`) a `plataformaHtml`. Fix acotado y rápido, mismo patrón ya resuelto en `c960296`.
+### 2. ~~XSS pendiente en `recordatorio-silvana`~~
+✅ **RESUELTO en `c873534`** — `escapeHtml()` aplicado a `plataformaHtml`.
 
 ### 3. Decisión de producto: tipografía del sitio
 Fraunces (documentado) vs. Cormorant Garamond + Mulish (real, en 20+ archivos). Ver §5.3. Requiere decisión del dueño del producto antes de tocar código — no es un fix técnico unilateral.
