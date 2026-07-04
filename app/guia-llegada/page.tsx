@@ -4,6 +4,14 @@ import { AppCard } from '@/components/guia/AppCard'
 
 export const metadata = getNextMetadata('guiaLlegada')
 
+// Evita filas incompletas en pantallas grandes (ej. 4 tarjetas en grilla de 3 = 3+1 huérfana).
+// Con 4 tarjetas se usan 2 columnas (2x2) en vez de 3 (3+1).
+function lgColsForCount(n: number): string {
+  if (n === 4) return 'lg:grid-cols-2'
+  if (n <= 2) return 'lg:grid-cols-2'
+  return 'lg:grid-cols-3'
+}
+
 export default function GuiaLlegadaPage() {
   return (
     <>
@@ -85,7 +93,7 @@ export default function GuiaLlegadaPage() {
 
                 {/* Grid de cards */}
                 <ul
-                  className="grid gap-[var(--space-4)] sm:grid-cols-2 lg:grid-cols-3"
+                  className={`grid gap-[var(--space-4)] sm:grid-cols-2 ${lgColsForCount(appsDeCategoria.length)}`}
                   role="list"
                 >
                   {appsDeCategoria.map((app) => (

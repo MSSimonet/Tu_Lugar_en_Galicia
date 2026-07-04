@@ -13,6 +13,7 @@ export type FormState = {
   nombreCompleto: string
   email: string
   telefono: string
+  origenResidencia: 'en_espana' | 'fuera' | ''
   paisResidencia: string
   // Familia
   adultos: '1' | '2' | '3' | '4+' | ''
@@ -21,28 +22,43 @@ export type FormState = {
   adolescentes: '0' | '1' | '2' | '3+' | ''
   mascotas: 'si' | 'no' | ''
   mascotaTipo: ('perro' | 'gato' | 'otro')[]
+  cantidadPerros: '1' | '2' | '3+' | ''
+  cantidadGatos: '1' | '2' | '3+' | ''
   mascotaPeso: '0-5 kg' | '5-10 kg' | '+10 kg' | ''
   // Legal y económica
   documentacion: LeadData['documentacion'] | ''
   situacionLaboral: LeadData['situacionLaboral'] | ''
   ingresosMensuales: string
   garantias: ('garantia-adicional' | 'aval-bancario' | 'avalista' | 'seguro-impago' | 'ninguna')[]
+  cuentaBancaria: 'si' | 'no' | ''
+  comprendeHonorarios: 'entiende' | 'pide-explicacion' | ''
   // Vivienda
   ciudadDestino: LeadData['ciudadDestino'] | ''
-  tipoInmueble: 'habitacion' | 'estudio' | 'piso' | 'casa' | 'co-living' | ''
   presupuestoMensual: 'menos-700' | '700-1000' | '1000-1400' | 'mas-1400' | ''
+  tipoInmueble: 'habitacion' | 'estudio' | 'piso' | 'casa' | 'co-living' | ''
   habitacionesMinimas: '1' | '2' | '3' | '4+' | ''
   amueblado: LeadData['amueblado'] | ''
   imprescindibles: ('ascensor' | 'garaje' | 'calefaccion' | 'terraza' | 'no')[]
   comodidades: ('transporte' | 'zona-tranquila' | 'cerca-colegios' | 'internet' | 'ninguna')[]
   // Perfil y plazos
   necesidadesEspeciales: 'si' | 'no' | ''
+  tipoLicencia: 'espanola' | 'europea' | 'origen' | 'no-tiene' | ''
+  // Solo si origenResidencia === 'en_espana' (rama "ya vivo en España" de Gina)
+  ciudadActual: string
+  tiempoEnEspana: 'menos-1-ano' | '1-5-anos' | 'mas-5-anos' | ''
+  objetivoBusqueda: 'busca-vivienda' | 'integrarse' | ''
   profesion: string
+  nivelEstudios: 'sin-estudios' | 'bachillerato' | 'tecnico' | 'universitario' | 'posgrado' | ''
   fechaLlegada: string
   // Para terminar
   comoNosConociste: 'instagram' | 'facebook' | 'tiktok' | 'google' | 'recomendacion' | 'otro' | ''
   comprendeServicio: boolean
   consentimientoRGPD: boolean
+}
+
+/** true cuando, igual que en Gina (p20a_objetivo → "integrarse"), se omite toda la búsqueda de vivienda */
+export function omiteBusquedaVivienda(form: Pick<FormState, 'origenResidencia' | 'objetivoBusqueda'>): boolean {
+  return form.origenResidencia === 'en_espana' && form.objetivoBusqueda === 'integrarse'
 }
 
 export type FormErrors = Partial<Record<keyof FormState, string>>
@@ -51,6 +67,7 @@ export const INITIAL_STATE: FormState = {
   nombreCompleto: '',
   email: '',
   telefono: '',
+  origenResidencia: '',
   paisResidencia: '',
   adultos: '',
   hayMenores: '',
@@ -58,20 +75,29 @@ export const INITIAL_STATE: FormState = {
   adolescentes: '',
   mascotas: '',
   mascotaTipo: [],
+  cantidadPerros: '',
+  cantidadGatos: '',
   mascotaPeso: '',
   documentacion: '',
   situacionLaboral: '',
   ingresosMensuales: '',
   garantias: [],
+  cuentaBancaria: '',
+  comprendeHonorarios: '',
   ciudadDestino: '',
-  tipoInmueble: '',
   presupuestoMensual: '',
+  tipoInmueble: '',
   habitacionesMinimas: '',
   amueblado: '',
   imprescindibles: [],
   comodidades: [],
   necesidadesEspeciales: '',
+  tipoLicencia: '',
+  ciudadActual: '',
+  tiempoEnEspana: '',
+  objetivoBusqueda: '',
   profesion: '',
+  nivelEstudios: '',
   fechaLlegada: '',
   comoNosConociste: '',
   comprendeServicio: false,
@@ -95,8 +121,16 @@ function validate(form: FormState): FormErrors {
     errors.email = 'Ese email no parece tener el formato correcto (ej: nombre@correo.com)'
   if (!form.telefono.trim())
     errors.telefono = 'Incluí tu teléfono con el código de país'
-  if (!form.paisResidencia.trim())
+  if (!form.origenResidencia)
+    errors.origenResidencia = 'Indícanos si ya vives en España o vienes de fuera'
+  if (form.origenResidencia === 'fuera' && !form.paisResidencia.trim())
     errors.paisResidencia = 'Cuéntanos desde qué país nos escribes'
+  if (form.origenResidencia === 'en_espana' && !form.ciudadActual.trim())
+    errors.ciudadActual = 'Cuéntanos en qué ciudad o provincia vives actualmente'
+  if (form.origenResidencia === 'en_espana' && !form.tiempoEnEspana)
+    errors.tiempoEnEspana = 'Indícanos cuánto tiempo llevas viviendo en España'
+  if (form.origenResidencia === 'en_espana' && !form.objetivoBusqueda)
+    errors.objetivoBusqueda = 'Indícanos si buscas vivienda o ya tienes dónde vivir'
   if (!form.adultos)
     errors.adultos = 'Indícanos cuántos adultos se mudan'
   if (!form.hayMenores)
@@ -109,6 +143,10 @@ function validate(form: FormState): FormErrors {
     errors.mascotas = 'Indícanos si viajan con mascotas'
   if (form.mascotas === 'si' && form.mascotaTipo.length === 0)
     errors.mascotaTipo = 'Indícanos qué tipo de mascota traes'
+  if (form.mascotas === 'si' && form.mascotaTipo.includes('perro') && !form.cantidadPerros)
+    errors.cantidadPerros = 'Indícanos cuántos perros tienes'
+  if (form.mascotas === 'si' && form.mascotaTipo.includes('gato') && !form.cantidadGatos)
+    errors.cantidadGatos = 'Indícanos cuántos gatos tienes'
   if (form.mascotas === 'si' && form.mascotaTipo.includes('perro') && !form.mascotaPeso)
     errors.mascotaPeso = 'Indícanos el peso aproximado de tu perro'
   if (!form.documentacion)
@@ -119,16 +157,26 @@ function validate(form: FormState): FormErrors {
     errors.ingresosMensuales = 'Indícanos tu rango de ingresos mensuales'
   if (form.garantias.length === 0)
     errors.garantias = 'Selecciona al menos una opción de garantía (aunque sea ninguna)'
+  if (!form.cuentaBancaria)
+    errors.cuentaBancaria = 'Indícanos si ya tienes cuenta bancaria en España'
+  if (!form.comprendeHonorarios)
+    errors.comprendeHonorarios = 'Indícanos si entiendes cómo funcionan nuestros honorarios'
   if (!form.ciudadDestino)
     errors.ciudadDestino = 'Elige una ciudad de destino'
-  if (!form.tipoInmueble)
-    errors.tipoInmueble = 'Selecciona el tipo de vivienda que buscas'
   if (!form.presupuestoMensual)
     errors.presupuestoMensual = 'Indícanos tu presupuesto mensual de alquiler'
-  if (form.tipoInmueble !== 'estudio' && !form.habitacionesMinimas)
-    errors.habitacionesMinimas = 'Indícanos cuántas habitaciones necesitas'
-  if (!form.amueblado)
-    errors.amueblado = 'Indícanos si necesitas la vivienda amueblada'
+  if (!omiteBusquedaVivienda(form)) {
+    if (!form.tipoInmueble)
+      errors.tipoInmueble = 'Selecciona el tipo de vivienda que buscas'
+    if (form.tipoInmueble !== 'estudio' && !form.habitacionesMinimas)
+      errors.habitacionesMinimas = 'Indícanos cuántas habitaciones necesitas'
+    if (!form.amueblado)
+      errors.amueblado = 'Indícanos si necesitas la vivienda amueblada'
+  }
+  if (!form.tipoLicencia)
+    errors.tipoLicencia = 'Indícanos si tienes licencia de conducir'
+  if (!form.nivelEstudios)
+    errors.nivelEstudios = 'Selecciona tu nivel de estudios'
   if (!form.fechaLlegada)
     errors.fechaLlegada = 'Indícanos en qué plazo necesitas resolver tu vivienda'
   if (!form.comprendeServicio)
@@ -177,11 +225,47 @@ export function useFormulario() {
 
   function setMascotas(v: 'si' | 'no') {
     if (v === 'no') {
-      setForm((prev) => ({ ...prev, mascotas: 'no', mascotaTipo: [], mascotaPeso: '' as FormState['mascotaPeso'] }))
+      setForm((prev) => ({
+        ...prev,
+        mascotas: 'no',
+        mascotaTipo: [],
+        cantidadPerros: '' as FormState['cantidadPerros'],
+        cantidadGatos: '' as FormState['cantidadGatos'],
+        mascotaPeso: '' as FormState['mascotaPeso'],
+      }))
     } else {
       setForm((prev) => ({ ...prev, mascotas: 'si' }))
     }
     if (errors.mascotas) setErrors((prev) => ({ ...prev, mascotas: undefined }))
+  }
+
+  function setOrigenResidencia(v: 'en_espana' | 'fuera') {
+    setForm((prev) => ({
+      ...prev,
+      origenResidencia: v,
+      // Limpia los campos exclusivos de la rama contraria (mismo criterio que flow.json)
+      ...(v === 'en_espana'
+        ? { paisResidencia: '' }
+        : { ciudadActual: '', tiempoEnEspana: '' as FormState['tiempoEnEspana'], objetivoBusqueda: '' as FormState['objetivoBusqueda'] }),
+    }))
+    if (errors.origenResidencia) setErrors((prev) => ({ ...prev, origenResidencia: undefined }))
+  }
+
+  function setObjetivoBusqueda(v: 'busca-vivienda' | 'integrarse') {
+    setForm((prev) => ({
+      ...prev,
+      objetivoBusqueda: v,
+      ...(v === 'integrarse'
+        ? {
+            tipoInmueble: '' as FormState['tipoInmueble'],
+            habitacionesMinimas: '' as FormState['habitacionesMinimas'],
+            amueblado: '' as FormState['amueblado'],
+            imprescindibles: [] as FormState['imprescindibles'],
+            comodidades: [] as FormState['comodidades'],
+          }
+        : {}),
+    }))
+    if (errors.objetivoBusqueda) setErrors((prev) => ({ ...prev, objetivoBusqueda: undefined }))
   }
 
   function setTipoInmueble(v: 'habitacion' | 'estudio' | 'piso' | 'casa' | 'co-living') {
@@ -200,13 +284,16 @@ export function useFormulario() {
   }
 
   function toggleMascotaTipo(val: 'perro' | 'gato' | 'otro') {
-    const next = form.mascotaTipo.includes(val)
+    const yaEstaba = form.mascotaTipo.includes(val)
+    const next = yaEstaba
       ? form.mascotaTipo.filter((v) => v !== val)
       : [...form.mascotaTipo, val]
     setForm((prev) => ({
       ...prev,
       mascotaTipo: next,
-      mascotaPeso: val === 'perro' && prev.mascotaTipo.includes(val) ? '' as FormState['mascotaPeso'] : prev.mascotaPeso,
+      mascotaPeso: val === 'perro' && yaEstaba ? '' as FormState['mascotaPeso'] : prev.mascotaPeso,
+      cantidadPerros: val === 'perro' && yaEstaba ? '' as FormState['cantidadPerros'] : prev.cantidadPerros,
+      cantidadGatos: val === 'gato' && yaEstaba ? '' as FormState['cantidadGatos'] : prev.cantidadGatos,
     }))
     if (errors.mascotaTipo) setErrors((prev) => ({ ...prev, mascotaTipo: undefined }))
   }
@@ -236,14 +323,20 @@ export function useFormulario() {
     setStatus('loading')
 
     const hayEstudio = form.tipoInmueble === 'estudio'
+    const sinBusquedaVivienda = omiteBusquedaVivienda(form)
 
     try {
-      const payload: LeadData = {
+      // origenResidencia y paisResidencia se envían tal cual — el servidor deriva
+      // paisResidencia='España' y modalidad, igual que hace Gina con sesion.origenResidencia.
+      const payload:
+        Partial<LeadData> & Pick<LeadData, 'nombreCompleto' | 'email' | 'comprendeServicio' | 'consentimientoRGPD'>
+        & { origenResidencia: FormState['origenResidencia'] } = {
         // Contacto
         nombreCompleto: form.nombreCompleto,
         email: form.email,
         telefono: form.telefono,
-        paisResidencia: form.paisResidencia,
+        origenResidencia: form.origenResidencia,
+        paisResidencia: form.origenResidencia === 'fuera' ? form.paisResidencia : '',
         // Familia
         adultos: form.adultos as LeadData['adultos'],
         ...(form.hayMenores === 'si' && form.ninos
@@ -256,6 +349,12 @@ export function useFormulario() {
         ...(form.mascotas === 'si' && form.mascotaTipo.length > 0
           ? { mascotaTipo: form.mascotaTipo }
           : {}),
+        ...(form.mascotas === 'si' && form.mascotaTipo.includes('perro') && form.cantidadPerros
+          ? { cantidadPerros: form.cantidadPerros as LeadData['cantidadPerros'] }
+          : {}),
+        ...(form.mascotas === 'si' && form.mascotaTipo.includes('gato') && form.cantidadGatos
+          ? { cantidadGatos: form.cantidadGatos as LeadData['cantidadGatos'] }
+          : {}),
         ...(form.mascotas === 'si' && form.mascotaTipo.includes('perro') && form.mascotaPeso
           ? { mascotaPeso: form.mascotaPeso as LeadData['mascotaPeso'] }
           : {}),
@@ -264,25 +363,40 @@ export function useFormulario() {
         situacionLaboral: form.situacionLaboral as LeadData['situacionLaboral'],
         ingresosMensuales: form.ingresosMensuales,
         garantias: form.garantias,
+        cuentaBancaria: form.cuentaBancaria as LeadData['cuentaBancaria'],
+        comprendeHonorarios: form.comprendeHonorarios as LeadData['comprendeHonorarios'],
         // Vivienda
         ciudadDestino: form.ciudadDestino as LeadData['ciudadDestino'],
-        tipoInmueble: form.tipoInmueble as LeadData['tipoInmueble'],
         presupuestoMensual: form.presupuestoMensual as LeadData['presupuestoMensual'],
-        ...(!hayEstudio && form.habitacionesMinimas
-          ? { habitacionesMinimas: form.habitacionesMinimas as LeadData['habitacionesMinimas'] }
+        ...(!sinBusquedaVivienda
+          ? {
+              tipoInmueble: form.tipoInmueble as LeadData['tipoInmueble'],
+              amueblado: form.amueblado as LeadData['amueblado'],
+              ...(!hayEstudio && form.habitacionesMinimas
+                ? { habitacionesMinimas: form.habitacionesMinimas as LeadData['habitacionesMinimas'] }
+                : {}),
+              ...(form.imprescindibles.length > 0
+                ? { imprescindibles: form.imprescindibles as LeadData['imprescindibles'] }
+                : {}),
+              ...(form.comodidades.length > 0
+                ? { comodidades: form.comodidades as LeadData['comodidades'] }
+                : {}),
+            }
           : {}),
-        amueblado: form.amueblado as LeadData['amueblado'],
-        ...(form.imprescindibles.length > 0
-          ? { imprescindibles: form.imprescindibles as LeadData['imprescindibles'] }
-          : {}),
-        ...(form.comodidades.length > 0
-          ? { comodidades: form.comodidades as LeadData['comodidades'] }
-          : {}),
-        // Perfil y plazos — opcionales
+        // Perfil y plazos
         ...(form.necesidadesEspeciales
           ? { necesidadesEspeciales: form.necesidadesEspeciales }
           : {}),
+        tipoLicencia: form.tipoLicencia as LeadData['tipoLicencia'],
+        ...(form.origenResidencia === 'en_espana'
+          ? {
+              ciudadActual: form.ciudadActual.trim(),
+              tiempoEnEspana: form.tiempoEnEspana as LeadData['tiempoEnEspana'],
+              objetivoBusqueda: form.objetivoBusqueda as LeadData['objetivoBusqueda'],
+            }
+          : {}),
         ...(form.profesion.trim() ? { profesion: form.profesion.trim() } : {}),
+        nivelEstudios: form.nivelEstudios as LeadData['nivelEstudios'],
         fechaLlegada: form.fechaLlegada,
         // Para terminar — opcional
         ...(form.comoNosConociste
@@ -318,6 +432,8 @@ export function useFormulario() {
     setHayMenores,
     setMascotas,
     setTipoInmueble,
+    setOrigenResidencia,
+    setObjetivoBusqueda,
     toggleGarantia,
     toggleMascotaTipo,
     toggleImprescindible,

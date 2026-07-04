@@ -101,12 +101,26 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Límite de tamaño en campos de texto libre — evita payloads abusivos
+  // Límite de tamaño en campos de texto libre — evita payloads abusivos (A4: cubre también arrays)
   if (typeof respuesta === 'string' && respuesta.length > 2000) {
     return NextResponse.json(
       { error: 'Respuesta demasiado larga (máx. 2000 caracteres)' },
       { status: 400 },
     )
+  }
+  if (Array.isArray(respuesta)) {
+    if (respuesta.length > 50) {
+      return NextResponse.json(
+        { error: 'Demasiados elementos en la respuesta (máx. 50)' },
+        { status: 400 },
+      )
+    }
+    if (respuesta.some((r) => typeof r === 'string' && r.length > 2000)) {
+      return NextResponse.json(
+        { error: 'Respuesta demasiado larga (máx. 2000 caracteres por elemento)' },
+        { status: 400 },
+      )
+    }
   }
 
   // Obtener definición del paso actual

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorized } from '@/lib/admin/auth'
 import { getLeadsConCitaProxima, type AirtableRecord } from '@/lib/admin/airtable'
 import { generateAdminToken } from '@/lib/admin/tokens'
-import { sendEmail } from '@/lib/admin/email'
+import { sendEmail, escapeHtml } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
 
 // ── Etiquetas legibles (subconjunto necesario para el mail de recordatorio) ──
@@ -75,9 +75,10 @@ function buildRecordatorio(record: AirtableRecord, profileUrl: string): string {
   const minutos    = fechaCita !== '—' ? minutosHasta(fechaCita) : 0
 
   const esUrl = plataforma.startsWith('http')
+  const plataformaEscapada = escapeHtml(plataforma)
   const plataformaHtml = esUrl
-    ? `<a href="${plataforma}" style="color:#1565c0;font-family:Arial,sans-serif;font-size:14px;">${plataforma}</a>`
-    : `<span style="font-family:Arial,sans-serif;font-size:14px;color:#1E1C19;">${plataforma}</span>`
+    ? `<a href="${plataformaEscapada}" style="color:#1565c0;font-family:Arial,sans-serif;font-size:14px;">${plataformaEscapada}</a>`
+    : `<span style="font-family:Arial,sans-serif;font-size:14px;color:#1E1C19;">${plataformaEscapada}</span>`
 
   return `
 <div style="background:#ffffff;border:1px solid #e0d8cc;border-radius:8px;padding:20px 24px;margin-bottom:16px;">

@@ -4,7 +4,7 @@ import type { FormState, FormErrors } from './useFormulario'
 import { RadioGroup, CheckboxGroup, labelClass, errorClass, sectionTitleClass, sectionClass } from './form-fields'
 
 type Props = {
-  form: Pick<FormState, 'adultos' | 'hayMenores' | 'ninos' | 'adolescentes' | 'mascotas' | 'mascotaTipo' | 'mascotaPeso'>
+  form: Pick<FormState, 'adultos' | 'hayMenores' | 'ninos' | 'adolescentes' | 'mascotas' | 'mascotaTipo' | 'cantidadPerros' | 'cantidadGatos' | 'mascotaPeso'>
   errors: FormErrors
   set: <K extends keyof FormState>(key: K, value: FormState[K]) => void
   setHayMenores: (v: 'si' | 'no') => void
@@ -150,6 +150,52 @@ export function SeccionFamilia({ form, errors, set, setHayMenores, setMascotas, 
                   {errors.mascotaTipo && <p className={errorClass} role="alert">{errors.mascotaTipo}</p>}
                 </fieldset>
               </div>
+
+              {form.mascotaTipo.includes('perro') && (
+                <div>
+                  <fieldset>
+                    <legend id="rg-cantidadPerros" className={`${labelClass} mb-[var(--space-2)]`}>
+                      ¿Cuántos perros tienes?
+                      <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                    </legend>
+                    <RadioGroup
+                      name="cantidadPerros"
+                      options={[
+                        { value: '1', label: '1' },
+                        { value: '2', label: '2' },
+                        { value: '3+', label: '3 o más' },
+                      ]}
+                      value={form.cantidadPerros}
+                      onChange={(v) => set('cantidadPerros', v as FormState['cantidadPerros'])}
+                      error={errors.cantidadPerros}
+                      labelId="rg-cantidadPerros"
+                    />
+                  </fieldset>
+                </div>
+              )}
+
+              {form.mascotaTipo.includes('gato') && (
+                <div>
+                  <fieldset>
+                    <legend id="rg-cantidadGatos" className={`${labelClass} mb-[var(--space-2)]`}>
+                      ¿Cuántos gatos tienes?
+                      <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                    </legend>
+                    <RadioGroup
+                      name="cantidadGatos"
+                      options={[
+                        { value: '1', label: '1' },
+                        { value: '2', label: '2' },
+                        { value: '3+', label: '3 o más' },
+                      ]}
+                      value={form.cantidadGatos}
+                      onChange={(v) => set('cantidadGatos', v as FormState['cantidadGatos'])}
+                      error={errors.cantidadGatos}
+                      labelId="rg-cantidadGatos"
+                    />
+                  </fieldset>
+                </div>
+              )}
 
               {form.mascotaTipo.includes('perro') && (
                 <div>

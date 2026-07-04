@@ -101,6 +101,7 @@ function buildCard(record: AirtableRecord, siteUrl: string): string {
   const summary = buildSummary(f)
   const token   = generateAdminToken(record.id)
   const profileUrl = `${siteUrl}/admin/lead/${record.id}?token=${encodeURIComponent(token)}`
+  const pdfUrl  = `${siteUrl}/api/plan/${record.id}/pdf?token=${encodeURIComponent(token)}`
 
   const habilitarBtn = codigo && codigo !== 'expirado'
     ? `<span style="display:inline-block;padding:8px 16px;background:#e8f5e9;color:#2e7d32;
@@ -147,6 +148,14 @@ function buildCard(record: AirtableRecord, siteUrl: string): string {
           Ver perfil completo &rarr;
         </a>
       </td>
+      <td style="padding-right:8px;">
+        <a href="${pdfUrl}"
+           style="display:inline-block;padding:8px 16px;background:#f5f0e8;color:#1E1C19;
+                  text-decoration:none;border-radius:4px;font-size:12px;font-weight:500;
+                  letter-spacing:0.04em;font-family:Arial,sans-serif;border:1px solid #e0d8cc;">
+          Ver PDF &rarr;
+        </a>
+      </td>
       <td>${habilitarBtn}</td>
     </tr>
   </table>
@@ -161,6 +170,7 @@ function buildSeguimientoCard(record: AirtableRecord, siteUrl: string): string {
   const email      = str(f.email)
   const token      = generateAdminToken(record.id)
   const profileUrl = `${siteUrl}/admin/lead/${record.id}?token=${encodeURIComponent(token)}`
+  const pdfUrl     = `${siteUrl}/api/plan/${record.id}/pdf?token=${encodeURIComponent(token)}`
   const fechaHab   = typeof f.fechaHabilitacion === 'string' ? f.fechaHabilitacion : record.createdTime
   const diasExp    = diasDesde(fechaHab)
 
@@ -189,12 +199,20 @@ function buildSeguimientoCard(record: AirtableRecord, siteUrl: string): string {
           Regenerar c&oacute;digo &rarr;
         </a>
       </td>
-      <td>
+      <td style="padding-right:8px;">
         <a href="${profileUrl}"
            style="display:inline-block;padding:8px 16px;background:#f5f0e8;color:#1E1C19;
                   text-decoration:none;border-radius:4px;font-size:12px;font-weight:500;
                   font-family:Arial,sans-serif;">
           Ver perfil &rarr;
+        </a>
+      </td>
+      <td>
+        <a href="${pdfUrl}"
+           style="display:inline-block;padding:8px 16px;background:#f5f0e8;color:#1E1C19;
+                  text-decoration:none;border-radius:4px;font-size:12px;font-weight:500;
+                  font-family:Arial,sans-serif;border:1px solid #e0d8cc;">
+          Ver PDF &rarr;
         </a>
       </td>
     </tr>

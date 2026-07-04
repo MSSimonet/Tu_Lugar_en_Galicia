@@ -3,7 +3,6 @@ import { Plus_Jakarta_Sans, Cormorant_Garamond, Mulish } from "next/font/google"
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { GinaWidget } from "@/components/gina/GinaWidget";
-import { ContactoFlotante } from "@/components/shared/ContactoFlotante";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin", "latin-ext"],
@@ -54,7 +53,6 @@ export default function RootLayout({
         <main id="main-content" className="flex-1">{children}</main>
         <Footer />
         <GinaWidget />
-        <ContactoFlotante />
       </body>
     </html>
   );

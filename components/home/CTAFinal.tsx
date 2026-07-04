@@ -1,5 +1,10 @@
-import Link from "next/link";
+'use client'
+
 import { Button } from "@/components/ui/Button";
+
+function abrirGina() {
+  window.dispatchEvent(new CustomEvent('gina:open'))
+}
 
 export function CTAFinal() {
   return (
@@ -22,11 +27,9 @@ export function CTAFinal() {
         </p>
 
         <div className="mt-[var(--space-8)] flex justify-center">
-          <Link href="/conocernos">
-            <Button variant="primario" size="lg">
-              Vamos a conocernos
-            </Button>
-          </Link>
+          <Button variant="primario" size="lg" onClick={abrirGina}>
+            Vamos a conocernos
+          </Button>
         </div>
       </div>
     </section>

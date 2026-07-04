@@ -2,6 +2,21 @@ export const VALID_ADULTOS = ['1', '2', '3', '4+'] as const
 export const VALID_MENORES_COUNT = ['0', '1', '2', '3+'] as const
 export const VALID_MASCOTA_TIPO = ['perro', 'gato', 'otro'] as const
 export const VALID_MASCOTA_PESO = ['0-5 kg', '5-10 kg', '+10 kg'] as const
+export const VALID_CANTIDAD_MASCOTA = ['1', '2', '3+'] as const
+
+export const VALID_ORIGEN_RESIDENCIA = ['en_espana', 'fuera'] as const
+export const VALID_CUENTA_BANCARIA = ['si', 'no'] as const
+export const VALID_COMPRENDE_HONORARIOS = ['entiende', 'pide-explicacion'] as const
+export const VALID_TIPO_LICENCIA = ['espanola', 'europea', 'origen', 'no-tiene'] as const
+export const VALID_TIEMPO_EN_ESPANA = ['menos-1-ano', '1-5-anos', 'mas-5-anos'] as const
+export const VALID_OBJETIVO_BUSQUEDA = ['busca-vivienda', 'integrarse'] as const
+export const VALID_NIVEL_ESTUDIOS = [
+  'sin-estudios',
+  'bachillerato',
+  'tecnico',
+  'universitario',
+  'posgrado',
+] as const
 
 export const VALID_DOCUMENTACION = [
   'espanol',

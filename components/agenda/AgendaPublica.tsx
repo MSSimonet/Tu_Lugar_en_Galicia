@@ -1,7 +1,5 @@
 'use client'
 
-import Link from 'next/link'
-
 const pasos = [
   {
     n: '01',
@@ -115,7 +113,7 @@ export function AgendaPublica() {
             aria-hidden="true"
           />
 
-          {/* CTAs */}
+          {/* CTA */}
           <div className="flex flex-col sm:flex-row gap-[var(--space-4)]">
             <button
               onClick={openGina}
@@ -124,17 +122,6 @@ export function AgendaPublica() {
             >
               Cuéntale tu caso a Gina
             </button>
-            <Link
-              href="/conocernos"
-              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium uppercase tracking-[var(--tracking-ui)] transition-brand hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
-              style={{
-                borderColor: 'var(--color-laton)',
-                color: 'var(--color-granito)',
-                outlineColor: 'var(--color-laton)',
-              }}
-            >
-              Completar el formulario
-            </Link>
           </div>
         </div>
       </section>

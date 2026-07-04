@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import type { LeadData } from '@/lib/leads'
-import { useFormulario } from './useFormulario'
+import { useFormulario, omiteBusquedaVivienda, type FormState } from './useFormulario'
 import { SeccionFamilia } from './SeccionFamilia'
 import { SeccionVivienda } from './SeccionVivienda'
 import {
@@ -29,6 +29,8 @@ export function FormularioDiagnostico() {
     setHayMenores,
     setMascotas,
     setTipoInmueble,
+    setOrigenResidencia,
+    setObjetivoBusqueda,
     toggleGarantia,
     toggleMascotaTipo,
     toggleImprescindible,
@@ -174,19 +176,41 @@ export function FormularioDiagnostico() {
             />
           </FieldWrapper>
 
-          <FieldWrapper id="paisResidencia" label="País de residencia actual" required error={errors.paisResidencia}>
-            <input
-              id="paisResidencia"
-              type="text"
-              value={form.paisResidencia}
-              onChange={(e) => set('paisResidencia', e.target.value)}
-              className={`${inputBase} ${errors.paisResidencia ? inputError : ''}`}
-              autoComplete="country-name"
-              required
-              aria-required="true"
-              aria-describedby={errors.paisResidencia ? 'paisResidencia-error' : undefined}
-            />
-          </FieldWrapper>
+          <div>
+            <fieldset>
+              <legend id="rg-origenResidencia" className={`${labelClass} mb-[var(--space-2)]`}>
+                ¿Ya vives en España o vienes de fuera?
+                <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              </legend>
+              <RadioGroup
+                name="origenResidencia"
+                options={[
+                  { value: 'fuera', label: 'Vengo de fuera' },
+                  { value: 'en_espana', label: 'Ya vivo en España' },
+                ]}
+                value={form.origenResidencia}
+                onChange={(v) => setOrigenResidencia(v as 'en_espana' | 'fuera')}
+                error={errors.origenResidencia}
+                labelId="rg-origenResidencia"
+              />
+            </fieldset>
+          </div>
+
+          {form.origenResidencia === 'fuera' && (
+            <FieldWrapper id="paisResidencia" label="¿Desde qué país nos escribes?" required error={errors.paisResidencia}>
+              <input
+                id="paisResidencia"
+                type="text"
+                value={form.paisResidencia}
+                onChange={(e) => set('paisResidencia', e.target.value)}
+                className={`${inputBase} ${errors.paisResidencia ? inputError : ''}`}
+                autoComplete="country-name"
+                required
+                aria-required="true"
+                aria-describedby={errors.paisResidencia ? 'paisResidencia-error' : undefined}
+              />
+            </FieldWrapper>
+          )}
 
         </div>
       </section>
@@ -312,6 +336,48 @@ export function FormularioDiagnostico() {
             </fieldset>
           </div>
 
+          {/* Cuenta bancaria en España */}
+          <div>
+            <fieldset>
+              <legend id="rg-cuentaBancaria" className={`${labelClass} mb-[var(--space-2)]`}>
+                ¿Ya tienes cuenta bancaria operativa en España?
+                <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              </legend>
+              <RadioGroup
+                name="cuentaBancaria"
+                options={[
+                  { value: 'no', label: 'No' },
+                  { value: 'si', label: 'Sí' },
+                ]}
+                value={form.cuentaBancaria}
+                onChange={(v) => set('cuentaBancaria', v as FormState['cuentaBancaria'])}
+                error={errors.cuentaBancaria}
+                labelId="rg-cuentaBancaria"
+              />
+            </fieldset>
+          </div>
+
+          {/* Comprensión de honorarios */}
+          <div>
+            <fieldset>
+              <legend id="rg-comprendeHonorarios" className={`${labelClass} mb-[var(--space-2)]`}>
+                ¿Entiendes que somos un servicio de consultoría y búsqueda personalizada, con honorarios propios, aparte del alquiler y la fianza?
+                <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              </legend>
+              <RadioGroup
+                name="comprendeHonorarios"
+                options={[
+                  { value: 'entiende', label: 'Sí, lo entiendo perfectamente' },
+                  { value: 'pide-explicacion', label: 'Me gustaría que me lo expliquen mejor' },
+                ]}
+                value={form.comprendeHonorarios}
+                onChange={(v) => set('comprendeHonorarios', v as FormState['comprendeHonorarios'])}
+                error={errors.comprendeHonorarios}
+                labelId="rg-comprendeHonorarios"
+              />
+            </fieldset>
+          </div>
+
         </div>
       </section>
 
@@ -325,6 +391,7 @@ export function FormularioDiagnostico() {
         setTipoInmueble={setTipoInmueble}
         toggleImprescindible={toggleImprescindible}
         toggleComodidad={toggleComodidad}
+        ocultarBusquedaVivienda={omiteBusquedaVivienda(form)}
       />
 
       <hr className="border-[var(--color-arena)]" />
@@ -353,6 +420,89 @@ export function FormularioDiagnostico() {
             </fieldset>
           </div>
 
+          {/* Licencia de conducir */}
+          <div>
+            <label htmlFor="tipoLicencia" className={labelClass}>
+              ¿Tienes licencia de conducir?
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
+            </label>
+            <select
+              id="tipoLicencia"
+              value={form.tipoLicencia}
+              onChange={(e) => set('tipoLicencia', e.target.value as FormState['tipoLicencia'])}
+              className={`${inputBase} ${errors.tipoLicencia ? inputError : ''}`}
+              aria-describedby={errors.tipoLicencia ? 'tipoLicencia-error' : undefined}
+            >
+              <option value="" disabled>Selecciona una opción</option>
+              <option value="espanola">Española</option>
+              <option value="europea">Europea</option>
+              <option value="origen">De mi país de origen</option>
+              <option value="no-tiene">No tengo</option>
+            </select>
+            {errors.tipoLicencia && (
+              <p id="tipoLicencia-error" className={errorClass} role="alert">{errors.tipoLicencia}</p>
+            )}
+          </div>
+
+          {/* Rama "ya vivo en España" — igual que Gina p18a/p19a/p20a */}
+          {form.origenResidencia === 'en_espana' && (
+            <>
+              <FieldWrapper id="ciudadActual" label="¿En qué ciudad o provincia vives actualmente?" required error={errors.ciudadActual}>
+                <input
+                  id="ciudadActual"
+                  type="text"
+                  value={form.ciudadActual}
+                  onChange={(e) => set('ciudadActual', e.target.value)}
+                  className={`${inputBase} ${errors.ciudadActual ? inputError : ''}`}
+                  required
+                  aria-required="true"
+                  aria-describedby={errors.ciudadActual ? 'ciudadActual-error' : undefined}
+                />
+              </FieldWrapper>
+
+              <div>
+                <fieldset>
+                  <legend id="rg-tiempoEnEspana" className={`${labelClass} mb-[var(--space-2)]`}>
+                    ¿Cuánto tiempo llevas viviendo en España?
+                    <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                  </legend>
+                  <RadioGroup
+                    name="tiempoEnEspana"
+                    options={[
+                      { value: 'menos-1-ano', label: 'Menos de 1 año' },
+                      { value: '1-5-anos', label: 'Entre 1 y 5 años' },
+                      { value: 'mas-5-anos', label: 'Más de 5 años' },
+                    ]}
+                    value={form.tiempoEnEspana}
+                    onChange={(v) => set('tiempoEnEspana', v as FormState['tiempoEnEspana'])}
+                    error={errors.tiempoEnEspana}
+                    labelId="rg-tiempoEnEspana"
+                  />
+                </fieldset>
+              </div>
+
+              <div>
+                <fieldset>
+                  <legend id="rg-objetivoBusqueda" className={`${labelClass} mb-[var(--space-2)]`}>
+                    ¿Estás buscando vivienda en Galicia, o ya tienes dónde vivir y buscas orientación para integrarte?
+                    <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                  </legend>
+                  <RadioGroup
+                    name="objetivoBusqueda"
+                    options={[
+                      { value: 'busca-vivienda', label: 'Busco vivienda' },
+                      { value: 'integrarse', label: 'Ya tengo vivienda, quiero integrarme' },
+                    ]}
+                    value={form.objetivoBusqueda}
+                    onChange={(v) => setObjetivoBusqueda(v as 'busca-vivienda' | 'integrarse')}
+                    error={errors.objetivoBusqueda}
+                    labelId="rg-objetivoBusqueda"
+                  />
+                </fieldset>
+              </div>
+            </>
+          )}
+
           {/* Profesión — opcional */}
           <FieldWrapper id="profesion" label="Profesión u ocupación (opcional)" error={errors.profesion}>
             <input
@@ -365,6 +515,31 @@ export function FormularioDiagnostico() {
               aria-describedby={errors.profesion ? 'profesion-error' : undefined}
             />
           </FieldWrapper>
+
+          {/* Nivel de estudios */}
+          <div>
+            <label htmlFor="nivelEstudios" className={labelClass}>
+              ¿Cuál es tu nivel de estudios?
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
+            </label>
+            <select
+              id="nivelEstudios"
+              value={form.nivelEstudios}
+              onChange={(e) => set('nivelEstudios', e.target.value as FormState['nivelEstudios'])}
+              className={`${inputBase} ${errors.nivelEstudios ? inputError : ''}`}
+              aria-describedby={errors.nivelEstudios ? 'nivelEstudios-error' : undefined}
+            >
+              <option value="" disabled>Selecciona una opción</option>
+              <option value="sin-estudios">Sin estudios superiores</option>
+              <option value="bachillerato">Bachillerato o equivalente</option>
+              <option value="tecnico">Técnico / FP / Terciario</option>
+              <option value="universitario">Universitario / Grado</option>
+              <option value="posgrado">Posgrado / Máster / Doctorado</option>
+            </select>
+            {errors.nivelEstudios && (
+              <p id="nivelEstudios-error" className={errorClass} role="alert">{errors.nivelEstudios}</p>
+            )}
+          </div>
 
           {/* Fecha de llegada */}
           <div>
