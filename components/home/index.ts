@@ -1,7 +1,6 @@
 export { Hero } from "./Hero";
 export { ElMarcador } from "./ElMarcador";
 export { ComoFuncionaResumen } from "./ComoFuncionaResumen";
-export { CiudadesCards } from "./CiudadesCards";
 export { FeedInstagram } from "./FeedInstagram";
 export { MuroLlavesPreview } from "./MuroLlavesPreview";
 export { Testimonios } from "./Testimonios";
