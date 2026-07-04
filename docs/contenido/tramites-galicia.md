@@ -423,7 +423,7 @@
 
 ### 44. Canje de permiso de conducción extranjero
 - **¿Se puede iniciar en el país de origen?** ❌ No, requiere ser residente legal en España.
-- **¿Qué es?** Homologación de la licencia de tu país por un carnet español equivalente. Solo es posible con países con los que España tiene **convenio** de canje (de lo contrario, ver trámite 45).
+- **¿Qué es?** Homologación de la licencia de tu país por un carnet español equivalente. Solo es posible con países con los que España tiene **convenio** de canje (de lo contrario, ver *Exámenes de la DGT para nuevo permiso de conducir*).
 - **¿Para qué sirve?** Permite seguir conduciendo legalmente: los permisos extracomunitarios dejan de ser válidos a los 6 meses de adquirir la residencia legal.
 - **Requisitos:** Residencia legal, pasaporte, NIE/CUE, licencia extranjera original vigente, empadronamiento, informe psicofísico del CRC y foto carnet.
 - **Tasa:** Tasas propias de la DGT (no Modelo 790): canje ordinario (tasa 2.3) y canje profesional con pruebas (tasa 2.1). *(Consultar importes vigentes en sede.dgt.gob.es.)*
@@ -456,7 +456,7 @@
 - **¿Se puede iniciar en el país de origen?** ❌ No, es un trámite estrictamente presencial que solo se puede realizar una vez que ya te encuentras residiendo en territorio español.
 - **¿Qué es?** El Documento Nacional de Identidad (DNI) es la tarjeta oficial que acredita la identidad, los datos personales y la nacionalidad española de su titular.
 - **¿Para qué sirve?** Es el documento de identificación estándar para los ciudadanos españoles dentro del país, necesario para trabajar, abrir cuentas bancarias, el alta en la Seguridad Social y cualquier trámite legal.
-- **Requisitos:** Certificado de nacimiento literal para DNI expedido por el Registro Civil español (antigüedad máxima de 6 meses y que mencione expresamente que se expide para obtener el DNI — ver trámite 46), Certificado de Empadronamiento del ayuntamiento gallego donde residas (antigüedad máxima de 3 meses), una fotografía reciente a color en fondo blanco y el pasaporte con el que ingresaste.
+- **Requisitos:** Certificado de nacimiento literal para DNI expedido por el Registro Civil español (antigüedad máxima de 6 meses y que mencione expresamente que se expide para obtener el DNI — ver *Partida de Nacimiento para Primer DNI*), Certificado de Empadronamiento del ayuntamiento gallego donde residas (antigüedad máxima de 3 meses), una fotografía reciente a color en fondo blanco y el pasaporte con el que ingresaste.
 - **Tasa:** Tasa de expedición del DNI (tasa propia de la Policía Nacional, no Modelo 790). Gratuito para familias numerosas acreditadas. *(Consultar importe vigente.)*
 - **Tiempo de obtención:** Se imprime y entrega en mano el mismo día de la cita. La demora real está en conseguir el turno previo (de días a semanas según la oficina).
 - **¿Dónde y cómo?** Primero debes empadronarte en el concello de Galicia donde vayas a vivir. Luego se solicita cita previa por internet (citapreviadnie.es) o llamando al 060. El día del turno, acudes presencialmente a una Oficina de Expedición de la Policía Nacional (A Coruña, Santiago de Compostela, Vigo, Lugo, Ourense, Pontevedra, Ferrol, entre otras).
@@ -497,7 +497,7 @@
 ### 51. Certificado de salud y desparasitación
 - **¿Se puede iniciar en el país de origen?** ✅ Sí, se expide en origen en los días inmediatamente previos al vuelo.
 - **¿Qué es?** Documento original de un veterinario que acredita que el animal está clínicamente sano, sin parásitos y apto para viajar.
-- **¿Para qué sirve?** Es requisito para gestionar y obtener el certificado oficial de exportación (ver trámite 52).
+- **¿Para qué sirve?** Es requisito para gestionar y obtener el certificado oficial de exportación (ver *Certificado sanitario oficial de exportación*).
 - **Requisitos:** Chequeo clínico integral y tratamiento antiparasitario (interno y externo), registrado en la libreta sanitaria.
 - **Tasa:** Consultá a tu veterinario de confianza.
 - **Tiempo de obtención:** Se emite en el momento de la consulta; suele exigirse dentro de los **10 días** previos a la emisión del certificado oficial o del embarque.

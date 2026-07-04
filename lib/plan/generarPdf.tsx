@@ -457,7 +457,6 @@ function BloqueTramiте({
   const puente = item.frasePuente.replace(/\{\{PAIS_ORIGEN\}\}/g, origen)
   return (
     <View style={S.tramiteWrap} wrap={false}>
-      <Text style={S.tramiteNum}>TRÁMITE {item.numero}</Text>
       <Text style={S.tramiteName}>{info.nombre}</Text>
       <Text style={S.tramitePuente}>{puente}</Text>
       <Text style={S.tramiteResumen}>{stripMd(info.resumen)}</Text>
