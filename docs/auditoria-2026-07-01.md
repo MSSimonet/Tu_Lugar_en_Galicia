@@ -9,14 +9,14 @@
 | ID | Severidad | Estado | Nota |
 |---|---|---|---|
 | A01 | ✅ Resuelto | ✅ Confirmado | `verifyAdminToken` antes de `getLead` en PDF route |
-| A02 | 🔴 Crítico | ✅ Resuelto | `console.warn` usa `clientEmail.substring(0,3)***` |
+| A02 | 🔴 Crítico | ✅ Resuelto | `console.warn` usa `clientEmail.substring(0,3)***`. Revisión adicional 2026-07-04: se encontraron y sanearon 4 puntos más de log con `err`/body crudo en `calcom/route.ts` y `gina/route.ts` (ver `docs/arranque.md`) |
 | A03 | 🔴 Crítico | ✅ Resuelto | Upstash Ratelimit `slidingWindow(30, '10 m')` en Gina; fail-closed |
 | A04 | 🔴 Crítico | 🔴 ABIERTO | 4 TODOs en `app/politica-de-privacidad/page.tsx` (líneas 44, 48, 52, 182) |
 | A05 | 🟠 Alto | ✅ Resuelto | CSP implementado en `middleware.ts` |
 | A06 | 🟠 Alto | ✅ Resuelto | HSTS en `vercel.json` (`max-age=63072000; includeSubDomains`) |
 | A07 | 🟠 Alto | ✅ Resuelto | `consentimientoRGPD` validado del body del cliente en `/api/lead` |
 | A08 | 🟠 Alto | Sin verificar | Requiere inspección de `lib/config/site.ts` |
-| A09 | 🟡 Medio | 🟡 ABIERTO | Token en query string persiste (ver §1 abajo) |
+| A09 | 🟡 Medio | 🟢 ACEPTADO | Evaluado en sesión 2026-07-04, riesgo residual bajo — sin cambio de código (ver §1 abajo, actualizado) |
 | A10 | 🟡 Medio | 🟡 ABIERTO | Sanitización email en Airtable filterByFormula incompleta |
 | A11 | 🟡 Medio | 🟡 ABIERTO | `UPSTASH_REDIS_REST_URL/TOKEN` ausentes en `.env.local.example` |
 | A12 | 🟡 Medio | 🟡 Parcial | `OPENWEATHER_API_KEY` eliminada ✅; `CALCOM_API_KEY` documentada pero sin uso |
@@ -61,14 +61,24 @@ el header `CF-Connecting-IP` de Cloudflare (que no puede ser falsificado por el 
 
 ---
 
-### 🟡 A09 — Token admin en query string (referer leak)
+### 🟢 A09 — Token admin en query string (referer leak) — evaluado y aceptado (2026-07-04)
 **Archivo:** `lib/admin/tokens.ts`, `app/api/plan/[recordId]/pdf/route.ts`
 
 El token HMAC aparece en `?token=...`. Si el servidor de PDF (Resend, S3, o el cliente)
 tiene analytics o Referer logging, el token queda expuesto en logs externos.
 
-**Mitigación a corto plazo:** En `middleware.ts`, el `Referrer-Policy: no-referrer` ya
-está activo en rutas `/api/admin/*`. Riesgo reducido pero no eliminado (logs propios de Vercel).
+**Mitigación ya activa:** En `middleware.ts`, el `Referrer-Policy: no-referrer` está
+activo en rutas `/api/admin/*`, `/admin/*` y `/api/webhooks/*`.
+
+**Decisión de sesión 2026-07-04:** se evaluaron las alternativas (header Authorization —
+no aplica a un link que se abre directo en el navegador; formulario intermedio que pida
+el token — degrada la UX del único destinatario sin agregar seguridad real, ya que el
+token seguiría viajando en texto plano por email). Se decidió **no tocar el esquema**:
+el riesgo residual es bajo porque el destinatario es una sola persona de confianza
+(Silvana), no hay analytics de terceros instalados, `no-referrer` ya está activo, y el
+TTL ya se redujo a 24h (A15). El único vector no mitigable desde el código es que la
+URL con token queda en el log de acceso propio de Vercel — aceptado como riesgo residual
+razonable para un link interno de bajo volumen, no una contraseña ni un dato financiero.
 
 ---
 
@@ -264,7 +274,7 @@ la usa. El webhook de Cal.com solo necesita `CALCOM_WEBHOOK_SECRET`.
 
 | Categoría | 🔴 Crítico | 🟠 Alto | 🟡 Medio | ✅ OK |
 |---|---|---|---|---|
-| Seguridad | 1 (A04) | 1 (XFF) | 4 (A09,A10,A11,A15) | 7+ |
+| Seguridad | 1 (A04) | 1 (XFF) | 2 (A10,A11) | 9+ (A02, A03, A05-A07, A15 resueltos; A09 aceptado) |
 | Funcionalidad | 0 | 0 | 2 | 9 piezas |
 | Diseño | 0 | 1 (header) | 2 | — |
 | Performance | 0 | 1 (O(n) scan) | 1 | — |

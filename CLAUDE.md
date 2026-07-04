@@ -141,14 +141,14 @@ El 2026-06-28 se realizó la primera auditoría total del proyecto (código, seg
 | ID | Severidad | Descripción | Archivo |
 |---|---|---|---|
 | A01 | ✅ Resuelto | `/api/plan/[recordId]/pdf` — auth implementada con `verifyAdminToken` (token HMAC-SHA256 en query param) | `app/api/plan/[recordId]/pdf/route.ts` |
-| A02 | 🔴 Crítico | Email de cliente en logs de producción (RGPD) | `app/api/webhooks/calcom/route.ts:241` |
+| A02 | ✅ Resuelto | Logs de error saneados en 5 puntos (calcom webhook ×3, gina retry ×1) — se reemplazó el volcado de `err`/body crudo por status HTTP + timestamp + recordId, para que ningún log pueda arrastrar el email del cliente vía mensajes de error de Airtable/Resend (sesión 2026-07-04) | `app/api/webhooks/calcom/route.ts`, `app/api/gina/route.ts` |
 | A03 | 🔴 Crítico | `/api/gina` sin rate limiting — Airtable puede saturarse | `app/api/gina/route.ts` |
 | A04 | 🔴 Crítico | Política de Privacidad con TODO sin completar en producción | `app/politica-de-privacidad/page.tsx` |
 | A05 | 🟠 Alto | CSP ausente — sin defensa en profundidad contra XSS | `middleware.ts`, `vercel.json` |
 | A06 | 🟠 Alto | HSTS ausente | `vercel.json` |
 | A07 | 🟠 Alto | consentimientoRGPD hardcodeado en Gina (no viene del usuario) | `app/api/gina/route.ts:190` |
 | A08 | 🟠 Alto | WhatsApp y Cal.com URL con placeholders en config | `lib/config/site.ts` |
-| A09 | 🟡 Medio | Token admin en query string (Referer leak) | `lib/admin/tokens.ts` |
+| A09 | 🟢 Aceptado | Evaluado en sesión 2026-07-04: riesgo residual bajo (destinatario único conocido, `no-referrer` activo en rutas admin, TTL ya en 24h desde A15, sin analytics de terceros instalado). Se decidió no tocar el esquema de tokens — ver razonamiento completo en `docs/arranque.md` | `lib/admin/tokens.ts` |
 | A10 | 🟡 Medio | Sanitización de email en filterByFormula por exclusión (frágil) | `lib/admin/airtable.ts:122` |
 | A11 | 🟡 Medio | `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` no están en `.env.local.example` | `.env.local.example` |
 | A12 | 🟡 Medio | `CALCOM_API_KEY` en example pero nunca usada; `OPENWEATHER_API_KEY` obsoleta | `.env.local.example` |
@@ -161,6 +161,21 @@ El 2026-06-28 se realizó la primera auditoría total del proyecto (código, seg
 - Ante cualquier log nuevo: nunca loguear emails, nombres ni datos personales — usar hash/ID.
 - El `Security Engineer` debe revisar todos los cambios en `/app/api/admin/` antes de merge.
 - La `Política de Privacidad` debe estar completa (sin TodoBlock) antes del lanzamiento público.
+
+### Auditoría de seguridad — Fase 1 (2026-07-04)
+
+Auditoría completa de los 11 endpoints `/api/*`: secretos, auth/autorización, validación de inputs, rate limiting, CORS/headers, dependencias, webhooks, manejo de errores.
+
+| ID | Severidad | Estado |
+|---|---|---|
+| C1 | 🔴 Crítico | ✅ Resuelto — IDOR en `/api/gina`: el cliente controlaba `sesion.airtableRecordId` sin verificación, permitiendo sobrescribir el lead de otra persona. Fix: firma HMAC del recordId (`generateAdminToken`/`verifyAdminToken`), verificada en cada request (commit `b8a2327`) |
+| C2 | 🔴 Crítico | ✅ Resuelto (parcial) — HTML sin escapar en templates de mail (`buildContactoEmail`, `buildAgendaEmail`, `buildConfirmacionEmail` de Cal.com). Fix: `escapeHtml()` en `lib/admin/email.ts` (commit `c960296`). **Pendiente:** `app/api/admin/recordatorio-silvana/route.ts:78-80` tiene el mismo patrón sin corregir (`plataformaHtml` interpola `plataforma` de Airtable sin escape) — no estaba en el alcance de este fix |
+| A1-A4 | 🟠 Alto | Pendientes — sin rate limit en `/api/contacto`, rate limit "fail-open" en `/api/lead`, CSP con `unsafe-inline`, sin límite de tamaño en respuestas array de Gina. Detalle en `docs/arranque.md` |
+| M1-M4 | 🟡 Medio | Pendientes — sin rate limit en endpoints de token admin, posible conflicto de precedencia de headers, mensajes de error internos expuestos en `/api/gina`, 2 vulnerabilidades moderadas en dependencias (bajo riesgo real). Detalle en `docs/arranque.md` |
+
+### Auditoría UX/UI completa (2026-07-04)
+
+Recorrido de las 17 páginas públicas (contraste medido, no estimado; claro y oscuro). Hallazgo más grave: **texto invisible en 28 archivos** por una sintaxis de Tailwind v4 rota (`text-[var(--color-*)]` no genera regla CSS) — ya resuelto en 3 commits por severidad (`2d08a6e`, `b43640b`, `e1ebaff`). Hallazgo pendiente de decisión de producto: **divergencia tipográfica documentada vs. implementada** — `DESIGN.md`/`docs/design-system.md` especifican Fraunces para titulares, pero el código real usa Cormorant Garamond + una tercera familia no documentada (Mulish) en 20+ archivos. Detalle completo en `docs/arranque.md`.
 
 ---
 

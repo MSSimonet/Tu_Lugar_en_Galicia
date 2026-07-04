@@ -62,7 +62,7 @@
 | A06 | ✅ Resuelto | HSTS en `vercel.json` | — |
 | A07 | ✅ Resuelto | `consentimientoRGPD` validado desde el cliente | — |
 | A08 | 🟠 Abierto | `CALCOM_URL` y `WHATSAPP_DISPLAY` son placeholders en `lib/config/site.ts` | SÍ — antes del lanzamiento público (configuración, no código) |
-| A09 | 🟡 Abierto | Token admin en query string (Referer leak) | No — mitigado con `Referrer-Policy: no-referrer` en rutas admin |
+| A09 | 🟢 Aceptado | Token admin en query string (Referer leak) — evaluado en sesión 2026-07-04, riesgo residual bajo, sin cambio de código | No — mitigado con `Referrer-Policy: no-referrer` en rutas admin + TTL 24h (A15) |
 | A10 | 🟡 Abierto | Sanitización email en filterByFormula incompleta | No — riesgo interno (solo afecta rutas admin autenticadas) |
 | A11 | 🟡 Abierto | Vars Upstash ausentes en `.env.local.example` | No — documentación de dev |
 | A13 | 🟡 Abierto | Widget Windy sin autorización legal confirmada | No — no crítico para lanzamiento; revisar antes de activar tráfico masivo |

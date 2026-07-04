@@ -1,6 +1,6 @@
 # Documento de arranque — Tu Lugar en Galicia
 
-> Actualizado 2026-07-02. Próxima sesión: leer este archivo antes de actuar.
+> Actualizado 2026-07-04. Próxima sesión: leer este archivo antes de actuar.
 > Reglas completas en `CLAUDE.md`.
 
 ---
@@ -16,10 +16,10 @@
 | **CDN / DNS / SSL** | Cloudflare (pendiente: apuntar dominio propio) |
 | **CRM / Leads** | Airtable (sin base de datos hasta Fase 5) |
 | **IA (Gina)** | Gemini API (ADR-008 vigente — NO cambiar a Claude sin ADR) |
-| **tsc** | 0 errores (verificado en fa56ec7) |
-| **build** | exit 0 (verificado en fa56ec7) |
-| **Última sesión** | 2026-07-02 |
-| **Fase actual** | Fase 1 (marketing + Gina + flujo agenda — completados) |
+| **tsc** | 0 errores (verificado en `c960296`) |
+| **build** | no re-verificado tras `c960296` — pendiente correr `npm run build` en próxima sesión |
+| **Última sesión** | 2026-07-04 |
+| **Fase actual** | Fase 1 (marketing + Gina + flujo agenda — completados). Auditoría de seguridad Fase 1 completa, auditoría UX/UI completa. Pendiente: fase de performance + QA funcional end-to-end + limpieza de código muerto |
 
 ### Commits desde el estado certificado anterior (9b223a7) — 7 en total
 
@@ -34,6 +34,71 @@ f159d9a  fix: restaurar WhatsApp flotante y secciones faltantes en home
 ```
 
 Todos están en origin/main y auto-desplegados en Vercel. Los 3 marcados como "sesión 2026-07-02" son los que se pushearon en la sesión actual; los 4 restantes ya estaban en origin al inicio de la sesión.
+
+---
+
+## 1.1 — Sesión 2026-07-04 — resumen completo
+
+10 commits, todos en `origin/main` y auto-desplegados:
+
+```
+7b78ef6  fix: eliminar rótulo de número de trámite en PDF y actualizar referencias cruzadas
+08645ea  fix: agregar width explícito al logo del header para eliminar warning de Next Image
+5f30fec  fix(security): reducir TTL de token admin de 72h a 24h (A15)
+0b8a539  simplify: dejar "Vamos a conocernos" como único CTA en sección final de home
+1b10394  fix(security): sanear logs de errores para evitar exposición indirecta de PII (A02)
+2d08a6e  fix: corregir texto invisible por sintaxis Tailwind rota (text-[var(--color-*)])
+b43640b  fix: corregir color equivocado en elementos funcionales por sintaxis Tailwind rota
+e1ebaff  fix: corregir tono de color en texto secundario por sintaxis Tailwind rota
+b8a2327  fix(security): prevenir IDOR en /api/gina mediante firma HMAC del recordId
+c960296  fix(security): escapar HTML en templates de email para prevenir inyección (C2)
+```
+
+### Detalle por commit
+
+1. **`7b78ef6` — Rótulo de trámites en PDF.** El PDF del plan estratégico mostraba "TRÁMITE {número}" antes del nombre de cada trámite. Se eliminó el rótulo (`lib/plan/generarPdf.tsx`) y se actualizaron 3 referencias cruzadas en `docs/contenido/tramites-galicia.md` (trámites 44, 47, 51) que citaban el número del trámite destino — ahora citan el nombre, para no quedar huérfanas.
+
+2. **`08645ea` — Warning de aspect-ratio en el logo.** `components/layout/Header.tsx` — el `<Image>` del logo (`aldaba.png`) fijaba `height` vía clase Tailwind pero el `width` solo por `w-auto` en `className` (no en `style`), y Next.js Image chequea específicamente la prop `style`. Se agregó `width: 'auto'` al objeto `style`. Sin cambio de tamaño visual (verificado: 63.09×70px antes y después). Warning confirmado ausente en consola tras el fix.
+
+3. **`5f30fec` — A15 resuelto: TTL 72h → 24h.** `lib/admin/tokens.ts:3` y su mensaje de error, más la comparación literal correspondiente en `app/admin/lead/[recordId]/page.tsx` (que debía seguir el mismo string para mostrar el mensaje amigable de expiración). Documentación actualizada en el mismo commit (CLAUDE.md, arranque.md, auditoria-2026-07-01.md, certificacion-fase-1, spec-flujo-agenda.md).
+
+4. **`0b8a539` — Simplificación del CTA final de home.** `components/home/CTAFinal.tsx` — se eliminó el botón "Agenda tu videollamada" y la línea "O si prefieres, escríbenos por el formulario de contacto". Queda "Vamos a conocernos" como único CTA de la sección. El wrapper de botones se simplificó de `flex flex-col items-center gap-4 sm:flex-row sm:justify-center` (pensado para 2 botones) a `flex justify-center` (1 solo). Sin impacto en Header/Footer/otras páginas que también enlazan a `/agenda` o `/contacto`.
+
+5. **`1b10394` — A02 resuelto (parcial — ver pendiente abajo): saneo de logs.** 5 puntos en `app/api/webhooks/calcom/route.ts` (búsqueda de lead por email, PATCH Airtable, envío de mail con/sin lead) y `app/api/gina/route.ts` (reintentos de guardado) reemplazaron el logueo de objetos `err`/body crudos por `status HTTP + timestamp + recordId` (cuando disponible). Ningún log puede ya arrastrar el email del cliente vía mensajes de error de Airtable/Resend. **Sin cambios de comportamiento funcional** — reintentos y manejo de errores permanecen idénticos.
+
+6. **`2d08a6e`, `b43640b`, `e1ebaff` — Fix crítico: texto invisible en 28 archivos.** Ver §1.2 abajo (sección propia por la magnitud del hallazgo).
+
+7. **`b8a2327` — C1 resuelto: IDOR en `/api/gina`.** Ver §1.3 abajo.
+
+8. **`c960296` — C2 resuelto (parcial): HTML sin escapar en emails.** Ver §1.3 abajo.
+
+### 1.2 — Auditoría UX/UI completa + fix del hallazgo crítico
+
+Auditoría de las 17 páginas públicas (contraste medido vía `getComputedStyle` + muestreo de píxel real sobre imágenes/video, no estimado; verificado en modo claro y oscuro).
+
+**Hallazgo crítico (ya resuelto en 3 commits por severidad):** la sintaxis `text-[var(--color-*)]` **no genera ninguna regla CSS en Tailwind v4** — el prefijo `text-` es ambiguo entre tamaño de fuente y color, y Tailwind no logra resolver un `var()` crudo como color válido. El elemento queda con el color heredado de `body { color: var(--color-granito) }`, que en varias secciones coincide exactamente con el fondo de esa misma sección → texto invisible. Se descubrió además un conflicto secundario: `text-[var(--text-*)]` (tamaño de fuente, sintaxis igual de ambigua) genera una declaración `color` fantasma que puede ganar la cascada sobre una clase de color correcta en el mismo elemento — se corrigió a `[font-size:var(--text-*)]` en los mismos 28 archivos.
+
+Casos críticos confirmados invisibles antes del fix: párrafo de `CTAFinal.tsx`, **H1 completo de `/contacto`**, tooltip de `ContactoFlotante`, eyebrow de `CiudadLayout.tsx` (afecta las 5 páginas de ciudad). También se corrigió el contraste del dorado "Galicia" en `CTAFinal` en modo oscuro (1.62:1 → ~4.80:1 con el nuevo token `--color-laton-invertido`, fijo, no invierte en `.dark`).
+
+Los 28 archivos se dividieron en 3 commits por severidad real (no solo por sintaxis): crítico (texto invisible), color equivocado en elementos funcionales (Button fantasma, chevron FAQ, ícono Instagram, asteriscos de obligatorio), y tono menor (texto secundario/legal, siempre legible).
+
+**Pendiente de decisión de producto (sin código tocado):** `DESIGN.md` y `docs/design-system.md` especifican **Fraunces** para titulares editoriales, pero el código real (`app/layout.tsx`) nunca cargó esa fuente — usa **Cormorant Garamond** para `--font-titular`, más una tercera familia (**Mulish**) no documentada en absoluto, usada en 20+ archivos (Header, Footer, Button, formularios, Hero). Además `docs/design-system.md` está desactualizado y se contradice a sí mismo en varios tokens de color (tabla §1 vs. bloque de código §7) — ver detalle completo en la sección de pendientes (§5) más abajo.
+
+### 1.3 — Auditoría de seguridad Fase 1 completa (8 áreas) + fix de C1 y C2
+
+Auditoría de los 11 endpoints `/api/*`: secretos (grep exhaustivo + historial de git completo — limpio, sin hallazgos), auth/autorización por endpoint, validación de inputs, rate limiting, CORS/headers, dependencias (`npm audit`: 2 moderadas, bajo riesgo real), webhooks, manejo de errores.
+
+**C1 — IDOR en `/api/gina` (crítico, resuelto).** El servidor confiaba ciegamente en `sesion.airtableRecordId` enviado por el cliente sin ninguna verificación de pertenencia — cualquiera con un `recordId` real (visible en URLs de mail a Silvana, o en logs de acceso) podía forjar una sesión y sobrescribir (`PATCH`) los datos de otro lead. Fix: el servidor firma el `recordId` con `generateAdminToken` (mismo mecanismo HMAC ya usado en `lib/admin/tokens.ts`) al crearlo, lo devuelve como `sesion.airtableRecordSig`, y valida esa firma con `verifyAdminToken` en cada request posterior antes de usar el recordId para el PATCH. Si la firma falta o no valida, la sesión se trata como nueva (fail-safe silencioso, sin error visible — el flujo simplemente crea un registro propio). Se removió `runtime = 'edge'` del endpoint porque `lib/admin/tokens.ts` usa el módulo `crypto` de Node, no disponible en Edge Runtime.
+
+Verificado end-to-end contra Airtable real: flujo legítimo (reenviando la firma real) hace `PATCH` correcto sobre el mismo recordId; dos variantes de ataque (sin firma, firma inventada) contra el recordId real de un lead existente fueron descartadas — confirmado byte a byte que el registro real no cambió. Los registros de prueba/ataque creados durante la verificación fueron eliminados de la base real.
+
+**C2 — HTML sin escapar en templates de email (crítico, resuelto parcialmente).** `nombre`, `email`, `mensaje`/`teléfono` se interpolaban crudos en el HTML de los mails a Silvana — un envío con `nombre: "<img src=x onerror=...>"` se renderizaba como HTML real en el cliente de correo. Fix: `escapeHtml()` nueva en `lib/admin/email.ts` (no existía ninguna función de escape en el proyecto), aplicada en `buildContactoEmail` (nombre, email, teléfono, mensaje), `buildAgendaEmail` (nombre) y `buildConfirmacionEmail` del webhook de Cal.com (nombre, email, plataforma). Verificado con payloads reales (`<img onerror>`, `<script>`, comillas de escape) — todos se renderizan como texto literal.
+
+**⚠️ Pendiente — no cubierto por este fix:** `app/api/admin/recordatorio-silvana/route.ts:78-80` tiene el mismo patrón exacto (`plataformaHtml` interpola `plataforma` de Airtable sin escape) y ya estaba documentado desde la auditoría de 2026-07-01 (`docs/auditoria-2026-07-01.md`, sección "XSS en templates de email admin"). No se tocó en esta sesión porque el fix de C2 se acotó a los 3 templates identificados en la auditoría de seguridad de esta sesión. Queda abierto — ver §5.
+
+**A09 — evaluado y aceptado como riesgo residual bajo (sin cambio de código).** Token admin en query string de `/admin/lead/[recordId]`. Se evaluaron las alternativas (header Authorization — no aplica a un link abierto directo en navegador; formulario intermedio — degrada UX sin agregar seguridad real) y se decidió no tocar el esquema: el destinatario es una sola persona de confianza, `no-referrer` ya está activo en rutas admin, no hay analytics de terceros, y el TTL ya bajó a 24h (A15). El único vector residual (URL con token en el log de acceso propio de Vercel) se acepta como riesgo bajo para un link interno de bajo volumen.
+
+**Pendientes de la auditoría de seguridad (sin tocar, ver §5 para detalle completo):** A1 (rate limit en `/api/contacto`), A2 (rate limit fail-open en `/api/lead`), A3 (CSP con `unsafe-inline`), A4 (sin límite de tamaño en respuestas array de Gina), M1-M4 (rate limit en endpoints de token admin, precedencia de headers sin verificar, mensajes de error internos expuestos en `/api/gina`, dependencias moderadas).
 
 ---
 
@@ -121,13 +186,42 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 
 ## 5 — Pendientes técnicos sin resolver
 
+### 5.1 — Generales
+
 | # | Pendiente | Detalle |
 |---|---|---|
 | **PDF del plan estratégico** | R3 resuelto (sesión 2026-07-03). Lead de prueba disponible: `recgLT5e61Im5mrhN` (etiqueta: `seguimiento-futuro`, no tiene `codigoAgenda`). Generar token con `generateAdminToken` y probar `/admin/lead/recgLT5e61Im5mrhN` | Pendiente verificación visual |
 | **R2: `sesion.completado = false`** | En el E2E de Gina, `localStorage['gina_session_v1'].sesion.completado` quedó en `false` a pesar de llegar a `pasoActual === 'despedida'`. Posible desincronización entre estado React y localStorage tras el último guardado. No investigado — sin impacto visible en UX confirmado | Técnico, baja urgencia |
-| **A02: email cliente en logs** | `app/api/webhooks/calcom/route.ts:241` — email completo del cliente en logs de producción (RGPD). `console.warn` con primeros 3 chars ya existe en otro punto; revisar si línea 241 es un `console.log` o el email en el cuerpo del mail a Silvana (que es intencional). Verificar antes del lanzamiento | RGPD — antes de lanzar |
-| **A09: token admin en query string** | Token HMAC en query param de `/admin/lead/[recordId]` — visible en Referer headers. Considerar mover a header Authorization o cookie httpOnly | Mejora de seguridad |
-| **Calendario propio (reemplazo Cal.com)** | Eliminar branding Cal.com (banner "Pruébalo Gratis", logo, "Powered by Cal.com") sin depender del plan Teams ($12/mes). Implica desarrollo propio de disponibilidad de slots, sincronización de calendario, envío de invitaciones/confirmaciones — no es un ajuste menor. Evaluar cuando el volumen de reservas justifique la inversión. | Backlog / futuro — no urgente |
+| **Calendario propio (reemplazo Cal.com)** | Eliminar branding Cal.com sin depender del plan Teams ($12/mes). Implica desarrollo propio de disponibilidad de slots, sincronización de calendario, envío de invitaciones — no es un ajuste menor. Evaluar cuando el volumen de reservas lo justifique | Backlog / futuro — no urgente |
+
+### 5.2 — Auditoría de seguridad (sesión 2026-07-04) — pendientes
+
+| ID | Severidad | Pendiente | Archivo |
+|---|---|---|---|
+| A1 | 🟠 Alto | `/api/contacto` sin rate limiting ni verificación de origen — a diferencia de `/api/lead` y `/api/gina` | `app/api/contacto/route.ts` |
+| A2 | 🟠 Alto | Rate limit "fail-open" en `/api/lead`: si falta `UPSTASH_REDIS_REST_URL`, el chequeo se salta silenciosamente sin log ni error (contraste: `/api/gina` responde 503 fail-closed en el mismo caso) | `app/api/lead/route.ts:30-36,76` |
+| A3 | 🟠 Alto | CSP con `'unsafe-inline'` en `script-src` — anula gran parte del valor de la CSP como mitigación XSS | `middleware.ts:9` |
+| A4 | 🟠 Alto | Sin límite de tamaño en respuestas tipo array de Gina (`respuesta: string[]`) — el chequeo de 2000 caracteres solo aplica si `respuesta` es string | `app/api/gina/route.ts:84-89` |
+| M1 | 🟡 Medio | Sin rate limiting en endpoints de token admin (`plan/pdf`, `habilitar-agenda`) — riesgo bajo porque el token no es adivinable, pero sin freno si llegara a filtrarse | `app/api/plan/[recordId]/pdf/route.ts`, `app/api/admin/habilitar-agenda/[recordId]/route.ts` |
+| M2 | 🟡 Medio | Posible conflicto de precedencia entre `vercel.json` (`Referrer-Policy: strict-origin-when-cross-origin` para todas las rutas) y `middleware.ts` (`no-referrer` específico para rutas admin) — **sin verificar con una request real en producción** | `vercel.json`, `middleware.ts` |
+| M3 | 🟡 Medio | Mensajes de error internos expuestos al cliente en `/api/gina` (`(e as Error).message` de `obtenerPaso()` revela nombres de pasos de `flow.json`) | `app/api/gina/route.ts:96-99,114-117` |
+| M4 | 🟡 Medio | 2 vulnerabilidades moderadas en dependencias (`next`→`postcss` interno del build, XSS en stringify) — bajo riesgo real, es tooling de build no runtime servido al usuario | `package.json` (npm audit) |
+| — | 🟡 Medio | `app/api/admin/recordatorio-silvana/route.ts:78-80` tiene el mismo patrón de HTML sin escapar que C2 (`plataformaHtml` interpola `plataforma` de Airtable) — no estaba en el alcance del fix de C2 de esta sesión, documentado desde 2026-07-01 | `app/api/admin/recordatorio-silvana/route.ts` |
+
+### 5.3 — Auditoría UX/UI (sesión 2026-07-04) — pendientes
+
+| # | Pendiente | Detalle |
+|---|---|---|
+| **Decisión de tipografía** | `DESIGN.md`/`docs/design-system.md` documentan Fraunces para titulares; el código real usa Cormorant Garamond + Mulish (no documentada) en 20+ archivos. Decidir: ¿documentar lo real, o migrar el código a Fraunces? Requiere decisión de producto antes de tocar código | `app/layout.tsx`, `DESIGN.md` §3 |
+| **Consolidación de dorados del Hero** | `components/home/Hero.tsx` usa 4 variantes de dorado distintas sin un token unificado (`#D4B873`, `#E8C97A`, `#C9A961`, `#E7D29C`), y 13 hex hardcodeados en total, ignorando el sistema de tokens y el componente `Button` existente | `components/home/Hero.tsx` |
+| **`docs/design-system.md` desactualizado** | Se contradice a sí mismo (tabla §1 vs. bloque de código §7 para `laton`) y contradice el código real (`app/globals.css`) en 4 de 7 tokens comparados (granito, niebla, arena, blanco) | `docs/design-system.md` |
+
+### 5.4 — Auditoría global pendiente (no iniciada)
+
+Esta sesión cubrió solo la **fase de seguridad** de una auditoría global más amplia. Quedan sin hacer:
+- **Limpieza de código muerto / assets sin usar** (ej. dependencias de fuentes no usadas en `package.json` — `@fontsource/dm-sans`, `@fontsource/mulish`, `@fontsource/source-sans-3` — ya detectadas en `docs/auditoria-2026-07-01.md` §3, sin confirmar si siguen sin uso tras esta sesión).
+- **Performance** (Lighthouse en producción — pendiente desde certificación de Fase 1, criterio C6 nunca verificado con medición real).
+- **QA funcional end-to-end** — recorrido completo de los flujos de negocio (Gina → Airtable → agenda → PDF → mails) verificando comportamiento, no solo seguridad.
 
 ---
 
@@ -161,25 +255,34 @@ Eliminadas en esta sesión 4 entradas que auto-aprobaban operaciones de git:
 
 **En este orden:**
 
-### 1. ~~Resolver R3 y~~ Verificar PDF ✅ R3 resuelto
-Generar token → probar `/admin/lead/recgLT5e61Im5mrhN` → confirmar que el PDF se genera sin errores visuales (colores, fuentes, layout) con los nuevos tokens de color.
+### 1. Fixes de auditoría de seguridad pendientes (🟠 Alto)
+A1 (rate limit `/api/contacto`), A2 (fail-open en `/api/lead`), A3 (CSP `unsafe-inline`), A4 (límite de tamaño en respuestas array de Gina). Ver detalle completo en §5.2. Agentes: `Security Engineer` + `Backend Architect`.
 
-### 2. ~~Verificar webhook Cal.com tras C3~~ ✅ C3 resuelto
-Cal.com configurado y funcionando. Próximo paso: reserva real de prueba end-to-end → confirmar que `POST /api/webhooks/calcom` actualiza Airtable y dispara mail a Silvana.
+### 2. XSS pendiente en `recordatorio-silvana` (mismo patrón que C2, no cubierto)
+`app/api/admin/recordatorio-silvana/route.ts:78-80` — aplicar `escapeHtml()` (ya existe en `lib/admin/email.ts`) a `plataformaHtml`. Fix acotado y rápido, mismo patrón ya resuelto en `c960296`.
 
-### 3. Rediseño páginas de ciudad: tabs + cámara MeteoGalicia
+### 3. Decisión de producto: tipografía del sitio
+Fraunces (documentado) vs. Cormorant Garamond + Mulish (real, en 20+ archivos). Ver §5.3. Requiere decisión del dueño del producto antes de tocar código — no es un fix técnico unilateral.
+
+### 4. Verificar PDF del plan estratégico
+Generar token → probar `/admin/lead/recgLT5e61Im5mrhN` → confirmar que el PDF se genera sin errores visuales (colores, fuentes, layout).
+
+### 5. Reserva real de prueba end-to-end del flujo de agenda
+Confirmar que `POST /api/webhooks/calcom` actualiza Airtable y dispara mail a Silvana con una reserva real (no solo el ping test ya verificado).
+
+### 6. Rediseño páginas de ciudad: tabs + cámara MeteoGalicia
 - Tabs para secciones (Barrios, Clima, Colegios, Transporte, etc.)
 - Verificar autorización legal de `VistaEnVivo.tsx` (Windy/MeteoGalicia — auditado A13)
 - Agentes: `Frontend Developer` + `Legal Compliance Checker` + `Accessibility Auditor`
 
-### 4. Motor del plan estratégico: completar PDF
+### 7. Motor del plan estratégico: completar PDF
 - Pasada final de tono Carnegie sobre textos fijos
 - Integrar `plan-estrategico.md` como fuente de textos fijos
 - Verificar que los 55 trámites del catálogo están mapeados
 - Agentes: `AI Engineer` + `Content Creator` + `Code Reviewer`
 
-### 5. Fixes de auditoría pendientes (🟠)
-A02 (email en logs), A09 (token en query string), A10 (sanitización email Airtable). A15 (TTL 72h→24h) resuelto.
+### 8. Fixes de seguridad medios (🟡) y auditoría global restante
+M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, performance (Lighthouse en producción, C6 nunca verificado), QA funcional end-to-end (§5.4) — la auditoría global de esta sesión cubrió solo la fase de seguridad.
 
 ---
 
@@ -216,7 +319,7 @@ A02 (email en logs), A09 (token en query string), A10 (sanitización email Airta
 
 | Ruta | Método | Auth | Propósito |
 |---|---|---|---|
-| `/api/gina` | POST | Rate limit Upstash (**60**/10min) + origin allowlist | IA Gina → Gemini, guarda lead en Airtable |
+| `/api/gina` | POST | Rate limit Upstash (**60**/10min) + origin allowlist + firma HMAC del `airtableRecordId` (C1, `generateAdminToken`/`verifyAdminToken`) | IA Gina → Gemini, guarda lead en Airtable. Runtime Node (ya no edge, por `crypto` de Node) |
 | `/api/lead` | POST | Origin check | Guardar lead de FormularioDiagnostico |
 | `/api/marcador` | GET | — | Lee Google Sheets → métricas El Marcador |
 | `/api/clima/[ciudad]` | GET | — | Clima por ciudad (AEMET) |
@@ -269,31 +372,33 @@ Leer **siempre** antes de crear o modificar cualquier componente visual. Paleta 
 Reglas completas en `CLAUDE.md` — no duplicar aquí.
 ## Estado técnico al cierre
 
-> Actualizado por pre-compact hook — 2026-07-03 18:30
+> Actualizado — sesión 2026-07-04.
 
 ### Últimos 10 commits
 
 ```
-b7ea93b refactor(tokens): tokeniza hex en admin, conocernos, home y shared; agrega tokens de estado semántico
-40ec095 refactor(tokens) + chore(deps): tokeniza hex en como-funciona y LoQueNoSomos; actualiza deps menores
-8263525 refactor(tokens): elimina hex residuales en FormularioContacto, VistaEnVivo, GinaButtons y Header
-82f742f refactor(footer): tokeniza todos los hex crudos en Footer.tsx
-881b2c2 fix(agenda): elimina duración y nombre propio del texto de presentación de la llamada
-c0af5e6 refactor(pdf): elimina cast 'as string' redundante en condición CTA
-d036473 fix(types): agrega 'potencial-alto' al union type de calificacion en LeadData
-b8b1333 fix(ui): aplica auditoría UX/UI completa y elimina toggle de idioma sin implementar
-8253cb1 chore(cleanup): elimina pendiente WhatsApp de arranque.md
-30bd85d chore(skills): instala skill ui-ux-pro-max (MIT) para diseno UI/UX
+c960296 fix(security): escapar HTML en templates de email para prevenir inyección (C2)
+b8a2327 fix(security): prevenir IDOR en /api/gina mediante firma HMAC del recordId
+e1ebaff fix: corregir tono de color en texto secundario por sintaxis Tailwind rota
+b43640b fix: corregir color equivocado en elementos funcionales por sintaxis Tailwind rota
+2d08a6e fix: corregir texto invisible por sintaxis Tailwind rota (text-[var(--color-*)])
+1b10394 fix(security): sanear logs de errores para evitar exposición indirecta de PII (A02)
+0b8a539 simplify: dejar "Vamos a conocernos" como único CTA en sección final de home
+5f30fec fix(security): reducir TTL de token admin de 72h a 24h (A15)
+08645ea fix: agregar width explícito al logo del header para eliminar warning de Next Image
+7b78ef6 fix: eliminar rótulo de número de trámite en PDF y actualizar referencias cruzadas
 ```
 
 ### Working tree
 
 ```
- M docs/arranque.md
+(pendiente confirmar tras esta actualización de docs — ver git status en la sesión)
 ```
 
 ### Pendientes de push (origin/main..HEAD)
 
 ```
-(ninguno — origin/main al dia)
+(ninguno al cierre de la sesión de código — origin/main en c960296.
+ Esta actualización de documentación (CLAUDE.md, arranque.md, auditoria-2026-07-01.md,
+ certificacion-fase-1-2026-07-01.md) está sin commitear, a la espera de revisión.)
 ```
