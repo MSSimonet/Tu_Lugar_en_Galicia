@@ -16,13 +16,13 @@ export default function ContactoPage() {
       >
         <div className="mx-auto max-w-2xl">
           <p
-            className="mb-2 font-[family-name:var(--font-ui)] text-[var(--text-xs)] uppercase tracking-[var(--tracking-ui)]"
+            className="mb-2 font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] uppercase tracking-[var(--tracking-ui)]"
             style={{ color: 'var(--color-laton-claro)' }}
           >
             Hablemos
           </p>
           <h1
-            className="font-[family-name:var(--font-titular)] leading-[var(--leading-titulo)] text-[var(--color-niebla)]"
+            className="font-[family-name:var(--font-titular)] leading-[var(--leading-titulo)] [color:var(--color-niebla)]"
             style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}
           >
             ¿Tienes alguna pregunta?

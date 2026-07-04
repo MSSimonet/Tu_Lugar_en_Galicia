@@ -108,7 +108,7 @@ export function CiudadLayout({
         <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 max-w-5xl" style={{ paddingTop: '64px' }}>
           {/* Eyebrow pill */}
           <span
-            className="inline-flex self-start items-center px-3 py-1 rounded-full mb-4 font-[family-name:var(--font-mulish)] tracking-widest uppercase text-[var(--color-laton-claro)] border"
+            className="inline-flex self-start items-center px-3 py-1 rounded-full mb-4 font-[family-name:var(--font-mulish)] tracking-widest uppercase [color:var(--color-laton-claro)] border"
             style={{
               fontSize: '10px',
               background: 'rgba(0,0,0,0.42)',
@@ -158,14 +158,14 @@ export function CiudadLayout({
           {/* Descripción larga */}
           <div className="bg-[var(--color-niebla)] rounded-2xl border border-[var(--color-arena)] p-6">
             <h2
-              className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4"
+              className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase [color:var(--color-laton-text)] mb-4"
             >
               La ciudad
             </h2>
-            <p className="font-[family-name:var(--font-mulish)] text-[var(--color-granito)] text-sm leading-[1.75] mb-4">
+            <p className="font-[family-name:var(--font-mulish)] [color:var(--color-granito)] text-sm leading-[1.75] mb-4">
               {descripcionLarga}
             </p>
-            <p className="font-[family-name:var(--font-mulish)] text-[var(--color-pizarra)] text-sm leading-[1.75]">
+            <p className="font-[family-name:var(--font-mulish)] [color:var(--color-pizarra)] text-sm leading-[1.75]">
               {descripcionLarga2}
             </p>
           </div>
@@ -181,16 +181,16 @@ export function CiudadLayout({
 
           {/* Barrios más buscados */}
           <div className="bg-[var(--color-niebla)] rounded-2xl p-5">
-            <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4">
+            <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase [color:var(--color-laton-text)] mb-4">
               Los barrios más buscados
             </h2>
             <ul className="space-y-0 divide-y divide-[var(--color-arena)]">
               {barrios.map((b, i) => (
                 <li key={i} className="py-3 first:pt-0 last:pb-0">
-                  <p className="font-[family-name:var(--font-mulish)] font-semibold text-sm text-[var(--color-granito)] mb-0.5">
+                  <p className="font-[family-name:var(--font-mulish)] font-semibold text-sm [color:var(--color-granito)] mb-0.5">
                     {b.nombre}
                   </p>
-                  <p className="font-[family-name:var(--font-mulish)] text-xs text-[var(--color-pizarra)] leading-snug">
+                  <p className="font-[family-name:var(--font-mulish)] text-xs [color:var(--color-pizarra)] leading-snug">
                     {b.descripcion}
                   </p>
                 </li>
@@ -200,7 +200,7 @@ export function CiudadLayout({
 
           {/* Alquileres orientativos */}
           <div className="bg-[var(--color-niebla)] rounded-2xl p-5">
-            <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-4">
+            <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase [color:var(--color-laton-text)] mb-4">
               Alquileres orientativos · 2025
             </h2>
             <ul className="space-y-2">
@@ -209,16 +209,16 @@ export function CiudadLayout({
                   key={i}
                   className="flex justify-between items-center bg-[var(--color-blanco)] rounded-xl px-3 py-2"
                 >
-                  <span className="font-[family-name:var(--font-mulish)] text-xs text-[var(--color-pizarra)]">
+                  <span className="font-[family-name:var(--font-mulish)] text-xs [color:var(--color-pizarra)]">
                     {a.habitaciones}
                   </span>
-                  <span className="font-[family-name:var(--font-mulish)] text-xs font-semibold text-[var(--color-granito)]">
+                  <span className="font-[family-name:var(--font-mulish)] text-xs font-semibold [color:var(--color-granito)]">
                     {a.rango}
                   </span>
                 </li>
               ))}
             </ul>
-            <p className="font-[family-name:var(--font-mulish)] text-[var(--color-pizarra)] mt-3 leading-snug" style={{ fontSize: '10px' }}>
+            <p className="font-[family-name:var(--font-mulish)] [color:var(--color-pizarra)] mt-3 leading-snug" style={{ fontSize: '10px' }}>
               Orientativos. Varían según barrio y estado del inmueble.
             </p>
           </div>
@@ -235,7 +235,7 @@ export function CiudadLayout({
         {/* Fila 3: FAQ ancho completo */}
         <div className="bg-[var(--color-niebla)] rounded-2xl border border-[var(--color-arena)] p-6">
           <h2
-            className="font-[family-name:var(--font-cormorant)] text-[var(--color-granito)] text-2xl font-normal mb-5"
+            className="font-[family-name:var(--font-cormorant)] [color:var(--color-granito)] text-2xl font-normal mb-5"
           >
             Preguntas frecuentes sobre {nombre}
           </h2>
@@ -245,13 +245,13 @@ export function CiudadLayout({
         {/* Fila 4: Guía de apps para recién llegados */}
         <div className="bg-[var(--color-niebla)] rounded-2xl border border-[var(--color-arena)] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-2">
+            <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase [color:var(--color-laton-text)] mb-2">
               Para tu llegada
             </h2>
-            <p className="font-[family-name:var(--font-mulish)] font-semibold text-sm text-[var(--color-granito)] mb-1">
+            <p className="font-[family-name:var(--font-mulish)] font-semibold text-sm [color:var(--color-granito)] mb-1">
               ¿Ya tienes las apps que vas a necesitar desde el primer día?
             </p>
-            <p className="font-[family-name:var(--font-mulish)] text-xs text-[var(--color-pizarra)] leading-snug">
+            <p className="font-[family-name:var(--font-mulish)] text-xs [color:var(--color-pizarra)] leading-snug">
               Transporte, salud, banca y trámites — las apps esenciales para recién llegados en Galicia.
             </p>
           </div>
@@ -272,7 +272,7 @@ export function CiudadLayout({
         return (
           <section className="bg-[var(--color-niebla)] px-6 md:px-8 py-7">
             <div className="max-w-7xl mx-auto">
-              <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase text-[var(--color-laton-text)] mb-5">
+              <h2 className="font-[family-name:var(--font-mulish)] text-[10px] tracking-widest uppercase [color:var(--color-laton-text)] mb-5">
                 Otras ciudades
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

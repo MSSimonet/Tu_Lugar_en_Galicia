@@ -12,6 +12,7 @@
   --color-laton-claro:  #D4B96A;
   --color-laton-oscuro: #8A6E2A;
   --color-laton-text:   #7A5F22; /* laton oscurecido para texto AA sobre niebla/blanco */
+  --color-laton-invertido: #7A5F22; /* fijo, NO invierte en .dark — para texto dorado en secciones cuyo fondo sí se invierte (ej. CTAFinal, bg-[var(--color-granito)]); 4.80:1 sobre #F0EBE2 */
 
   /* Acento territorial — verde atlántico */
   --color-atlantico:       #1A5247;

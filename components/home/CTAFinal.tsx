@@ -13,10 +13,10 @@ export function CTAFinal() {
           className="font-[family-name:var(--font-titular)] [font-size:var(--text-2xl)] leading-[var(--leading-titulo)] [color:var(--color-niebla)] md:[font-size:var(--text-3xl)]"
         >
           ¿Listo para encontrar tu lugar en{" "}
-          <span className="text-[var(--color-laton-claro)]">Galicia</span>?
+          <span className="[color:var(--color-laton-claro)] dark:text-laton-invertido">Galicia</span>?
         </h2>
 
-        <p className="mx-auto mt-[var(--space-6)] max-w-lg font-[family-name:var(--font-ui)] text-[var(--text-md)] leading-[var(--leading-cuerpo)] text-[var(--color-niebla)] opacity-80">
+        <p className="mx-auto mt-[var(--space-6)] max-w-lg font-[family-name:var(--font-ui)] [font-size:var(--text-md)] leading-[var(--leading-cuerpo)] [color:var(--color-niebla)] opacity-80">
           Cuéntanos tu situación y te decimos si podemos
           ayudarte. Sin compromiso, sin costo de consulta.
         </p>

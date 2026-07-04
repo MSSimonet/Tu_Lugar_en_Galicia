@@ -5,7 +5,7 @@ export function ContactoFlotante() {
     <div className="fixed bottom-6 right-6 z-50 group">
       <span
         aria-hidden="true"
-        className="absolute right-16 bottom-1/2 translate-y-1/2 whitespace-nowrap bg-[var(--color-granito)] text-[var(--color-niebla)] text-[var(--text-xs)] font-[family-name:var(--font-ui)] px-[var(--space-3)] py-[var(--space-2)] rounded-[var(--radius-card)] shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200"
+        className="absolute right-16 bottom-1/2 translate-y-1/2 whitespace-nowrap bg-[var(--color-granito)] [color:var(--color-niebla)] [font-size:var(--text-xs)] font-[family-name:var(--font-ui)] px-[var(--space-3)] py-[var(--space-2)] rounded-[var(--radius-card)] shadow-md opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200"
       >
         Contáctanos
       </span>
