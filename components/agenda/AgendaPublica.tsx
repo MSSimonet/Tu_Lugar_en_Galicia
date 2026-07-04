@@ -47,7 +47,7 @@ export function AgendaPublica() {
         </div>
 
         {/* Contenido */}
-        <div className="bg-[var(--color-blanco)] rounded-bl-[var(--radius-card)] rounded-br-[var(--radius-card)] md:rounded-bl-none md:rounded-tr-[var(--radius-card)] px-[var(--space-6)] py-[var(--space-12)] md:px-[var(--space-14)] md:py-[var(--space-16)] flex flex-col justify-center gap-[var(--space-5)]">
+        <div className="bg-[var(--color-blanco)] rounded-bl-[var(--radius-card)] rounded-br-[var(--radius-card)] md:rounded-bl-none md:rounded-tr-[var(--radius-card)] px-[var(--space-6)] py-[var(--space-12)] md:px-[var(--space-12)] md:py-[var(--space-16)] flex flex-col justify-center gap-[var(--space-6)]">
 
           <span
             className="inline-flex self-start items-center rounded-[var(--radius-pill)] border px-[var(--space-4)] py-[var(--space-1)] font-[family-name:var(--font-ui)] text-[var(--text-xs)] uppercase tracking-[var(--tracking-ui)]"
@@ -107,7 +107,7 @@ export function AgendaPublica() {
           <button
             onClick={openGina}
             className="mt-[var(--space-2)] inline-flex w-fit items-center gap-[var(--space-2)] rounded-[var(--radius-pill)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-bold uppercase tracking-[var(--tracking-ui)] text-white transition-brand hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
-            style={{ backgroundColor: 'var(--color-laton)', outlineColor: 'var(--color-laton)' }}
+            style={{ backgroundColor: 'var(--color-laton)', outlineColor: 'var(--color-laton)', boxShadow: '0 4px 14px rgba(143, 114, 43, 0.35)' }}
           >
             Cuéntale tu caso a Gina
             <span aria-hidden="true">→</span>
