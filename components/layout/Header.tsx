@@ -146,7 +146,7 @@ export function Header() {
                 width={54}
                 height={70}
                 className="h-10 w-auto md:h-[70px]"
-                style={{ objectFit: 'contain', display: 'block' }}
+                style={{ objectFit: 'contain', display: 'block', width: 'auto' }}
                 priority
               />
               <span style={{
