@@ -213,7 +213,7 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
     verifyAdminToken(recordId, token)
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Token inválido'
-    return <ErrorPage mensaje={msg === 'El enlace expiró (72 h)' ? 'El enlace expiró. Generá uno nuevo desde el resumen diario.' : 'Token inválido o malformado.'} />
+    return <ErrorPage mensaje={msg === 'El enlace expiró (24 h)' ? 'El enlace expiró. Generá uno nuevo desde el resumen diario.' : 'Token inválido o malformado.'} />
   }
 
   let fields: Record<string, unknown>

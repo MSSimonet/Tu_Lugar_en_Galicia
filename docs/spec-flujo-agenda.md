@@ -65,7 +65,7 @@ No hay cambios en esta pieza.
 ## Pieza 3 — Página de perfil completo `/admin/lead/[recordId]`
 
 Página privada, solo accesible desde el link del mail (no indexada, no en el nav).
-**Autenticación:** token firmado en el link (HMAC con `INTERNAL_API_SECRET` + recordId + fecha). Expira en 72 horas.
+**Autenticación:** token firmado en el link (HMAC con `INTERNAL_API_SECRET` + recordId + fecha). Expira en 24 horas (reducido de 72h, A15 resuelto).
 
 ### Contenido
 - Todos los campos que respondió en Gina, con etiquetas legibles (no los keys técnicos)
@@ -208,7 +208,7 @@ Si el cliente no abrió el mail en 48hs (detectable con Resend tracking):
 - Ciudad destino, país origen, plazo de llegada, presupuesto
 - Situación laboral
 - Plataforma de videollamada (con link clicable si es URL)
-- Botón "Ver perfil completo →" con token HMAC válido 72h
+- Botón "Ver perfil completo →" con token HMAC válido 24h
 
 ---
 

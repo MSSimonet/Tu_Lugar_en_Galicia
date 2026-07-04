@@ -22,7 +22,7 @@
 | A12 | 🟡 Medio | 🟡 Parcial | `OPENWEATHER_API_KEY` eliminada ✅; `CALCOM_API_KEY` documentada pero sin uso |
 | A13 | 🟡 Medio | Sin verificar | Widget Windy — requiere revisión legal independiente |
 | A14 | 🟡 Medio | Sin verificar | Imágenes placeholder — requiere revisión visual |
-| A15 | 🟡 Medio | 🟡 ABIERTO | TTL 72h en `lib/admin/tokens.ts:3` |
+| A15 | 🟡 Medio | ✅ Resuelto | TTL reducido de 72h a 24h en `lib/admin/tokens.ts:3` |
 
 ---
 
@@ -93,14 +93,14 @@ silenciosamente (el código hace `ratelimit = null` y salta el bloqueo).
 
 ---
 
-### 🟡 A15 — TTL admin token 72h
+### ✅ A15 — TTL admin token 72h → resuelto (24h)
 **Archivo:** `lib/admin/tokens.ts:3`
 ```typescript
-const TTL_MS = 72 * 60 * 60 * 1000  // debería ser 24h
+const TTL_MS = 24 * 60 * 60 * 1000  // 24 horas
 ```
 
 Para acciones de alta sensibilidad (ver perfil completo de lead + descargar PDF),
-72 horas es una ventana de exposición innecesaria.
+72 horas era una ventana de exposición innecesaria. Reducido a 24h.
 
 ---
 

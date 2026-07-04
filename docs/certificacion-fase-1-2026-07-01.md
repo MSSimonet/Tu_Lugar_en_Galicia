@@ -67,7 +67,7 @@
 | A11 | 🟡 Abierto | Vars Upstash ausentes en `.env.local.example` | No — documentación de dev |
 | A13 | 🟡 Abierto | Widget Windy sin autorización legal confirmada | No — no crítico para lanzamiento; revisar antes de activar tráfico masivo |
 | A14 | 🟡 Abierto | Imágenes placeholder en producción | SÍ — experiencia visual; reemplazar antes del lanzamiento |
-| A15 | 🟡 Abierto | TTL admin token 72h (debería ser 24h) | No — baja exposición |
+| A15 | ✅ Resuelto | TTL admin token reducido de 72h a 24h | — |
 
 ---
 

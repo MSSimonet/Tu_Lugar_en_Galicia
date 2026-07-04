@@ -154,7 +154,7 @@ El 2026-06-28 se realizó la primera auditoría total del proyecto (código, seg
 | A12 | 🟡 Medio | `CALCOM_API_KEY` en example pero nunca usada; `OPENWEATHER_API_KEY` obsoleta | `.env.local.example` |
 | A13 | 🟡 Medio | VistaEnVivo widget Windy sin autorización legal de MeteoGalicia | `components/ciudad/VistaEnVivo.tsx` |
 | A14 | 🟡 Medio | Imágenes placeholder en producción (Testimonios, Silvana, MuroLlaves) | múltiples |
-| A15 | 🟡 Medio | TTL token admin 72h — debería ser 24h para acción de alta sensibilidad | `lib/admin/tokens.ts:3` |
+| A15 | ✅ Resuelto | TTL token admin reducido de 72h a 24h para acción de alta sensibilidad | `lib/admin/tokens.ts:3` |
 
 ### Reglas de auditoría para sesiones futuras:
 - Ante cualquier endpoint nuevo: verificar auth, rate limiting y que no devuelva más PII de lo necesario.

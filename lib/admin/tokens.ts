@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from 'crypto'
 
-const TTL_MS = 72 * 60 * 60 * 1000 // 72 horas
+const TTL_MS = 24 * 60 * 60 * 1000 // 24 horas
 
 function secret(): string {
   const s = process.env.INTERNAL_API_SECRET
@@ -41,7 +41,7 @@ export function verifyAdminToken(recordId: string, token: string): void {
   }
 
   if (!ts || !hmacIn || isNaN(Number(ts))) throw new Error('Token malformado')
-  if (Date.now() - Number(ts) > TTL_MS) throw new Error('El enlace expiró (72 h)')
+  if (Date.now() - Number(ts) > TTL_MS) throw new Error('El enlace expiró (24 h)')
 
   const expected = createHmac('sha256', secret())
     .update(`${recordId}:${ts}`)

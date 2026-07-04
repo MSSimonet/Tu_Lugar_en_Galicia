@@ -60,7 +60,7 @@ Todos con evidencia concreta (tsc + build + test en producción o revisión de c
 |---|---|---|
 | Pieza 1 — Calificación Airtable | (sesiones anteriores) | Lead guardado con `calificacion` en Airtable |
 | Pieza 2 — Mail diario Silvana | `56b5129` | Cron 08:00 España → `/api/admin/resumen-diario` |
-| Pieza 3 — Perfil `/admin/lead/[recordId]` | `86c505c` | Página privada HMAC, token 72h |
+| Pieza 3 — Perfil `/admin/lead/[recordId]` | `86c505c` | Página privada HMAC, token 24h (reducido de 72h, A15 resuelto) |
 | Pieza 4 — Endpoint habilitar-agenda | `2e3cba0` | Genera código 8 chars, guarda en Airtable, dispara mail |
 | Pieza 5 — Mail cálido al cliente | `2e3cba0` | Template voz Silvana, código personal, link `/agenda?code=` |
 | Pieza 6 — Expiración + alertas | `0e7d320` | Cron diario expira códigos >7 días |
@@ -127,7 +127,6 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 | **R2: `sesion.completado = false`** | En el E2E de Gina, `localStorage['gina_session_v1'].sesion.completado` quedó en `false` a pesar de llegar a `pasoActual === 'despedida'`. Posible desincronización entre estado React y localStorage tras el último guardado. No investigado — sin impacto visible en UX confirmado | Técnico, baja urgencia |
 | **A02: email cliente en logs** | `app/api/webhooks/calcom/route.ts:241` — email completo del cliente en logs de producción (RGPD). `console.warn` con primeros 3 chars ya existe en otro punto; revisar si línea 241 es un `console.log` o el email en el cuerpo del mail a Silvana (que es intencional). Verificar antes del lanzamiento | RGPD — antes de lanzar |
 | **A09: token admin en query string** | Token HMAC en query param de `/admin/lead/[recordId]` — visible en Referer headers. Considerar mover a header Authorization o cookie httpOnly | Mejora de seguridad |
-| **A15: TTL token admin 72h** | `lib/admin/tokens.ts:3` — reducir a 24h para acciones de alta sensibilidad | Mejora de seguridad |
 | **Calendario propio (reemplazo Cal.com)** | Eliminar branding Cal.com (banner "Pruébalo Gratis", logo, "Powered by Cal.com") sin depender del plan Teams ($12/mes). Implica desarrollo propio de disponibilidad de slots, sincronización de calendario, envío de invitaciones/confirmaciones — no es un ajuste menor. Evaluar cuando el volumen de reservas justifique la inversión. | Backlog / futuro — no urgente |
 
 ---
@@ -180,7 +179,7 @@ Cal.com configurado y funcionando. Próximo paso: reserva real de prueba end-to-
 - Agentes: `AI Engineer` + `Content Creator` + `Code Reviewer`
 
 ### 5. Fixes de auditoría pendientes (🟠)
-A02 (email en logs), A09 (token en query string), A15 (TTL 72h→24h), A10 (sanitización email Airtable).
+A02 (email en logs), A09 (token en query string), A10 (sanitización email Airtable). A15 (TTL 72h→24h) resuelto.
 
 ---
 
