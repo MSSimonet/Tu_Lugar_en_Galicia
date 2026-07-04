@@ -13,6 +13,20 @@ const FROM =
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tu-lugar-en-galicia.vercel.app'
 
+/**
+ * Escapa caracteres HTML especiales antes de interpolar texto de usuario en
+ * un template de email. Sin esto, un nombre/mensaje con "<img onerror=...>"
+ * se renderiza como HTML real en el cliente de correo del destinatario.
+ */
+export function escapeHtml(input: string): string {
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 interface EmailParams {
   to: string
   subject: string
@@ -54,7 +68,10 @@ export function buildContactoEmail(params: {
   telefono?: string
   mensaje: string
 }): string {
-  const { nombre, email, telefono, mensaje } = params
+  const nombre   = escapeHtml(params.nombre)
+  const email    = escapeHtml(params.email)
+  const telefono = params.telefono ? escapeHtml(params.telefono) : undefined
+  const mensaje  = escapeHtml(params.mensaje)
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -119,7 +136,7 @@ export function buildContactoEmail(params: {
  * Voz de Silvana, tú neutro (brand voice — voz-tu-lugar-en-galicia skill).
  */
 export function buildAgendaEmail(nombre: string, codigo: string): string {
-  const primerNombre = nombre.split(' ')[0] || nombre
+  const primerNombre = escapeHtml(nombre.split(' ')[0] || nombre)
   const agendaUrl   = `${SITE_URL}/agenda?code=${codigo}`
 
   return `<!DOCTYPE html>

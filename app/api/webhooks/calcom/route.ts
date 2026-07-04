@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { findLeadByEmail, patchRecord } from '@/lib/admin/airtable'
 import { generateAdminToken } from '@/lib/admin/tokens'
-import { sendEmail } from '@/lib/admin/email'
+import { sendEmail, escapeHtml } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tu-lugar-en-galicia.vercel.app'
@@ -61,7 +61,10 @@ function buildConfirmacionEmail(
   plataforma: string,
   profileUrl: string,
 ): string {
-  const fechaCap = fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1)
+  const fechaCap  = fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1)
+  const nombreSafe     = escapeHtml(nombre)
+  const emailSafe       = escapeHtml(email)
+  const plataformaSafe = escapeHtml(plataforma)
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -92,10 +95,10 @@ function buildConfirmacionEmail(
 
               <div style="background:#e8f5e9;border:1px solid #c8e6c9;border-radius:6px;padding:16px 20px;margin-bottom:20px;">
                 <p style="margin:0 0 4px;font-family:Arial,sans-serif;font-size:16px;font-weight:600;color:#1E1C19;">
-                  ${nombre}
+                  ${nombreSafe}
                 </p>
                 <p style="margin:0;font-family:Arial,sans-serif;font-size:13px;color:#555;">
-                  ${email}
+                  ${emailSafe}
                 </p>
               </div>
 
@@ -129,7 +132,7 @@ function buildConfirmacionEmail(
                       Plataforma
                     </span>
                     <span style="font-family:Arial,sans-serif;font-size:14px;color:#1E1C19;">
-                      &#128250; ${plataforma}
+                      &#128250; ${plataformaSafe}
                     </span>
                   </td>
                 </tr>
