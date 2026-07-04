@@ -37,7 +37,7 @@ export default async function AgendaPage({ searchParams }: PageProps) {
       >
         <div className="mx-auto max-w-3xl">
           <p
-            className="mb-[var(--space-2)] font-[family-name:var(--font-ui)] text-[var(--text-xs)] uppercase tracking-[var(--tracking-ui)]"
+            className="mb-[var(--space-2)] font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] uppercase tracking-[var(--tracking-ui)]"
             style={{ color: 'var(--color-laton-claro)' }}
           >
             Tu cita te espera
@@ -62,7 +62,7 @@ export default async function AgendaPage({ searchParams }: PageProps) {
       <section className="bg-[var(--color-niebla)] py-[var(--space-8)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl">
           <p
-            className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-granito)] leading-[var(--leading-cuerpo)]"
+            className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-granito)] leading-[var(--leading-cuerpo)]"
           >
             En esta llamada escuchamos tu situación, respondemos tus dudas sobre el proceso
             en Galicia y evaluamos si el servicio es el indicado para ti. Sin presión,
@@ -75,11 +75,11 @@ export default async function AgendaPage({ searchParams }: PageProps) {
       <section className="bg-[var(--color-blanco)] py-[var(--space-16)] px-[var(--space-6)]">
         <div className="mx-auto max-w-4xl">
           <CalEmbed className="rounded-[var(--radius-card)]" />
-          <p className="mt-[var(--space-6)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
+          <p className="mt-[var(--space-6)] text-center font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
             Si el calendario no carga,{' '}
             <a
               href="/contacto"
-              className="text-[var(--color-mar)] underline hover:no-underline"
+              className="[color:var(--color-mar)] underline hover:no-underline"
             >
               escríbenos por el formulario de contacto
             </a>

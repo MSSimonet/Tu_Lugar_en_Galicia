@@ -38,11 +38,11 @@ export function Testimonios() {
       <div className="mx-auto max-w-5xl">
         <h2
           id="testimonios-heading"
-          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] uppercase"
+          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] tracking-[var(--tracking-ui)] [color:var(--color-pizarra)] uppercase"
         >
           Lo que dicen las familias
         </h2>
-        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] md:text-[var(--text-2xl)]">
+        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] md:[font-size:var(--text-2xl)]">
           Testimonios
         </p>
 
@@ -62,17 +62,17 @@ export function Testimonios() {
                     className="rounded-full flex-shrink-0"
                   />
                   <div>
-                    <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-bold text-[var(--color-granito)]">
+                    <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] font-bold [color:var(--color-granito)]">
                       {nombre}
                     </p>
-                    <p className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)]">
+                    <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] [color:var(--color-pizarra)]">
                       {ciudadOrigen} → {ciudadGalicia}
                     </p>
                   </div>
                 </div>
 
                 <blockquote className="mt-[var(--space-6)] flex-1">
-                  <p className="font-[family-name:var(--font-titular)] text-[var(--text-sm)] italic leading-[var(--leading-cuerpo)] text-[var(--color-pizarra)]">
+                  <p className="font-[family-name:var(--font-titular)] [font-size:var(--text-sm)] italic leading-[var(--leading-cuerpo)] [color:var(--color-pizarra)]">
                     &ldquo;{texto}&rdquo;
                   </p>
                 </blockquote>

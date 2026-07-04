@@ -148,19 +148,19 @@ export default function CiudadesIndexPage() {
         style={{ padding: '40px 48px' }}
       >
         <span
-          className="inline-flex items-center px-3 py-1 rounded-full mb-5 font-[family-name:var(--font-mulish)] tracking-widest uppercase text-[var(--color-laton)] border border-[var(--color-arena)]"
+          className="inline-flex items-center px-3 py-1 rounded-full mb-5 font-[family-name:var(--font-mulish)] tracking-widest uppercase [color:var(--color-laton)] border border-[var(--color-arena)]"
           style={{ fontSize: '10px', background: 'var(--color-niebla)' }}
         >
           Relocation especializado · Galicia
         </span>
         <h1
-          className="font-[family-name:var(--font-cormorant)] text-[var(--color-granito)] font-normal mb-4"
+          className="font-[family-name:var(--font-cormorant)] [color:var(--color-granito)] font-normal mb-4"
           style={{ fontSize: 'clamp(36px, 5vw, 64px)', fontWeight: 400, lineHeight: 1.15, letterSpacing: '-0.01em' }}
         >
           Elige tu ciudad
         </h1>
         <p
-          className="font-[family-name:var(--font-mulish)] leading-relaxed max-w-[480px] mx-auto text-[var(--color-pizarra)]"
+          className="font-[family-name:var(--font-mulish)] leading-relaxed max-w-[480px] mx-auto [color:var(--color-pizarra)]"
           style={{ fontSize: '1rem' }}
         >
           Cada ciudad de Galicia tiene su carácter. Encuentra la que mejor se adapta a lo que buscas.

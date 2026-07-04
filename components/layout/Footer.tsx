@@ -67,7 +67,7 @@ function NavLink({
         target="_blank"
         rel="noopener noreferrer"
         style={style}
-        className="hover:text-[var(--color-laton-claro)]"
+        className="hover:[color:var(--color-laton-claro)]"
       >
         {children}
         <span className="sr-only">(abre en nueva pestaña)</span>
@@ -76,7 +76,7 @@ function NavLink({
   }
 
   return (
-    <Link href={href} style={style} className="hover:text-[var(--color-laton-claro)]">
+    <Link href={href} style={style} className="hover:[color:var(--color-laton-claro)]">
       {children}
     </Link>
   )
@@ -257,7 +257,7 @@ export function Footer() {
                   fontFamily: 'var(--font-ui)',
                   transition: 'color 200ms ease',
                 }}
-                className="hover:text-[var(--color-laton-claro)]"
+                className="hover:[color:var(--color-laton-claro)]"
               >
                 hola@tulugarengalicia.com
               </a>

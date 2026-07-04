@@ -20,11 +20,11 @@ export function MuroLlavesPreview() {
       <div className="mx-auto max-w-4xl">
         <h2
           id="muro-llaves-heading"
-          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] uppercase"
+          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] tracking-[var(--tracking-ui)] [color:var(--color-pizarra)] uppercase"
         >
           Resultados
         </h2>
-        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] md:text-[var(--text-2xl)]">
+        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] md:[font-size:var(--text-2xl)]">
           El muro de llaves
         </p>
 
@@ -46,7 +46,7 @@ export function MuroLlavesPreview() {
 
         <div className="mt-[var(--space-8)] text-center">
           {/* TODO Fase 2: crear página /muro-de-llaves con galería completa */}
-          <span className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] cursor-default">
+          <span className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] cursor-default">
             Más entregas próximamente
           </span>
         </div>

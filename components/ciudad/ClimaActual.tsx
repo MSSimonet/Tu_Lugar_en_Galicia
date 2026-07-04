@@ -72,7 +72,7 @@ export function ClimaActual({ slug }: { slug: string }) {
         className="rounded-2xl bg-[var(--color-niebla)] p-5 flex items-center justify-center min-h-[120px]"
         role="status"
       >
-        <p className="font-[family-name:var(--font-mulish)] text-[var(--text-xs)] text-[var(--color-pizarra)]">
+        <p className="font-[family-name:var(--font-mulish)] [font-size:var(--text-xs)] [color:var(--color-pizarra)]">
           Clima no disponible
         </p>
       </div>
@@ -91,13 +91,13 @@ export function ClimaActual({ slug }: { slug: string }) {
       <div className="flex items-start justify-between">
         <div>
           <span
-            className="font-[family-name:var(--font-cormorant)] text-[3rem] leading-none font-semibold text-[var(--color-granito)]"
+            className="font-[family-name:var(--font-cormorant)] text-[3rem] leading-none font-semibold [color:var(--color-granito)]"
             aria-hidden="true"
           >
             {temperatura}°
           </span>
           {descripcion && (
-            <p className="font-[family-name:var(--font-mulish)] text-[var(--text-xs)] text-[var(--color-pizarra)] mt-1 leading-snug">
+            <p className="font-[family-name:var(--font-mulish)] [font-size:var(--text-xs)] [color:var(--color-pizarra)] mt-1 leading-snug">
               {descripcion}
             </p>
           )}
@@ -109,12 +109,12 @@ export function ClimaActual({ slug }: { slug: string }) {
       {(tempMin != null || tempMax != null) && (
         <div className="flex gap-2">
           {tempMin != null && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-[var(--color-arena)] bg-[var(--color-blanco)] font-[family-name:var(--font-mulish)] text-[var(--text-xs)] text-[var(--color-pizarra)]">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-[var(--color-arena)] bg-[var(--color-blanco)] font-[family-name:var(--font-mulish)] [font-size:var(--text-xs)] [color:var(--color-pizarra)]">
               mín · {tempMin}°
             </span>
           )}
           {tempMax != null && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-[var(--color-arena)] bg-[var(--color-blanco)] font-[family-name:var(--font-mulish)] text-[var(--text-xs)] text-[var(--color-pizarra)]">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-[var(--color-arena)] bg-[var(--color-blanco)] font-[family-name:var(--font-mulish)] [font-size:var(--text-xs)] [color:var(--color-pizarra)]">
               máx · {tempMax}°
             </span>
           )}
@@ -127,17 +127,17 @@ export function ClimaActual({ slug }: { slug: string }) {
           <div className="h-px bg-[var(--color-arena)]" />
           <div className="flex flex-wrap gap-x-4 gap-y-1">
             {precipitacion != null && (
-              <span className="font-[family-name:var(--font-mulish)] text-[var(--text-xs)] text-[var(--color-pizarra)] flex items-center gap-1">
+              <span className="font-[family-name:var(--font-mulish)] [font-size:var(--text-xs)] [color:var(--color-pizarra)] flex items-center gap-1">
                 <span aria-hidden="true">💧</span> {precipitacion} mm
               </span>
             )}
             {viento != null && (
-              <span className="font-[family-name:var(--font-mulish)] text-[var(--text-xs)] text-[var(--color-pizarra)] flex items-center gap-1">
+              <span className="font-[family-name:var(--font-mulish)] [font-size:var(--text-xs)] [color:var(--color-pizarra)] flex items-center gap-1">
                 <span aria-hidden="true">💨</span> {viento} km/h
               </span>
             )}
             {humedad != null && (
-              <span className="font-[family-name:var(--font-mulish)] text-[var(--text-xs)] text-[var(--color-pizarra)] flex items-center gap-1">
+              <span className="font-[family-name:var(--font-mulish)] [font-size:var(--text-xs)] [color:var(--color-pizarra)] flex items-center gap-1">
                 <span aria-hidden="true">💦</span> {humedad}%
               </span>
             )}
@@ -146,7 +146,7 @@ export function ClimaActual({ slug }: { slug: string }) {
       )}
 
       {/* Footer */}
-      <p className="font-[family-name:var(--font-mulish)] text-[var(--color-pizarra)] leading-none" style={{ fontSize: '10px' }}>
+      <p className="font-[family-name:var(--font-mulish)] [color:var(--color-pizarra)] leading-none" style={{ fontSize: '10px' }}>
         AEMET · actualizado cada 6h
       </p>
     </div>

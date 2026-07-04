@@ -5,7 +5,7 @@ export const metadata = getNextMetadata('politicaPrivacidad')
 // Bloque visual para los TODO pendientes de configuración
 function TodoBlock({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-block bg-[var(--color-arena)] border-l-4 border-[var(--color-coral)] px-4 py-2 font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-granito)]">
+    <span className="inline-block bg-[var(--color-arena)] border-l-4 border-[var(--color-coral)] px-4 py-2 font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-granito)]">
       {children}
     </span>
   )
@@ -28,7 +28,7 @@ export default function PoliticaDePrivacidadPage() {
 
       {/* Contenido */}
       <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]">
-        <div className="flex flex-col gap-[var(--space-12)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-granito)] leading-[var(--leading-cuerpo)]">
+        <div className="flex flex-col gap-[var(--space-12)] font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-granito)] leading-[var(--leading-cuerpo)]">
 
           {/* 1. Responsable del tratamiento */}
           <section aria-labelledby="responsable">
@@ -191,7 +191,7 @@ export default function PoliticaDePrivacidadPage() {
                 href="https://www.aepd.es"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[var(--color-mar)] underline-offset-4 hover:no-underline underline"
+                className="[color:var(--color-mar)] underline-offset-4 hover:no-underline underline"
               >
                 aepd.es<span className="sr-only">(abre en nueva pestaña)</span>
               </a>

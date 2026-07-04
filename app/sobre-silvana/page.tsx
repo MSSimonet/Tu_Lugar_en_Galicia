@@ -74,7 +74,7 @@ export default function SobreSilvanaPage() {
           <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] leading-[var(--leading-titulo)]">
             Mi historia
           </h2>
-          <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-relaxed">
+          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-relaxed">
             Nací en Argentina y crecí sabiendo que en algún momento iba a cruzar el Atlántico. Mi
             familia tiene raíces gallegas — como tantas familias latinoamericanas — y Galicia siempre
             fue algo más que un lugar en el mapa. Era una historia que me habían contado desde chica,
@@ -82,7 +82,7 @@ export default function SobreSilvanaPage() {
             Cuando decidí venirme, sentí que no estaba yendo a un lugar desconocido: estaba volviendo
             a algo.
           </p>
-          <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-relaxed">
+          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-relaxed">
             Pero la realidad del proceso migratorio no se parece a esa historia romántica. Encontrar
             vivienda desde el otro lado del Atlántico es una de las partes más duras. Los propietarios
             no confían en alguien que no pueden ver, los portales de alquiler están llenos de opciones
@@ -91,7 +91,7 @@ export default function SobreSilvanaPage() {
             lo viví en carne propia. Tardé mucho más de lo que debería haber tardado, y llegué a
             Galicia con más incertidumbre de la necesaria.
           </p>
-          <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-relaxed">
+          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-relaxed">
             Cuando me instalé y empecé a conocer la realidad del mercado desde adentro, entendí que
             podía hacer algo concreto con eso. Empecé a ayudar a algunas familias del entorno —
             amigos de amigos, conocidos de conocidos — que estaban pasando por lo mismo que yo había
@@ -99,14 +99,14 @@ export default function SobreSilvanaPage() {
             cómo se sentía esa incertidumbre. En algún momento dejó de ser un favor ocasional y se
             convirtió en un servicio real.
           </p>
-          <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-relaxed">
+          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-relaxed">
             Hoy llevo cuatro años haciendo esto de manera profesional. Más de doscientas familias
             encontraron su lugar en Galicia con nuestra ayuda. Conozco propietarios, conozco barrios,
             conozco los trucos del mercado y conozco los trámites. Pero lo más importante es que
             conozco lo que siente una familia cuando está a miles de kilómetros tratando de imaginar
             su vida nueva. Eso no lo enseña ningún curso — lo da haberlo vivido.
           </p>
-          <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-relaxed">
+          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-relaxed">
             Empecé este servicio porque quería que otras familias llegaran a Galicia mejor de lo que
             llegué yo. Eso sigue siendo lo que me mueve cada día.
           </p>
@@ -124,15 +124,15 @@ export default function SobreSilvanaPage() {
               <li key={item.titulo} className="flex gap-[var(--space-4)]">
                 <span
                   aria-hidden="true"
-                  className="mt-1 shrink-0 text-[var(--color-laton)] font-bold text-[var(--text-md)]"
+                  className="mt-1 shrink-0 [color:var(--color-laton)] font-bold [font-size:var(--text-md)]"
                 >
                   ✓
                 </span>
                 <div>
-                  <h3 className="font-[family-name:var(--font-ui)] font-semibold text-[var(--text-sm)] text-[var(--color-granito)]">
+                  <h3 className="font-[family-name:var(--font-ui)] font-semibold [font-size:var(--text-sm)] [color:var(--color-granito)]">
                     {item.titulo}
                   </h3>
-                  <p className="mt-[var(--space-1)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
+                  <p className="mt-[var(--space-1)] font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
                     {item.texto}
                   </p>
                 </div>
@@ -145,14 +145,14 @@ export default function SobreSilvanaPage() {
       {/* Cierre + CTA */}
       <section className="bg-[var(--color-blanco)] py-[var(--space-16)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
+          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-md)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
             Si llegaste hasta acá, ya sabes quién soy y por qué hago esto. Ahora lo que me gustaría
             es conocerte, escuchar tu historia y ver si puedo ayudarte.
           </p>
           <div className="flex justify-center">
             <Link
               href="/conocernos"
-              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
             >
               Vamos a conocernos
             </Link>

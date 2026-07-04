@@ -20,7 +20,7 @@ export default function PoliticaDeCookiesPage() {
       </section>
 
       <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]">
-        <div className="flex flex-col gap-[var(--space-10)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-granito)] leading-[var(--leading-cuerpo)]">
+        <div className="flex flex-col gap-[var(--space-10)] font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-granito)] leading-[var(--leading-cuerpo)]">
 
           <section aria-labelledby="construccion">
             <div className="rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-[var(--color-niebla)] p-[var(--space-8)]">
@@ -36,7 +36,7 @@ export default function PoliticaDeCookiesPage() {
               </p>
               <a
                 href="mailto:hola@tulugarengalicia.com"
-                className="font-medium text-[var(--color-laton)] underline underline-offset-2 hover:text-[var(--color-laton-oscuro)]"
+                className="font-medium [color:var(--color-laton)] underline underline-offset-2 hover:[color:var(--color-laton-oscuro)]"
               >
                 hola@tulugarengalicia.com
               </a>
@@ -67,7 +67,7 @@ export default function PoliticaDeCookiesPage() {
               Para cualquier consulta sobre esta política, escríbenos a{' '}
               <a
                 href="mailto:hola@tulugarengalicia.com"
-                className="text-[var(--color-laton)] underline underline-offset-2 hover:text-[var(--color-laton-oscuro)]"
+                className="[color:var(--color-laton)] underline underline-offset-2 hover:[color:var(--color-laton-oscuro)]"
               >
                 hola@tulugarengalicia.com
               </a>

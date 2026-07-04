@@ -174,7 +174,7 @@ export default function FAQPage() {
           }}>
             ¿Tienes dudas?
           </h1>
-          <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
+          <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] [font-size:var(--text-md)] [color:var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
             Respondemos las preguntas que más nos hacen
           </p>
         </div>
@@ -183,7 +183,7 @@ export default function FAQPage() {
       {/* Bajada */}
       <section className="bg-[var(--color-niebla)] py-[var(--space-8)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl">
-          <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
+          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
             Reunimos las preguntas que nos hacen todas las familias antes de arrancar. Si la tuya no
             está acá, escríbenos — respondemos hoy.
           </p>
@@ -210,19 +210,19 @@ export default function FAQPage() {
           <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] leading-[var(--leading-titulo)] mb-[var(--space-4)]">
             ¿No encontraste tu respuesta?
           </h2>
-          <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
+          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
             Cuéntanos tu caso y te respondemos hoy.
           </p>
           <div className="flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
             <Link
               href="/conocernos"
-              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
             >
               Vamos a conocernos
             </Link>
             <Link
               href="/contacto"
-              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-[var(--color-laton)] tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton)] hover:text-white transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] [color:var(--color-laton)] tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton)] hover:text-white transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
             >
               Contáctanos
             </Link>

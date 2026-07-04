@@ -48,14 +48,14 @@ export function ComoFuncionaResumen() {
       <div className="mx-auto max-w-6xl px-[var(--space-4)] md:px-[var(--space-8)]">
         <h2
           id="como-funciona-heading"
-          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] uppercase"
+          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] tracking-[var(--tracking-ui)] [color:var(--color-pizarra)] uppercase"
         >
           El proceso
         </h2>
         <p className="mb-[var(--space-3)] text-center font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] md:[font-size:var(--text-2xl)]">
           Cómo funciona
         </p>
-        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-ui)] text-[var(--text-md)] text-[var(--color-pizarra)]">
+        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-ui)] [font-size:var(--text-md)] [color:var(--color-pizarra)]">
           Sin vueltas. Así acompañamos a cada familia.
         </p>
 
@@ -69,10 +69,10 @@ export function ComoFuncionaResumen() {
                 {numero}
               </span>
               <div>
-                <h3 className="font-[family-name:var(--font-ui)] text-[var(--text-md)] font-bold text-[var(--color-granito)]">
+                <h3 className="font-[family-name:var(--font-ui)] [font-size:var(--text-md)] font-bold [color:var(--color-granito)]">
                   {nombre}
                 </h3>
-                <p className="mt-[var(--space-1)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)] text-[var(--color-pizarra)]">
+                <p className="mt-[var(--space-1)] font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)] [color:var(--color-pizarra)]">
                   {descripcion}
                 </p>
               </div>
@@ -83,7 +83,7 @@ export function ComoFuncionaResumen() {
         <div className="mt-[var(--space-12)] text-center">
           <Link
             href="/como-funciona"
-            className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium text-[var(--color-mar)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-mar)]"
+            className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] font-medium [color:var(--color-mar)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-mar)]"
           >
             Ver el proceso completo →
           </Link>

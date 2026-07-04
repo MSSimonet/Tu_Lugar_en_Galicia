@@ -43,14 +43,14 @@ export function CiudadesCards() {
       <div className="mx-auto max-w-5xl">
         <h2
           id="ciudades-heading"
-          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] text-[var(--text-xs)] tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] uppercase"
+          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] tracking-[var(--tracking-ui)] [color:var(--color-pizarra)] uppercase"
         >
           Destinos
         </h2>
-        <p className="mb-[var(--space-4)] text-center font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] md:text-[var(--text-2xl)]">
+        <p className="mb-[var(--space-4)] text-center font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] md:[font-size:var(--text-2xl)]">
           Las ciudades donde operamos
         </p>
-        <p className="mb-[var(--space-12)] mx-auto max-w-2xl text-center font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)] text-[var(--color-pizarra)]">
+        <p className="mb-[var(--space-12)] mx-auto max-w-2xl text-center font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)] [color:var(--color-pizarra)]">
           Galicia tiene ciudades para todos los estilos de vida. ¿Prefieres la
           energía portuaria de Vigo, la elegancia costera de A Coruña, la
           escala humana de Santiago o la tranquilidad de Pontevedra y Lugo?
@@ -74,13 +74,13 @@ export function CiudadesCards() {
                   />
                 </div>
                 <div className="p-[var(--space-6)]">
-                  <h3 className="font-[family-name:var(--font-titular)] text-[var(--text-lg)] text-[var(--color-granito)] dark:text-[var(--color-granito)]">
+                  <h3 className="font-[family-name:var(--font-titular)] [font-size:var(--text-lg)] [color:var(--color-granito)] dark:[color:var(--color-granito)]">
                     {nombre}
                   </h3>
-                  <p className="mt-[var(--space-2)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)] text-[var(--color-pizarra)] dark:text-[var(--color-pizarra)]">
+                  <p className="mt-[var(--space-2)] font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)] [color:var(--color-pizarra)] dark:[color:var(--color-pizarra)]">
                     {descripcion}
                   </p>
-                  <span className="mt-[var(--space-4)] inline-block font-[family-name:var(--font-ui)] text-[var(--text-xs)] font-medium tracking-[var(--tracking-ui)] text-[var(--color-pizarra)] dark:text-[var(--color-pizarra)] uppercase">
+                  <span className="mt-[var(--space-4)] inline-block font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] font-medium tracking-[var(--tracking-ui)] [color:var(--color-pizarra)] dark:[color:var(--color-pizarra)] uppercase">
                     Conoce {nombre} →
                   </span>
                 </div>
