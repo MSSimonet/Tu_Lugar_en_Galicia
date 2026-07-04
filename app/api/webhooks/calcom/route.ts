@@ -210,7 +210,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     record = await findLeadByEmail(clientEmail)
   } catch (err) {
-    console.error('[calcom] Error buscando lead por email:', err)
+    const status = err instanceof Error ? err.message.match(/\d{3}/)?.[0] : undefined
+    console.error(`[calcom] Error buscando lead por email — status: ${status ?? 'red'}, ts: ${new Date().toISOString()}`)
     // Continuamos sin lead — al menos notificamos a Silvana
   }
 
@@ -224,7 +225,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         fechaCita:             startTime,  // ISO string — usado en getLeadsConCitaProxima()
         horaCita,
         plataformaVideollamada: plataforma,
-      }).catch(err => console.error(`[calcom] PATCH Airtable ${record.id}:`, err))
+      }).catch(err => {
+        const status = err instanceof Error ? err.message.match(/^Airtable PATCH (\d+)/)?.[1] : undefined
+        console.error(`[calcom] PATCH Airtable — recordId: ${record.id}, status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
+      })
     )
 
     if (silvanaEmail) {
@@ -235,7 +239,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           to:      silvanaEmail,
           subject: `✓ Nueva cita — ${nombre} — ${fechaLarga}`,
           html:    buildConfirmacionEmail(nombre, clientEmail, fechaLarga, horaCita, plataforma, profileUrl),
-        }).catch(err => console.error('[calcom] Resend error:', err))
+        }).catch(err => {
+          const status = err instanceof Error ? err.message.match(/^Resend error (\d+)/)?.[1] : undefined
+          console.error(`[calcom] Resend error — recordId: ${record.id}, status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
+        })
       )
     }
   } else {
@@ -246,7 +253,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           to:      silvanaEmail,
           subject: `⚠ Nueva cita (lead no encontrado) — ${nombre} — ${fechaLarga}`,
           html:    buildConfirmacionEmail(nombre, clientEmail, fechaLarga, horaCita, plataforma, SITE_URL),
-        }).catch(err => console.error('[calcom] Resend error (sin lead):', err))
+        }).catch(err => {
+          const status = err instanceof Error ? err.message.match(/^Resend error (\d+)/)?.[1] : undefined
+          console.error(`[calcom] Resend error (sin lead) — status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
+        })
       )
     }
   }

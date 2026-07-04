@@ -308,7 +308,9 @@ async function conReintentos<T>(fn: () => Promise<T>): Promise<T | null> {
       return await fn()
     } catch (err) {
       const intento = i + 1
-      console.error(`[gina] intento ${intento}/3 falló:`, (err as Error).message)
+      const msg = err instanceof Error ? err.message : String(err)
+      const status = msg.match(/HTTP (\d{3})/)?.[1]
+      console.error(`[gina] intento ${intento}/3 falló — status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
     }
   }
   return null
