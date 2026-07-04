@@ -25,6 +25,8 @@ export type GinaSession = {
   completado: boolean
   /** Record ID de Airtable creado en guardar_nivel1 — usado para PATCH en guardados posteriores */
   airtableRecordId?: string
+  /** Firma HMAC de airtableRecordId (generateAdminToken) — evita que el cliente inyecte un recordId ajeno */
+  airtableRecordSig?: string
 }
 
 /** Crea una sesión inicial antes de mostrar el primer paso */

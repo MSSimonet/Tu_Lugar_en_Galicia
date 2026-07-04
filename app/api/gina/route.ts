@@ -18,8 +18,7 @@ import { calcularCalificacion } from '@/lib/gina/scoring'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { getRealIp } from '@/lib/utils/ip'
-
-export const runtime = 'edge'
+import { generateAdminToken, verifyAdminToken } from '@/lib/admin/tokens'
 
 const ratelimit =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
@@ -74,10 +73,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
-  const { sesion, respuesta } = body
+  const { sesion: sesionCruda, respuesta } = body
 
-  if (!sesion || !sesion.pasoActual) {
+  if (!sesionCruda || !sesionCruda.pasoActual) {
     return NextResponse.json({ error: 'sesion inválida' }, { status: 400 })
+  }
+
+  // Seguridad (C1): sesionCruda.airtableRecordId viene del cliente sin control del
+  // servidor — sin esta verificación, cualquiera podría inyectar el recordId de otro
+  // lead y sobrescribir sus datos vía PATCH. Solo se confía en el recordId si viene
+  // acompañado de una firma HMAC válida (emitida por este mismo servidor al crearlo
+  // en guardar_nivel1). Si falta o no valida, se descarta silenciosamente — el flujo
+  // continúa como si fuera una sesión nueva (crea un registro propio vía POST).
+  let sesion = sesionCruda
+  if (sesion.airtableRecordId) {
+    let firmaValida = false
+    if (typeof sesion.airtableRecordSig === 'string') {
+      try {
+        verifyAdminToken(sesion.airtableRecordId, sesion.airtableRecordSig)
+        firmaValida = true
+      } catch {
+        firmaValida = false
+      }
+    }
+    if (!firmaValida) {
+      sesion = { ...sesion, airtableRecordId: undefined, airtableRecordSig: undefined }
+    }
   }
 
   // Límite de tamaño en campos de texto libre — evita payloads abusivos
@@ -126,7 +147,11 @@ export async function POST(req: NextRequest) {
   if (paso.accion === 'guardar_nivel1') {
     const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada))
     if (recordId) {
-      sesionParaDevolver = { ...sesionActualizada, airtableRecordId: recordId }
+      sesionParaDevolver = {
+        ...sesionActualizada,
+        airtableRecordId: recordId,
+        airtableRecordSig: generateAdminToken(recordId),
+      }
     } else {
       console.error('[gina] nivel1 falló tras 3 intentos — el guardado completo hará POST como fallback')
     }
