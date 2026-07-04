@@ -6,7 +6,7 @@ import Link from 'next/link'
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
 const inputBase =
-  'w-full rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-white px-4 py-3 font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-granito)] placeholder:text-[var(--color-arena)] focus:outline-none focus:border-[var(--color-laton)] focus:ring-1 focus:ring-[var(--color-laton)] transition-colors'
+  'w-full rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-white px-4 py-3 font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-granito)] placeholder:[color:var(--color-arena)] focus:outline-none focus:border-[var(--color-laton)] focus:ring-1 focus:ring-[var(--color-laton)] transition-colors'
 
 export function FormularioContacto() {
   const [nombre,   setNombre]   = useState('')
@@ -52,15 +52,15 @@ export function FormularioContacto() {
         role="status"
       >
         <div className="text-4xl" aria-hidden="true">✉️</div>
-        <h2 className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)]">
+        <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)]">
           Mensaje recibido
         </h2>
-        <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] max-w-sm leading-[var(--leading-cuerpo)]">
+        <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] max-w-sm leading-[var(--leading-cuerpo)]">
           Te respondemos en las próximas 24 horas hábiles.
         </p>
         <Link
           href="/"
-          className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-mar)] underline-offset-4 hover:underline"
+          className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-mar)] underline-offset-4 hover:underline"
         >
           Volver al inicio
         </Link>
@@ -73,7 +73,7 @@ export function FormularioContacto() {
 
       {status === 'error' && errorMsg && (
         <div
-          className="rounded-[var(--radius-card)] border border-[var(--color-coral)] bg-[var(--color-blanco)] p-4 text-[var(--text-sm)] text-[var(--color-coral)]"
+          className="rounded-[var(--radius-card)] border border-[var(--color-coral)] bg-[var(--color-blanco)] p-4 [font-size:var(--text-sm)] [color:var(--color-coral)]"
           role="alert"
         >
           {errorMsg}
@@ -84,9 +84,9 @@ export function FormularioContacto() {
         <div className="flex flex-col gap-2">
           <label
             htmlFor="nombre"
-            className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium text-[var(--color-granito)]"
+            className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] font-medium [color:var(--color-granito)]"
           >
-            Nombre y apellido <span aria-hidden="true" className="text-[var(--color-coral)]">*</span>
+            Nombre y apellido <span aria-hidden="true" className="[color:var(--color-coral)]">*</span>
           </label>
           <input
             id="nombre"
@@ -103,9 +103,9 @@ export function FormularioContacto() {
         <div className="flex flex-col gap-2">
           <label
             htmlFor="email"
-            className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium text-[var(--color-granito)]"
+            className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] font-medium [color:var(--color-granito)]"
           >
-            Email <span aria-hidden="true" className="text-[var(--color-coral)]">*</span>
+            Email <span aria-hidden="true" className="[color:var(--color-coral)]">*</span>
           </label>
           <input
             id="email"
@@ -123,10 +123,10 @@ export function FormularioContacto() {
       <div className="flex flex-col gap-2">
         <label
           htmlFor="telefono"
-          className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium text-[var(--color-granito)]"
+          className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] font-medium [color:var(--color-granito)]"
         >
           Teléfono{' '}
-          <span className="font-normal text-[var(--color-pizarra)] opacity-60">(opcional)</span>
+          <span className="font-normal [color:var(--color-pizarra)] opacity-60">(opcional)</span>
         </label>
         <input
           id="telefono"
@@ -142,9 +142,9 @@ export function FormularioContacto() {
       <div className="flex flex-col gap-2">
         <label
           htmlFor="mensaje"
-          className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium text-[var(--color-granito)]"
+          className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] font-medium [color:var(--color-granito)]"
         >
-          Mensaje <span aria-hidden="true" className="text-[var(--color-coral)]">*</span>
+          Mensaje <span aria-hidden="true" className="[color:var(--color-coral)]">*</span>
         </label>
         <textarea
           id="mensaje"
@@ -168,12 +168,12 @@ export function FormularioContacto() {
         />
         <label
           htmlFor="rgpd"
-          className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)] cursor-pointer"
+          className="font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)] cursor-pointer"
         >
           He leído y acepto la{' '}
           <Link
             href="/politica-de-privacidad"
-            className="underline underline-offset-2 hover:text-[var(--color-laton)] transition-colors"
+            className="underline underline-offset-2 hover:[color:var(--color-laton)] transition-colors"
             target="_blank"
           >
             política de privacidad
@@ -185,7 +185,7 @@ export function FormularioContacto() {
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="self-start inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-8 py-4 font-[family-name:var(--font-ui)] font-medium text-[var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+        className="self-start inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-8 py-4 font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
       >
         {status === 'loading' ? 'Enviando…' : 'Enviar mensaje'}
       </button>

@@ -47,15 +47,15 @@ export function FormularioDiagnostico() {
         aria-live="polite"
       >
         <div className="text-4xl" aria-hidden="true">🏡</div>
-        <h2 className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] font-semibold">
+        <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] font-semibold">
           ¡Recibimos tu consulta!
         </h2>
-        <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
+        <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
           Te respondemos en <strong>48 horas hábiles</strong>. Pronto tendrás noticias nuestras.
         </p>
         <Link
           href="/"
-          className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] text-[var(--text-sm)]"
+          className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] [font-size:var(--text-sm)]"
         >
           Volver al inicio
         </Link>
@@ -73,23 +73,23 @@ export function FormularioDiagnostico() {
         aria-live="polite"
       >
         <div className="text-4xl" aria-hidden="true">🙏</div>
-        <h2 className="font-[family-name:var(--font-titular)] text-[var(--text-xl)] text-[var(--color-granito)] font-semibold">
+        <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] font-semibold">
           Recibimos tu consulta
         </h2>
-        <p className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
+        <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
           Anotamos tus datos y nuestro equipo se va a comunicar contigo a la brevedad.
           Si no recibes noticias en <strong>48 horas hábiles</strong>, escríbenos
           a través del formulario de contacto.
         </p>
         <Link
           href="/contacto"
-          className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] text-[var(--text-sm)]"
+          className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] [font-size:var(--text-sm)]"
         >
           Contáctanos
         </Link>
         <Link
           href="/"
-          className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-mar)] underline-offset-4 hover:underline"
+          className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-mar)] underline-offset-4 hover:underline"
         >
           Volver al inicio
         </Link>
@@ -115,7 +115,7 @@ export function FormularioDiagnostico() {
 
       {status === 'error' && (
         <div
-          className="rounded-[var(--radius-card)] border border-[var(--color-coral)] bg-[var(--color-blanco)] p-[var(--space-4)] text-[var(--text-sm)] text-[var(--color-coral)]"
+          className="rounded-[var(--radius-card)] border border-[var(--color-coral)] bg-[var(--color-blanco)] p-[var(--space-4)] [font-size:var(--text-sm)] [color:var(--color-coral)]"
           role="alert"
           aria-live="assertive"
         >
@@ -214,7 +214,7 @@ export function FormularioDiagnostico() {
           <div>
             <label htmlFor="documentacion" className={labelClass}>
               Documentación para residir legalmente en España
-              <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
             </label>
             <select
               id="documentacion"
@@ -240,7 +240,7 @@ export function FormularioDiagnostico() {
           <div>
             <label htmlFor="situacionLaboral" className={labelClass}>
               Situación laboral al llegar
-              <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
             </label>
             <select
               id="situacionLaboral"
@@ -267,7 +267,7 @@ export function FormularioDiagnostico() {
           <div>
             <label htmlFor="ingresosMensuales" className={labelClass}>
               Ingresos netos mensuales del hogar
-              <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
             </label>
             <select
               id="ingresosMensuales"
@@ -293,7 +293,7 @@ export function FormularioDiagnostico() {
             <fieldset>
               <legend id="rg-garantias" className={`${labelClass} mb-[var(--space-2)]`}>
                 Garantías que puedes ofrecer
-                <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </legend>
               <CheckboxGroup
                 options={[
@@ -370,7 +370,7 @@ export function FormularioDiagnostico() {
           <div>
             <label htmlFor="fechaLlegada" className={labelClass}>
               ¿En qué plazo necesitas tener resuelta tu vivienda?
-              <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
             </label>
             <select
               id="fechaLlegada"
@@ -435,9 +435,9 @@ export function FormularioDiagnostico() {
                 className="accent-[var(--color-laton)] w-4 h-4 mt-[2px] cursor-pointer flex-shrink-0"
                 aria-describedby={errors.comprendeServicio ? 'comprendeServicio-error' : undefined}
               />
-              <span className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
+              <span className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
                 Entiendo que Tu Lugar en Galicia es un servicio de consultoría y búsqueda personalizada, con honorarios propios aparte del alquiler y la fianza. Tu Lugar en Galicia actúa en nombre de mi familia, no del propietario.
-                <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </span>
             </label>
             {errors.comprendeServicio && (
@@ -460,17 +460,17 @@ export function FormularioDiagnostico() {
                 className="accent-[var(--color-laton)] w-4 h-4 mt-[2px] cursor-pointer flex-shrink-0"
                 aria-describedby={errors.consentimientoRGPD ? 'consentimientoRGPD-error' : undefined}
               />
-              <span className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
+              <span className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
                 Acepto el tratamiento de mis datos personales según la{' '}
                 <Link
                   href="/politica-de-privacidad"
-                  className="text-[var(--color-mar)] underline hover:no-underline"
+                  className="[color:var(--color-mar)] underline hover:no-underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   política de privacidad<span className="sr-only">(abre en nueva pestaña)</span>
                 </Link>.
-                <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </span>
             </label>
             {errors.consentimientoRGPD && (
@@ -504,8 +504,8 @@ export function FormularioDiagnostico() {
             'Enviar mi consulta'
           )}
         </Button>
-        <p className="mt-[var(--space-3)] text-[var(--text-xs)] text-[var(--color-pizarra)] font-[family-name:var(--font-ui)]">
-          Los campos marcados con <span className="text-[var(--color-coral)]">*</span> son obligatorios.
+        <p className="mt-[var(--space-3)] [font-size:var(--text-xs)] [color:var(--color-pizarra)] font-[family-name:var(--font-ui)]">
+          Los campos marcados con <span className="[color:var(--color-coral)]">*</span> son obligatorios.
         </p>
       </div>
     </form>

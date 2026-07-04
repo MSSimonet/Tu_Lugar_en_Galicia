@@ -16,14 +16,14 @@ const variantClasses: Record<Variant, string> = {
   secundario:
     "bg-[var(--color-coral)] text-white hover:bg-[color-mix(in_srgb,var(--color-coral)_85%,#000)]",
   fantasma:
-    "border border-[var(--color-laton)] text-[var(--color-laton-text)] " +
+    "border border-[var(--color-laton)] [color:var(--color-laton-text)] " +
     "hover:bg-[var(--color-laton-text)] hover:text-white",
 };
 
 const sizeClasses: Record<Size, string> = {
-  sm: "px-[var(--space-4)] py-[var(--space-2)] text-[var(--text-xs)]",
-  md: "px-[var(--space-6)] py-[var(--space-3)] text-[var(--text-sm)]",
-  lg: "px-[var(--space-8)] py-[var(--space-4)] text-[var(--text-md)]",
+  sm: "px-[var(--space-4)] py-[var(--space-2)] [font-size:var(--text-xs)]",
+  md: "px-[var(--space-6)] py-[var(--space-3)] [font-size:var(--text-sm)]",
+  lg: "px-[var(--space-8)] py-[var(--space-4)] [font-size:var(--text-md)]",
 };
 
 export function Button({

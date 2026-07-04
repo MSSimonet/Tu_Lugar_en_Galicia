@@ -22,7 +22,7 @@ export function FAQAccordion({ faqs }: FAQAccordionProps) {
               flex items-center justify-between gap-[var(--space-4)]
               px-[var(--space-6)] py-[var(--space-4)]
               font-[family-name:var(--font-ui)] font-medium
-              text-[var(--text-sm)] text-[var(--color-granito)]
+              [font-size:var(--text-sm)] [color:var(--color-granito)]
               cursor-pointer list-none
               hover:bg-[var(--color-niebla)] transition-colors duration-150
               focus-visible:outline-2 focus-visible:outline-[var(--color-laton)]
@@ -31,7 +31,7 @@ export function FAQAccordion({ faqs }: FAQAccordionProps) {
             <span>{faq.question}</span>
             <span
               aria-hidden="true"
-              className="shrink-0 text-[var(--color-laton)] transition-transform duration-200 group-open:rotate-180"
+              className="shrink-0 [color:var(--color-laton)] transition-transform duration-200 group-open:rotate-180"
             >
               ▾
             </span>
@@ -39,8 +39,8 @@ export function FAQAccordion({ faqs }: FAQAccordionProps) {
           <div
             className="
               px-[var(--space-6)] pb-[var(--space-4)]
-              font-[family-name:var(--font-ui)] text-[var(--text-sm)]
-              text-[var(--color-pizarra)] leading-[var(--leading-cuerpo)]
+              font-[family-name:var(--font-ui)] [font-size:var(--text-sm)]
+              [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)]
               border-t border-[var(--color-arena)]
               pt-[var(--space-4)]
             "

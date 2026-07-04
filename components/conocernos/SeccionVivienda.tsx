@@ -23,7 +23,7 @@ export function SeccionVivienda({ form, errors, set, setTipoInmueble, toggleImpr
         <div>
           <label htmlFor="ciudadDestino" className={labelClass}>
             Ciudad de destino
-            <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+            <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
           </label>
           <select
             id="ciudadDestino"
@@ -49,7 +49,7 @@ export function SeccionVivienda({ form, errors, set, setTipoInmueble, toggleImpr
         <div>
           <label htmlFor="tipoInmueble" className={labelClass}>
             Tipo de vivienda
-            <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+            <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
           </label>
           <select
             id="tipoInmueble"
@@ -76,7 +76,7 @@ export function SeccionVivienda({ form, errors, set, setTipoInmueble, toggleImpr
             <fieldset>
               <legend id="rg-habitacionesMinimas" className={`${labelClass} mb-[var(--space-2)]`}>
                 Habitaciones mínimas
-                {form.tipoInmueble !== '' && <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>}
+                {form.tipoInmueble !== '' && <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>}
               </legend>
               <RadioGroup
                 name="habitacionesMinimas"
@@ -100,7 +100,7 @@ export function SeccionVivienda({ form, errors, set, setTipoInmueble, toggleImpr
           <fieldset>
             <legend id="rg-presupuestoMensual" className={`${labelClass} mb-[var(--space-2)]`}>
               Presupuesto mensual de alquiler
-              <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
             </legend>
             <RadioGroup
               name="presupuestoMensual"
@@ -123,7 +123,7 @@ export function SeccionVivienda({ form, errors, set, setTipoInmueble, toggleImpr
           <fieldset>
             <legend id="rg-amueblado" className={`${labelClass} mb-[var(--space-2)]`}>
               ¿Prefieres la vivienda amueblada?
-              <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
             </legend>
             <RadioGroup
               name="amueblado"

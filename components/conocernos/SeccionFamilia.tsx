@@ -23,7 +23,7 @@ export function SeccionFamilia({ form, errors, set, setHayMenores, setMascotas, 
           <fieldset>
             <legend id="rg-adultos" className={`${labelClass} mb-[var(--space-2)]`}>
               ¿Cuántos adultos se mudan? (incluyéndote)
-              <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
             </legend>
             <RadioGroup
               name="adultos"
@@ -46,7 +46,7 @@ export function SeccionFamilia({ form, errors, set, setHayMenores, setMascotas, 
           <fieldset>
             <legend id="rg-hayMenores" className={`${labelClass} mb-[var(--space-2)]`}>
               ¿Viajan menores de edad contigo?
-              <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
             </legend>
             <RadioGroup
               name="hayMenores"
@@ -67,7 +67,7 @@ export function SeccionFamilia({ form, errors, set, setHayMenores, setMascotas, 
                 <fieldset>
                   <legend id="rg-ninos" className={`${labelClass} mb-[var(--space-2)]`}>
                     Niños de 0 a 12 años
-                    <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                    <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
                   </legend>
                   <RadioGroup
                     name="ninos"
@@ -88,7 +88,7 @@ export function SeccionFamilia({ form, errors, set, setHayMenores, setMascotas, 
                 <fieldset>
                   <legend id="rg-adolescentes" className={`${labelClass} mb-[var(--space-2)]`}>
                     Adolescentes de 13 a 17 años
-                    <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                    <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
                   </legend>
                   <RadioGroup
                     name="adolescentes"
@@ -114,7 +114,7 @@ export function SeccionFamilia({ form, errors, set, setHayMenores, setMascotas, 
           <fieldset>
             <legend id="rg-mascotas" className={`${labelClass} mb-[var(--space-2)]`}>
               ¿Viajan con mascotas? (cerca del 80% de propietarios no las admite)
-              <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+              <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
             </legend>
             <RadioGroup
               name="mascotas"
@@ -135,7 +135,7 @@ export function SeccionFamilia({ form, errors, set, setHayMenores, setMascotas, 
                 <fieldset>
                   <legend id="rg-mascotaTipo" className={`${labelClass} mb-[var(--space-2)]`}>
                     Tipo de mascota (puedes marcar varias)
-                    <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                    <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
                   </legend>
                   <CheckboxGroup
                     options={[
@@ -156,7 +156,7 @@ export function SeccionFamilia({ form, errors, set, setHayMenores, setMascotas, 
                   <fieldset>
                     <legend id="rg-mascotaPeso" className={`${labelClass} mb-[var(--space-2)]`}>
                       Peso aproximado de tu perro
-                      <span className="text-[var(--color-coral)] ml-1" aria-hidden="true">*</span>
+                      <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
                     </legend>
                     <RadioGroup
                       name="mascotaPeso"
