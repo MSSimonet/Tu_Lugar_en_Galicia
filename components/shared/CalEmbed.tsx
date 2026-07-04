@@ -95,7 +95,7 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
     return (
       <div
         className={[
-          'flex flex-col items-center justify-center gap-6 rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-[var(--color-niebla)] px-8 py-16 text-center',
+          'flex flex-col items-center justify-center gap-4 px-8 py-16 text-center',
           className,
         ]
           .filter(Boolean)
@@ -103,50 +103,36 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
         role="status"
         aria-label="Agenda tu videollamada"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="40"
-          height="40"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+        <span
           aria-hidden="true"
-          style={{ color: 'var(--color-laton)' }}
+          className="flex items-center justify-center rounded-full border"
+          style={{ width: '52px', height: '52px', borderColor: 'var(--color-laton-text)', color: 'var(--color-laton-text)', fontSize: '22px' }}
         >
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-          <line x1="16" y1="2" x2="16" y2="6"/>
-          <line x1="8" y1="2" x2="8" y2="6"/>
-          <line x1="3" y1="10" x2="21" y2="10"/>
-        </svg>
-        <div>
-          <p
-            className="font-[family-name:var(--font-titular)] mb-3"
-            style={{ fontSize: 'var(--text-lg)', color: 'var(--color-granito)' }}
-          >
-            Agenda tu videollamada gratuita
-          </p>
-          <p
-            className="font-[family-name:var(--font-ui)] max-w-sm"
-            style={{ fontSize: 'var(--text-sm)', color: 'var(--color-pizarra)', lineHeight: 1.6 }}
-          >
-            Escríbenos a través de nuestro formulario y coordinamos un horario que te sea cómodo.
-            La llamada es gratuita y sin compromiso.
-          </p>
-        </div>
+          !
+        </span>
+        <p
+          className="font-[family-name:var(--font-titular)]"
+          style={{ fontSize: 'var(--text-lg)', color: 'var(--color-granito)' }}
+        >
+          El calendario no cargó
+        </p>
+        <p
+          className="font-[family-name:var(--font-ui)] max-w-sm"
+          style={{ fontSize: 'var(--text-sm)', color: 'var(--color-pizarra)', lineHeight: 1.5 }}
+        >
+          A veces pasa. Escríbenos por el formulario de contacto y coordinamos tu llamada a mano.
+        </p>
         <a
           href="/contacto"
-          className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] font-[family-name:var(--font-ui)] font-medium uppercase tracking-[var(--tracking-ui)] transition-colors duration-150"
+          className="mt-[var(--space-2)] inline-flex items-center gap-2 rounded-[var(--radius-pill)] font-[family-name:var(--font-ui)] font-bold uppercase tracking-[var(--tracking-ui)] transition-colors duration-150"
           style={{
             background: 'var(--color-laton)',
             color: 'var(--color-blanco)',
-            padding: '0.75rem 2rem',
+            padding: '0.75rem 1.75rem',
             fontSize: 'var(--text-sm)',
           }}
         >
-          Contáctanos
+          Escribirnos por contacto
         </a>
       </div>
     )
