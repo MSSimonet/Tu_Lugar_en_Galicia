@@ -21,27 +21,13 @@ export function CTAFinal() {
           ayudarte. Sin compromiso, sin costo de consulta.
         </p>
 
-        <div className="mt-[var(--space-8)] flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
+        <div className="mt-[var(--space-8)] flex justify-center">
           <Link href="/conocernos">
             <Button variant="primario" size="lg">
               Vamos a conocernos
             </Button>
           </Link>
-
-          <Link href="/agenda">
-            <Button variant="fantasma" size="lg" className="border-[var(--color-niebla)] text-[var(--color-niebla)] hover:bg-[var(--color-niebla)] hover:text-[var(--color-granito)]">
-              Agenda tu videollamada
-            </Button>
-          </Link>
         </div>
-
-        <p className="mt-[var(--space-6)] font-[family-name:var(--font-ui)] text-[var(--text-xs)] text-[var(--color-niebla)] opacity-60">
-          O si prefieres,{' '}
-          <Link href="/contacto" className="underline underline-offset-2 hover:opacity-80 transition-opacity">
-            escríbenos por el formulario de contacto
-          </Link>{' '}
-          y respondemos hoy.
-        </p>
       </div>
     </section>
   );
