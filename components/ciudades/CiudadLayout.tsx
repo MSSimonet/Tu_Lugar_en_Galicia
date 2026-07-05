@@ -6,7 +6,7 @@ import { FAQAccordion } from '@/components/ciudades/FAQAccordion'
 import { ClimaActual } from '@/components/ciudad/ClimaActual'
 import { VistaEnVivo } from '@/components/ciudad/VistaEnVivo'
 import { faqSchema } from '@/lib/seo/schemas'
-import { prefetchCiudadVideo, videoSrcPorSlug } from '@/lib/ciudades/videoPrefetch'
+import { prefetchCiudadVideo } from '@/lib/ciudades/videoPrefetch'
 
 export interface CiudadLayoutProps {
   nombre: string
@@ -286,18 +286,13 @@ export function CiudadLayout({
                     className="group block rounded-xl overflow-hidden relative"
                     style={{ aspectRatio: '4/3' }}
                   >
-                    <video
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="auto"
-                      poster={ciudad.imagen}
-                      aria-label={ciudad.nombre}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                    >
-                      <source src={videoSrcPorSlug[ciudad.slug]} type="video/mp4" />
-                    </video>
+                    <Image
+                      src={ciudad.imagen}
+                      alt={ciudad.nombre}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                    />
                     {/* Overlay inferior */}
                     <div
                       className="absolute inset-0"
