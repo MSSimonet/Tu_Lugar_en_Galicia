@@ -42,7 +42,9 @@ export function Hero() {
           loop
           playsInline
           poster={POSTER}
-          preload="none"
+          preload="metadata"
+          // @ts-expect-error — fetchPriority es válido en HTML pero los tipos de React aún no lo tipan para <video>
+          fetchPriority="high"
           style={{
             position: "absolute",
             inset: 0,
@@ -64,7 +66,7 @@ export function Hero() {
         type="button"
         onClick={togglePause}
         aria-label={paused ? 'Reproducir vídeo de fondo' : 'Pausar vídeo de fondo'}
-        className="absolute bottom-[4.5rem] right-4 z-20 flex items-center justify-center w-9 h-9 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E7D29C]"
+        className="absolute bottom-[4.5rem] right-4 z-20 flex items-center justify-center w-9 h-9 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton-claro)]"
         style={{
           background: 'rgba(0,0,0,0.45)',
           border: '1px solid rgba(255,255,255,0.2)',
@@ -99,11 +101,11 @@ export function Hero() {
             className="hero-eyebrow"
             style={{
               display: "inline-block",
-              fontFamily: "var(--font-mulish)",
+              fontFamily: "var(--font-ui)",
               fontWeight: 500,
               fontSize: "12px",
               textTransform: "uppercase",
-              color: "#D4B873",
+              color: "var(--color-laton-claro)",
               background: "rgba(0,0,0,0.45)",
               borderRadius: "999px",
               padding: "4px 12px",
@@ -128,7 +130,7 @@ export function Hero() {
             }}
           >
             Tu nueva vida en Galicia<br />empieza con una{" "}
-            <em style={{ fontStyle: "italic", color: "#E8C97A", textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
+            <em style={{ fontStyle: "italic", color: "var(--color-laton-claro)", textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
               puerta abierta...
             </em>
           </h1>
@@ -140,7 +142,7 @@ export function Hero() {
               width: "100%",
               maxWidth: "600px",
               height: "1px",
-              backgroundColor: "#C9A961",
+              backgroundColor: "var(--color-laton-borde)",
               marginBottom: "1.25rem",
             }}
           />
@@ -148,7 +150,7 @@ export function Hero() {
           {/* Subtítulo */}
           <p
             style={{
-              fontFamily: "var(--font-mulish)",
+              fontFamily: "var(--font-ui)",
               fontWeight: 300,
               fontSize: "1.05rem",
               lineHeight: 1.78,
@@ -166,7 +168,7 @@ export function Hero() {
           <button
             type="button"
             onClick={abrirGina}
-            className="inline-flex items-center gap-2 rounded-full transition-brand cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E7D29C]"
+            className="inline-flex items-center gap-2 rounded-full transition-brand cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-laton-claro)]"
             style={{
               background: "linear-gradient(135deg, #2A2A2A 0%, #1A1A1A 100%)",
               color: "var(--color-laton-claro)",
@@ -174,7 +176,7 @@ export function Hero() {
               paddingRight: "1.25rem",
               paddingTop: "0.75rem",
               paddingBottom: "0.75rem",
-              fontFamily: "var(--font-mulish)",
+              fontFamily: "var(--font-ui)",
               fontWeight: 600,
               fontSize: "0.9375rem",
               letterSpacing: "0.04em",
@@ -214,7 +216,7 @@ export function Hero() {
           {/* Enlace al formulario */}
           <p
             style={{
-              fontFamily: "var(--font-mulish)",
+              fontFamily: "var(--font-ui)",
               fontSize: "0.82rem",
               color: "#aab2af",
             }}
@@ -251,7 +253,7 @@ export function Hero() {
                   fontFamily: "var(--font-cormorant)",
                   fontWeight: 500,
                   fontSize: "clamp(1.5rem, 2.4vw, 2rem)",
-                  color: "#E7D29C",
+                  color: "var(--color-laton-claro)",
                   lineHeight: 1.1,
                 }}
               >
@@ -259,7 +261,7 @@ export function Hero() {
               </dt>
               <dd
                 style={{
-                  fontFamily: "var(--font-mulish)",
+                  fontFamily: "var(--font-ui)",
                   fontWeight: 500,
                   fontSize: "0.6rem",
                   letterSpacing: "0.12em",

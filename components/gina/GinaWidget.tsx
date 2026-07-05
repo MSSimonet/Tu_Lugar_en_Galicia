@@ -140,6 +140,7 @@ export function GinaWidget() {
         aria-label="Asistente Gina — Tu Lugar en Galicia"
         aria-modal="true"
         aria-hidden={!abierto}
+        inert={!abierto}
         onKeyDown={onKeyDown}
         className={`
           fixed bottom-6 right-6 z-50

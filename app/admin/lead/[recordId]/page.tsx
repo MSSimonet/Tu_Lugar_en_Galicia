@@ -125,7 +125,7 @@ function FieldRow({ label, value }: { label: string; value: string }) {
       display: 'grid', gridTemplateColumns: '200px 1fr', gap: '8px',
       padding: '8px 0', borderBottom: '1px solid var(--color-arena)',
     }}>
-      <span style={{ fontSize: '13px', color: '#696560', fontFamily: 'var(--font-ui)' }}>
+      <span style={{ fontSize: '13px', color: 'var(--color-pizarra)', fontFamily: 'var(--font-ui)' }}>
         {label}
       </span>
       <span style={{ fontSize: '14px', color: 'var(--color-granito)', fontFamily: 'var(--font-ui)', fontWeight: value === '—' ? 400 : 500 }}>
@@ -183,7 +183,7 @@ function ErrorPage({ mensaje }: { mensaje: string }) {
         }}>
           Acceso no disponible
         </h1>
-        <p style={{ fontSize: '14px', color: '#696560', fontFamily: 'var(--font-ui)', margin: 0 }}>
+        <p style={{ fontSize: '14px', color: 'var(--color-pizarra)', fontFamily: 'var(--font-ui)', margin: 0 }}>
           {mensaje}
         </p>
       </div>
@@ -229,7 +229,7 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
   const etiqueta       = String(fields.etiqueta ?? '')
   const codigoAgenda   = fields.codigoAgenda ? String(fields.codigoAgenda) : undefined
   const createdTime    = typeof fields._createdTime === 'string' ? fields._createdTime : null
-  const calStyle       = CALIFICACION_STYLE[calificacion] ?? { bg: 'var(--color-niebla)', color: '#696560', label: calificacion || 'Sin calificar' }
+  const calStyle       = CALIFICACION_STYLE[calificacion] ?? { bg: 'var(--color-niebla)', color: 'var(--color-pizarra)', label: calificacion || 'Sin calificar' }
   const dias           = createdTime ? diasDesde(createdTime) : null
 
   return (
@@ -260,21 +260,21 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-end' }}>
               <Badge text={calStyle.label} bg={calStyle.bg} color={calStyle.color} />
               {etiqueta && (
-                <Badge text={etiqueta} bg="#2a2826" color="var(--color-laton-claro)" />
+                <Badge text={etiqueta} bg="var(--color-acordeon-bg)" color="var(--color-laton-claro)" />
               )}
             </div>
           </div>
 
           {createdTime && (
             <p style={{
-              fontSize: '12px', color: '#888480', fontFamily: 'var(--font-ui)',
+              fontSize: '12px', color: 'var(--color-header-subtle)', fontFamily: 'var(--font-ui)',
               marginTop: '16px',
             }}>
               Cuestionario completado el {formatFecha(createdTime)}
               {dias !== null && (
                 <span style={{
                   marginLeft: '10px', fontWeight: 500,
-                  color: dias > 7 ? '#e57373' : dias > 3 ? '#ffb74d' : '#81c784',
+                  color: dias > 7 ? 'var(--color-estado-error)' : dias > 3 ? 'var(--color-estado-alerta)' : 'var(--color-estado-ok)',
                 }}>
                   · hace {dias} día{dias !== 1 ? 's' : ''}
                   {dias > 7 ? ' ⚠ urgente' : dias > 3 ? ' · seguimiento recomendado' : ''}
@@ -326,7 +326,7 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
 
         {/* ID interno */}
         <p style={{
-          textAlign: 'center', fontSize: '11px', color: '#B0ADA8',
+          textAlign: 'center', fontSize: '11px', color: 'var(--color-pizarra)',
           fontFamily: 'var(--font-ui)', marginTop: '8px',
         }}>
           ID Airtable: {recordId}

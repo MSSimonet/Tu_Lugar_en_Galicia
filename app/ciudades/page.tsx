@@ -70,7 +70,7 @@ function CiudadCard({ nombre, tag, slug, imagen }: typeof CIUDADES[number]) {
             fontSize: '26px',
             fontWeight: 400,
             fontStyle: 'italic',
-            color: '#F5F0E8',
+            color: 'var(--color-header-active)',
             margin: '0 0 7px 0',
             lineHeight: 1.2,
           }}>
@@ -94,14 +94,14 @@ function CiudadCard({ nombre, tag, slug, imagen }: typeof CIUDADES[number]) {
           left: 0,
           right: 0,
           height: '2px',
-          background: '#B8943F',
+          background: 'var(--color-laton-borde)',
           zIndex: 3,
         }} />
         {/* Borde dorado completo — aparece en hover via CSS */}
         <div aria-hidden="true" className="ciudad-border" style={{
           position: 'absolute',
           inset: 0,
-          border: '1.5px solid #B8943F',
+          border: '1.5px solid var(--color-laton-borde)',
           borderRadius: '3px',
           zIndex: 3,
           pointerEvents: 'none',
@@ -148,7 +148,7 @@ export default function CiudadesIndexPage() {
         style={{ padding: '40px 48px' }}
       >
         <span
-          className="inline-flex items-center px-3 py-1 rounded-full mb-5 font-[family-name:var(--font-mulish)] tracking-widest uppercase [color:var(--color-laton)] border border-[var(--color-arena)]"
+          className="inline-flex items-center px-3 py-1 rounded-full mb-5 font-[family-name:var(--font-ui)] tracking-widest uppercase [color:var(--color-laton)] border border-[var(--color-arena)]"
           style={{ fontSize: '10px', background: 'var(--color-niebla)' }}
         >
           Relocation especializado · Galicia
@@ -160,7 +160,7 @@ export default function CiudadesIndexPage() {
           Elige tu ciudad
         </h1>
         <p
-          className="font-[family-name:var(--font-mulish)] leading-relaxed max-w-[480px] mx-auto [color:var(--color-pizarra)]"
+          className="font-[family-name:var(--font-ui)] leading-relaxed max-w-[480px] mx-auto [color:var(--color-pizarra)]"
           style={{ fontSize: '1rem' }}
         >
           Cada ciudad de Galicia tiene su carácter. Encuentra la que mejor se adapta a lo que buscas.

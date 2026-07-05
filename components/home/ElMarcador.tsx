@@ -127,8 +127,8 @@ export function ElMarcador() {
                     fontSize: '10px',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
-                    color: 'rgba(245,240,232,0.75)',
-                    opacity: 1,
+                    color: 'var(--color-sobre-laton)',
+                    opacity: 0.9,
                   }}
                 >
                   {etiqueta}

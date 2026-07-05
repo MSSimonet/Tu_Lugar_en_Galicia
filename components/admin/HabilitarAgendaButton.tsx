@@ -18,7 +18,7 @@ export function HabilitarAgendaButton({ recordId, token, codigoExistente }: Prop
         <span
           style={{
             display: 'inline-flex', alignItems: 'center', gap: '6px',
-            background: '#e8f5e9', color: '#2e7d32',
+            background: 'var(--color-estado-ok-bg)', color: 'var(--color-estado-ok)',
             padding: '10px 18px', borderRadius: '6px',
             fontFamily: 'var(--font-ui)', fontSize: '14px', fontWeight: 500,
           }}
@@ -71,11 +71,11 @@ export function HabilitarAgendaButton({ recordId, token, codigoExistente }: Prop
     transition: 'opacity 0.15s',
     opacity: disabled ? 0.7 : 1,
     background:
-      estado === 'done'    ? '#2e7d32' :
-      estado === 'warning' ? '#8F722B' :
-      estado === 'error'   ? '#c62828' :
-                             '#1E1C19',
-    color: '#ffffff',
+      estado === 'done'    ? 'var(--color-estado-ok)' :
+      estado === 'warning' ? 'var(--color-laton)' :
+      estado === 'error'   ? 'var(--color-estado-error)' :
+                             'var(--color-granito)',
+    color: 'var(--color-sobre-laton)',
   }
 
   return (
@@ -90,7 +90,7 @@ export function HabilitarAgendaButton({ recordId, token, codigoExistente }: Prop
       {msg && (
         <p style={{
           margin: 0, fontSize: '13px', fontFamily: 'var(--font-ui)',
-          color: estado === 'error' ? '#c62828' : estado === 'warning' ? '#7A5F22' : '#2e7d32',
+          color: estado === 'error' ? 'var(--color-estado-error)' : estado === 'warning' ? 'var(--color-laton-text)' : 'var(--color-estado-ok)',
         }}>
           {msg}
         </p>
