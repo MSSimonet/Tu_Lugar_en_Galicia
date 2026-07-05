@@ -12,5 +12,5 @@ export function prefetchCiudadVideo(slug: string): void {
   const src = videoSrcPorSlug[slug]
   if (!src || prefetched.has(src)) return
   prefetched.add(src)
-  fetch(src).catch(() => {})
+  fetch(src, { keepalive: true }).catch(() => {})
 }
