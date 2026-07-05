@@ -142,17 +142,17 @@ El 2026-06-28 se realizó la primera auditoría total del proyecto (código, seg
 |---|---|---|---|
 | A01 | ✅ Resuelto | `/api/plan/[recordId]/pdf` — auth implementada con `verifyAdminToken` (token HMAC-SHA256 en query param) | `app/api/plan/[recordId]/pdf/route.ts` |
 | A02 | ✅ Resuelto | Logs de error saneados en 5 puntos (calcom webhook ×3, gina retry ×1) — se reemplazó el volcado de `err`/body crudo por status HTTP + timestamp + recordId, para que ningún log pueda arrastrar el email del cliente vía mensajes de error de Airtable/Resend (sesión 2026-07-04) | `app/api/webhooks/calcom/route.ts`, `app/api/gina/route.ts` |
-| A03 | 🔴 Crítico | `/api/gina` sin rate limiting — Airtable puede saturarse | `app/api/gina/route.ts` |
+| A03 | ✅ Resuelto | Rate limiting con Upstash (`Ratelimit.slidingWindow(60, '10 m')` por IP, fail-closed: responde 503 si faltan las env vars de Upstash) ya implementado | `app/api/gina/route.ts` |
 | A04 | 🔴 Crítico | Política de Privacidad con TODO sin completar en producción | `app/politica-de-privacidad/page.tsx` |
-| A05 | 🟠 Alto | CSP ausente — sin defensa en profundidad contra XSS | `middleware.ts`, `vercel.json` |
+| A05 | ✅ Resuelto (parcial) | CSP implementada en `middleware.ts` vía hashes SHA-256 en `script-src` (sin `unsafe-inline`). `style-src` mantiene `unsafe-inline` porque el proyecto usa `style={{}}` inline de forma masiva — decisión documentada en el propio archivo (mismo tema que A3 de la auditoría 2026-07-04) | `middleware.ts` |
 | A06 | ✅ Resuelto | HSTS ya configurado (`Strict-Transport-Security: max-age=63072000; includeSubDomains` para todas las rutas) | `vercel.json:32-35` |
-| A07 | 🟠 Alto | consentimientoRGPD hardcodeado en Gina (no viene del usuario) | `app/api/gina/route.ts:190` |
-| A08 | 🟠 Alto | WhatsApp y Cal.com URL con placeholders en config | `lib/config/site.ts` |
+| A07 | ✅ Resuelto | `consentimientoRGPD` se lee de `sesion.respuestas['rgpd'] === 'acepto'`, respuesta real de un paso de opt-in del usuario en `flow.json`. Caveat menor: la rama "ver política" no vuelve a preguntar el consentimiento antes de continuar a `p1_nombre` | `app/api/gina/route.ts`, `lib/gina/flow.json` |
+| A08 | 🟡 Medio | WhatsApp ya no existe (reemplazado por formulario de contacto en toda la web, commit `a19e4a7`). Pendiente real: la URL de Cal.com en `lib/config/site.ts` sigue siendo un placeholder ("reemplazar con la URL real de Silvana") | `lib/config/site.ts` |
 | A09 | 🟢 Aceptado | Evaluado en sesión 2026-07-04: riesgo residual bajo (destinatario único conocido, `no-referrer` activo en rutas admin, TTL ya en 24h desde A15, sin analytics de terceros instalado). Se decidió no tocar el esquema de tokens — ver razonamiento completo en `docs/arranque.md` | `lib/admin/tokens.ts` |
-| A10 | 🟡 Medio | Sanitización de email en filterByFormula por exclusión (frágil) | `lib/admin/airtable.ts:122` |
+| A10 | 🟡 Medio | Sanitización de email en `findLeadByEmail`: `replace(/['"\\]/g, '')` manual antes de interpolar en la fórmula de Airtable (la API no admite parametrización real). Funciona pero sigue siendo frágil ante otros caracteres especiales de su sintaxis de fórmulas | `lib/admin/airtable.ts` |
 | A11 | 🟡 Medio | `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` no están en `.env.local.example` | `.env.local.example` |
-| A12 | 🟡 Medio | `CALCOM_API_KEY` en example pero nunca usada; `OPENWEATHER_API_KEY` obsoleta | `.env.local.example` |
-| A13 | 🟡 Medio | VistaEnVivo widget Windy sin autorización legal de MeteoGalicia | `components/ciudad/VistaEnVivo.tsx` |
+| A12 | 🟡 Medio | `OPENWEATHER_API_KEY` ya fue eliminada del example. Pendiente: `CALCOM_API_KEY` sigue en el example pero no se usa en ningún archivo del código | `.env.local.example` |
+| A13 | 🟢 Aceptado | Ya no hay ningún embed de terceros (Windy u otro): el componente es un placeholder estático "Próximamente" sin autorización legal pendiente — comentario del archivo actualizado al estado real en commit `4b54856`. Pendiente real: decisión de producto sobre qué cámara mostrar | `components/ciudad/VistaEnVivo.tsx` |
 | A14 | 🟡 Medio | Imágenes placeholder en producción (Testimonios, Silvana, MuroLlaves) | múltiples |
 | A15 | ✅ Resuelto | TTL token admin reducido de 72h a 24h para acción de alta sensibilidad | `lib/admin/tokens.ts:3` |
 
@@ -169,13 +169,13 @@ Auditoría completa de los 11 endpoints `/api/*`: secretos, auth/autorización, 
 | ID | Severidad | Estado |
 |---|---|---|
 | C1 | 🔴 Crítico | ✅ Resuelto — IDOR en `/api/gina`: el cliente controlaba `sesion.airtableRecordId` sin verificación, permitiendo sobrescribir el lead de otra persona. Fix: firma HMAC del recordId (`generateAdminToken`/`verifyAdminToken`), verificada en cada request (commit `b8a2327`) |
-| C2 | 🔴 Crítico | ✅ Resuelto (parcial) — HTML sin escapar en templates de mail (`buildContactoEmail`, `buildAgendaEmail`, `buildConfirmacionEmail` de Cal.com). Fix: `escapeHtml()` en `lib/admin/email.ts` (commit `c960296`). **Pendiente:** `app/api/admin/recordatorio-silvana/route.ts:78-80` tiene el mismo patrón sin corregir (`plataformaHtml` interpola `plataforma` de Airtable sin escape) — no estaba en el alcance de este fix |
-| A1-A4 | 🟠 Alto | Pendientes — sin rate limit en `/api/contacto`, rate limit "fail-open" en `/api/lead`, CSP con `unsafe-inline`, sin límite de tamaño en respuestas array de Gina. Detalle en `docs/arranque.md` |
-| M1-M4 | 🟡 Medio | Pendientes — sin rate limit en endpoints de token admin, posible conflicto de precedencia de headers, mensajes de error internos expuestos en `/api/gina`, 2 vulnerabilidades moderadas en dependencias (bajo riesgo real). Detalle en `docs/arranque.md` |
+| C2 | 🔴 Crítico | ✅ Resuelto — HTML sin escapar en templates de mail (`buildContactoEmail`, `buildAgendaEmail`, `buildConfirmacionEmail` de Cal.com). Fix: `escapeHtml()` en `lib/admin/email.ts` (commit `c960296`). El caso que había quedado pendiente (`recordatorio-silvana/route.ts` interpolaba `plataforma` sin escape) también fue corregido — ya usa `escapeHtml()` |
+| A1-A4 | 🟠 Alto | A1 (rate limit `/api/contacto`), A2 (rate limit fail-open en `/api/lead`) y A4 (límite de tamaño en respuestas array de Gina) resueltos en `c873534`. Pendiente: A3 — CSP con `unsafe-inline` en `style-src` (ver A05 de la tabla de arriba). Detalle en `docs/arranque.md` |
+| M1-M4 | 🟡 Medio | M1 (rate limit en endpoints de token admin), M2 (conflicto de precedencia del header Referrer-Policy) y M3 (mensajes de error internos expuestos en `/api/gina`) resueltos en `4b54856`. Pendiente: M4 — 2 vulnerabilidades moderadas en dependencias (`postcss` vía `next`, XSS en stringify; bajo riesgo real, tooling de build no servido al usuario), reverificado con `npm audit` el 2026-07-05 | `docs/arranque.md` |
 
 ### Auditoría UX/UI completa (2026-07-04)
 
-Recorrido de las 17 páginas públicas (contraste medido, no estimado; claro y oscuro). Hallazgo más grave: **texto invisible en 28 archivos** por una sintaxis de Tailwind v4 rota (`text-[var(--color-*)]` no genera regla CSS) — ya resuelto en 3 commits por severidad (`2d08a6e`, `b43640b`, `e1ebaff`). Hallazgo pendiente de decisión de producto: **divergencia tipográfica documentada vs. implementada** — `DESIGN.md`/`docs/design-system.md` especifican Fraunces para titulares, pero el código real usa Cormorant Garamond + una tercera familia no documentada (Mulish) en 20+ archivos. Detalle completo en `docs/arranque.md`.
+Recorrido de las 17 páginas públicas (contraste medido, no estimado; claro y oscuro). Hallazgo más grave: **texto invisible en 28 archivos** por una sintaxis de Tailwind v4 rota (`text-[var(--color-*)]` no genera regla CSS) — ya resuelto en 3 commits por severidad (`2d08a6e`, `b43640b`, `e1ebaff`). Hallazgo pendiente de decisión de producto: **divergencia tipográfica en titulares** — `docs/design-system.md` especifica Fraunces para titulares editoriales, pero el código real usa Cormorant Garamond (`app/layout.tsx`). La tercera familia no documentada (Mulish) que existía en 20+ archivos ya fue consolidada en Plus Jakarta Sans —hoy documentada como `--font-ui`— en el commit `153960d`. Detalle completo en `docs/arranque.md`.
 
 ---
 
