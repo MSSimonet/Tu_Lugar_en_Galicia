@@ -54,7 +54,7 @@ export default async function AgendaPage({ searchParams }: PageProps) {
           className="font-[family-name:var(--font-ui)] leading-[var(--leading-cuerpo)] max-w-xl [color:var(--color-pizarra)]"
           style={{ fontSize: 'var(--text-md)' }}
         >
-          Gratuita, sin compromiso. Silvana te va a escuchar y decirte si puede ayudarte.
+          Gratuita, sin compromiso. Te vamos a escuchar y decirte si podemos ayudarte.
         </p>
 
         <p

@@ -7,7 +7,7 @@ import { SITE_NAME } from '@/lib/config/site'
 const serviceLinks = [
   { label: 'Cómo funciona',       href: '/como-funciona' },
   { label: 'Ciudades',            href: '/ciudades' },
-  { label: 'Sobre Silvana',       href: '/sobre-silvana' },
+  { label: 'Quiénes somos',       href: '/sobre-silvana' },
   { label: 'Testimonios',         href: '/#testimonios' },
   { label: 'Preguntas frecuentes', href: '/faq' },
 ]

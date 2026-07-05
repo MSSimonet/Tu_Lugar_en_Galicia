@@ -220,7 +220,7 @@ const ejemplos: Array<{
       { numero: 4,  descripcion: 'Cuenta no residente — ya en España' },
       { numero: 17, descripcion: 'Baja consular — ya en España' },
     ],
-    notasEsperadas: ['Silvana', 'videollamada'],
+    notasEsperadas: ['equipo', 'videollamada'],
   },
 
   // ── Ejemplo 6 ───────────────────────────────────────────────────────────────

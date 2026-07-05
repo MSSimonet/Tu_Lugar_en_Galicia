@@ -256,7 +256,7 @@ export function armarPlan(r: RespuestasLead): PlanArmado {
   // Nota obligatoria TURISTA: caso que requiere conversación con Silvana
   if (doc === 'turista') {
     items.push(n(
-      '⚠️ ATENCIÓN — Este caso requiere conversación directa con Silvana. ' +
+      '⚠️ ATENCIÓN — Este caso requiere conversación directa con nuestro equipo. ' +
       'Como entrarás como turista, las vías de regularización son limitadas y dependen de tu situación concreta ' +
       '(visado de nómada digital, arraigo, Ley Beckham, etc.). ' +
       'No es posible generar un plan automático completo; el equipo lo estudiará contigo en la videollamada.',

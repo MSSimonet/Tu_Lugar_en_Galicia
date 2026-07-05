@@ -133,7 +133,7 @@ export function buildContactoEmail(params: {
 
 /**
  * Template del mail de habilitación de agenda al cliente.
- * Voz de Silvana, tú neutro (brand voice — voz-tu-lugar-en-galicia skill).
+ * Voz del equipo, tú neutro (brand voice — voz-tu-lugar-en-galicia skill).
  */
 export function buildAgendaEmail(nombre: string, codigo: string): string {
   const primerNombre = escapeHtml(nombre.split(' ')[0] || nombre)
@@ -169,9 +169,9 @@ export function buildAgendaEmail(nombre: string, codigo: string): string {
               <p style="margin:0 0 20px;">Hola ${primerNombre},</p>
 
               <p style="margin:0 0 20px;">
-                Revisé tu historia con atención y me alegra mucho decirte que creo que puedo
-                acompañarte en este proceso. Lo que describes es exactamente el tipo de situación
-                en la que más podemos ayudar.
+                Revisamos tu historia con atención y nos alegra mucho decirte que creemos que
+                podemos acompañarte en este proceso. Lo que describes es exactamente el tipo de
+                situación en la que más podemos ayudar.
               </p>
 
               <p style="margin:0 0 20px;">
@@ -215,13 +215,13 @@ export function buildAgendaEmail(nombre: string, codigo: string): string {
               </p>
 
               <p style="margin:0 0 28px;">
-                Si tienes alguna pregunta antes de la llamada, puedes escribirme directamente
+                Si tienes alguna pregunta antes de la llamada, puedes escribirnos directamente
                 respondiendo este mail.
               </p>
 
               <p style="margin:0;">¡Nos vemos pronto!</p>
               <p style="margin:8px 0 0;font-style:italic;color:#2D2926;">
-                Silvana<br />
+                El equipo<br />
                 <span style="font-size:13px;color:#696560;">Tu Lugar en Galicia</span>
               </p>
 

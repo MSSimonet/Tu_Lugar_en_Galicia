@@ -103,7 +103,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
     canonical: `${SITE_URL}/como-funciona`,
   },
   sobreSilvana: {
-    title: 'Sobre Silvana Lorenzo — Fundadora de Tu Lugar en Galicia',
+    title: 'Quiénes somos — Silvana Lorenzo, fundadora de Tu Lugar en Galicia',
     description:
       'Silvana es gallega de corazón y emigrante de experiencia. Conoce su historia y por qué creó el primer servicio de relocation especializado en Galicia.',
     keywords: [
@@ -144,7 +144,7 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
   agenda: {
     title: 'Agenda tu videollamada gratuita sobre relocation en Galicia | Tu Lugar en Galicia',
     description:
-      'Reserva una videollamada gratuita con Silvana. Cuéntanos tu caso y evaluamos juntos si podemos ayudarte a encontrar alquiler en Galicia.',
+      'Reserva una videollamada gratuita con nuestro equipo. Cuéntanos tu caso y evaluamos juntos si podemos ayudarte a encontrar alquiler en Galicia.',
     keywords: [
       'agendar videollamada relocation galicia',
       'consulta gratuita alquiler galicia',

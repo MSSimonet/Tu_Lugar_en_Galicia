@@ -10,13 +10,13 @@ const pasos = [
   },
   {
     n: '02',
-    title: 'Silvana revisa tu caso',
+    title: 'El equipo revisa tu caso',
     desc: 'El equipo analiza tu perfil y, si el servicio encaja con lo que necesitas, te envía un código de acceso por email.',
   },
   {
     n: '03',
     title: 'Eliges tu horario',
-    desc: 'Con el código en mano, vuelves a esta página y reservas la videollamada gratuita con Silvana.',
+    desc: 'Con el código en mano, vuelves a esta página y reservas la videollamada gratuita con nuestro equipo.',
   },
 ]
 
@@ -68,7 +68,7 @@ export function AgendaPublica() {
             className="font-[family-name:var(--font-ui)] leading-[var(--leading-cuerpo)] max-w-xl [color:var(--color-pizarra)]"
             style={{ fontSize: 'var(--text-md)' }}
           >
-            La videollamada con Silvana es el inicio de todo — y para que valga de verdad, queremos conocerte antes.
+            La videollamada con nuestro equipo es el inicio de todo — y para que valga de verdad, queremos conocerte antes.
           </p>
 
           <p
@@ -76,7 +76,7 @@ export function AgendaPublica() {
             style={{ fontSize: 'var(--text-sm)' }}
           >
             Cada familia que viene a Galicia llega con una situación propia: ciudad de destino, plazos,
-            documentación, expectativas. Antes de reservar un espacio en el calendario de Silvana,
+            documentación, expectativas. Antes de reservar un espacio en nuestro calendario,
             Gina recoge esos datos para que esa charla sea aprovechada al máximo.
           </p>
 
