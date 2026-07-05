@@ -30,7 +30,7 @@ export function AgendaPublica() {
       className="bg-[var(--color-niebla)] px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
       aria-labelledby="agenda-publica-heading"
     >
-      <div className="mx-auto grid max-w-[1180px] grid-cols-1 md:grid-cols-[1fr_1.15fr]">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[1fr_1.15fr]">
 
         {/* Imagen editorial */}
         <div
