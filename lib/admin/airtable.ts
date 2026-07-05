@@ -30,6 +30,7 @@ export async function getRecord(recordId: string): Promise<Record<string, unknow
   const res = await fetch(`${baseUrl}/${recordId}`, {
     headers: { Authorization: `Bearer ${apiKey}` },
     cache: 'no-store',
+    signal: AbortSignal.timeout(8000),
   })
   if (res.status === 404) throw new Error(`Registro ${recordId} no encontrado en Airtable`)
   if (!res.ok) throw new Error(`Airtable GET ${res.status}`)
@@ -72,6 +73,7 @@ export async function listAllRecords(filterByFormula?: string): Promise<Airtable
     const res = await fetch(url.toString(), {
       headers: { Authorization: `Bearer ${apiKey}` },
       cache: 'no-store',
+      signal: AbortSignal.timeout(8000),
     })
     if (!res.ok) throw new Error(`Airtable list ${res.status}`)
 
@@ -106,6 +108,7 @@ export async function validateCodigoAgenda(code: string): Promise<boolean> {
   const res = await fetch(`${baseUrl}?${params.toString()}`, {
     headers: { Authorization: `Bearer ${apiKey}` },
     cache: 'no-store',
+    signal: AbortSignal.timeout(8000),
   })
   if (!res.ok) throw new Error(`Airtable validate ${res.status}`)
 
@@ -127,6 +130,7 @@ export async function findLeadByEmail(email: string): Promise<AirtableRecord | n
   const res = await fetch(`${baseUrl}?${params.toString()}`, {
     headers: { Authorization: `Bearer ${apiKey}` },
     cache: 'no-store',
+    signal: AbortSignal.timeout(8000),
   })
   if (!res.ok) throw new Error(`Airtable findByEmail ${res.status}`)
 
@@ -167,6 +171,7 @@ export async function patchRecord(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ fields }),
+    signal: AbortSignal.timeout(8000),
   })
   if (!res.ok) {
     const msg = await res.text()

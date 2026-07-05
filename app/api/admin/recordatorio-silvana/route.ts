@@ -266,7 +266,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       html,
     })
   } catch (err) {
-    console.error('[recordatorio-silvana] Resend error:', err)
+    const status = err instanceof Error ? err.message.match(/^Resend error (\d+)/)?.[1] : undefined
+    console.error(`[recordatorio-silvana] Resend error — status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
     return NextResponse.json({ error: 'Error enviando mail' }, { status: 500 })
   }
 

@@ -69,7 +69,8 @@ export async function POST(
   try {
     await patchRecord(recordId, { codigoAgenda: codigo, fechaHabilitacion })
   } catch (err) {
-    console.error('[habilitar-agenda] Airtable PATCH fallido —', new Date().toISOString(), err)
+    const status = err instanceof Error ? err.message.match(/^Airtable PATCH (\d+)/)?.[1] : undefined
+    console.error(`[habilitar-agenda] Airtable PATCH fallido — recordId: ${recordId}, status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
     return NextResponse.json({ error: 'Error al guardar el código en Airtable' }, { status: 500 })
   }
 
@@ -84,7 +85,8 @@ export async function POST(
     })
   } catch (err) {
     // El código ya está guardado — no revertimos; avisamos para reenvío manual
-    console.error('[habilitar-agenda] Resend fallido —', new Date().toISOString(), err)
+    const status = err instanceof Error ? err.message.match(/^Resend error (\d+)/)?.[1] : undefined
+    console.error(`[habilitar-agenda] Resend fallido — recordId: ${recordId}, status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
     return NextResponse.json(
       { ok: true, warning: 'Código generado pero el mail no pudo enviarse. Reenviar manualmente.' },
       { status: 200 },

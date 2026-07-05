@@ -53,9 +53,11 @@ export async function GET(
   let buffer
   try {
     buffer = await generarPlanPdf(lead, planArmado)
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Error al generar el PDF'
-    return NextResponse.json({ error: msg }, { status: 500 })
+  } catch {
+    // Nunca devolver err.message al cliente — la plantilla puede interpolar datos
+    // del lead en el mensaje de error. Detalle solo server-side, sin el mensaje.
+    console.error(`[plan/pdf] Error generando PDF — recordId: ${recordId}, ts: ${new Date().toISOString()}`)
+    return NextResponse.json({ error: 'Error al generar el PDF' }, { status: 500 })
   }
 
   const slug = lead.nombreCompleto.trim().replace(/\s+/g, '-').toLowerCase()

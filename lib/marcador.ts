@@ -63,6 +63,7 @@ export async function getMarcadorData(): Promise<{
     const response = await fetch(url, {
       // next.js fetch cache: revalidar cada hora
       next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(8000),
     })
 
     if (!response.ok) {

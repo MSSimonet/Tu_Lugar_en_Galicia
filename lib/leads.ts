@@ -171,6 +171,7 @@ export async function saveLead(data: LeadData, recordId?: string): Promise<strin
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ fields: { ...data } }),
+    signal: AbortSignal.timeout(8000),
   })
 
   if (!response.ok) {
@@ -210,6 +211,7 @@ export async function getLead(recordId: string): Promise<LeadData> {
   const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}/${recordId}`
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${apiKey}` },
+    signal: AbortSignal.timeout(8000),
   })
 
   if (!response.ok) {

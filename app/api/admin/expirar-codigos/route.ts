@@ -11,7 +11,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     vencidos = await getLeadsConCodigoActivo()
   } catch (err) {
-    console.error('[expirar-codigos] Airtable error:', err)
+    const status = err instanceof Error ? err.message.match(/Airtable list (\d+)/)?.[1] : undefined
+    console.error(`[expirar-codigos] Airtable error — status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
     return NextResponse.json({ error: 'Error consultando Airtable' }, { status: 500 })
   }
 
@@ -21,9 +22,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const fallidos = resultados.filter(r => r.status === 'rejected')
   if (fallidos.length > 0) {
-    fallidos.forEach((r, i) =>
-      console.error(`[expirar-codigos] PATCH fallido ${vencidos[i]?.id}:`, (r as PromiseRejectedResult).reason)
-    )
+    fallidos.forEach((r, i) => {
+      const reason = (r as PromiseRejectedResult).reason
+      const status = reason instanceof Error ? reason.message.match(/^Airtable PATCH (\d+)/)?.[1] : undefined
+      console.error(`[expirar-codigos] PATCH fallido — recordId: ${vencidos[i]?.id}, status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
+    })
   }
 
   const expirados = resultados.filter(r => r.status === 'fulfilled').length

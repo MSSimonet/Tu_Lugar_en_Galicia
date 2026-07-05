@@ -103,15 +103,24 @@ export async function POST(req: NextRequest) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ fields }),
+        signal: AbortSignal.timeout(8000),
       }
     )
     if (!airtableRes.ok) {
-      const errSnippet = (await airtableRes.text()).slice(0, 200)
-      console.error('[contacto] Airtable devolvió error:', airtableRes.status, errSnippet)
+      // Nunca volcar el body crudo — puede ecoar valores de campo (PII) en mensajes
+      // de validación de Airtable. Solo status + type estructurado si existe.
+      let type: string | undefined
+      try {
+        const errBody = (await airtableRes.json()) as { error?: { type?: string } }
+        type = errBody?.error?.type
+      } catch {
+        // cuerpo no parseable como JSON — no hay type disponible
+      }
+      console.error(`[contacto] Airtable devolvió error — status: ${airtableRes.status}, type: ${type ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
       return NextResponse.json({ error: 'No se pudo registrar tu consulta. Intenta de nuevo.' }, { status: 500 })
     }
   } catch (err) {
-    console.error('[contacto] Error de red al guardar en Airtable:', err instanceof Error ? err.message : 'unknown')
+    console.error(`[contacto] Error de red al guardar en Airtable — ts: ${new Date().toISOString()}`, err instanceof Error ? err.name : 'unknown')
     return NextResponse.json({ error: 'No se pudo registrar tu consulta. Intenta de nuevo.' }, { status: 500 })
   }
 
@@ -135,7 +144,8 @@ export async function POST(req: NextRequest) {
         replyTo: emailLimpio,
       })
     } catch (err) {
-      console.error('[contacto] Notificación por mail falló (lead guardado en CRM):', err instanceof Error ? err.message : 'unknown')
+      const status = err instanceof Error ? err.message.match(/^Resend error (\d+)/)?.[1] : undefined
+      console.error(`[contacto] Notificación por mail falló (lead guardado en CRM) — status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
     }
   }
 
