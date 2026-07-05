@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Cormorant_Garamond, Mulish } from "next/font/google";
+import { Plus_Jakarta_Sans, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { GinaWidget } from "@/components/gina/GinaWidget";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   variable: "--font-plus-jakarta",
   display: "swap",
 });
@@ -16,13 +16,6 @@ const cormorant = Cormorant_Garamond({
   weight: ["400", "500"],
   style: ["normal", "italic"],
   variable: "--font-cormorant",
-  display: "swap",
-});
-
-const mulish = Mulish({
-  subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-mulish",
   display: "swap",
 });
 
@@ -43,7 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${plusJakarta.variable} ${cormorant.variable} ${mulish.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${cormorant.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-[family-name:var(--font-ui)]">

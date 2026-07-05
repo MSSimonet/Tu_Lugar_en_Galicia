@@ -22,7 +22,7 @@ import type { PlanArmado, Fase, BloqueTramite, NotaEspecial } from './armador'
 // transformación y produce fonts embebidos correctos.
 
 const CG = (file: string) => join(process.cwd(), 'node_modules/@fontsource/cormorant-garamond/files', file)
-const MU = (file: string) => join(process.cwd(), 'node_modules/@fontsource/mulish/files', file)
+const PJ = (file: string) => join(process.cwd(), 'node_modules/@fontsource/plus-jakarta-sans/files', file)
 
 Font.register({
   family: 'Cormorant',
@@ -34,11 +34,11 @@ Font.register({
 })
 
 Font.register({
-  family: 'Mulish',
+  family: 'PlusJakartaSans',
   fonts: [
-    { src: MU('mulish-latin-300-normal.woff'), fontWeight: 300 },
-    { src: MU('mulish-latin-400-normal.woff'), fontWeight: 400 },
-    { src: MU('mulish-latin-600-normal.woff'), fontWeight: 600 },
+    { src: PJ('plus-jakarta-sans-latin-300-normal.woff'), fontWeight: 300 },
+    { src: PJ('plus-jakarta-sans-latin-400-normal.woff'), fontWeight: 400 },
+    { src: PJ('plus-jakarta-sans-latin-600-normal.woff'), fontWeight: 600 },
   ],
 })
 
@@ -163,7 +163,7 @@ const S = StyleSheet.create({
     backgroundColor: C.granito,
   },
   pageBody: {
-    fontFamily: 'Mulish',
+    fontFamily: 'PlusJakartaSans',
     fontSize: 11,
     color: C.granito,
     backgroundColor: C.blanco,
@@ -280,7 +280,7 @@ const S = StyleSheet.create({
     borderLeftColor: C.latonClaro,
   },
   tramiteNum: {
-    fontFamily: 'Mulish',
+    fontFamily: 'PlusJakartaSans',
     fontSize: 8,
     fontWeight: 600,
     color: C.laton,
@@ -388,13 +388,13 @@ const S = StyleSheet.create({
   },
   contextoLabel: {
     fontSize: 9,
-    fontFamily: 'Mulish',
+    fontFamily: 'PlusJakartaSans',
     fontWeight: 400,
     color: C.pizarra,
   },
   contextoVal: {
     fontSize: 9,
-    fontFamily: 'Mulish',
+    fontFamily: 'PlusJakartaSans',
     fontWeight: 600,
     color: C.granito,
     marginRight: 14,

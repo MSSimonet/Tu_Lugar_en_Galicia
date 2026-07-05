@@ -14,7 +14,7 @@
     "@fontsource/cormorant-garamond": "^5.2.11",
     "@fontsource/dm-sans": "^5.2.8",
     "@fontsource/inter": "^5.2.8",
-    "@fontsource/mulish": "^5.2.8",
+    "@fontsource/plus-jakarta-sans": "^5.2.8",
     "@fontsource/source-sans-3": "^5.2.9",
     "@react-pdf/renderer": "^4.5.1",
     "@upstash/ratelimit": "^2.0.8",

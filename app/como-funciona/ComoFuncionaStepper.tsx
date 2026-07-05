@@ -127,7 +127,7 @@ export default function ComoFuncionaStepper() {
         {/* Encabezado */}
         <div style={{ flexShrink: 0, marginBottom: '12px' }}>
           <p style={{
-            fontFamily: 'var(--font-mulish), sans-serif',
+            fontFamily: 'var(--font-ui)',
             fontSize: '10px',
             letterSpacing: '0.15em',
             textTransform: 'uppercase',
@@ -155,7 +155,7 @@ export default function ComoFuncionaStepper() {
           </h1>
 
           <p style={{
-            fontFamily: 'var(--font-mulish), sans-serif',
+            fontFamily: 'var(--font-ui)',
             fontSize: '12px',
             color: 'var(--color-pizarra)',
             lineHeight: 1.6,
@@ -238,7 +238,7 @@ export default function ComoFuncionaStepper() {
                     {d.title}
                   </div>
                   <div style={{
-                    fontFamily: 'var(--font-mulish), sans-serif',
+                    fontFamily: 'var(--font-ui)',
                     fontSize: '14px',
                     lineHeight: 1.55,
                     color: 'var(--color-pizarra)',
