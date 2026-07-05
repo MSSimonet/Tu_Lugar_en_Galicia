@@ -50,6 +50,10 @@ export function middleware(req: NextRequest) {
   response.headers.set('Content-Security-Policy', csp)
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-Frame-Options', 'DENY')
+  // Referrer-Policy vive únicamente acá (no en vercel.json) — vercel.json aplica
+  // sus reglas al final, en el edge, y pisaría este valor por rutas para todas
+  // las rutas incluidas las admin, anulando el no-referrer que protege los
+  // links con token en query string (A09).
   response.headers.set(
     'Referrer-Policy',
     isSensitiveRoute ? 'no-referrer' : 'strict-origin-when-cross-origin',

@@ -127,9 +127,11 @@ export async function POST(req: NextRequest) {
   let paso
   try {
     paso = obtenerPaso(sesion.pasoActual)
-  } catch (e) {
+  } catch {
+    // Nunca exponer el mensaje interno — revela nombres de pasos de flow.json
+    console.error(`[gina] Paso actual inválido — ts: ${new Date().toISOString()}`)
     return NextResponse.json(
-      { error: (e as Error).message },
+      { error: 'Sesión inválida. Por favor, recarga la página.' },
       { status: 400 },
     )
   }
@@ -145,9 +147,11 @@ export async function POST(req: NextRequest) {
   let siguientePaso
   try {
     siguientePaso = obtenerPaso(siguientePasoId)
-  } catch (e) {
+  } catch {
+    // Nunca exponer el mensaje interno — revela nombres de pasos de flow.json
+    console.error(`[gina] Siguiente paso inválido — ts: ${new Date().toISOString()}`)
     return NextResponse.json(
-      { error: (e as Error).message },
+      { error: 'Ocurrió un error interno. Por favor, recarga la página.' },
       { status: 500 },
     )
   }

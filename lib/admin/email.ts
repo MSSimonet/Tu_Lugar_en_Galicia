@@ -61,6 +61,42 @@ export async function sendEmail({ to, subject, html, replyTo }: EmailParams): Pr
 }
 
 /**
+ * Esqueleto HTML compartido por todos los templates de email transaccional:
+ * doctype/head, tabla centrada de ancho fijo, fondo exterior. Cada caller
+ * arma sus propias filas (`rows`, ya como `<tr><td>...</td></tr>` completos)
+ * para no perder el detalle visual propio de cada mail (paddings, colores de
+ * cabecera, radios) — esto solo evita repetir el boilerplate de alrededor.
+ */
+export function buildEmailShell(params: {
+  title?: string
+  tableWidth: number
+  tableStyle: string
+  outerPadding?: string
+  rows: string
+}): string {
+  const outerPadding = params.outerPadding ?? '40px 0'
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />${params.title ? `
+  <title>${params.title}</title>` : ''}
+</head>
+<body style="margin:0;padding:0;background:#f5f0e8;font-family:Georgia,serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f0e8;padding:${outerPadding};">
+    <tr>
+      <td align="center">
+        <table width="${params.tableWidth}" cellpadding="0" cellspacing="0" style="${params.tableStyle}">
+          ${params.rows}
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
+}
+
+/**
  * Template de notificación inmediata a Silvana cuando alguien usa el formulario de contacto.
  */
 export function buildContactoEmail(params: {
@@ -73,19 +109,8 @@ export function buildContactoEmail(params: {
   const email    = escapeHtml(params.email)
   const telefono = params.telefono ? escapeHtml(params.telefono) : undefined
   const mensaje  = escapeHtml(params.mensaje)
-  return `<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Nuevo contacto directo — Tu Lugar en Galicia</title>
-</head>
-<body style="margin:0;padding:0;background:#f5f0e8;font-family:Georgia,serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f0e8;padding:40px 0;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0"
-               style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
+
+  const rows = `
           <tr>
             <td style="background:#141210;padding:28px 40px;text-align:center;">
               <span style="font-family:Georgia,serif;font-size:22px;font-weight:400;font-style:italic;color:#D4AF6A;letter-spacing:0.06em;">
@@ -123,13 +148,14 @@ export function buildContactoEmail(params: {
             <td style="background:#f5f0e8;padding:16px 40px;text-align:center;font-size:11px;color:#696560;font-family:Georgia,serif;">
               Formulario de contacto — Tu Lugar en Galicia
             </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`
+          </tr>`
+
+  return buildEmailShell({
+    title: 'Nuevo contacto directo — Tu Lugar en Galicia',
+    tableWidth: 600,
+    tableStyle: 'background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;',
+    rows,
+  })
 }
 
 /**
@@ -140,20 +166,7 @@ export function buildAgendaEmail(nombre: string, codigo: string): string {
   const primerNombre = escapeHtml(nombre.split(' ')[0] || nombre)
   const agendaUrl   = `${SITE_URL}/agenda?code=${codigo}`
 
-  return `<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Tu cita con Tu Lugar en Galicia está lista</title>
-</head>
-<body style="margin:0;padding:0;background:#f5f0e8;font-family:Georgia,serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f0e8;padding:40px 0;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0"
-               style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
-
+  const rows = `
           <!-- Cabecera -->
           <tr>
             <td style="background:#141210;padding:28px 40px;text-align:center;">
@@ -235,12 +248,12 @@ export function buildAgendaEmail(nombre: string, codigo: string): string {
                         font-size:11px;color:#696560;font-family:Georgia,serif;">
               Recibiste este mail porque completaste el cuestionario de Tu Lugar en Galicia.
             </td>
-          </tr>
+          </tr>`
 
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`
+  return buildEmailShell({
+    title: 'Tu cita con Tu Lugar en Galicia está lista',
+    tableWidth: 600,
+    tableStyle: 'background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;',
+    rows,
+  })
 }

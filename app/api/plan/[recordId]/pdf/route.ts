@@ -1,13 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
 import { getLead } from '@/lib/leads'
 import { armarPlan } from '@/lib/plan/armador'
 import { generarPlanPdf } from '@/lib/plan/generarPdf'
 import { verifyAdminToken } from '@/lib/admin/tokens'
+import { getRealIp } from '@/lib/utils/ip'
+
+const ratelimit =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Ratelimit({
+        redis: Redis.fromEnv(),
+        limiter: Ratelimit.slidingWindow(20, '10 m'),
+        analytics: false,
+      })
+    : null
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ recordId: string }> },
 ) {
+  if (!ratelimit) {
+    console.error('[plan/pdf] ratelimit no configurado — faltan UPSTASH_REDIS_REST_URL/UPSTASH_REDIS_REST_TOKEN en el entorno')
+    return NextResponse.json({ error: 'Servicio no disponible' }, { status: 503 })
+  }
+  const ip = getRealIp(req)
+  const { success } = await ratelimit.limit(ip)
+  if (!success) {
+    return NextResponse.json({ error: 'Demasiadas solicitudes. Inténtalo más tarde.' }, { status: 429 })
+  }
+
   const { recordId } = await params
 
   if (!recordId || !/^rec[a-zA-Z0-9]{14}$/.test(recordId)) {

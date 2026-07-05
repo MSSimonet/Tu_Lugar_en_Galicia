@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { findLeadByEmail, patchRecord } from '@/lib/admin/airtable'
 import { generateAdminToken } from '@/lib/admin/tokens'
-import { sendEmail, escapeHtml } from '@/lib/admin/email'
+import { sendEmail, escapeHtml, buildEmailShell } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tu-lugar-en-galicia.vercel.app'
@@ -66,18 +66,7 @@ function buildConfirmacionEmail(
   const emailSafe       = escapeHtml(email)
   const plataformaSafe = escapeHtml(plataforma)
 
-  return `<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-</head>
-<body style="margin:0;padding:0;background:#f5f0e8;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f0e8;padding:28px 16px;">
-    <tr>
-      <td align="center">
-        <table width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;">
-
+  const rows = `
           <tr>
             <td style="background:#1E1C19;padding:20px 28px;border-radius:8px 8px 0 0;">
               <p style="margin:0 0 4px;font-family:Arial,sans-serif;font-size:10px;color:#D4B96A;
@@ -157,14 +146,14 @@ function buildConfirmacionEmail(
               </p>
 
             </td>
-          </tr>
+          </tr>`
 
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`
+  return buildEmailShell({
+    tableWidth: 640,
+    tableStyle: 'max-width:640px;width:100%;',
+    outerPadding: '28px 16px',
+    rows,
+  })
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────────

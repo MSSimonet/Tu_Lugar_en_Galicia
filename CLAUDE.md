@@ -145,7 +145,7 @@ El 2026-06-28 se realizó la primera auditoría total del proyecto (código, seg
 | A03 | 🔴 Crítico | `/api/gina` sin rate limiting — Airtable puede saturarse | `app/api/gina/route.ts` |
 | A04 | 🔴 Crítico | Política de Privacidad con TODO sin completar en producción | `app/politica-de-privacidad/page.tsx` |
 | A05 | 🟠 Alto | CSP ausente — sin defensa en profundidad contra XSS | `middleware.ts`, `vercel.json` |
-| A06 | 🟠 Alto | HSTS ausente | `vercel.json` |
+| A06 | ✅ Resuelto | HSTS ya configurado (`Strict-Transport-Security: max-age=63072000; includeSubDomains` para todas las rutas) | `vercel.json:32-35` |
 | A07 | 🟠 Alto | consentimientoRGPD hardcodeado en Gina (no viene del usuario) | `app/api/gina/route.ts:190` |
 | A08 | 🟠 Alto | WhatsApp y Cal.com URL con placeholders en config | `lib/config/site.ts` |
 | A09 | 🟢 Aceptado | Evaluado en sesión 2026-07-04: riesgo residual bajo (destinatario único conocido, `no-referrer` activo en rutas admin, TTL ya en 24h desde A15, sin analytics de terceros instalado). Se decidió no tocar el esquema de tokens — ver razonamiento completo en `docs/arranque.md` | `lib/admin/tokens.ts` |
