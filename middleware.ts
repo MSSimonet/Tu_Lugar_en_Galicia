@@ -30,8 +30,11 @@ export function middleware(req: NextRequest) {
     // de forma masiva (cientos de usos); los hashes/nonces de CSP no cubren
     // atributos style="", solo <style> como elemento — migrarlo requeriría
     // reescribir el enfoque de estilos del proyecto, no solo agregar CSP.
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' data: https://fonts.gstatic.com",
+    // (fonts.googleapis.com ya no hace falta acá: next/font/google descarga
+    // las fuentes en build time y las sirve desde /_next/static/media — no
+    // hay ningún request en runtime a Google Fonts, verificado en preview.)
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self' data:",
     "img-src 'self' data: blob: https://placehold.co",
     "media-src 'self'",
     "frame-src https://app.cal.com https://cal.com",
@@ -50,6 +53,19 @@ export function middleware(req: NextRequest) {
   response.headers.set('Content-Security-Policy', csp)
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-Frame-Options', 'DENY')
+
+  // Cache-Control por defecto para API dinámicas/sensibles (ZAP: "Missing Cache-Control
+  // Header"). Se excluyen /api/clima y /api/marcador porque ya declaran su propio
+  // Cache-Control público (s-maxage) a propósito para CDN — un header puesto acá
+  // pisaría el suyo, ya que el que se setea en middleware.ts gana sobre el que
+  // devuelve el route handler (verificado empíricamente: mismo orden de ejecución
+  // que CSP/X-Frame-Options más arriba).
+  const isCacheableApiRoute =
+    pathname.startsWith('/api/clima/') || pathname === '/api/marcador'
+  if (pathname.startsWith('/api/') && !isCacheableApiRoute) {
+    response.headers.set('Cache-Control', 'no-store')
+  }
+
   // Referrer-Policy vive únicamente acá (no en vercel.json) — vercel.json aplica
   // sus reglas al final, en el edge, y pisaría este valor por rutas para todas
   // las rutas incluidas las admin, anulando el no-referrer que protege los

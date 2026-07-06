@@ -62,14 +62,20 @@ function successResponse(): NextResponse {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // 0. Verificación de origen
+    // 0. Verificación de origen — fail-closed: se rechaza si falta el header Origin
+    // o si no matchea el allowlist. Este endpoint solo recibe POST desde fetch()
+    // del navegador (useFormulario.ts) — no hay cron, webhook ni llamada
+    // server-to-server que lo invoque, y los navegadores modernos siempre envían
+    // Origin en requests POST (verificado en vivo: fetch same-origin desde el
+    // propio sitio llega con Origin seteado). Un Origin ausente en este endpoint
+    // solo puede venir de un cliente no-navegador (curl, script) — se rechaza.
     const origin = request.headers.get('origin')
     const allowedOrigins = [
       'https://tu-lugar-en-galicia.vercel.app',
       process.env.NEXT_PUBLIC_SITE_URL,
     ].filter((x): x is string => Boolean(x))
 
-    if (origin && !allowedOrigins.includes(origin)) {
+    if (!origin || !allowedOrigins.includes(origin)) {
       return NextResponse.json(
         { error: 'Origen no permitido' },
         { status: 403 }

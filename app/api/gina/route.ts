@@ -52,6 +52,12 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // Fail-closed: se rechaza si falta el header Origin o si no matchea el allowlist.
+  // Este endpoint solo recibe POST desde fetch() del navegador (GinaConversation.tsx)
+  // — no hay cron, webhook ni llamada server-to-server que lo invoque, y los navegadores
+  // modernos siempre envían Origin en requests POST (verificado en vivo: fetch same-origin
+  // desde el propio sitio llega con Origin seteado). Un Origin ausente en este endpoint
+  // solo puede venir de un cliente no-navegador (curl, script) — se rechaza.
   const origin = req.headers.get('origin')
   const allowedOrigins = [
     'https://tu-lugar-en-galicia.vercel.app',
@@ -59,7 +65,7 @@ export async function POST(req: NextRequest) {
     process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`,
   ].filter((x): x is string => Boolean(x))
 
-  if (origin && !allowedOrigins.includes(origin)) {
+  if (!origin || !allowedOrigins.includes(origin)) {
     return NextResponse.json(
       { error: 'Origen no permitido' },
       { status: 403 },
