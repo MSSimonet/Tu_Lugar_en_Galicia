@@ -148,7 +148,7 @@ export function Footer() {
                 alt=""
                 width={72}
                 height={93}
-                style={{ objectFit: 'contain', display: 'block', flexShrink: 0 }}
+                style={{ objectFit: 'contain', display: 'block', flexShrink: 0, width: 'auto', height: 'auto' }}
                 priority
               />
               <span style={{

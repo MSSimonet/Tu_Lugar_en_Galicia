@@ -141,15 +141,16 @@ export function Header() {
                 flexShrink: 0,
               }}
             >
-              <Image
-                src="/images/aldaba.png"
-                alt=""
-                width={54}
-                height={70}
-                className="h-10 w-auto xl:h-[70px]"
-                style={{ objectFit: 'contain', display: 'block', width: 'auto' }}
-                priority
-              />
+              <span className="block h-10 xl:h-[70px]" style={{ flexShrink: 0 }}>
+                <Image
+                  src="/images/aldaba.png"
+                  alt=""
+                  width={54}
+                  height={70}
+                  style={{ objectFit: 'contain', display: 'block', height: '100%', width: 'auto' }}
+                  priority
+                />
+              </span>
               <span style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: '20px',

@@ -41,6 +41,7 @@ export function AgendaPublica() {
             src="/images/ciudades/tag_coruna3.jpg"
             alt="Vista de A Coruña, Galicia"
             fill
+            priority
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 45vw"
           />

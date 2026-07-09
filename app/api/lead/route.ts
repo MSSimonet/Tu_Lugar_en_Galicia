@@ -73,6 +73,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const allowedOrigins = [
       'https://tu-lugar-en-galicia.vercel.app',
       process.env.NEXT_PUBLIC_SITE_URL,
+      process.env.NODE_ENV === 'development' && 'http://localhost:3000',
     ].filter((x): x is string => Boolean(x))
 
     if (!origin || !allowedOrigins.includes(origin)) {
