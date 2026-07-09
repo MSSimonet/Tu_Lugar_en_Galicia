@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Hashes SHA-256 de los <script> inline (tema anti-flash + JSON-LD estático).
-// Todos son contenido fijo/determinístico (sin datos por request) — permiten
-// eliminar 'unsafe-inline' de script-src sin usar nonce (un nonce por request
-// forzaría renderizado dinámico en estas páginas, hoy estáticas).
-// Si se edita el texto de alguno de estos scripts (ej. copy de FAQ de una
-// ciudad, o el script de tema), hay que recalcular su hash o el navegador
-// bloqueará el script silenciosamente (se ve como violación de CSP en consola).
+// Hashes SHA-256 de los <script> inline estáticos (JSON-LD + script de tema).
+// El script de tema también recibe el nonce dinámico desde layout.tsx — los hashes
+// quedan como fallback para navegadores sin soporte de nonce (CSP nivel 1).
+// Si se edita el texto de alguno de estos scripts, recalcular su hash o el
+// navegador lo bloqueará silenciosamente (violación CSP en consola).
 const INLINE_SCRIPT_HASHES = [
   "'sha256-PMdR7RFpYsftOnJgaAsT7Oor3sSpSyqJ6X/d1hV6sZg='", // app/layout.tsx — script de tema
   "'sha256-D6OU0n76o3oia0DoRGnz4iTMPdRK/g6+BrT3Hgt0ckM='", // app/page.tsx — localBusinessSchema
@@ -20,12 +18,29 @@ const INLINE_SCRIPT_HASHES = [
 ].join(' ')
 
 export function middleware(req: NextRequest) {
-  const response = NextResponse.next()
+  // Un nonce criptográfico por request. Next.js App Router lee 'x-nonce' de los
+  // headers del request y estampa ese valor en todos los inline scripts que genera
+  // durante el streaming RSC (__next_f.push(...)), habilitando la hidratación de React.
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
   const { pathname } = req.nextUrl
+
+  // Pasar el nonce al layout: headers() en app/layout.tsx lo lee y lo pone en
+  // el script anti-flash. Next.js también lo aplica a sus propios inline scripts.
+  const requestHeaders = new Headers(req.headers)
+  requestHeaders.set('x-nonce', nonce)
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  })
 
   const csp = [
     "default-src 'self'",
-    `script-src 'self' ${INLINE_SCRIPT_HASHES} https://app.cal.com`,
+    // 'nonce-{nonce}': cubre el script anti-flash (layout.tsx) y todos los
+    // __next_f.push(...) de hidratación RSC que Next.js genera por request.
+    // Los hashes quedan como fallback para browsers sin soporte de nonce (CSP1).
+    // 'unsafe-eval' solo en dev: React usa eval() en desarrollo para reconstruir
+    // call stacks. En producción React nunca usa eval() — Vercel deploy es seguro.
+    `script-src 'self' 'nonce-${nonce}' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval' " : ''}${INLINE_SCRIPT_HASHES} https://app.cal.com`,
     // style-src mantiene 'unsafe-inline': el proyecto usa atributos style={{}}
     // de forma masiva (cientos de usos); los hashes/nonces de CSP no cubren
     // atributos style="", solo <style> como elemento — migrarlo requeriría

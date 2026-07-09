@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Cormorant_Garamond } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { GinaWidget } from "@/components/gina/GinaWidget";
@@ -28,11 +29,12 @@ export const metadata: Metadata = {
   description: 'El primer servicio de relocation especializado en Galicia para familias latinoamericanas.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get('x-nonce') ?? ''
   return (
     <html
       lang="es"
@@ -40,8 +42,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-[family-name:var(--font-ui)]">
-        {/* Anti-flash: primer elemento del body, ejecuta síncrono antes del primer paint */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(){const s=localStorage.getItem('tlg-theme');const p=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',s?s==='dark':p);})();` }} />
+        {/* Anti-flash: ejecuta síncrono antes del primer paint. suppressHydrationWarning porque
+            el browser elimina el atributo nonce del DOM después de evaluar el script (seguridad),
+            lo que causaría un falso mismatch de hidratación. */}
+        <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `(function(){const s=localStorage.getItem('tlg-theme');const p=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',s?s==='dark':p);})();` }} />
         <Header />
         <main id="main-content" className="flex-1">{children}</main>
         <Footer />
