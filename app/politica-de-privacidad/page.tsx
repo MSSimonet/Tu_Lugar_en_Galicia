@@ -5,7 +5,10 @@ export const metadata = getNextMetadata('politicaPrivacidad')
 // Bloque visual para los TODO pendientes de configuración
 function TodoBlock({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-block bg-[var(--color-arena)] border-l-4 border-[var(--color-coral)] px-4 py-2 font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-granito)]">
+    <span
+      className="inline-block px-4 py-2 [font-size:var(--text-sm)]"
+      style={{ fontFamily: 'var(--font-lato)', backgroundColor: 'var(--po-borde)', borderLeft: '4px solid var(--color-coral)', color: 'var(--po-pedra)' }}
+    >
       {children}
     </span>
   )
@@ -14,27 +17,37 @@ function TodoBlock({ children }: { children: React.ReactNode }) {
 export default function PoliticaDePrivacidadPage() {
   return (
     <>
-      {/* Hero pequeño */}
-      <section className="bg-[var(--color-granito)] pb-[var(--space-16)] px-[var(--space-6)]" style={{ paddingTop: 'calc(64px + 60px)' }}>
+      {/* Hero pequeño — bookend fijo oscuro (Pedra e Ouro) */}
+      <section className="pb-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--po-hero-bg)', paddingTop: 'calc(64px + 60px)' }}>
         <div className="mx-auto max-w-3xl">
-          <h1 className="font-[family-name:var(--font-titular)] [font-size:var(--text-2xl)] leading-[var(--leading-titulo)] [color:var(--color-niebla)] md:[font-size:var(--text-3xl)]">
+          <h1
+            className="[font-size:var(--text-2xl)] leading-[var(--leading-titulo)] md:[font-size:var(--text-3xl)]"
+            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 900, color: 'var(--po-hero-text)' }}
+          >
             Política de Privacidad
           </h1>
-          <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] leading-[var(--leading-cuerpo)]" style={{ fontSize: 'var(--text-sm)', color: 'var(--color-arena)' }}>
+          <p
+            className="mt-[var(--space-4)] leading-[var(--leading-cuerpo)]"
+            style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-sm)', color: 'var(--po-hero-muted)' }}
+          >
             Última actualización: mayo 2026
           </p>
         </div>
       </section>
 
       {/* Contenido */}
-      <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]">
-        <div className="flex flex-col gap-[var(--space-12)] font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-granito)] leading-[var(--leading-cuerpo)]">
+      <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]" style={{ backgroundColor: 'var(--po-luz)' }}>
+        <div
+          className="flex flex-col gap-[var(--space-12)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)]"
+          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+        >
 
           {/* 1. Responsable del tratamiento */}
           <section aria-labelledby="responsable">
             <h2
               id="responsable"
-              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
             >
               1. Responsable del tratamiento
             </h2>
@@ -58,13 +71,14 @@ export default function PoliticaDePrivacidadPage() {
             </div>
           </section>
 
-          <hr className="border-[var(--color-arena)]" />
+          <hr style={{ borderColor: 'var(--po-borde)' }} />
 
           {/* 2. Finalidad del tratamiento */}
           <section aria-labelledby="finalidad">
             <h2
               id="finalidad"
-              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
             >
               2. Finalidad del tratamiento
             </h2>
@@ -89,13 +103,14 @@ export default function PoliticaDePrivacidadPage() {
             </ul>
           </section>
 
-          <hr className="border-[var(--color-arena)]" />
+          <hr style={{ borderColor: 'var(--po-borde)' }} />
 
           {/* 3. Base legal */}
           <section aria-labelledby="base-legal">
             <h2
               id="base-legal"
-              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
             >
               3. Base legal del tratamiento
             </h2>
@@ -112,13 +127,14 @@ export default function PoliticaDePrivacidadPage() {
             </ul>
           </section>
 
-          <hr className="border-[var(--color-arena)]" />
+          <hr style={{ borderColor: 'var(--po-borde)' }} />
 
           {/* 4. Conservación de los datos */}
           <section aria-labelledby="conservacion">
             <h2
               id="conservacion"
-              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
             >
               4. Conservación de los datos
             </h2>
@@ -133,13 +149,14 @@ export default function PoliticaDePrivacidadPage() {
             </p>
           </section>
 
-          <hr className="border-[var(--color-arena)]" />
+          <hr style={{ borderColor: 'var(--po-borde)' }} />
 
           {/* 5. Destinatarios */}
           <section aria-labelledby="destinatarios">
             <h2
               id="destinatarios"
-              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
             >
               5. Destinatarios de los datos
             </h2>
@@ -155,13 +172,14 @@ export default function PoliticaDePrivacidadPage() {
             </p>
           </section>
 
-          <hr className="border-[var(--color-arena)]" />
+          <hr style={{ borderColor: 'var(--po-borde)' }} />
 
           {/* 6. Derechos */}
           <section aria-labelledby="derechos">
             <h2
               id="derechos"
-              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
             >
               6. Tus derechos
             </h2>
@@ -191,7 +209,8 @@ export default function PoliticaDePrivacidadPage() {
                 href="https://www.aepd.es"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="[color:var(--color-mar)] underline-offset-4 hover:no-underline underline"
+                className="underline-offset-4 hover:no-underline underline"
+                style={{ color: 'var(--po-ouro-text)' }}
               >
                 aepd.es<span className="sr-only">(abre en nueva pestaña)</span>
               </a>
@@ -199,13 +218,14 @@ export default function PoliticaDePrivacidadPage() {
             </p>
           </section>
 
-          <hr className="border-[var(--color-arena)]" />
+          <hr style={{ borderColor: 'var(--po-borde)' }} />
 
           {/* 7. Cambios en la política */}
           <section aria-labelledby="cambios">
             <h2
               id="cambios"
-              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
             >
               7. Cambios en esta política
             </h2>

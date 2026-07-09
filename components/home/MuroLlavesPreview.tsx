@@ -1,5 +1,3 @@
-// TODO: reemplazar imágenes placeholder con fotos reales en /public
-
 import Image from "next/image";
 
 const llaves = [
@@ -14,26 +12,34 @@ const llaves = [
 export function MuroLlavesPreview() {
   return (
     <section
-      className="bg-[var(--color-niebla)] px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
+      className="px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
+      style={{ backgroundColor: 'var(--po-luz)' }}
       aria-labelledby="muro-llaves-heading"
     >
       <div className="mx-auto max-w-4xl">
         <h2
           id="muro-llaves-heading"
-          className="mb-[var(--space-2)] text-center font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] tracking-[var(--tracking-ui)] [color:var(--color-pizarra)] uppercase"
+          className="mb-[var(--space-2)] text-center [font-size:var(--text-xs)] tracking-[var(--tracking-ui)] uppercase"
+          style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-muted)' }}
         >
           Resultados
         </h2>
-        <p className="mb-[var(--space-12)] text-center font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] md:[font-size:var(--text-2xl)]">
+        <p
+          className="mb-[var(--space-12)] text-center [font-size:var(--text-xl)] md:[font-size:var(--text-2xl)]"
+          style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-pedra)' }}
+        >
           El muro de llaves
         </p>
 
         <ul className="grid grid-cols-2 gap-[var(--space-4)] md:grid-cols-3">
           {llaves.map(({ n, alt }) => (
             <li key={n}>
-              <div className="relative overflow-hidden rounded-[var(--radius-card)] shadow-md transition-shadow duration-300 hover:shadow-lg" style={{ paddingBottom: '100%' }}>
+              <div
+                className="relative overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-lg"
+                style={{ paddingBottom: '100%', borderRadius: '4px' }}
+              >
                 <Image
-                  src={`https://placehold.co/300x300/9A7A2E/FFFFFF?text=Llave+${n}`}
+                  src={`/images/llaves/llaves${n}.jpg`}
                   alt={alt}
                   fill
                   sizes="(max-width: 768px) 50vw, 33vw"
@@ -46,7 +52,10 @@ export function MuroLlavesPreview() {
 
         <div className="mt-[var(--space-8)] text-center">
           {/* TODO Fase 2: crear página /muro-de-llaves con galería completa */}
-          <span className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] cursor-default">
+          <span
+            className="[font-size:var(--text-sm)] cursor-default"
+            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
+          >
             Más entregas próximamente
           </span>
         </div>

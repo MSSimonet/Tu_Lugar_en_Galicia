@@ -33,14 +33,14 @@ const confianza = [
 export default function SobreSilvanaPage() {
   return (
     <>
-      {/* Hero */}
-      <section className="bg-[var(--color-granito)]" style={{ padding: '48px 80px' }}>
+      {/* Hero — bookend fijo oscuro (Pedra e Ouro) */}
+      <section style={{ backgroundColor: 'var(--po-hero-bg)', padding: '48px 80px' }}>
         <div className="mx-auto max-w-4xl">
           <div className="flex flex-col gap-[var(--space-8)] md:flex-row-reverse md:items-center md:gap-[var(--space-12)]">
             {/* Foto */}
             <div className="flex shrink-0 justify-center md:justify-end">
               <Image
-                src="https://placehold.co/400x400/9A7A2E/FFFFFF?text=Silvana"
+                src="https://placehold.co/400x400/C89B3C/2C2420?text=Silvana"
                 alt="Silvana Lorenzo, fundadora de Tu Lugar en Galicia"
                 width={200}
                 height={200}
@@ -51,17 +51,20 @@ export default function SobreSilvanaPage() {
             {/* Título */}
             <div>
               <h1 style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontFamily: 'var(--font-playfair)',
                 fontSize: 'clamp(36px, 5vw, 64px)',
-                fontWeight: 400,
-                color: 'var(--color-niebla)',
+                fontWeight: 900,
+                color: 'var(--po-hero-text)',
                 lineHeight: 1.15,
                 letterSpacing: '-0.01em',
                 margin: '0 0 24px 0',
               }}>
                 Hice tu mismo camino,<br />te entiendo muy bien…
               </h1>
-              <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] leading-[var(--leading-cuerpo)]" style={{ fontSize: 'var(--text-sm)', color: 'var(--color-laton-claro)' }}>
+              <p
+                className="mt-[var(--space-4)] leading-[var(--leading-cuerpo)]"
+                style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-sm)', color: 'var(--po-hero-muted)' }}
+              >
                 Fundadora de Tu Lugar en Galicia — emigrante argentina con raíces gallegas
               </p>
             </div>
@@ -70,12 +73,15 @@ export default function SobreSilvanaPage() {
       </section>
 
       {/* Historia en primera persona */}
-      <section className="bg-[var(--color-blanco)] py-[var(--space-16)] px-[var(--space-6)]">
+      <section className="py-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--po-luz)' }}>
         <div className="mx-auto max-w-3xl space-y-[var(--space-6)]">
-          <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] leading-[var(--leading-titulo)]">
+          <h2
+            className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)]"
+            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-pedra)' }}
+          >
             Mi historia
           </h2>
-          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-relaxed">
+          <p className="[font-size:var(--text-sm)] leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}>
             Nací en Argentina y crecí sabiendo que en algún momento iba a cruzar el Atlántico. Mi
             familia tiene raíces gallegas — como tantas familias latinoamericanas — y Galicia siempre
             fue algo más que un lugar en el mapa. Era una historia que me habían contado desde chica,
@@ -83,7 +89,7 @@ export default function SobreSilvanaPage() {
             Cuando decidí venirme, sentí que no estaba yendo a un lugar desconocido: estaba volviendo
             a algo.
           </p>
-          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-relaxed">
+          <p className="[font-size:var(--text-sm)] leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}>
             Pero la realidad del proceso migratorio no se parece a esa historia romántica. Encontrar
             vivienda desde el otro lado del Atlántico es una de las partes más duras. Los propietarios
             no confían en alguien que no pueden ver, los portales de alquiler están llenos de opciones
@@ -92,7 +98,7 @@ export default function SobreSilvanaPage() {
             lo viví en carne propia. Tardé mucho más de lo que debería haber tardado, y llegué a
             Galicia con más incertidumbre de la necesaria.
           </p>
-          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-relaxed">
+          <p className="[font-size:var(--text-sm)] leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}>
             Cuando me instalé y empecé a conocer la realidad del mercado desde adentro, entendí que
             podía hacer algo concreto con eso. Empecé a ayudar a algunas familias del entorno —
             amigos de amigos, conocidos de conocidos — que estaban pasando por lo mismo que yo había
@@ -100,14 +106,14 @@ export default function SobreSilvanaPage() {
             cómo se sentía esa incertidumbre. En algún momento dejó de ser un favor ocasional y se
             convirtió en un servicio real.
           </p>
-          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-relaxed">
+          <p className="[font-size:var(--text-sm)] leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}>
             Hoy llevo cuatro años haciendo esto de manera profesional. Más de doscientas familias
             encontraron su lugar en Galicia con nuestra ayuda. Conozco propietarios, conozco barrios,
             conozco los trucos del mercado y conozco los trámites. Pero lo más importante es que
             conozco lo que siente una familia cuando está a miles de kilómetros tratando de imaginar
             su vida nueva. Eso no lo enseña ningún curso — lo da haberlo vivido.
           </p>
-          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-relaxed">
+          <p className="[font-size:var(--text-sm)] leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}>
             Empecé este servicio porque quería que otras familias llegaran a Galicia mejor de lo que
             llegué yo. Eso sigue siendo lo que me mueve cada día.
           </p>
@@ -115,9 +121,12 @@ export default function SobreSilvanaPage() {
       </section>
 
       {/* Por qué confiar en mí */}
-      <section className="bg-[var(--color-niebla)] py-[var(--space-16)] px-[var(--space-6)]">
+      <section className="py-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--po-areia)' }}>
         <div className="mx-auto max-w-3xl">
-          <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] leading-[var(--leading-titulo)] mb-[var(--space-8)]">
+          <h2
+            className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-8)]"
+            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-pedra)' }}
+          >
             Por qué confiar en mí
           </h2>
           <ul className="space-y-[var(--space-6)]" role="list">
@@ -125,15 +134,22 @@ export default function SobreSilvanaPage() {
               <li key={item.titulo} className="flex gap-[var(--space-4)]">
                 <span
                   aria-hidden="true"
-                  className="mt-1 shrink-0 [color:var(--color-laton)] font-bold [font-size:var(--text-md)]"
+                  className="mt-1 shrink-0 font-bold [font-size:var(--text-md)]"
+                  style={{ color: 'var(--po-ouro-text)' }}
                 >
                   ✓
                 </span>
                 <div>
-                  <h3 className="font-[family-name:var(--font-ui)] font-semibold [font-size:var(--text-sm)] [color:var(--color-granito)]">
+                  <h3
+                    className="font-semibold [font-size:var(--text-sm)]"
+                    style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+                  >
                     {item.titulo}
                   </h3>
-                  <p className="mt-[var(--space-1)] font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
+                  <p
+                    className="mt-[var(--space-1)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)]"
+                    style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
+                  >
                     {item.texto}
                   </p>
                 </div>
@@ -144,19 +160,32 @@ export default function SobreSilvanaPage() {
       </section>
 
       {/* Cierre + CTA */}
-      <section className="bg-[var(--color-blanco)] py-[var(--space-16)] px-[var(--space-6)]">
+      <section className="py-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--po-luz)' }}>
         <div className="mx-auto max-w-3xl text-center">
-          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-md)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
+          <p
+            className="[font-size:var(--text-md)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]"
+            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
+          >
             Si llegaste hasta acá, ya sabes quién soy y por qué hago esto. Ahora lo que me gustaría
             es conocerte, escuchar tu historia y ver si puedo ayudarte.
           </p>
           <div className="flex flex-col items-center gap-[var(--space-4)]">
-            <GinaButton className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]">
+            <GinaButton
+              className="inline-flex items-center justify-center px-[var(--space-8)] py-[var(--space-4)] font-bold [font-size:var(--text-sm)] tracking-[0.10em] uppercase transition-brand focus-visible:outline-2 focus-visible:outline-offset-2"
+              style={{
+                fontFamily: 'var(--font-lato)',
+                borderRadius: '4px',
+                backgroundColor: 'var(--po-ouro)',
+                color: '#1A1410',
+                outlineColor: 'var(--po-ouro)',
+              }}
+            >
               Vamos a conocernos
             </GinaButton>
             <Link
               href="/conocernos"
-              className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] underline underline-offset-2 hover:[color:var(--color-laton)] transition-colors duration-150"
+              className="[font-size:var(--text-sm)] underline underline-offset-2 transition-colors duration-150"
+              style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
             >
               ¿Prefieres escribirlo? Completa el formulario
             </Link>

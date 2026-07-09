@@ -49,7 +49,8 @@ export function ElMarcador() {
         }
       `}</style>
       <section
-        className="marcador-section bg-[var(--color-atlantico)]"
+        className="marcador-section"
+        style={{ backgroundColor: 'var(--po-terra)' }}
         aria-label="El marcador — cifras en tiempo real"
       >
         <div className="mx-auto max-w-4xl">
@@ -57,11 +58,11 @@ export function ElMarcador() {
             style={{
               marginBottom: '6px',
               textAlign: 'center',
-              fontFamily: 'var(--font-ui)',
+              fontFamily: 'var(--font-lato)',
               fontSize: '10px',
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              color: 'rgba(245,240,232,0.75)',
+              color: 'rgba(245,240,232,0.80)',
             }}
           >
             En tiempo real
@@ -70,10 +71,11 @@ export function ElMarcador() {
             style={{
               marginBottom: '24px',
               textAlign: 'center',
-              fontFamily: 'var(--font-titular)',
+              fontFamily: 'var(--font-playfair)',
+              fontWeight: 700,
               fontSize: '32px',
               lineHeight: 1.1,
-              color: 'var(--color-sobre-laton)',
+              color: '#F5EFE4',
             }}
           >
             El Marcador
@@ -85,8 +87,8 @@ export function ElMarcador() {
                 key={key}
                 style={{
                   textAlign: 'center',
-                  borderRadius: 'var(--radius-card)',
-                  background: 'rgba(255,255,255,0.10)',
+                  borderRadius: '4px',
+                  background: 'rgba(255,255,255,0.12)',
                   padding: '20px 16px',
                 }}
               >
@@ -96,8 +98,8 @@ export function ElMarcador() {
                       margin: '0 auto 8px',
                       height: '40px',
                       width: '80px',
-                      borderRadius: 'var(--radius-card)',
-                      background: 'var(--color-atlantico-claro)',
+                      borderRadius: '4px',
+                      background: 'rgba(255,255,255,0.22)',
                       animation: 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite',
                     }}
                     aria-hidden="true"
@@ -106,10 +108,11 @@ export function ElMarcador() {
                   <span
                     style={{
                       display: 'block',
-                      fontFamily: 'var(--font-titular)',
+                      fontFamily: 'var(--font-playfair)',
+                      fontWeight: 700,
                       fontSize: '40px',
                       lineHeight: 1,
-                      color: 'var(--color-sobre-laton)',
+                      color: '#F5EFE4',
                     }}
                     aria-label={`${display[key]}${unidad ? " " + unidad : ""} — ${etiqueta}`}
                   >
@@ -123,11 +126,11 @@ export function ElMarcador() {
                   style={{
                     marginTop: '6px',
                     display: 'block',
-                    fontFamily: 'var(--font-ui)',
+                    fontFamily: 'var(--font-lato)',
                     fontSize: '10px',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
-                    color: 'var(--color-sobre-laton)',
+                    color: '#F5EFE4',
                     opacity: 0.9,
                   }}
                 >

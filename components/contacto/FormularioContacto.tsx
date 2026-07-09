@@ -6,7 +6,15 @@ import Link from 'next/link'
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
 const inputBase =
-  'w-full rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-white px-4 py-3 font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-granito)] placeholder:[color:var(--color-arena)] focus:outline-none focus:border-[var(--color-laton)] focus:ring-1 focus:ring-[var(--color-laton)] transition-colors'
+  'w-full rounded border px-4 py-3 [font-size:var(--text-sm)] placeholder:opacity-50 focus:outline-none focus:ring-1 transition-colors'
+
+const inputStyle: React.CSSProperties = {
+  fontFamily: 'var(--font-lato)',
+  borderRadius: '4px',
+  borderColor: 'var(--po-borde)',
+  backgroundColor: 'var(--po-luz)',
+  color: 'var(--po-pedra)',
+}
 
 export function FormularioContacto() {
   const [nombre,   setNombre]   = useState('')
@@ -48,19 +56,24 @@ export function FormularioContacto() {
   if (status === 'success') {
     return (
       <div
-        className="rounded-[var(--radius-card)] bg-[var(--color-niebla)] border border-[var(--color-arena)] p-12 text-center flex flex-col items-center gap-6"
+        className="p-12 text-center flex flex-col items-center gap-6"
+        style={{ borderRadius: '4px', backgroundColor: 'var(--po-areia)', border: '1px solid var(--po-borde)' }}
         role="status"
       >
         <div className="text-4xl" aria-hidden="true">✉️</div>
-        <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)]">
+        <h2 style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, fontSize: 'var(--text-xl)', color: 'var(--po-pedra)' }}>
           Mensaje recibido
         </h2>
-        <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] max-w-sm leading-[var(--leading-cuerpo)]">
+        <p
+          className="max-w-sm leading-[var(--leading-cuerpo)]"
+          style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-sm)', color: 'var(--po-muted)' }}
+        >
           Te respondemos en las próximas 24 horas hábiles.
         </p>
         <Link
           href="/"
-          className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-mar)] underline-offset-4 hover:underline"
+          className="underline-offset-4 hover:underline"
+          style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-sm)', color: 'var(--po-ouro-text)' }}
         >
           Volver al inicio
         </Link>
@@ -73,7 +86,8 @@ export function FormularioContacto() {
 
       {status === 'error' && errorMsg && (
         <div
-          className="rounded-[var(--radius-card)] border border-[var(--color-coral)] bg-[var(--color-blanco)] p-4 [font-size:var(--text-sm)] [color:var(--color-coral)]"
+          className="p-4 [font-size:var(--text-sm)]"
+          style={{ borderRadius: '4px', border: '1px solid var(--color-coral)', backgroundColor: 'var(--po-luz)', color: 'var(--color-coral)' }}
           role="alert"
         >
           {errorMsg}
@@ -84,9 +98,10 @@ export function FormularioContacto() {
         <div className="flex flex-col gap-2">
           <label
             htmlFor="nombre"
-            className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] font-medium [color:var(--color-granito)]"
+            className="[font-size:var(--text-sm)] font-medium"
+            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
           >
-            Nombre y apellido <span aria-hidden="true" className="[color:var(--color-coral)]">*</span>
+            Nombre y apellido <span aria-hidden="true" style={{ color: 'var(--color-coral)' }}>*</span>
           </label>
           <input
             id="nombre"
@@ -96,6 +111,7 @@ export function FormularioContacto() {
             value={nombre}
             onChange={e => setNombre(e.target.value)}
             className={inputBase}
+            style={inputStyle}
             placeholder="María García"
           />
         </div>
@@ -103,9 +119,10 @@ export function FormularioContacto() {
         <div className="flex flex-col gap-2">
           <label
             htmlFor="email"
-            className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] font-medium [color:var(--color-granito)]"
+            className="[font-size:var(--text-sm)] font-medium"
+            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
           >
-            Email <span aria-hidden="true" className="[color:var(--color-coral)]">*</span>
+            Email <span aria-hidden="true" style={{ color: 'var(--color-coral)' }}>*</span>
           </label>
           <input
             id="email"
@@ -115,6 +132,7 @@ export function FormularioContacto() {
             value={email}
             onChange={e => setEmail(e.target.value)}
             className={inputBase}
+            style={inputStyle}
             placeholder="maria@ejemplo.com"
           />
         </div>
@@ -123,10 +141,11 @@ export function FormularioContacto() {
       <div className="flex flex-col gap-2">
         <label
           htmlFor="telefono"
-          className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] font-medium [color:var(--color-granito)]"
+          className="[font-size:var(--text-sm)] font-medium"
+          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
         >
           Teléfono{' '}
-          <span className="font-normal [color:var(--color-pizarra)] opacity-60">(opcional)</span>
+          <span className="font-normal opacity-60">(opcional)</span>
         </label>
         <input
           id="telefono"
@@ -135,6 +154,7 @@ export function FormularioContacto() {
           value={telefono}
           onChange={e => setTelefono(e.target.value)}
           className={inputBase}
+          style={inputStyle}
           placeholder="+54 11 1234 5678"
         />
       </div>
@@ -142,9 +162,10 @@ export function FormularioContacto() {
       <div className="flex flex-col gap-2">
         <label
           htmlFor="mensaje"
-          className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] font-medium [color:var(--color-granito)]"
+          className="[font-size:var(--text-sm)] font-medium"
+          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
         >
-          Mensaje <span aria-hidden="true" className="[color:var(--color-coral)]">*</span>
+          Mensaje <span aria-hidden="true" style={{ color: 'var(--color-coral)' }}>*</span>
         </label>
         <textarea
           id="mensaje"
@@ -153,6 +174,7 @@ export function FormularioContacto() {
           value={mensaje}
           onChange={e => setMensaje(e.target.value)}
           className={`${inputBase} resize-y`}
+          style={inputStyle}
           placeholder="Cuéntanos tu situación, ciudad de destino, cuándo planeas llegar…"
         />
       </div>
@@ -164,16 +186,19 @@ export function FormularioContacto() {
           required
           checked={rgpd}
           onChange={e => setRgpd(e.target.checked)}
-          className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-laton)] cursor-pointer"
+          className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer"
+          style={{ accentColor: 'var(--po-ouro)' }}
         />
         <label
           htmlFor="rgpd"
-          className="font-[family-name:var(--font-ui)] [font-size:var(--text-xs)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)] cursor-pointer"
+          className="[font-size:var(--text-xs)] leading-[var(--leading-cuerpo)] cursor-pointer"
+          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
         >
           He leído y acepto la{' '}
           <Link
             href="/politica-de-privacidad"
-            className="underline underline-offset-2 hover:[color:var(--color-laton)] transition-colors"
+            className="underline underline-offset-2 transition-colors"
+            style={{ color: 'var(--po-ouro-text)' }}
             target="_blank"
           >
             política de privacidad
@@ -185,7 +210,14 @@ export function FormularioContacto() {
       <button
         type="submit"
         disabled={status === 'loading'}
-        className="self-start inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-8 py-4 font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+        className="self-start inline-flex items-center justify-center px-8 py-4 font-bold [font-size:var(--text-sm)] tracking-[0.10em] uppercase disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
+        style={{
+          fontFamily: 'var(--font-lato)',
+          borderRadius: '4px',
+          backgroundColor: 'var(--po-ouro)',
+          color: '#1A1410',
+          outlineColor: 'var(--po-ouro)',
+        }}
       >
         {status === 'loading' ? 'Enviando…' : 'Enviar mensaje'}
       </button>

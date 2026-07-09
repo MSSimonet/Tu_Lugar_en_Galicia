@@ -21,37 +21,19 @@ export default function LoQueNoSomos() {
       <style>{`
         .lqns-section {
           padding: 48px 80px 52px;
-          /* ── tokens de modo claro ── */
-          --lqns-bg:              var(--color-niebla);
-          --lqns-card-bg:         var(--color-blanco);
-          --lqns-card-border:     var(--color-arena);
-          --lqns-card-hover-bg:   var(--color-arena);
-          --lqns-accent:          var(--color-laton);
-          --lqns-accent-hover:    var(--color-laton-oscuro);
-          --lqns-num:             var(--color-laton-text);
-          --lqns-title:           var(--color-granito);
-          --lqns-body:            var(--color-pizarra);
-          --lqns-em:              var(--color-atlantico);
-          --lqns-badge-text:      var(--color-pizarra);
-          --lqns-badge-border:    var(--color-arena);
-          --lqns-dot:             var(--color-atlantico);
-        }
-
-        /* ── tokens de modo oscuro ── */
-        .dark .lqns-section {
-          --lqns-bg:              var(--color-blanco);
-          --lqns-card-bg:         var(--color-niebla);
-          --lqns-card-border:     var(--color-arena);
-          --lqns-card-hover-bg:   var(--color-niebla);
-          --lqns-accent:          var(--color-laton);
-          --lqns-accent-hover:    var(--color-laton-claro);
-          --lqns-num:             var(--color-laton-claro);
-          --lqns-title:           var(--color-granito);
-          --lqns-body:            var(--color-pizarra);
-          --lqns-em:              var(--color-atlantico-claro);
-          --lqns-badge-text:      var(--color-pizarra);
-          --lqns-badge-border:    var(--color-arena);
-          --lqns-dot:             var(--color-atlantico-claro);
+          --lqns-bg:            var(--po-areia);
+          --lqns-card-bg:       var(--po-luz);
+          --lqns-card-border:   var(--po-borde);
+          --lqns-card-hover-bg: var(--po-areia);
+          --lqns-accent:        var(--po-ouro);
+          --lqns-accent-hover:  var(--po-ouro-hover);
+          --lqns-num:           var(--po-ouro-text);
+          --lqns-title:         var(--po-pedra);
+          --lqns-body:          var(--po-muted);
+          --lqns-em:            var(--po-ouro-text);
+          --lqns-badge-text:    var(--po-muted);
+          --lqns-badge-border:  var(--po-borde);
+          --lqns-dot:           var(--po-ouro);
         }
 
         .lqns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -64,13 +46,13 @@ export default function LoQueNoSomos() {
 
       <section
         className="lqns-section"
-        style={{ background: 'var(--lqns-bg)', fontFamily: 'var(--font-ui)' }}
+        style={{ background: 'var(--lqns-bg)', fontFamily: 'var(--font-lato)' }}
       >
         {/* ── Cabecera ── */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '26px' }}>
           <h2 style={{
-            fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif",
-            fontSize: '44px', fontWeight: 400, color: 'var(--lqns-title)',
+            fontFamily: 'var(--font-playfair)',
+            fontSize: '44px', fontWeight: 900, color: 'var(--lqns-title)',
             lineHeight: 1.1, margin: 0, letterSpacing: '-0.01em',
           }}>
             Lo que{' '}
@@ -85,7 +67,7 @@ export default function LoQueNoSomos() {
               background: 'var(--lqns-dot)', flexShrink: 0, display: 'inline-block',
             }} />
             <span style={{
-              fontSize: '11px', fontWeight: 400, color: 'var(--lqns-badge-text)',
+              fontSize: '11px', fontWeight: 700, color: 'var(--lqns-badge-text)',
               letterSpacing: '0.18em', textTransform: 'uppercase' as const,
               border: '1px solid var(--lqns-badge-border)',
               borderRadius: '2px', padding: '2px 8px',
@@ -132,16 +114,16 @@ function Card({ title, body }: { title: string; body: string }) {
       }}
     >
       <span style={{
-        fontFamily: 'var(--font-ui)',
-        fontSize: '10px', fontWeight: 600, color: 'var(--lqns-num)',
+        fontFamily: 'var(--font-lato)',
+        fontSize: '10px', fontWeight: 700, color: 'var(--lqns-num)',
         letterSpacing: '0.16em', display: 'block', marginBottom: '10px',
       }}>
         NO somos
       </span>
 
       <h3 style={{
-        fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif",
-        fontSize: '24px', fontWeight: 400, color: 'var(--lqns-title)',
+        fontFamily: 'var(--font-playfair)',
+        fontSize: '24px', fontWeight: 700, color: 'var(--lqns-title)',
         lineHeight: 1.2, margin: '0 0 14px 0', letterSpacing: '0.01em',
       }}>
         {title}
@@ -156,8 +138,8 @@ function Card({ title, body }: { title: string; body: string }) {
       />
 
       <p style={{
-        fontFamily: 'var(--font-ui)',
-        fontSize: '14px', fontWeight: 300, color: 'var(--lqns-body)',
+        fontFamily: 'var(--font-lato)',
+        fontSize: '14px', fontWeight: 400, color: 'var(--lqns-body)',
         lineHeight: 1.85, margin: 0,
       }}>
         {body}

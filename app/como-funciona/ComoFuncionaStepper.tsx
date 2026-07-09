@@ -86,7 +86,7 @@ export default function ComoFuncionaStepper() {
         width: '47%',
         flexShrink: 0,
         position: 'relative',
-        background: 'var(--color-granito)',
+        background: 'var(--po-hero-bg)',
         overflow: 'hidden',
         alignSelf: 'stretch',
       }}>
@@ -105,7 +105,7 @@ export default function ComoFuncionaStepper() {
               transition: 'opacity 0.85s ease',
               transform: 'scale(0.90)',
               transformOrigin: 'center center',
-              borderRadius: '20px',
+              borderRadius: '8px',
               overflow: 'hidden',
             }}
           />
@@ -117,7 +117,7 @@ export default function ComoFuncionaStepper() {
       <div className="stepper-content-col" style={{
         flex: 1,
         minWidth: 0,
-        background: 'var(--color-niebla)',
+        background: 'var(--po-luz)',
         display: 'flex',
         flexDirection: 'column',
         padding: '32px 44px 0',
@@ -127,27 +127,28 @@ export default function ComoFuncionaStepper() {
         {/* Encabezado */}
         <div style={{ flexShrink: 0, marginBottom: '12px' }}>
           <p style={{
-            fontFamily: 'var(--font-ui)',
+            fontFamily: 'var(--font-lato)',
+            fontWeight: 700,
             fontSize: '10px',
             letterSpacing: '0.15em',
             textTransform: 'uppercase',
-            color: 'var(--color-laton-text)',
+            color: 'var(--po-ouro-text)',
             margin: '0 0 6px',
           }}>
             Cómo funciona
           </p>
 
           <h1 style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontWeight: 400,
+            fontFamily: 'var(--font-playfair)',
+            fontWeight: 900,
             fontSize: 'clamp(24px, 3vw, 40px)',
             lineHeight: 1.15,
             letterSpacing: '-0.01em',
-            color: 'var(--color-granito)',
+            color: 'var(--po-pedra)',
             margin: '0 0 6px',
           }}>
             Tu hogar en Galicia{' '}
-            <em style={{ fontStyle: 'italic', fontWeight: 500, color: 'var(--color-laton)' }}>
+            <em style={{ fontStyle: 'italic', fontWeight: 700, color: 'var(--po-ouro-text)' }}>
               ya existe.
             </em>
             <br />
@@ -155,9 +156,9 @@ export default function ComoFuncionaStepper() {
           </h1>
 
           <p style={{
-            fontFamily: 'var(--font-ui)',
+            fontFamily: 'var(--font-lato)',
             fontSize: '12px',
-            color: 'var(--color-pizarra)',
+            color: 'var(--po-muted)',
             lineHeight: 1.6,
             margin: 0,
             maxWidth: '361px',
@@ -167,7 +168,7 @@ export default function ComoFuncionaStepper() {
         </div>
 
         {/* Divisor */}
-        <div style={{ height: '1px', background: 'var(--color-arena)', flexShrink: 0, marginBottom: '4px' }} />
+        <div style={{ height: '1px', background: 'var(--po-borde)', flexShrink: 0, marginBottom: '4px' }} />
 
         {/* 5 filas */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -187,22 +188,22 @@ export default function ComoFuncionaStepper() {
                   alignItems: 'center',
                   width: '100%',
                   border: 'none',
-                  borderTop: '1px solid var(--color-arena)',
+                  borderTop: '1px solid var(--po-borde)',
                   paddingLeft: '16px',
                   cursor: 'pointer',
                   position: 'relative',
-                  background: isAct ? 'rgba(143,114,43,0.05)' : 'transparent',
+                  background: isAct ? 'color-mix(in srgb, var(--po-ouro) 8%, transparent)' : 'transparent',
                   transition: 'background .3s ease',
                   textAlign: 'left',
                   font: 'inherit',
                 }}
               >
-                {/* Barra izquierda brass */}
+                {/* Barra izquierda dorada */}
                 <div style={{
                   position: 'absolute',
                   left: 0, top: 0, bottom: 0,
                   width: '3px',
-                  background: isAct ? 'var(--color-laton)' : 'transparent',
+                  background: isAct ? 'var(--po-ouro)' : 'transparent',
                   transition: 'background .3s ease',
                 }} />
 
@@ -210,12 +211,12 @@ export default function ComoFuncionaStepper() {
                 <span
                   aria-hidden="true"
                   style={{
-                    fontFamily: 'var(--font-cormorant), serif',
+                    fontFamily: 'var(--font-playfair)',
                     fontStyle: 'italic',
                     fontSize: '28px',
-                    fontWeight: 400,
+                    fontWeight: 700,
                     lineHeight: 1,
-                    color: isAct ? 'var(--color-laton)' : 'var(--color-laton-oscuro)',
+                    color: isAct ? 'var(--po-ouro-text)' : 'var(--po-muted)',
                     minWidth: '48px',
                     flexShrink: 0,
                     transition: 'color .3s ease',
@@ -228,20 +229,20 @@ export default function ComoFuncionaStepper() {
                 {/* Nombre + descripción */}
                 <div style={{ flex: 1, minWidth: 0, padding: '6px 0' }}>
                   <div style={{
-                    fontFamily: 'var(--font-cormorant), serif',
+                    fontFamily: 'var(--font-playfair)',
                     fontSize: '18px',
-                    fontWeight: isAct ? 600 : 500,
+                    fontWeight: isAct ? 700 : 500,
                     lineHeight: 1.2,
-                    color: isAct ? 'var(--color-granito)' : 'var(--color-pizarra)',
+                    color: isAct ? 'var(--po-pedra)' : 'var(--po-muted)',
                     transition: 'color .3s ease',
                   }}>
                     {d.title}
                   </div>
                   <div style={{
-                    fontFamily: 'var(--font-ui)',
+                    fontFamily: 'var(--font-lato)',
                     fontSize: '14px',
                     lineHeight: 1.55,
-                    color: 'var(--color-pizarra)',
+                    color: 'var(--po-muted)',
                     marginTop: '3px',
                     transition: 'color .3s ease',
                   }}>
@@ -253,7 +254,7 @@ export default function ComoFuncionaStepper() {
             )
           })}
           {/* Borde inferior de la última fila */}
-          <div style={{ height: '1px', background: 'var(--color-arena)', flexShrink: 0 }} />
+          <div style={{ height: '1px', background: 'var(--po-borde)', flexShrink: 0 }} />
         </div>
 
       </div>

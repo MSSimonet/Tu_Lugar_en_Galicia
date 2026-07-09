@@ -1,7 +1,7 @@
 import { getNextMetadata } from '@/lib/seo/metadata'
 import { GinaButton } from '@/components/shared/GinaButton'
 import { APPS, CATEGORIAS } from '@/lib/config/apps'
-import { AppCard } from '@/components/guia/AppCard'
+import { AppCardPedraEOuro } from '@/components/guia/AppCardPedraEOuro'
 
 export const metadata = getNextMetadata('guiaLlegada')
 
@@ -16,31 +16,46 @@ function lgColsForCount(n: number): string {
 export default function GuiaLlegadaPage() {
   return (
     <>
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      {/* ── Hero — bookend fijo oscuro (Pedra e Ouro) ───────────────────────── */}
       <section
-        className="hero-gradient px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
+        className="px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
+        style={{ backgroundColor: 'var(--po-hero-bg)' }}
         aria-labelledby="guia-heading"
       >
         <div className="mx-auto max-w-3xl">
-          <p
-            className="mb-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-xs)] uppercase tracking-[var(--tracking-ui)]"
-            style={{ color: 'var(--color-laton-claro)' }}
+          <div
+            aria-hidden="true"
+            style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.25rem' }}
           >
-            Guía de llegada
-          </p>
+            <span style={{ display: 'block', width: '32px', height: '1px', backgroundColor: 'var(--po-ouro)' }} />
+            <span
+              style={{
+                fontFamily: 'var(--font-lato)',
+                fontWeight: 700,
+                fontSize: '11px',
+                letterSpacing: '0.24em',
+                textTransform: 'uppercase',
+                color: 'var(--po-ouro)',
+              }}
+            >
+              Guía de llegada
+            </span>
+          </div>
           <h1
             id="guia-heading"
-            className="font-[family-name:var(--font-titular)] leading-[var(--leading-titulo)]"
             style={{
+              fontFamily: 'var(--font-playfair)',
+              fontWeight: 900,
               fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-              color: 'var(--color-niebla)',
+              lineHeight: 1.15,
+              color: 'var(--po-hero-text)',
             }}
           >
             Tu kit digital para vivir en Galicia
           </h1>
           <p
-            className="mt-[var(--space-6)] font-[family-name:var(--font-ui)] leading-[var(--leading-cuerpo)] max-w-xl"
-            style={{ fontSize: 'var(--text-md)', color: 'var(--color-laton-claro)' }}
+            className="mt-[var(--space-6)] max-w-xl leading-[var(--leading-cuerpo)]"
+            style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-md)', color: 'var(--po-hero-muted)' }}
           >
             Las apps y webs que usarás desde el primer día. Sin rodeos: qué es cada una y para qué la necesitás ahora mismo.
           </p>
@@ -48,11 +63,11 @@ export default function GuiaLlegadaPage() {
       </section>
 
       {/* ── Intro ─────────────────────────────────────────────────────────── */}
-      <section className="bg-[var(--color-niebla)] px-[var(--space-6)] py-[var(--space-8)]">
+      <section className="px-[var(--space-6)] py-[var(--space-8)]" style={{ backgroundColor: 'var(--po-luz)' }}>
         <div className="mx-auto max-w-3xl">
           <p
-            className="font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
-            style={{ color: 'var(--color-pizarra)' }}
+            className="text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
+            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
           >
             Llegar a Galicia implica navegar una burocracia nueva. Esta guía agrupa las herramientas
             digitales imprescindibles por categoría — identidad, salud, transporte, hogar y burocracia —
@@ -62,7 +77,7 @@ export default function GuiaLlegadaPage() {
       </section>
 
       {/* ── Secciones por categoría ───────────────────────────────────────── */}
-      <div className="bg-[var(--color-blanco)]">
+      <div style={{ backgroundColor: 'var(--po-areia)' }}>
         {CATEGORIAS.map((cat) => {
           const appsDeCategoria = APPS.filter((a) => a.categoria === cat.id)
           return (
@@ -76,17 +91,19 @@ export default function GuiaLlegadaPage() {
                 <div className="mb-[var(--space-8)] flex items-baseline gap-[var(--space-4)]">
                   <h2
                     id={`cat-${cat.id}`}
-                    className="font-[family-name:var(--font-titular)] leading-[var(--leading-titulo)]"
                     style={{
+                      fontFamily: 'var(--font-playfair)',
+                      fontWeight: 700,
                       fontSize: 'var(--text-xl)',
-                      color: 'var(--color-granito)',
+                      color: 'var(--po-pedra)',
+                      lineHeight: 'var(--leading-titulo)',
                     }}
                   >
                     {cat.label}
                   </h2>
                   <span
-                    className="font-[family-name:var(--font-ui)] text-[var(--text-xs)] uppercase tracking-[var(--tracking-ui)]"
-                    style={{ color: 'var(--color-pizarra)' }}
+                    className="text-[var(--text-xs)] uppercase tracking-[var(--tracking-ui)]"
+                    style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
                   >
                     {appsDeCategoria.length} {appsDeCategoria.length === 1 ? 'app' : 'apps'}
                   </span>
@@ -99,7 +116,7 @@ export default function GuiaLlegadaPage() {
                 >
                   {appsDeCategoria.map((app) => (
                     <li key={app.nombre}>
-                      <AppCard app={app} />
+                      <AppCardPedraEOuro app={app} />
                     </li>
                   ))}
                 </ul>
@@ -108,7 +125,7 @@ export default function GuiaLlegadaPage() {
               {/* Separador entre secciones */}
               <div
                 className="mx-auto mt-[var(--space-12)] max-w-5xl border-t md:mt-[var(--space-16)]"
-                style={{ borderColor: 'var(--color-arena)' }}
+                style={{ borderColor: 'var(--po-borde)' }}
                 aria-hidden="true"
               />
             </section>
@@ -116,31 +133,39 @@ export default function GuiaLlegadaPage() {
         })}
       </div>
 
-      {/* ── CTA final ─────────────────────────────────────────────────────── */}
+      {/* ── CTA final — bookend fijo oscuro (Pedra e Ouro) ──────────────────── */}
       <section
         className="px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
-        style={{ backgroundColor: 'var(--color-arena)' }}
+        style={{ backgroundColor: 'var(--po-hero-bg)' }}
       >
         <div className="mx-auto max-w-3xl text-center">
           <h2
-            className="font-[family-name:var(--font-titular)] leading-[var(--leading-titulo)]"
-            style={{ fontSize: 'var(--text-xl)', color: 'var(--color-granito)' }}
+            style={{
+              fontFamily: 'var(--font-playfair)',
+              fontWeight: 700,
+              fontSize: 'var(--text-xl)',
+              color: 'var(--po-hero-text)',
+              lineHeight: 'var(--leading-titulo)',
+            }}
           >
             ¿Listo para dar el siguiente paso?
           </h2>
           <p
-            className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
-            style={{ color: 'var(--color-granito)' }}
+            className="mt-[var(--space-4)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
+            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-hero-muted)' }}
           >
             Las apps son el kit digital, pero encontrar el piso es el primer paso real.
             Cuéntanos tu caso y buscamos juntos tu hogar en Galicia.
           </p>
           <div className="mt-[var(--space-8)] flex justify-center">
             <GinaButton
-              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium uppercase tracking-[var(--tracking-ui)] text-white transition-brand hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="inline-flex items-center justify-center px-[var(--space-8)] py-[var(--space-4)] text-[var(--text-sm)] font-bold uppercase tracking-[0.10em] transition-brand focus-visible:outline-2 focus-visible:outline-offset-2"
               style={{
-                backgroundColor: 'var(--color-laton)',
-                outlineColor: 'var(--color-laton)',
+                fontFamily: 'var(--font-lato)',
+                borderRadius: '4px',
+                backgroundColor: 'var(--po-ouro)',
+                color: '#1A1410',
+                outlineColor: 'var(--po-ouro)',
               }}
             >
               Cuéntame de ti

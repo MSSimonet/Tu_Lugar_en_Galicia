@@ -9,24 +9,31 @@ export default function AvisoLegalPage() {
   return (
     <>
       <section
-        className="bg-[var(--color-granito)] pb-[var(--space-16)] px-[var(--space-6)]"
-        style={{ paddingTop: 'calc(64px + 60px)' }}
+        className="pb-[var(--space-16)] px-[var(--space-6)]"
+        style={{ backgroundColor: 'var(--po-hero-bg)', paddingTop: 'calc(64px + 60px)' }}
       >
         <div className="mx-auto max-w-3xl">
-          <h1 className="font-[family-name:var(--font-titular)] [font-size:var(--text-2xl)] leading-[var(--leading-titulo)] [color:var(--color-niebla)] md:[font-size:var(--text-3xl)]">
+          <h1
+            className="[font-size:var(--text-2xl)] leading-[var(--leading-titulo)] md:[font-size:var(--text-3xl)]"
+            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 900, color: 'var(--po-hero-text)' }}
+          >
             Aviso Legal
           </h1>
         </div>
       </section>
 
-      <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]">
-        <div className="flex flex-col gap-[var(--space-10)] font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-granito)] leading-[var(--leading-cuerpo)]">
+      <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]" style={{ backgroundColor: 'var(--po-luz)' }}>
+        <div
+          className="flex flex-col gap-[var(--space-10)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)]"
+          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+        >
 
           <section aria-labelledby="construccion">
-            <div className="rounded-[var(--radius-card)] border border-[var(--color-arena)] bg-[var(--color-niebla)] p-[var(--space-8)]">
+            <div className="p-[var(--space-8)]" style={{ borderRadius: '4px', border: '1px solid var(--po-borde)', backgroundColor: 'var(--po-areia)' }}>
               <h2
                 id="construccion"
-                className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+                className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+                style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
               >
                 Página en construcción
               </h2>
@@ -36,7 +43,8 @@ export default function AvisoLegalPage() {
               </p>
               <a
                 href="mailto:hola@tulugarengalicia.com"
-                className="font-medium [color:var(--color-laton)] underline underline-offset-2 hover:[color:var(--color-laton-oscuro)]"
+                className="font-medium underline underline-offset-2"
+                style={{ color: 'var(--po-ouro-text)' }}
               >
                 hola@tulugarengalicia.com
               </a>
@@ -46,7 +54,8 @@ export default function AvisoLegalPage() {
           <section aria-labelledby="titular">
             <h2
               id="titular"
-              className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
             >
               Titular del sitio web
             </h2>
@@ -58,7 +67,8 @@ export default function AvisoLegalPage() {
               Contacto:{' '}
               <a
                 href="mailto:hola@tulugarengalicia.com"
-                className="[color:var(--color-laton)] underline underline-offset-2 hover:[color:var(--color-laton-oscuro)]"
+                className="underline underline-offset-2"
+                style={{ color: 'var(--po-ouro-text)' }}
               >
                 hola@tulugarengalicia.com
               </a>

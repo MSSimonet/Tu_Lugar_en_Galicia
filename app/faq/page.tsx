@@ -1,8 +1,7 @@
-import Link from 'next/link'
 import { GinaButton } from '@/components/shared/GinaButton'
 import { getNextMetadata } from '@/lib/seo/metadata'
 import { faqSchema } from '@/lib/seo/schemas'
-import { FAQAccordion } from '@/components/ciudades/FAQAccordion'
+import { FAQAccordionPedraEOuro } from '@/components/ciudades/FAQAccordionPedraEOuro'
 
 export const metadata = getNextMetadata('faq')
 
@@ -161,30 +160,54 @@ export default function FAQPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      {/* Hero */}
-      <section className="bg-[var(--color-granito)]" style={{ padding: '48px 80px' }}>
+      {/* Hero — bookend fijo oscuro (Pedra e Ouro) */}
+      <section style={{ backgroundColor: 'var(--po-hero-bg)', padding: '48px 80px' }}>
         <div className="mx-auto max-w-3xl">
+          <div
+            aria-hidden="true"
+            style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.25rem' }}
+          >
+            <span style={{ display: 'block', width: '32px', height: '1px', backgroundColor: 'var(--po-ouro)' }} />
+            <span
+              style={{
+                fontFamily: 'var(--font-lato)',
+                fontWeight: 700,
+                fontSize: '11px',
+                letterSpacing: '0.24em',
+                textTransform: 'uppercase',
+                color: 'var(--po-ouro)',
+              }}
+            >
+              Preguntas frecuentes
+            </span>
+          </div>
           <h1 style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontFamily: 'var(--font-playfair)',
             fontSize: 'clamp(36px, 5vw, 64px)',
-            fontWeight: 400,
-            color: 'var(--color-niebla)',
+            fontWeight: 900,
+            color: 'var(--po-hero-text)',
             lineHeight: 1.15,
             letterSpacing: '-0.01em',
-            margin: '0 0 24px 0',
+            margin: 0,
           }}>
             ¿Tienes dudas?
           </h1>
-          <p className="mt-[var(--space-4)] font-[family-name:var(--font-ui)] [font-size:var(--text-md)] [color:var(--color-laton-claro)] leading-[var(--leading-cuerpo)]">
+          <p
+            className="mt-[var(--space-4)] leading-[var(--leading-cuerpo)]"
+            style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-md)', color: 'var(--po-hero-muted)' }}
+          >
             Respondemos las preguntas que más nos hacen
           </p>
         </div>
       </section>
 
       {/* Bajada */}
-      <section className="bg-[var(--color-niebla)] py-[var(--space-8)] px-[var(--space-6)]">
+      <section className="py-[var(--space-8)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--po-luz)' }}>
         <div className="mx-auto max-w-3xl">
-          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
+          <p
+            className="text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
+            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
+          >
             Reunimos las preguntas que nos hacen todas las familias antes de arrancar. Si la tuya no
             está acá, escríbenos — respondemos hoy.
           </p>
@@ -192,30 +215,60 @@ export default function FAQPage() {
       </section>
 
       {/* Categorías */}
-      <section className="bg-[var(--color-blanco)] py-[var(--space-16)] px-[var(--space-6)]">
+      <section className="py-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--po-areia)' }}>
         <div className="mx-auto max-w-3xl space-y-[var(--space-12)]">
           {categorias.map((cat) => (
             <div key={cat.titulo}>
-              <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-laton)] leading-[var(--leading-titulo)] mb-[var(--space-6)]">
+              <h2
+                className="mb-[var(--space-6)]"
+                style={{
+                  fontFamily: 'var(--font-playfair)',
+                  fontWeight: 700,
+                  fontSize: 'var(--text-xl)',
+                  color: 'var(--po-ouro-text)',
+                  lineHeight: 'var(--leading-titulo)',
+                }}
+              >
                 {cat.titulo}
               </h2>
-              <FAQAccordion faqs={cat.faqs} />
+              <FAQAccordionPedraEOuro faqs={cat.faqs} />
             </div>
           ))}
         </div>
       </section>
 
-      {/* CTA al final */}
-      <section className="bg-[var(--color-arena)] py-[var(--space-16)] px-[var(--space-6)]">
+      {/* CTA al final — bookend fijo oscuro (Pedra e Ouro) */}
+      <section className="py-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--po-hero-bg)' }}>
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] leading-[var(--leading-titulo)] mb-[var(--space-4)]">
+          <h2
+            className="mb-[var(--space-4)]"
+            style={{
+              fontFamily: 'var(--font-playfair)',
+              fontWeight: 700,
+              fontSize: 'var(--text-xl)',
+              color: 'var(--po-hero-text)',
+              lineHeight: 'var(--leading-titulo)',
+            }}
+          >
             ¿No encontraste tu respuesta?
           </h2>
-          <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
+          <p
+            className="mb-[var(--space-8)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
+            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-hero-muted)' }}
+          >
             Cuéntanos tu caso y te respondemos hoy.
           </p>
           <div className="flex justify-center">
-            <GinaButton className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]">
+            <GinaButton
+              className="inline-flex items-center justify-center px-[var(--space-8)] py-[var(--space-4)] text-[var(--text-sm)] font-bold uppercase tracking-[0.10em] transition-brand focus-visible:outline-2 focus-visible:outline-offset-2"
+              style={{
+                fontFamily: 'var(--font-lato)',
+                borderRadius: '4px',
+                backgroundColor: 'var(--po-ouro)',
+                color: '#1A1410',
+                outlineColor: 'var(--po-ouro)',
+              }}
+            >
               Cuéntame de ti
             </GinaButton>
           </div>

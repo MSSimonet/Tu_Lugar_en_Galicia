@@ -207,11 +207,112 @@ details > dd {
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   ATLÁNTICO EDITORIAL — Sistema de diseño (rama design/exploration)
+   Tokens aislados con prefijo --ae-* para no colisionar con otros sistemas
+   ══════════════════════════════════════════════════════════════════════════ */
+@theme {
+  --ae-papel:        #F8F5EF; /* papel cálido — canvas editorial */
+  --ae-tinta:        #0F172A; /* tinta atlántica — texto/fondo hero */
+  --ae-oceano:       #1E3A5F; /* azul profundo — secciones secundarias */
+  --ae-ambar:        #B45309; /* ámbar editorial — acento/CTA */
+  --ae-ambar-hover:  #92400E; /* ámbar oscuro — hover CTA */
+  --ae-niebla:       #EEF2F7; /* neblina azulada — superficie clara */
+  --ae-muted:        #64748B; /* texto secundario sobre papel */
+  --ae-borde:        #CBD5E1; /* borde sutil */
+  --ae-oro:          #D97706; /* oro editorial — detalles decorativos */
+
+  --font-ae-display: var(--font-jost), 'Montserrat', system-ui, sans-serif;
+  --font-ae-ui:      var(--font-dmsans), 'Inter', system-ui, sans-serif;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MAR ABIERTO — Sistema de diseño (rama design/exploration)
+   Tokens aislados con prefijo --mar-* para no colisionar con el sistema base
+   ══════════════════════════════════════════════════════════════════════════ */
+@theme {
+  --mar-canvas:      #E4EDEA;
+  --mar-ink:         #0C1F1A;
+  --mar-teal:        #0D9488;
+  --mar-teal-hover:  #0B7A70;
+  --mar-teal-light:  #2DD4BF;
+  --mar-niebla:      #F0F7F5;
+  --mar-muted:       #5E7A74;
+  --mar-border:      #C5D8D4;
+
+  --font-mar-display: var(--font-syne), 'Georgia', serif;
+  --font-mar-ui:      var(--font-nunito), 'Inter', system-ui, sans-serif;
+
+  --mar-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PEDRA E OURO — Sistema de diseño (rama design/exploration)
+   Tokens aislados con prefijo --po-*
+   ══════════════════════════════════════════════════════════════════════════ */
+@theme {
+  --po-pedra:       #3D3530; /* pedra escura — texto principal (invierte en dark) */
+  --po-ouro:        #C89B3C; /* ouro artesanal — acento principal, fijo */
+  --po-ouro-hover:  #A67C25; /* ouro profundo — hover, fijo */
+  --po-ouro-text:   #8A6220; /* ouro oscurecido — texto AA sobre areia/luz (4.68:1); en dark usa --po-ouro (5.98:1) */
+  --po-terra:       #8B6E4E; /* terra media — secciones secundarias, fijo */
+  --po-areia:       #F2EDE4; /* areia — canvas claro (invierte en dark) */
+  --po-luz:         #FBF8F2; /* luz — superficie muy clara (invierte en dark) */
+  --po-muted:       #6E625A; /* texto secundario sobre areia — AA 5.06:1 (invierte en dark) */
+  --po-borde:       #DDD5C8; /* borde cálido (invierte en dark) */
+
+  /* Bookends siempre oscuros — igual filosofía que --color-header-bg/--color-footer-bg:
+     no invierten con el tema, dan continuidad visual arriba (hero) y abajo (CTA) de la página. */
+  --po-hero-bg:     #2C2420;
+  --po-hero-text:   #F5EFE4;
+  --po-hero-muted:  rgba(245, 239, 228, 0.68);
+
+  --font-po-display: var(--font-playfair), 'Georgia', serif;
+  --font-po-ui:      var(--font-lato), 'Helvetica Neue', system-ui, sans-serif;
+}
+
+/* Hover de links de descarga en AppCardPedraEOuro — evita handlers JS en Server Component */
+.po-link-descarga:hover {
+  border-color: var(--po-ouro) !important;
+  color: var(--po-ouro-text) !important;
+}
+
+/* Estados hover/open del acordeón FAQAccordionPedraEOuro */
+.po-faq-details[open] {
+  border-color: color-mix(in srgb, var(--po-ouro) 40%, transparent) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.po-faq-summary:hover {
+  background-color: var(--po-areia);
+}
+
 /* ── Dark mode — override de variables CSS ───────────────────────────────────
    Reutiliza valores existentes de la paleta swapeando fondo/texto.
    El header usa --color-header-bg (siempre oscuro, override abajo).
    ─────────────────────────────────────────────────────────────────────────── */
 .dark {
+  /* Pedra e Ouro — dark overrides */
+  --po-areia:     #2A2420;
+  --po-luz:       #332C27;
+  --po-pedra:     #F0E8DC;
+  --po-muted:     #A8998C;
+  --po-borde:     #4A3F38;
+  --po-ouro-text: #C89B3C; /* claro sobre fondo oscuro — 5.98:1 AA */
+
+  /* Atlántico Editorial — dark overrides */
+  --ae-papel:   #0F172A;
+  --ae-tinta:   #F1F5F9;
+  --ae-niebla:  #1E293B;
+  --ae-muted:   #94A3B8;
+  --ae-borde:   #334155;
+
+  /* Mar Abierto — dark overrides */
+  --mar-canvas:  #0C1F1A;
+  --mar-ink:     #E8F5F2;
+  --mar-niebla:  #0F2B24;
+  --mar-muted:   #7FB8AF;
+  --mar-border:  #1A3A32;
+
   /* Fondos — grafito cálido */
   --color-blanco:  #141210;
   --color-niebla:  #1E1B18;
