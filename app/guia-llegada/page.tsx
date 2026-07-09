@@ -1,4 +1,5 @@
 import { getNextMetadata } from '@/lib/seo/metadata'
+import { GinaButton } from '@/components/shared/GinaButton'
 import { APPS, CATEGORIAS } from '@/lib/config/apps'
 import { AppCard } from '@/components/guia/AppCard'
 
@@ -134,28 +135,16 @@ export default function GuiaLlegadaPage() {
             Las apps son el kit digital, pero encontrar el piso es el primer paso real.
             Cuéntanos tu caso y buscamos juntos tu hogar en Galicia.
           </p>
-          <div className="mt-[var(--space-8)] flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
-            <a
-              href="/conocernos"
+          <div className="mt-[var(--space-8)] flex justify-center">
+            <GinaButton
               className="inline-flex items-center justify-center rounded-[var(--radius-pill)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium uppercase tracking-[var(--tracking-ui)] text-white transition-brand hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
               style={{
                 backgroundColor: 'var(--color-laton)',
                 outlineColor: 'var(--color-laton)',
               }}
             >
-              Vamos a conocernos
-            </a>
-            <a
-              href="/guia-llegada#cat-burocracia"
-              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] text-[var(--text-sm)] font-medium uppercase tracking-[var(--tracking-ui)] transition-brand focus-visible:outline-2 focus-visible:outline-offset-2"
-              style={{
-                borderColor: 'var(--color-laton)',
-                color: 'var(--color-granito)',
-                outlineColor: 'var(--color-laton)',
-              }}
-            >
-              Ver trámites y burocracia
-            </a>
+              Cuéntame de ti
+            </GinaButton>
           </div>
         </div>
       </section>

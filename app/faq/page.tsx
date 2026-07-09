@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { GinaButton } from '@/components/shared/GinaButton'
 import { getNextMetadata } from '@/lib/seo/metadata'
 import { faqSchema } from '@/lib/seo/schemas'
 import { FAQAccordion } from '@/components/ciudades/FAQAccordion'
@@ -213,19 +214,10 @@ export default function FAQPage() {
           <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)] mb-[var(--space-8)]">
             Cuéntanos tu caso y te respondemos hoy.
           </p>
-          <div className="flex flex-col items-center gap-[var(--space-4)] sm:flex-row sm:justify-center">
-            <Link
-              href="/conocernos"
-              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
-            >
-              Vamos a conocernos
-            </Link>
-            <Link
-              href="/contacto"
-              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] [color:var(--color-laton)] tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton)] hover:text-white transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
-            >
-              Contáctanos
-            </Link>
+          <div className="flex justify-center">
+            <GinaButton className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]">
+              Cuéntame de ti
+            </GinaButton>
           </div>
         </div>
       </section>

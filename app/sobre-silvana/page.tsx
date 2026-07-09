@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { GinaButton } from '@/components/shared/GinaButton'
 import { getNextMetadata } from '@/lib/seo/metadata'
 
 export const metadata = getNextMetadata('sobreSilvana')
@@ -149,12 +150,15 @@ export default function SobreSilvanaPage() {
             Si llegaste hasta acá, ya sabes quién soy y por qué hago esto. Ahora lo que me gustaría
             es conocerte, escuchar tu historia y ver si puedo ayudarte.
           </p>
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-[var(--space-4)]">
+            <GinaButton className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]">
+              Vamos a conocernos
+            </GinaButton>
             <Link
               href="/conocernos"
-              className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-laton)] px-[var(--space-8)] py-[var(--space-4)] font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] text-white tracking-[var(--tracking-ui)] uppercase hover:bg-[var(--color-laton-oscuro)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton)]"
+              className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] underline underline-offset-2 hover:[color:var(--color-laton)] transition-colors duration-150"
             >
-              Vamos a conocernos
+              ¿Prefieres escribirlo? Completa el formulario
             </Link>
           </div>
         </div>

@@ -28,7 +28,7 @@ export function CTAFinal() {
 
         <div className="mt-[var(--space-8)] flex justify-center">
           <Button variant="primario" size="lg" onClick={abrirGina}>
-            Vamos a conocernos
+            Cuéntame de ti
           </Button>
         </div>
       </div>
