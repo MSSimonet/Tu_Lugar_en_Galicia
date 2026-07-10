@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Cormorant_Garamond, Syne, Nunito_Sans, Fraunces, DM_Sans, Jost, Playfair_Display, Lato } from "next/font/google";
+import { Plus_Jakarta_Sans, Cormorant_Garamond, Syne, Nunito_Sans, Fraunces, DM_Sans, Jost, Playfair_Display, Lato, Lora, Work_Sans } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
@@ -74,6 +74,22 @@ const nunitoSans = Nunito_Sans({
   display: "swap",
 });
 
+/* Apps Útiles — tipografías (rama design/exploration) */
+const lora = Lora({
+  subsets: ["latin", "latin-ext"],
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-lora",
+  display: "swap",
+});
+
+const workSans = Work_Sans({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600"],
+  variable: "--font-worksans",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://tulugarengalicia.com'),
   title: {
@@ -92,7 +108,7 @@ export default async function RootLayout({
   return (
     <html
       lang="es"
-      className={`${plusJakarta.variable} ${cormorant.variable} ${syne.variable} ${nunitoSans.variable} ${fraunces.variable} ${dmSans.variable} ${jost.variable} ${playfair.variable} ${lato.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${cormorant.variable} ${syne.variable} ${nunitoSans.variable} ${fraunces.variable} ${dmSans.variable} ${jost.variable} ${playfair.variable} ${lato.variable} ${lora.variable} ${workSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-[family-name:var(--font-ui)]">

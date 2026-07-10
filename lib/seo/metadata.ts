@@ -175,6 +175,22 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
     ],
     canonical: `${SITE_URL}/guia-llegada`,
   },
+  appsUtiles: {
+    title: 'Apps útiles para vivir en Galicia | Tu Lugar en Galicia',
+    description:
+      'El kit digital para tu primera semana en Galicia, por ciudad: transporte local, Cl@ve, ÉSaúde, empleo y trámites del Estado. Apps con enlace directo de descarga.',
+    keywords: [
+      'apps para vivir en galicia',
+      'apps recién llegados españa',
+      'certificado digital españa',
+      'ésaúde galicia',
+      'clave pin españa',
+      'passvigo',
+      'apps emigrantes galicia',
+      'kit digital vivir en galicia',
+    ],
+    canonical: `${SITE_URL}/apps-utiles`,
+  },
 }
 
 export function getNextMetadata(page: keyof typeof PAGE_METADATA): Metadata {

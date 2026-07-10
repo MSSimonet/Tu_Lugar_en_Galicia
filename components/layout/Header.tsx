@@ -12,7 +12,7 @@ const navLinks = [
   { label: 'Ciudades',       href: '/ciudades'       },
   { label: 'Comunidad',      href: '/comunidad'      },
   { label: 'Quiénes somos',  href: '/sobre-silvana'  },
-  { label: 'Apps útiles',    href: '/guia-llegada'   },
+  { label: 'Apps útiles',    href: '/apps-utiles'    },
   { label: '¿Tienes dudas?', href: '/faq'            },
 ]
 

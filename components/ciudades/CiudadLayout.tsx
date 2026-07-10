@@ -279,7 +279,7 @@ export function CiudadLayout({
             </p>
           </div>
           <Link
-            href="/guia-llegada"
+            href="/apps-utiles"
             className="text-xs font-semibold uppercase tracking-wide whitespace-nowrap shrink-0 px-4 py-2 transition-opacity hover:opacity-70"
             style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-ouro-text)', border: '1px solid var(--po-ouro)', borderRadius: '999px' }}
           >

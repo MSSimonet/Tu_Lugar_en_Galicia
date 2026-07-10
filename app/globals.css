@@ -271,6 +271,38 @@ details > dd {
   --font-po-ui:      var(--font-lato), 'Helvetica Neue', system-ui, sans-serif;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   APPS ÚTILES — paleta fija (siempre oscura, no invierte con .dark)
+   Igual filosofía que --color-header-bg/--po-hero-bg: bookend de identidad,
+   no una superficie de contenido que deba adaptarse al tema claro/oscuro.
+   ══════════════════════════════════════════════════════════════════════════ */
+@theme {
+  --au-bg:          #1b1410; /* fondo de página */
+  --au-header-bg:   #14100c; /* franja superior, ligeramente más oscura */
+  --au-card:        #241a13; /* fondo de las secciones-acordeón */
+  --au-accent:      #c9a237; /* dorado — acento y bordes activos */
+  --au-hero-heading: #f7f0e4; /* h1 del hero */
+  --au-heading:     #f2e9da; /* h2 de cada sección */
+  --au-hero-body:   #cfc3af; /* párrafo del hero */
+  --au-text:        #e7dccb; /* texto principal / logo */
+  --au-muted:       #b3a690; /* descripción de cada app */
+  --au-faint:       #938576; /* plataformas, estado vacío — ajustado de #8d8171 (mockup) para WCAG AA: 4.47:1 sobre --au-card fallaba, ahora 4.75:1 */
+
+  --font-au-display: var(--font-lora), Georgia, serif;
+  --font-au-ui:       var(--font-worksans), 'Helvetica Neue', system-ui, sans-serif;
+}
+
+@keyframes auFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.au-fade-in {
+  animation: auFadeIn 0.3s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .au-fade-in { animation: none; }
+}
+
 /* Hover de links de descarga en AppCardPedraEOuro — evita handlers JS en Server Component */
 .po-link-descarga:hover {
   border-color: var(--po-ouro) !important;
