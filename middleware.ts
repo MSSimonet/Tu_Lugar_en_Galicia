@@ -50,10 +50,13 @@ export function middleware(req: NextRequest) {
     // hay ningún request en runtime a Google Fonts, verificado en preview.)
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
-    "img-src 'self' data: blob: https://placehold.co",
+    // https://*.tile.openstreetmap.org: tiles del mapa de Comunidad de Acogida (Leaflet.js).
+    "img-src 'self' data: blob: https://placehold.co https://*.tile.openstreetmap.org",
     "media-src 'self'",
     "frame-src https://app.cal.com https://cal.com",
-    "connect-src 'self' https://app.cal.com https://cal.com",
+    // https://*.supabase.co: el mapa de Comunidad de Acogida consume Supabase directo desde
+    // el cliente (docs/comunidad-de-acogida.md §4) — necesita connect-src, no solo server-side.
+    "connect-src 'self' https://app.cal.com https://cal.com https://*.supabase.co",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

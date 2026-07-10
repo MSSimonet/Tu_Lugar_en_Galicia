@@ -15,6 +15,10 @@ Sitio web y sistema de calificación de leads para el primer servicio de **reloc
 - **IA (Gina):** API de Gemini (Google)
 - **Clima:** API AEMET (España)
 - **Agenda:** Cal.com embebido
+- **Comunidad:** Leaflet + Supabase (formulario, mapa y puente a Airtable, con mensajería
+  privada vía Resend). Implementado y verificado end-to-end con datos e infraestructura reales
+  el 2026-07-10 — ver [`docs/comunidad-de-acogida.md`](docs/comunidad-de-acogida.md). Falta el
+  deploy a Vercel para confirmar en el dominio público.
 
 ---
 
@@ -31,7 +35,10 @@ components/           — Componentes React
 ├── home/             — Secciones de la home
 ├── ciudades/         — Layout y FAQ de páginas de ciudad
 lib/gina/             — Flujo JSON + motor de estados + persistencia
+lib/comunidad/        — Comunidad de Acogida: Supabase, Nominatim, puente a Airtable
+app/comunidad/        — Formulario de registro + mapa (Leaflet)
 docs/                 — Arquitectura, roadmap, PRD, design-system
+├── comunidad-de-acogida.md  — Mapa de comunidad: implementado y verificado end-to-end (§8)
 CLAUDE.md             — Reglas del proyecto para Claude Code
 ```
 

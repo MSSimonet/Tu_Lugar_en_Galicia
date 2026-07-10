@@ -22,6 +22,7 @@ Contexto completo del negocio, marca, competencia y producto en:
 - `/docs/contexto-estrategico.md` — contexto de negocio, marca y competencia
 - `/docs/gina-recursos-preparacion.md` — material de apoyo y recursos del asistente Gina
 - `/docs/legal-terminos-privacidad.md` — fuente de la política de privacidad real (datos fiscales pendientes de completar)
+- `/docs/comunidad-de-acogida.md` — 🟢 **Implementado y verificado end-to-end (2026-07-10)**. Mapa de comunidad (Fase 5): registro → geocoding → upsert en Supabase → réplica en Airtable → mapa con clustering → tooltip condicional → mensaje privado por email, probado con datos reales contra la infraestructura real y confirmado funcionando (incluye entrega de email confirmada por Resend). Corregidos 4 bugs reales encontrados en la verificación (detalle en el doc §8.3). Pendiente: deploy a Vercel (solo se verificó contra dev local hablándole a los servicios reales) y revisión RGPD de `Legal Compliance Checker` antes de anunciar la sección públicamente.
 
 ---
 
@@ -36,6 +37,10 @@ Contexto completo del negocio, marca, competencia y producto en:
   La clave va en `GEMINI_API_KEY` (solo servidor) — nunca en el cliente ni en el repo.
 - **Base de datos:** se introduce SOLO en Fase 5 (Vercel Postgres / Neon / Supabase)
 - **Agenda:** Cal.com embebido — **Pagos:** Stripe (Fase 6)
+- **Comunidad (Fase 5):** **Supabase** — dependencia sumada al stack (`@supabase/supabase-js`,
+  `leaflet`, `react-leaflet`, `leaflet.markercluster`), implementada y verificada end-to-end
+  según `/docs/comunidad-de-acogida.md` (2026-07-10). Falta el deploy a Vercel para confirmar
+  en el dominio de producción — la verificación fue contra dev local + servicios reales.
 
 > ⛔ **No usar PHP / Laravel / Livewire / Filament.** Vercel es nativo de JS/Next.js.
 > Si un agente sugiere PHP, está mal asignado.
