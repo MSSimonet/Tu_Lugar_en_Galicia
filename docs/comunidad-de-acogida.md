@@ -168,14 +168,16 @@ existe:
 - [x] **4. `RESEND_API_KEY` cargada y funcional.** Envío real confirmado con
       `last_event: "delivered"` en el log de Resend.
 
-**Restante, sin resolver (no bloquea el feature, ver nota de alcance al inicio del doc):**
+**Restante:**
+- [x] **Deploy a Vercel.** Completado — commit `28e2037` desplegado a Production, confirmado
+      por el usuario (2026-07-10).
 - MCP oficial de Supabase / login OAuth — el binario `claude` sigue sin estar disponible en el
   entorno de Bash usado para verificar. Sigue sin hacer falta: toda la verificación se hizo con
   `@supabase/supabase-js` + REST API directa.
-- Deploy a Vercel — la verificación fue 100% contra `localhost:3000` hablándole a los servicios
-  reales, no contra el dominio de producción.
-- Revisión de `Legal Compliance Checker` sobre datos de ubicación (RGPD) — sigue pendiente,
-  recomendado antes de anunciar la sección públicamente (CLAUDE.md §7).
+- Revisión de `Legal Compliance Checker` sobre datos de ubicación (RGPD) — **pendiente de
+  entrega por Silvana**, no es un bloqueo técnico: la revisión depende de que ella provea el
+  material/decisión de negocio necesario para que el `Legal Compliance Checker` pueda evaluarla.
+  Recomendado completarla antes de anunciar la sección públicamente (CLAUDE.md §7).
 
 ### 8.2 Flujo probado con datos reales — resultado de cada punto
 
@@ -219,6 +221,92 @@ infraestructura real, no decisiones de producto reabiertas.
 
 Ninguno de estos bugs era detectable sin probar contra la infraestructura real — es exactamente
 la razón por la que esta verificación en producción era necesaria y no bastaba con `tsc`/`build`.
+
+### 8.4 Revisión de seguridad independiente (2026-07-10)
+
+Revisión de seguridad separada de la implementación original, enfocada en PII, validación de
+inputs, rate limiting y manejo de errores sobre todo el diff del commit `28e2037`.
+
+**🔴 CRÍTICO — email de todos los usuarios legible directo desde el navegador, sin pasar por
+la app.** La policy RLS de `0001_comunidad_schema.sql` (`comunidad_select_public ... using
+(true)`) es a nivel de fila, no de columna. Supabase otorga por defecto `GRANT SELECT` sobre
+**todas** las columnas de las tablas de `public` a los roles `anon`/`authenticated`. El `select`
+explícito de columnas en `components/comunidad/MapaComunidad.tsx` es una restricción de la UI,
+no de la base de datos: con la anon key (pública, visible en el bundle del navegador) cualquiera
+puede pedir `GET .../comunidad?select=email,nombre,lat,lng` directo a la REST API de Supabase y
+obtener el email real de cada familia registrada. Fix escrito en
+`supabase/migrations/0002_comunidad_restringir_email.sql` (revoca `SELECT` de tabla completa y
+lo vuelve a otorgar columna por columna, excluyendo `email`).
+
+**✅ Estado: RESUELTO y verificado contra producción el 2026-07-10.** Se hicieron dos rondas de
+verificación real (no solo lectura de código) con la **anon key pública real**
+(`NEXT_PUBLIC_SUPABASE_ANON_KEY`) contra el proyecto de producción:
+
+- **Primera ronda (antes de aplicar `0003`):** `select=email` → `401/42501` (correcto), pero
+  `select=id,nombre,foto_url,lat,lng,disponibilidad,contacto,updated_at` (las columnas que usa
+  `components/comunidad/MapaComunidad.tsx`) también daba `401/42501` — el `grant select (...)`
+  de `0002_comunidad_restringir_email.sql` no había surtido efecto (solo el `revoke` quedó
+  aplicado), dejando el mapa público roto. Se creó
+  `supabase/migrations/0003_comunidad_reparar_grant_columnas.sql` para reparar solo ese `GRANT`.
+- **Segunda ronda (después de aplicar `0003`):** se insertó una fila de prueba
+  (`test-verificacion-0003b-<timestamp>@example.invalid`) vía `service_role`. Con la anon key:
+  `select=id,nombre,foto_url,lat,lng,disponibilidad,contacto,updated_at` filtrando por `id`
+  (columna otorgada) → **`200 OK`** con los datos correctos de la fila de prueba. `select=email`
+  → sigue dando `401/42501`. **Ambos hallazgos confirmados: el email nunca es legible y el mapa
+  vuelve a funcionar.**
+
+**Nota de método, para no repetir el hallazgo:** al filtrar por `email=eq.<valor>` (aunque no se
+pida esa columna en el `select`), Postgres exige privilegio `SELECT` sobre `email` igual que si
+se pidiera en el resultado — porque el filtro también "lee" esa columna para comparar. Como
+`email` nunca fue otorgado a `anon`, cualquier filtro `?email=eq....` da `401/42501` sin importar
+qué columnas se pidan en el `select`. Esto no es un bug: es un efecto colateral correcto y
+deseable (nadie puede usar `email` ni siquiera como filtro/oráculo de existencia). La prueba de
+"el mapa funciona" debe filtrar por una columna sí otorgada (por ejemplo `id`), no por `email`.
+
+**Tercera ronda, re-confirmación (mismo día):** repetida una vez más con una fila de prueba
+nueva (`test-verificacion-0003c-<timestamp>@example.invalid`) para dejar el hallazgo
+completamente estable antes del commit — mismo resultado: `200 OK` con datos en las columnas del
+mapa (filtrando por `id`), `401/42501` en `select=email`, fila de prueba borrada y confirmada en
+0 filas restantes.
+
+Se confirmó además, vía `service_role` (que bypassea RLS y grants), que cada fila de prueba
+insertada existía con sus datos correctos — descartando errores de inserción como causa de los
+resultados. Las 3 filas de prueba usadas en las dos rondas de esta verificación (`0002-<ts>`,
+`0003-<ts>`, `0003b-<ts>`) se borraron al terminar cada una — confirmado con un `select` filtrado
+por email vía `service_role` que devolvió `[]` (0 filas) en los tres casos.
+
+**🟠 Alto — upsert sin verificación de dueño del email, documentado sin fix de código.**
+Cualquiera puede registrarse con el email de otra persona (no hay verificación de propiedad del
+correo). Como el upsert hace merge silencioso de `contacto`, un atacante que registre primero el
+email de una víctima con su propio WhatsApp en `contacto` deja ese número pegado al perfil: si la
+víctima se registra después sin completar `contacto`, su `undefined` cae al valor ya guardado del
+atacante, no a `null`. Dado el perfil de usuario (familias inmigrantes vulnerables), es un vector
+real de suplantación/acoso. Requiere una decisión de producto (verificación por email/magic link
+antes de crear o modificar `contacto`/`fotoUrl`) — fuera del alcance de esta revisión.
+
+**🟡 Medio — validación server-side insuficiente en campos libres, corregido.** `nombre`,
+`calle1`, `calle2`, `contacto`, `fotoUrl` (registro) y `remitenteNombre`/`mensaje` (mensaje
+privado) no tenían longitud máxima; `ciudad` solo estaba restringida por el `<select>` de la UI
+(salteable llamando la API directo); `fotoUrl` no validaba protocolo/formato. Corregido en
+`app/api/comunidad/registro/route.ts` y `app/api/comunidad/mensaje/route.ts`: allow-list
+server-side de ciudades, topes de longitud, formato de teléfono, y `fotoUrl` debe ser una URL
+`https://` válida.
+
+**🟡 Medio — `/api/comunidad/mensaje` es un vector de acoso escalable, documentado sin fix.**
+Los `destinatarioId` son intencionalmente públicos (vienen del propio query del mapa, para no
+exponer el email — diseño correcto). Con el mapa público y el rate limit actual (5 req/10min por
+IP), alguien puede scrapear todos los IDs y, con rotación de IP, mandar un email no solicitado a
+cada persona registrada. Recomendado: límite por destinatario además del límite por IP, o
+CAPTCHA en este formulario específico. No se implementó en esta pasada.
+
+**Verificado como correcto, sin cambios:** logs sin PII (solo `err.name`), CSRF por
+`Origin` fail-closed, rate limiting Upstash fail-closed en ambos endpoints, sanitización contra
+inyección de fórmulas de Airtable (reutiliza el patrón de `lib/admin/airtable.ts`), HTML de los
+emails escapado con `escapeHtml()`, `destinatarioId` resuelto solo server-side (sin IDOR),
+querystring de Nominatim armado con `URLSearchParams` (sin inyección), y ninguna respuesta de
+error filtra mensajes crudos de Supabase/Airtable/Resend/Nominatim al cliente.
+
+Verificado con `npx tsc --noEmit` (limpio) y `npm run build` (limpio, 35 rutas compiladas).
 
 ---
 
