@@ -303,12 +303,6 @@ details > dd {
   .au-fade-in { animation: none; }
 }
 
-/* Hover de links de descarga en AppCardPedraEOuro — evita handlers JS en Server Component */
-.po-link-descarga:hover {
-  border-color: var(--po-ouro) !important;
-  color: var(--po-ouro-text) !important;
-}
-
 /* Estados hover/open del acordeón FAQAccordionPedraEOuro */
 .po-faq-details[open] {
   border-color: color-mix(in srgb, var(--po-ouro) 40%, transparent) !important;

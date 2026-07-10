@@ -218,9 +218,10 @@ Pasos para activar el feed dinámico de Instagram en la home:
 
 ---
 
-## Guía de llegada — revisión de contenido
-- [ ] Revisar si hay apps útiles para recién llegados que no están en lib/config/apps.ts
-      Categorías a repasar: identidad/trámites, salud SERGAS, transporte, hogar, burocracia
+## Apps útiles (/apps-utiles) — revisión de contenido
+- [ ] Revisar si hay apps útiles para recién llegados que no están en lib/config/appsUtiles.ts
+      Categorías a repasar: identidad/trámites, salud, empleo, viajes y transporte, clima y hogar,
+      más las apps locales por ciudad (Vigo, A Coruña, Santiago, Lugo, Pontevedra)
       Responsable: Silvana (conoce las consultas reales de los clientes)
       Prioridad: media — antes de que la página tenga tráfico real
 
