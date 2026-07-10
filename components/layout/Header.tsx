@@ -10,6 +10,7 @@ const navLinks = [
   { label: 'Inicio',         href: '/'              },
   { label: 'Cómo funciona',  href: '/como-funciona' },
   { label: 'Ciudades',       href: '/ciudades'       },
+  { label: 'Comunidad',      href: '/comunidad'      },
   { label: 'Quiénes somos',  href: '/sobre-silvana'  },
   { label: 'Apps útiles',    href: '/guia-llegada'   },
   { label: '¿Tienes dudas?', href: '/faq'            },

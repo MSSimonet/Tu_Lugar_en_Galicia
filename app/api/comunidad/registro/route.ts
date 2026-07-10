@@ -9,6 +9,33 @@ import type { Actividad, ComunidadRegistroInput } from '@/lib/comunidad/types'
 
 const ACTIVIDADES_VALIDAS: Actividad[] = ['cafe_cerveza_mate', 'caminata', 'apoyo_emocional']
 
+// Misma lista que CIUDADES en components/comunidad/FormularioComunidad.tsx — el <select> del
+// formulario ya restringe la ciudad, pero el cliente puede mandar cualquier string saltándose
+// la UI, así que se revalida server-side (defensa en profundidad).
+const CIUDADES_VALIDAS = ['Vigo', 'A Coruña', 'Santiago de Compostela', 'Pontevedra', 'Lugo']
+
+// Límites de longitud — sin esto, un cliente que no sea el formulario real puede mandar
+// strings arbitrariamente largos que se guardan tal cual en Supabase/Airtable y se
+// interpolan en el HTML del mail de mensaje privado.
+const MAX_NOMBRE = 80
+const MAX_CALLE = 120
+const MAX_CONTACTO = 30
+const MAX_FOTO_URL = 500
+
+function isValidContacto(value: string): boolean {
+  return value.length <= MAX_CONTACTO && /^[\d\s()+.\-]+$/.test(value)
+}
+
+function isValidFotoUrl(value: string): boolean {
+  if (value.length > MAX_FOTO_URL) return false
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 const ratelimit =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
     ? new Ratelimit({
@@ -63,13 +90,16 @@ export async function POST(req: NextRequest) {
   if (!input.email || typeof input.email !== 'string' || !isValidEmail(input.email.trim())) {
     return NextResponse.json({ error: 'El email no es válido.' }, { status: 400 })
   }
-  if (!input.nombre || typeof input.nombre !== 'string' || input.nombre.trim().length < 2) {
+  if (!input.nombre || typeof input.nombre !== 'string' || input.nombre.trim().length < 2 || input.nombre.trim().length > MAX_NOMBRE) {
     return NextResponse.json({ error: 'El nombre/alias es obligatorio.' }, { status: 400 })
   }
-  if (!input.calle1 || typeof input.calle1 !== 'string' || !input.calle2 || typeof input.calle2 !== 'string') {
+  if (
+    !input.calle1 || typeof input.calle1 !== 'string' || input.calle1.trim().length > MAX_CALLE ||
+    !input.calle2 || typeof input.calle2 !== 'string' || input.calle2.trim().length > MAX_CALLE
+  ) {
     return NextResponse.json({ error: 'Indica las dos calles de tu intersección.' }, { status: 400 })
   }
-  if (!input.ciudad || typeof input.ciudad !== 'string') {
+  if (!input.ciudad || typeof input.ciudad !== 'string' || !CIUDADES_VALIDAS.includes(input.ciudad.trim())) {
     return NextResponse.json({ error: 'La ciudad es obligatoria.' }, { status: 400 })
   }
   if (!Array.isArray(input.disponibilidad) || !input.disponibilidad.every(a => ACTIVIDADES_VALIDAS.includes(a as Actividad))) {
@@ -77,6 +107,12 @@ export async function POST(req: NextRequest) {
   }
   if (input.rgpd !== true) {
     return NextResponse.json({ error: 'Debes aceptar la política de privacidad para continuar.' }, { status: 400 })
+  }
+  if (typeof input.contacto === 'string' && input.contacto.trim() && !isValidContacto(input.contacto.trim())) {
+    return NextResponse.json({ error: 'El teléfono/WhatsApp no es válido.' }, { status: 400 })
+  }
+  if (typeof input.fotoUrl === 'string' && input.fotoUrl.trim() && !isValidFotoUrl(input.fotoUrl.trim())) {
+    return NextResponse.json({ error: 'La URL de la foto no es válida (debe ser https).' }, { status: 400 })
   }
 
   const email = input.email.trim().toLowerCase()

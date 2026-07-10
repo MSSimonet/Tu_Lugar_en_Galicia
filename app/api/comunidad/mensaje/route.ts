@@ -25,6 +25,12 @@ function isValidUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
 }
 
+// Límites de longitud — sin esto, un cliente que no sea el formulario real puede mandar un
+// "nombre" o "mensaje" arbitrariamente largo que termina interpolado en el HTML del mail
+// enviado vía Resend (lib/comunidad/email.ts).
+const MAX_NOMBRE = 80
+const MAX_MENSAJE = 2000
+
 export async function POST(req: NextRequest) {
   // 0. Verificación de origen — mismo patrón fail-closed que el resto de endpoints públicos.
   const origin = req.headers.get('origin')
@@ -69,10 +75,10 @@ export async function POST(req: NextRequest) {
   if (typeof remitenteEmail !== 'string' || !isValidEmail(remitenteEmail.trim())) {
     return NextResponse.json({ error: 'Tu email no es válido.' }, { status: 400 })
   }
-  if (typeof remitenteNombre !== 'string' || remitenteNombre.trim().length < 2) {
+  if (typeof remitenteNombre !== 'string' || remitenteNombre.trim().length < 2 || remitenteNombre.trim().length > MAX_NOMBRE) {
     return NextResponse.json({ error: 'Tu nombre es obligatorio.' }, { status: 400 })
   }
-  if (typeof mensaje !== 'string' || mensaje.trim().length < 5) {
+  if (typeof mensaje !== 'string' || mensaje.trim().length < 5 || mensaje.trim().length > MAX_MENSAJE) {
     return NextResponse.json({ error: 'El mensaje es obligatorio.' }, { status: 400 })
   }
 
