@@ -36,7 +36,7 @@ function entradaMasCercana<T extends PeriodoValor>(arr: T[] | undefined, hora: n
     const prevDiff = Math.abs(parseInt(prev.periodo) - hora)
     const currDiff = Math.abs(parseInt(curr.periodo) - hora)
     return currDiff < prevDiff ? curr : prev
-  })
+  }, arr[0])
 }
 
 function extraerViento(vientoArr: unknown[] | undefined): number | null {

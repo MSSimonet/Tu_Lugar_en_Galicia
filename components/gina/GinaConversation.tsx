@@ -11,7 +11,7 @@ import { useGinaEditor } from './useGinaEditor'
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 function generarId(): string {
-  return Math.random().toString(36).slice(2, 9)
+  return crypto.randomUUID()
 }
 
 /**

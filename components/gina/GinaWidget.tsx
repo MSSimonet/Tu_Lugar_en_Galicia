@@ -18,7 +18,7 @@ import { guardarSesionLocal, cargarSesionLocal, limpiarSesionLocal } from '@/lib
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 function generarId(): string {
-  return Math.random().toString(36).slice(2, 9)
+  return crypto.randomUUID()
 }
 
 /** Busca el primer paso del flujo (siempre "bienvenida") */

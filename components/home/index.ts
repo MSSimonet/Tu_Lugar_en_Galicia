@@ -1,4 +1,3 @@
-export { Hero } from "./Hero";
 export { ElMarcador } from "./ElMarcador";
 export { ComoFuncionaResumen } from "./ComoFuncionaResumen";
 export { FeedInstagram } from "./FeedInstagram";
