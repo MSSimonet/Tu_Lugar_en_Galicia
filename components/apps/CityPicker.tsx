@@ -17,9 +17,9 @@ export function CityPicker({ seleccionada, onSelect }: Props) {
             type="button"
             onClick={() => onSelect(ciudad.key)}
             aria-pressed={activa}
-            className="flex flex-col items-center gap-3 rounded-2xl p-3 text-left transition-brand md:gap-[14px] md:p-4 focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="au-city-card flex flex-col items-center gap-3 rounded-2xl p-3 text-left transition-colors md:gap-[14px] md:p-4 focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{
-              border: `2px solid ${activa ? 'var(--au-accent)' : 'rgba(201,162,55,0.2)'}`,
+              border: `2px solid ${activa ? 'var(--au-accent)' : 'var(--au-border-strong)'}`,
               backgroundColor: activa ? 'color-mix(in srgb, var(--au-accent) 12%, transparent)' : 'var(--au-card)',
               outlineColor: 'var(--au-accent)',
             }}
@@ -37,7 +37,7 @@ export function CityPicker({ seleccionada, onSelect }: Props) {
               className="text-base font-semibold md:text-lg"
               style={{
                 fontFamily: 'var(--font-au-display)',
-                color: activa ? 'var(--au-accent)' : 'var(--au-text)',
+                color: activa ? 'var(--au-accent-text)' : 'var(--au-text)',
               }}
             >
               {ciudad.label}

@@ -1,5 +1,5 @@
 import type { AppUtil } from '@/lib/config/appsUtiles'
-import { FilaApp } from './FilaApp'
+import { TarjetaApp } from './TarjetaApp'
 
 type Props = {
   label: string
@@ -11,7 +11,7 @@ export function SeccionAcordeon({ label, apps, abiertaPorDefecto = false }: Prop
   return (
     <details
       className="group overflow-hidden rounded-[10px]"
-      style={{ border: '1px solid rgba(201,162,55,0.2)', backgroundColor: 'var(--au-card)' }}
+      style={{ border: '1px solid var(--au-border-strong)', backgroundColor: 'var(--au-card)' }}
       open={abiertaPorDefecto}
     >
       <summary
@@ -25,21 +25,24 @@ export function SeccionAcordeon({ label, apps, abiertaPorDefecto = false }: Prop
           >
             {label}
           </h2>
-          <span className="text-[10.5px] font-semibold tracking-[0.06em]" style={{ color: 'var(--au-accent)' }}>
+          <span className="text-[10.5px] font-semibold tracking-[0.06em]" style={{ color: 'var(--au-accent-text)' }}>
             {apps.length}
           </span>
         </span>
         <span
           aria-hidden="true"
           className="shrink-0 text-[13px] transition-transform duration-150 group-open:rotate-180"
-          style={{ color: 'var(--au-accent)' }}
+          style={{ color: 'var(--au-accent-text)' }}
         >
           ▾
         </span>
       </summary>
-      <div className="px-[18px] pb-2 pt-1" style={{ borderTop: '1px solid rgba(201,162,55,0.14)' }}>
+      <div
+        className="grid gap-3 px-[18px] pb-4 pt-3"
+        style={{ borderTop: '1px solid var(--au-border)', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))' }}
+      >
         {apps.map((app) => (
-          <FilaApp key={app.nombre} app={app} />
+          <TarjetaApp key={app.nombre} app={app} />
         ))}
       </div>
     </details>

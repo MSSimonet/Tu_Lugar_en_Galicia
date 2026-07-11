@@ -1,13 +1,9 @@
-export type Plataformas = {
-  ios?: string
-  android?: string
-  web?: string
-}
-
 export type AppUtil = {
   nombre: string
   descripcion: string
-  plataformas: Plataformas
+  plataformas: string
+  icono: string
+  link: string
 }
 
 export type CiudadKey = 'vigo' | 'coruna' | 'santiago' | 'lugo' | 'pontevedra'
@@ -20,67 +16,130 @@ export const CIUDADES: { key: CiudadKey; label: string; imagen: string }[] = [
   { key: 'pontevedra', label: 'Pontevedra', imagen: '/images/apps%20ciudades/pontevedra1.jpg' },
 ]
 
-// Apps municipales por ciudad. Fuente: "apps - galicia.md" §"Aplicaciones Municipales por
-// Ciudades". Lugo no tiene sección propia en esa fuente (solo cubre Vigo/A Coruña/Santiago/
-// Ourense/Pontevedra) — se mantiene en el selector porque así lo define el diseño de
-// referencia, pero sin links reales inventados (plataformas queda vacío).
+export type NumeroEmergencia = { numero: string; servicio: string }
+
+export const NUMEROS_EMERGENCIA: NumeroEmergencia[] = [
+  { numero: '112', servicio: 'Emergencias generales' },
+  { numero: '091', servicio: 'Policía Nacional' },
+  { numero: '062', servicio: 'Guardia Civil' },
+  { numero: '092', servicio: 'Policía Local' },
+  { numero: '061', servicio: 'Emergencias sanitarias' },
+  { numero: '080', servicio: 'Bomberos' },
+]
+
+// Apps compartidas entre varias ciudades — misma referencia de objeto en cada LOCAL_APPS
+// donde corresponda, igual que en el diseño de referencia.
+const MOBT: AppUtil = {
+  nombre: 'MoBT',
+  descripcion: 'paga con el móvil el bus interurbano de la Xunta (QR, descuentos automáticos)',
+  plataformas: 'iOS · Android',
+  icono: '🎫',
+  link: 'https://play.google.com/store/apps/details?id=gal.xunta.maas',
+}
+
+const VIAQUA: AppUtil = {
+  nombre: 'Viaqua',
+  descripcion: 'factura y lecturas del agua',
+  plataformas: 'iOS · Android · Web',
+  icono: '🚰',
+  link: 'https://www.viaqua.gal',
+}
+
+const AQUALIA: AppUtil = {
+  nombre: 'Aqualia',
+  descripcion: 'factura y gestión del suministro de agua',
+  plataformas: 'iOS · Android · Web',
+  icono: '🌊',
+  link: 'https://www.aqualia.com',
+}
+
+const EMALCSA: AppUtil = {
+  nombre: 'Emalcsa',
+  descripcion: 'factura y consumo de agua (A Coruña)',
+  plataformas: 'Web',
+  icono: '💧',
+  link: 'https://www.emalcsa.es',
+}
+
+const ESPINA_DELFIN: AppUtil = {
+  nombre: 'Espina & Delfín',
+  descripcion: 'consumos y lecturas de agua',
+  plataformas: 'Web',
+  icono: '🪣',
+  link: 'https://oficinavirtual.espinaydelfin.com/',
+}
+
 export const LOCAL_APPS: Record<CiudadKey, AppUtil[]> = {
   vigo: [
     {
       nombre: 'Passvigo',
       descripcion: 'tarjeta monedero del bus urbano (Vitrasa)',
-      plataformas: {
-        web: 'https://vitrasa.es/',
-        ios: 'https://apps.apple.com/es/app/passvigo/id1485303649',
-        android: 'https://play.google.com/store/apps/details?id=com.vigodigital.passvigo',
-      },
+      plataformas: 'iOS · Android · Web',
+      icono: '🚌',
+      link: 'https://passvigo.vigo.org/',
     },
+    MOBT,
     {
       nombre: 'GasAll',
       descripcion: 'gasolineras más baratas cerca de ti',
-      plataformas: {
-        ios: 'https://apps.apple.com/es/app/gasall-gasolineras-espa%C3%B1a/id317316715',
-        android: 'https://play.google.com/store/apps/details?id=com.gasall.android',
-      },
+      plataformas: 'iOS · Android',
+      icono: '⛽',
+      link: 'https://play.google.com/store/apps/details?id=com.gasall',
     },
+    AQUALIA,
+    VIAQUA,
+    ESPINA_DELFIN,
   ],
   coruna: [
     {
-      nombre: 'iComi',
+      nombre: 'App Coruña',
       descripcion: 'trámites municipales y bus urbano',
-      plataformas: {
-        web: 'https://www.coruna.gal/',
-        ios: 'https://apps.apple.com/es/app/i-comi/id1390432321',
-        android: 'https://play.google.com/store/apps/details?id=es.coruna.icomi',
-      },
+      plataformas: 'iOS · Android · Web',
+      icono: '🚏',
+      link: 'https://play.google.com/store/apps/details?id=org.coruna.appcoruna',
     },
+    MOBT,
+    EMALCSA,
+    VIAQUA,
+    AQUALIA,
   ],
   santiago: [
     {
       nombre: 'Concello de Santiago',
       descripcion: 'sede electrónica y bus urbano',
-      plataformas: {
-        ios: 'https://apps.apple.com/es/app/santiago-de-compostela/id1159283076',
-        android: 'https://play.google.com/store/apps/details?id=com.concello.santiago',
-      },
+      plataformas: 'iOS · Android',
+      icono: '🏢',
+      link: 'https://sede.santiagodecompostela.gal',
     },
+    MOBT,
+    VIAQUA,
+    AQUALIA,
+    EMALCSA,
   ],
   lugo: [
     {
       nombre: 'Concello de Lugo',
       descripcion: 'trámites municipales y bus urbano',
-      plataformas: {},
+      plataformas: 'iOS · Android · Web',
+      icono: '🧱',
+      link: 'https://concellodelugo.gal/es/tramites/online',
     },
+    MOBT,
+    AQUALIA,
+    VIAQUA,
   ],
   pontevedra: [
     {
       nombre: 'Pontevédrate',
       descripcion: 'actividades municipales y avisos de servicios',
-      plataformas: {
-        web: 'https://www.pontevedra.gal/',
-        android: 'https://play.google.com/store/apps/details?id=com.tokapp.pontevedrate',
-      },
+      plataformas: 'Android · Web',
+      icono: '📅',
+      link: 'https://pontevedra.gal',
     },
+    MOBT,
+    VIAQUA,
+    AQUALIA,
+    ESPINA_DELFIN,
   ],
 }
 
@@ -90,200 +149,70 @@ export type CategoriaNacional = {
   apps: AppUtil[]
 }
 
-// Apps nacionales, agrupadas por categoría. Fuente: "apps - galicia.md".
 export const NATIONAL_CATEGORIES: CategoriaNacional[] = [
   {
     key: 'identidad',
     label: 'Identidad y Trámites',
     apps: [
-      {
-        nombre: 'Cl@ve',
-        descripcion: 'identificación digital ante la Administración',
-        plataformas: {
-          web: 'https://clave.gob.es/',
-          ios: 'https://apps.apple.com/es/app/cl-ve/id1524317112',
-          android: 'https://play.google.com/store/apps/details?id=es.gob.clave.app',
-        },
-      },
-      {
-        nombre: 'Carpeta Ciudadana',
-        descripcion: 'documentos y trámites con el Estado',
-        plataformas: {
-          web: 'https://recetaciudadana.gob.es/',
-          ios: 'https://apps.apple.com/es/app/mi-carpeta-ciudadana/id1631525096',
-          android: 'https://play.google.com/store/apps/details?id=es.gob.seg.mcc',
-        },
-      },
-      {
-        nombre: 'AEAT',
-        descripcion: 'declaración de la Renta y datos fiscales',
-        plataformas: {
-          web: 'https://sede.agenciatributaria.gob.es/',
-          ios: 'https://apps.apple.com/es/app/agencia-tributaria/id1331773095',
-          android: 'https://play.google.com/store/apps/details?id=es.aeat.etributaria',
-        },
-      },
-      {
-        nombre: 'Importass',
-        descripcion: 'vida laboral y afiliación a la Seg. Social',
-        plataformas: {
-          web: 'https://sede.seg-social.gob.es/',
-          ios: 'https://apps.apple.com/es/app/importass-seguridad-social/id1600127521',
-          android: 'https://play.google.com/store/apps/details?id=es.seg_social.importass',
-        },
-      },
-      {
-        nombre: 'miDGT',
-        descripcion: 'permiso de conducir y canje de licencia',
-        plataformas: {
-          web: 'https://www.dgt.es/nuestros-servicios/app-midgt/',
-          ios: 'https://apps.apple.com/es/app/midgt/id1418659178',
-          android: 'https://play.google.com/store/apps/details?id=es.dgt.app',
-        },
-      },
-      {
-        nombre: 'MiDNI',
-        descripcion: 'DNI digitalizado en el móvil',
-        plataformas: {
-          web: 'https://www.midni.gob.es',
-          ios: 'https://apps.apple.com/es/app/midni/id6477598076',
-          android: 'https://play.google.com/store/apps/details?id=es.gob.interior.policia.midni',
-        },
-      },
-      {
-        nombre: 'Extranjería Cita Previa',
-        descripcion: 'cita para la TIE y el NIE',
-        plataformas: {
-          web: 'https://icp.administracionelectronica.gob.es/icpplus/index.html',
-          android: 'https://play.google.com/store/apps/details?id=com.amsoft.extranjeria',
-        },
-      },
+      { nombre: 'Cl@ve', descripcion: 'identificación digital ante la Administración', plataformas: 'iOS · Android · Web', icono: '🔑', link: 'https://clave.gob.es/clave-movil/app-clave' },
+      { nombre: 'Carpeta Ciudadana', descripcion: 'documentos y trámites con el Estado', plataformas: 'iOS · Android · Web', icono: '🗂️', link: 'https://apps.apple.com/es/app/mi-carpeta-ciudadana/id1555943725' },
+      { nombre: 'AEAT', descripcion: 'declaración de la Renta y datos fiscales', plataformas: 'iOS · Android · Web', icono: '🧾', link: 'https://sede.agenciatributaria.gob.es' },
+      { nombre: 'Importass', descripcion: 'vida laboral y afiliación a la Seg. Social', plataformas: 'iOS · Android · Web', icono: '🗄️', link: 'https://portal.seg-social.gob.es/importass' },
+      { nombre: 'miDGT', descripcion: 'permiso de conducir y canje de licencia', plataformas: 'iOS · Android · Web', icono: '🚘', link: 'https://www.dgt.es' },
+      { nombre: 'MiDNI', descripcion: 'DNI digitalizado en el móvil', plataformas: 'iOS · Android · Web', icono: '🪪', link: 'https://apps.apple.com/es/app/midni/id6477598076' },
+      { nombre: 'Extranjería Cita Previa', descripcion: 'cita para la TIE y el NIE', plataformas: 'Web · Android', icono: '🛂', link: 'https://sede.administracionespublicas.gob.es/icpplus/index.html' },
     ],
   },
   {
     key: 'salud',
     label: 'Salud',
     apps: [
-      {
-        nombre: 'ÉSaúde',
-        descripcion: 'cita médica e informes del SERGAS',
-        plataformas: {
-          web: 'https://esaude.sergas.gal/',
-          ios: 'https://apps.apple.com/es/app/sergas-m%C3%B3bil/id1510444535',
-          android: 'https://play.google.com/store/apps/details?id=es.sergas.sergasmobil',
-        },
-      },
+      { nombre: 'ÉSaúde', descripcion: 'cita médica e informes del SERGAS', plataformas: 'iOS · Android · Web', icono: '🩺', link: 'https://www.sergas.es' },
     ],
   },
   {
     key: 'empleo',
     label: 'Empleo',
     apps: [
-      {
-        nombre: 'InfoJobs',
-        descripcion: 'ofertas de empleo en toda España',
-        plataformas: {
-          web: 'https://www.infojobs.net/',
-          ios: 'https://apps.apple.com/es/app/infojobs-empleo-y-trabajo/id372274154',
-          android: 'https://play.google.com/store/apps/details?id=net.infojobs.mobile',
-        },
-      },
-      {
-        nombre: 'LinkedIn',
-        descripcion: 'red profesional y networking',
-        plataformas: {
-          web: 'https://www.linkedin.com/',
-          ios: 'https://apps.apple.com/es/app/linkedin-red-profesional/id288429040',
-          android: 'https://play.google.com/store/apps/details?id=com.linkedin.android',
-        },
-      },
-      {
-        nombre: 'Emprego Galicia',
-        descripcion: 'servicio público de empleo de la Xunta',
-        plataformas: {
-          web: 'https://empleo.xunta.gal/',
-          ios: 'https://apps.apple.com/es/app/mobem/id1044432174',
-          android: 'https://play.google.com/store/apps/details?id=gl.xunta.ceei.mobem',
-        },
-      },
+      { nombre: 'InfoJobs', descripcion: 'ofertas de empleo en toda España', plataformas: 'iOS · Android · Web', icono: '💼', link: 'https://www.infojobs.net' },
+      { nombre: 'LinkedIn', descripcion: 'red profesional y networking', plataformas: 'iOS · Android · Web', icono: '🔗', link: 'https://www.linkedin.com' },
+      { nombre: 'Emprego Galicia', descripcion: 'servicio público de empleo de la Xunta', plataformas: 'iOS · Android · Web', icono: '📋', link: 'https://emprego.xunta.gal' },
     ],
   },
   {
     key: 'movilidad',
     label: 'Viajes y Transporte',
     apps: [
-      {
-        nombre: 'Renfe',
-        descripcion: 'billetes de tren y asistencia de viaje',
-        plataformas: {
-          web: 'https://www.renfe.com/',
-          ios: 'https://apps.apple.com/es/app/renfe/id1454512966',
-          android: 'https://play.google.com/store/apps/details?id=com.renfe.asistencias',
-        },
-      },
-      {
-        nombre: 'BlaBlaCar',
-        descripcion: 'viaje compartido en coche',
-        plataformas: {
-          web: 'https://www.blablacar.es/',
-          ios: 'https://apps.apple.com/es/app/blablacar-viajes-compartidos/id343517547',
-          android: 'https://play.google.com/store/apps/details?id=com.comuto',
-        },
-      },
-      {
-        nombre: 'Skyscanner',
-        descripcion: 'comparar tarifas de vuelos',
-        plataformas: {
-          web: 'https://www.skyscanner.es/',
-          ios: 'https://apps.apple.com/es/app/skyscanner-vuelos-hoteles/id415456883',
-          android: 'https://play.google.com/store/apps/details?id=net.skyscanner.android.main',
-        },
-      },
+      { nombre: 'Renfe', descripcion: 'billetes de tren y asistencia de viaje', plataformas: 'iOS · Android · Web', icono: '🚆', link: 'https://www.renfe.com' },
+      { nombre: 'BlaBlaCar', descripcion: 'viaje compartido en coche', plataformas: 'iOS · Android · Web', icono: '🚗', link: 'https://www.blablacar.es' },
+      { nombre: 'Skyscanner', descripcion: 'comparar tarifas de vuelos', plataformas: 'iOS · Android · Web', icono: '✈️', link: 'https://www.skyscanner.es' },
     ],
   },
   {
     key: 'hogar',
     label: 'Clima y Hogar',
     apps: [
-      {
-        nombre: 'MeteoGalicia',
-        descripcion: 'pronóstico oficial para Galicia',
-        plataformas: {
-          web: 'https://www.meteogalicia.gal/',
-          ios: 'https://apps.apple.com/es/app/meteogalicia/id535036139',
-          android: 'https://play.google.com/store/apps/details?id=gl.xunta.meteogalicia',
-        },
-      },
-      // El diseño de referencia agrupa "Endesa / Naturgy" en una sola fila, pero son dos
-      // apps distintas con links propios en la fuente — se separan para no dejar un botón
-      // que diga "Naturgy" y abra la ficha de Endesa (o viceversa).
-      {
-        nombre: 'Endesa',
-        descripcion: 'alta de luz del hogar',
-        plataformas: {
-          web: 'https://www.endesaclientes.com/',
-          ios: 'https://apps.apple.com/es/app/endesa-clientes/id1126765796',
-          android: 'https://play.google.com/store/apps/details?id=com.endesa.endesaclientes',
-        },
-      },
-      {
-        nombre: 'Naturgy',
-        descripcion: 'alta de gas del hogar',
-        plataformas: {
-          web: 'https://www.naturgy.es/',
-          ios: 'https://apps.apple.com/es/app/naturgy-clientes/id580053932',
-          android: 'https://play.google.com/store/apps/details?id=es.gasnaturalfenosa.comercializacion.clientes',
-        },
-      },
-      {
-        nombre: 'Correos',
-        descripcion: 'seguimiento de paquetes y correo',
-        plataformas: {
-          web: 'https://www.correos.es/',
-          ios: 'https://apps.apple.com/es/app/correos/id490100788',
-          android: 'https://play.google.com/store/apps/details?id=com.correos.infocor',
-        },
-      },
+      { nombre: 'MeteoGalicia', descripcion: 'pronóstico oficial para Galicia', plataformas: 'iOS · Android · Web', icono: '🌦', link: 'https://www.meteogalicia.gal' },
+      { nombre: 'Endesa / Naturgy', descripcion: 'alta de luz y gas del hogar', plataformas: 'iOS · Android · Web', icono: '⚡', link: 'https://www.endesa.com' },
+      { nombre: 'Correos', descripcion: 'seguimiento de paquetes y correo', plataformas: 'iOS · Android · Web', icono: '📦', link: 'https://www.correos.es' },
+    ],
+  },
+  {
+    key: 'telco',
+    label: 'Telefonía, Fibra y TV',
+    apps: [
+      { nombre: 'Mi Movistar', descripcion: 'gestiona tu línea, factura y datos móviles', plataformas: 'iOS · Android · Web', icono: '📱', link: 'https://www.movistar.es' },
+      { nombre: 'Mi Vodafone', descripcion: 'gestiona tu línea, factura y datos móviles', plataformas: 'iOS · Android · Web', icono: '📶', link: 'https://www.vodafone.es' },
+      { nombre: 'Mi R', descripcion: 'gestiona tu línea de fibra y móvil (R)', plataformas: 'iOS · Android · Web', icono: '📡', link: 'https://www.mundo-r.com' },
+      { nombre: 'Mi Digi', descripcion: 'gestiona tu línea, factura y datos móviles', plataformas: 'iOS · Android · Web', icono: '🌐', link: 'https://www.digimobil.es' },
+      { nombre: 'Mi Yoigo', descripcion: 'gestiona tu línea, factura y datos móviles', plataformas: 'iOS · Android', icono: '☎️', link: 'https://play.google.com/store/apps/details?id=com.yoigo.miyoigo' },
+      { nombre: 'Mi Orange', descripcion: 'gestiona tu línea, factura y datos móviles', plataformas: 'iOS · Android · Web', icono: '🍊', link: 'https://www.orange.es' },
+      { nombre: 'Mi Jazztel', descripcion: 'gestiona tu línea de fibra y factura', plataformas: 'iOS · Android · Web', icono: '🎷', link: 'https://www.jazztel.com' },
+      { nombre: 'MasOrange', descripcion: 'portal del grupo Orange · MasMóvil', plataformas: 'Web', icono: '🧡', link: 'https://www.masorange.es' },
+      { nombre: 'Movistar Plus+', descripcion: 'televisión y streaming de Movistar', plataformas: 'iOS · Android · Web', icono: '▶️', link: 'https://www.movistarplus.es' },
+      { nombre: 'Orange TV', descripcion: 'televisión y streaming de Orange', plataformas: 'iOS · Android · Web', icono: '📺', link: 'https://www.orange.es/television' },
+      { nombre: 'TV comigo (R)', descripcion: 'televisión y streaming de R', plataformas: 'iOS · Android · Web', icono: '🎬', link: 'https://www.mundo-r.com' },
+      { nombre: 'Vodafone TV', descripcion: 'televisión y streaming de Vodafone', plataformas: 'iOS · Android · Web', icono: '📹', link: 'https://www.vodafone.es/television' },
     ],
   },
 ]

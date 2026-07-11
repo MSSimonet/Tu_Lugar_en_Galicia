@@ -272,24 +272,56 @@ details > dd {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   APPS ÚTILES — paleta fija (siempre oscura, no invierte con .dark)
-   Igual filosofía que --color-header-bg/--po-hero-bg: bookend de identidad,
-   no una superficie de contenido que deba adaptarse al tema claro/oscuro.
+   APPS ÚTILES — paleta con toggle claro/oscuro PROPIO de la página
+   (independiente del toggle global del sitio en Header.tsx/.dark). El wrapper
+   client-side aplica la clase .au-theme-light sobre el contenido de
+   /apps-utiles cuando el visitante prefiere el tema claro dentro de esta
+   página — no toca ni depende de la clase .dark del <html>.
    ══════════════════════════════════════════════════════════════════════════ */
 @theme {
-  --au-bg:          #1b1410; /* fondo de página */
-  --au-header-bg:   #14100c; /* franja superior, ligeramente más oscura */
-  --au-card:        #241a13; /* fondo de las secciones-acordeón */
-  --au-accent:      #c9a237; /* dorado — acento y bordes activos */
-  --au-hero-heading: #f7f0e4; /* h1 del hero */
-  --au-heading:     #f2e9da; /* h2 de cada sección */
-  --au-hero-body:   #cfc3af; /* párrafo del hero */
-  --au-text:        #e7dccb; /* texto principal / logo */
-  --au-muted:       #b3a690; /* descripción de cada app */
-  --au-faint:       #938576; /* plataformas, estado vacío — ajustado de #8d8171 (mockup) para WCAG AA: 4.47:1 sobre --au-card fallaba, ahora 4.75:1 */
+  --au-bg:              #1b1410; /* fondo de página */
+  --au-header-bg:       #14100c; /* franja superior, ligeramente más oscura */
+  --au-card:            #241a13; /* fondo de las secciones-acordeón */
+  --au-accent:          #c9a237; /* dorado — acento y bordes activos, fijo en ambos temas */
+  --au-accent-text:     var(--au-accent); /* accent legible sobre el fondo — igual al accent en oscuro */
+  --au-hero-heading:    #f7f0e4; /* h1 del hero */
+  --au-heading:         #f2e9da; /* h2 de cada sección */
+  --au-hero-body:       #cfc3af; /* párrafo del hero */
+  --au-text:            #e7dccb; /* texto principal / logo */
+  --au-muted:           #b3a690; /* descripción de cada app */
+  --au-faint:           #938576; /* plataformas, estado vacío — ajustado de #8d8171 (mockup) para WCAG AA: 4.47:1 sobre --au-card fallaba, ahora 4.75:1 */
+  --au-border:          rgba(201,162,55,0.18); /* separador sutil */
+  --au-border-strong:   rgba(201,162,55,0.2); /* borde de card/acordeón */
+  --au-row-border:      rgba(226,213,196,0.08); /* borde de las tarjetas de app en el grid */
+  --au-toggle-track-off: #241a13; /* riel del toggle en modo oscuro */
+  --au-toggle-track-on:  rgba(201,162,55,0.25); /* riel del toggle en modo claro */
+  --au-app-card-bg:     #2a1f16; /* fondo de cada tarjeta de app */
+  --au-logo-bg:         #1b1410; /* fondo del ícono emoji de cada app */
 
   --font-au-display: var(--font-lora), Georgia, serif;
   --font-au-ui:       var(--font-worksans), 'Helvetica Neue', system-ui, sans-serif;
+}
+
+/* Tema claro de /apps-utiles — activado por el toggle local de la página,
+   nunca por el toggle global del sitio. Valores del mismo diseño de referencia. */
+.au-theme-light {
+  --au-bg:              #f8f3ea;
+  --au-header-bg:       #fffdf7;
+  --au-card:            #ffffff;
+  --au-accent-text:     #65511c; /* accent oscurecido — el dorado crudo no pasa AA sobre fondo claro */
+  --au-hero-heading:    #2c2013;
+  --au-heading:         #2c2013;
+  --au-hero-body:       #5c4d3a;
+  --au-text:            #3a2e1e;
+  --au-muted:           #7a6a53;
+  --au-faint:           #6b5d47;
+  --au-border:          rgba(154,109,20,0.22);
+  --au-border-strong:   rgba(154,109,20,0.28);
+  --au-row-border:      rgba(60,45,25,0.1);
+  --au-toggle-track-off: #e7ddc9;
+  --au-toggle-track-on:  rgba(201,162,55,0.4);
+  --au-app-card-bg:     #faf5eb;
+  --au-logo-bg:         #ffffff;
 }
 
 @keyframes auFadeIn {
@@ -299,8 +331,32 @@ details > dd {
 .au-fade-in {
   animation: auFadeIn 0.3s ease;
 }
+
+/* Círculo pulsante de los números de emergencia — color fijo (azul institucional),
+   igual en ambos temas de la página, no forma parte de la paleta --au-*. */
+@keyframes auEmergPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(58,110,196,0.45); }
+  70%  { box-shadow: 0 0 0 8px rgba(58,110,196,0); }
+  100% { box-shadow: 0 0 0 0 rgba(58,110,196,0); }
+}
+.au-emerg-pulse {
+  animation: auEmergPulse 2.2s infinite;
+}
+
+/* Glow dorado al pasar el mouse por una card de ciudad no seleccionada */
+.au-city-card:hover {
+  border-color: #d8b96a !important;
+  box-shadow: 0 0 0 1px #d8b96a, 0 0 22px 4px rgba(216,185,106,0.55);
+}
+
+/* Borde dorado al pasar el mouse por una tarjeta de app */
+.au-app-card:hover {
+  border-color: #d8b96a !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .au-fade-in { animation: none; }
+  .au-fade-in,
+  .au-emerg-pulse { animation: none; }
 }
 
 /* Estados hover/open del acordeón FAQAccordionPedraEOuro */
