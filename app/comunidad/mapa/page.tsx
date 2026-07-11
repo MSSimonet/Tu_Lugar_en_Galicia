@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { MapaComunidad } from '@/components/comunidad/MapaComunidad'
 
 export const metadata: Metadata = {
-  title: 'Comunidad de Acogida | Tu Lugar en Galicia',
+  title: 'Comunidad de Acogida',
   description:
     'Encuentra a otras familias y vecinos en Galicia dispuestos a tomar un café, salir a caminar o simplemente escucharte. Mira quién está cerca de ti.',
 }

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { FormularioContacto } from '@/components/contacto/FormularioContacto'
 
 export const metadata: Metadata = {
-  title: 'Contáctanos | Tu Lugar en Galicia',
+  title: 'Contáctanos',
   description: 'Escríbenos directamente. Te respondemos en 24 horas hábiles.',
 }
 

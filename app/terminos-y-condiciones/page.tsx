@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Términos y Condiciones — Tu Lugar en Galicia',
+  title: 'Términos y Condiciones',
   description: 'Términos y condiciones del servicio de Tu Lugar en Galicia, agencia de relocation especializada en Galicia.',
 }
 

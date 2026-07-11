@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Política de Cookies — Tu Lugar en Galicia',
+  title: 'Política de Cookies',
   description: 'Política de cookies de Tu Lugar en Galicia, agencia de relocation especializada en Galicia.',
 }
 

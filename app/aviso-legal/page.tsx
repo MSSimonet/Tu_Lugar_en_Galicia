@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Aviso Legal — Tu Lugar en Galicia',
+  title: 'Aviso Legal',
   description: 'Aviso legal de Tu Lugar en Galicia, agencia de relocation especializada en Galicia.',
 }
 
