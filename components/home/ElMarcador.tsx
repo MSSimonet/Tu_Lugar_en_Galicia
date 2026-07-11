@@ -16,13 +16,48 @@ const FALLBACK: MarcadorData = {
   tiempoMedioSemanas: 0,
 };
 
-const cifras: { key: keyof MarcadorData; etiqueta: string; unidad?: string }[] =
+// Trayectoria — cifras fijas (antes vivían superpuestas al video del hero)
+const cifrasEstaticas: { valor: string; etiqueta: string }[] = [
+  { valor: "+200", etiqueta: "Familias" },
+  { valor: "57", etiqueta: "En 2025" },
+  { valor: "4", etiqueta: "Años" },
+];
+
+// En tiempo real — vía /api/marcador (Google Sheets)
+const cifrasDinamicas: { key: keyof MarcadorData; etiqueta: string; unidad?: string }[] =
   [
     { key: "anunciosContactados", etiqueta: "Anuncios contactados" },
     { key: "propietariosDijeronNo", etiqueta: "Propietarios que dijeron no" },
     { key: "familiasUbicadas", etiqueta: "Familias ubicadas este mes" },
     { key: "tiempoMedioSemanas", etiqueta: "Semanas de tiempo medio", unidad: "sem" },
   ];
+
+const numberStyle: React.CSSProperties = {
+  display: 'block',
+  fontFamily: 'var(--font-playfair)',
+  fontWeight: 700,
+  fontSize: '40px',
+  lineHeight: 1,
+  color: '#F5EFE4',
+};
+
+const labelStyle: React.CSSProperties = {
+  marginTop: '6px',
+  display: 'block',
+  fontFamily: 'var(--font-lato)',
+  fontSize: '10px',
+  letterSpacing: '0.12em',
+  textTransform: 'uppercase',
+  color: '#F5EFE4',
+  opacity: 0.9,
+};
+
+const cardStyle: React.CSSProperties = {
+  textAlign: 'center',
+  borderRadius: '4px',
+  background: 'rgba(255,255,255,0.12)',
+  padding: '20px 16px',
+};
 
 export function ElMarcador() {
   const [data, setData] = useState<MarcadorData | null>(null);
@@ -51,7 +86,7 @@ export function ElMarcador() {
       <section
         className="marcador-section"
         style={{ backgroundColor: 'var(--po-terra)' }}
-        aria-label="El marcador — cifras en tiempo real"
+        aria-label="El marcador — cifras de trayectoria y en tiempo real"
       >
         <div className="mx-auto max-w-4xl">
           <h2
@@ -82,16 +117,17 @@ export function ElMarcador() {
           </p>
 
           <ul className="marcador-grid" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-            {cifras.map(({ key, etiqueta, unidad }) => (
-              <li
-                key={key}
-                style={{
-                  textAlign: 'center',
-                  borderRadius: '4px',
-                  background: 'rgba(255,255,255,0.12)',
-                  padding: '20px 16px',
-                }}
-              >
+            {cifrasEstaticas.map(({ valor, etiqueta }) => (
+              <li key={etiqueta} style={cardStyle}>
+                <span style={numberStyle} aria-label={`${valor} — ${etiqueta}`}>
+                  {valor}
+                </span>
+                <span style={labelStyle}>{etiqueta}</span>
+              </li>
+            ))}
+
+            {cifrasDinamicas.map(({ key, etiqueta, unidad }) => (
+              <li key={key} style={cardStyle}>
                 {loading ? (
                   <div
                     style={{
@@ -105,37 +141,14 @@ export function ElMarcador() {
                     aria-hidden="true"
                   />
                 ) : (
-                  <span
-                    style={{
-                      display: 'block',
-                      fontFamily: 'var(--font-playfair)',
-                      fontWeight: 700,
-                      fontSize: '40px',
-                      lineHeight: 1,
-                      color: '#F5EFE4',
-                    }}
-                    aria-label={`${display[key]}${unidad ? " " + unidad : ""} — ${etiqueta}`}
-                  >
+                  <span style={numberStyle} aria-label={`${display[key]}${unidad ? " " + unidad : ""} — ${etiqueta}`}>
                     {display[key]}
                     {unidad && (
                       <span style={{ fontSize: '24px' }}> {unidad}</span>
                     )}
                   </span>
                 )}
-                <span
-                  style={{
-                    marginTop: '6px',
-                    display: 'block',
-                    fontFamily: 'var(--font-lato)',
-                    fontSize: '10px',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: '#F5EFE4',
-                    opacity: 0.9,
-                  }}
-                >
-                  {etiqueta}
-                </span>
+                <span style={labelStyle}>{etiqueta}</span>
               </li>
             ))}
           </ul>
