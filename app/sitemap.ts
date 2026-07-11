@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next'
-
-const SITE_URL = 'https://tulugarengalicia.com'
+import { SITE_URL } from '@/lib/config/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date()

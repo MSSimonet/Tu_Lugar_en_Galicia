@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { buildOpenGraph } from './og'
-
-const SITE_URL = 'https://tulugarengalicia.com'
+import { SITE_URL } from '@/lib/config/site'
 
 type PageMetadata = {
   title: string

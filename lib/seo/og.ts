@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { PAGE_METADATA } from './metadata'
-
-const SITE_URL = 'https://tulugarengalicia.com'
+import { SITE_URL } from '@/lib/config/site'
 
 export function buildOpenGraph(
   page: keyof typeof PAGE_METADATA

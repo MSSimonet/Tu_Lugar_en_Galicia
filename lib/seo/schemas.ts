@@ -1,4 +1,4 @@
-const SITE_URL = 'https://tulugarengalicia.com'
+import { SITE_URL } from '@/lib/config/site'
 
 export function localBusinessSchema(): object {
   return {
