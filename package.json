@@ -12,10 +12,7 @@
   },
   "dependencies": {
     "@fontsource/cormorant-garamond": "^5.2.11",
-    "@fontsource/dm-sans": "^5.2.8",
-    "@fontsource/inter": "^5.2.8",
     "@fontsource/plus-jakarta-sans": "^5.2.8",
-    "@fontsource/source-sans-3": "^5.2.9",
     "@react-pdf/renderer": "^4.5.1",
     "@supabase/supabase-js": "^2.110.2",
     "@upstash/ratelimit": "^2.0.8",
@@ -25,8 +22,7 @@
     "lucide-react": "^1.23.0",
     "next": "^16.2.10",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "react-leaflet": "^5.0.0"
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.2",
