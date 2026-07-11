@@ -29,16 +29,27 @@ app/                  — Páginas y API routes (Next.js App Router)
 ├── api/gina/         — Motor conversacional de Gina → Airtable
 ├── api/clima/        — Clima en tiempo real por ciudad (AEMET, caché 6h)
 ├── api/lead/         — Formulario de diagnóstico → Airtable
+├── api/plan/         — Generación de PDF del Plan Estratégico
+├── api/comunidad/    — Registro y mensajería de Comunidad de Acogida
+├── api/admin/        — Endpoints internos (códigos de agenda, recordatorios, resumen diario)
+├── api/webhooks/     — Webhook de Cal.com
 ├── ciudades/         — 5 páginas de ciudad (Vigo, A Coruña, Santiago, Pontevedra, Lugo)
+├── apps-utiles/      — Directorio de apps por ciudad + trámites nacionales
+├── comunidad/         — Formulario de registro + mapa (Leaflet)
+├── agenda/, faq/, como-funciona/, conocernos/, sobre-silvana/, contacto/ — páginas de contenido
+├── admin/lead/        — Vista interna de un lead
 components/           — Componentes React
 ├── gina/             — Widget conversacional completo
 ├── home/             — Secciones de la home
 ├── ciudades/         — Layout y FAQ de páginas de ciudad
+├── comunidad/         — Formulario y mapa de Comunidad de Acogida
 lib/gina/             — Flujo JSON + motor de estados + persistencia
 lib/comunidad/        — Comunidad de Acogida: Supabase, Nominatim, puente a Airtable
-app/comunidad/        — Formulario de registro + mapa (Leaflet)
-docs/                 — Arquitectura, roadmap, PRD, design-system
+lib/plan/             — Armador del Plan Estratégico + generación de PDF
+lib/admin/            — Tokens HMAC, Airtable, email transaccional
+docs/                 — Arquitectura, roadmap, design-system, contexto estratégico
 ├── comunidad-de-acogida.md  — Mapa de comunidad: implementado y verificado end-to-end (§8)
+sonar-project.properties — Config de análisis estático (SonarQube)
 CLAUDE.md             — Reglas del proyecto para Claude Code
 ```
 
@@ -91,4 +102,4 @@ Cualquier push a `main` dispara un deploy automático en Vercel. Las ramas sigue
 
 ---
 
-*Actualizado: junio 2026*
+*Actualizado: julio 2026*

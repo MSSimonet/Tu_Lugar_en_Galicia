@@ -48,5 +48,8 @@ docs/unlighthouse-tlg8/
 docs/unlighthouse-tlg8-post/
 docs/auditoria-tlg8.md
 
+# auditorías de limpieza de repo (knip/unlighthouse) — output local, no commitear
+.audit/
+
 # marcador de sesión — no commitear
 .claude/.precompact-done
