@@ -6,31 +6,26 @@ import { CityPicker } from './CityPicker'
 import { SeccionEmergencias } from './SeccionEmergencias'
 import { SeccionAcordeon } from './SeccionAcordeon'
 import { EstadoVacio } from './EstadoVacio'
-import { ToggleTema } from './ToggleTema'
 
 export function AppsUtilesPagina() {
   const [ciudad, setCiudad] = useState<CiudadKey | null>(null)
-  const [esOscuro, setEsOscuro] = useState(true)
   const ciudadLabel = CIUDADES.find((c) => c.key === ciudad)?.label
 
   return (
-    <div className={esOscuro ? undefined : 'au-theme-light'} style={{ backgroundColor: 'var(--au-bg)', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: 'var(--au-bg)', minHeight: '100vh' }}>
       {/* Franja superior — separador visual, coherente con el header del diseño de referencia */}
       <div className="h-1" style={{ backgroundColor: 'var(--au-header-bg)' }} aria-hidden="true" />
 
       {/* Hero */}
       <div className="mx-auto max-w-[900px] px-6 pb-8 pt-12 md:pt-14">
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <span className="flex items-center gap-2">
-            <span className="block h-px w-4" style={{ backgroundColor: 'var(--au-accent)' }} aria-hidden="true" />
-            <span
-              className="text-[11px] font-semibold tracking-[0.14em]"
-              style={{ fontFamily: 'var(--font-au-ui)', color: 'var(--au-accent-text)' }}
-            >
-              GUÍA DE LLEGADA
-            </span>
+        <div className="mb-4 flex items-center gap-2">
+          <span className="block h-px w-4" style={{ backgroundColor: 'var(--au-accent)' }} aria-hidden="true" />
+          <span
+            className="text-[11px] font-semibold tracking-[0.14em]"
+            style={{ fontFamily: 'var(--font-au-ui)', color: 'var(--au-accent-text)' }}
+          >
+            GUÍA DE LLEGADA
           </span>
-          <ToggleTema esOscuro={esOscuro} onToggle={() => setEsOscuro((v) => !v)} />
         </div>
         <h1
           className="text-[32px] font-bold leading-[1.18] md:text-[38px]"

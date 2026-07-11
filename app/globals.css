@@ -272,42 +272,16 @@ details > dd {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   APPS ÚTILES — paleta con toggle claro/oscuro PROPIO de la página
-   (independiente del toggle global del sitio en Header.tsx/.dark). El wrapper
-   client-side aplica la clase .au-theme-light sobre el contenido de
-   /apps-utiles cuando el visitante prefiere el tema claro dentro de esta
-   página — no toca ni depende de la clase .dark del <html>.
+   APPS ÚTILES — sigue el toggle claro/oscuro GLOBAL del sitio (.dark en
+   <html>, controlado desde Header.tsx). Mismo mecanismo que los tokens
+   po y color: valores por defecto = tema claro, override bajo .dark = tema
+   oscuro. La página no tiene ningún toggle propio.
    ══════════════════════════════════════════════════════════════════════════ */
 @theme {
-  --au-bg:              #1b1410; /* fondo de página */
-  --au-header-bg:       #14100c; /* franja superior, ligeramente más oscura */
-  --au-card:            #241a13; /* fondo de las secciones-acordeón */
-  --au-accent:          #c9a237; /* dorado — acento y bordes activos, fijo en ambos temas */
-  --au-accent-text:     var(--au-accent); /* accent legible sobre el fondo — igual al accent en oscuro */
-  --au-hero-heading:    #f7f0e4; /* h1 del hero */
-  --au-heading:         #f2e9da; /* h2 de cada sección */
-  --au-hero-body:       #cfc3af; /* párrafo del hero */
-  --au-text:            #e7dccb; /* texto principal / logo */
-  --au-muted:           #b3a690; /* descripción de cada app */
-  --au-faint:           #938576; /* plataformas, estado vacío — ajustado de #8d8171 (mockup) para WCAG AA: 4.47:1 sobre --au-card fallaba, ahora 4.75:1 */
-  --au-border:          rgba(201,162,55,0.18); /* separador sutil */
-  --au-border-strong:   rgba(201,162,55,0.2); /* borde de card/acordeón */
-  --au-row-border:      rgba(226,213,196,0.08); /* borde de las tarjetas de app en el grid */
-  --au-toggle-track-off: #241a13; /* riel del toggle en modo oscuro */
-  --au-toggle-track-on:  rgba(201,162,55,0.25); /* riel del toggle en modo claro */
-  --au-app-card-bg:     #2a1f16; /* fondo de cada tarjeta de app */
-  --au-logo-bg:         #1b1410; /* fondo del ícono emoji de cada app */
-
-  --font-au-display: var(--font-lora), Georgia, serif;
-  --font-au-ui:       var(--font-worksans), 'Helvetica Neue', system-ui, sans-serif;
-}
-
-/* Tema claro de /apps-utiles — activado por el toggle local de la página,
-   nunca por el toggle global del sitio. Valores del mismo diseño de referencia. */
-.au-theme-light {
   --au-bg:              #f8f3ea;
   --au-header-bg:       #fffdf7;
   --au-card:            #ffffff;
+  --au-accent:          #c9a237; /* dorado — acento y bordes activos, fijo en ambos temas */
   --au-accent-text:     #65511c; /* accent oscurecido — el dorado crudo no pasa AA sobre fondo claro */
   --au-hero-heading:    #2c2013;
   --au-heading:         #2c2013;
@@ -318,10 +292,29 @@ details > dd {
   --au-border:          rgba(154,109,20,0.22);
   --au-border-strong:   rgba(154,109,20,0.28);
   --au-row-border:      rgba(60,45,25,0.1);
-  --au-toggle-track-off: #e7ddc9;
-  --au-toggle-track-on:  rgba(201,162,55,0.4);
   --au-app-card-bg:     #faf5eb;
   --au-logo-bg:         #ffffff;
+
+  --font-au-display: var(--font-lora), Georgia, serif;
+  --font-au-ui:       var(--font-worksans), 'Helvetica Neue', system-ui, sans-serif;
+}
+
+.dark {
+  --au-bg:              #1b1410;
+  --au-header-bg:       #14100c;
+  --au-card:            #241a13;
+  --au-accent-text:     var(--au-accent); /* el dorado crudo ya es legible sobre fondo oscuro */
+  --au-hero-heading:    #f7f0e4;
+  --au-heading:         #f2e9da;
+  --au-hero-body:       #cfc3af;
+  --au-text:            #e7dccb;
+  --au-muted:           #b3a690;
+  --au-faint:           #938576; /* ajustado de #8d8171 (mockup) para WCAG AA: 4.47:1 sobre --au-card fallaba, ahora 4.75:1 */
+  --au-border:          rgba(201,162,55,0.18);
+  --au-border-strong:   rgba(201,162,55,0.2);
+  --au-row-border:      rgba(226,213,196,0.08);
+  --au-app-card-bg:     #2a1f16;
+  --au-logo-bg:         #1b1410;
 }
 
 @keyframes auFadeIn {
