@@ -5,7 +5,7 @@
  * No se persiste en base de datos en Etapa 1: vive en el estado React del widget.
  */
 
-export type GinaEtiqueta =
+type GinaEtiqueta =
   | 'lead-en-preparacion'
   | 'seguimiento-futuro'
   | 'califica'

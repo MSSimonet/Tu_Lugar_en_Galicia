@@ -67,7 +67,7 @@ export type NotaEspecial = {
   fase: Fase
 }
 
-export type ItemPlan = BloqueTramite | NotaEspecial
+type ItemPlan = BloqueTramite | NotaEspecial
 
 export type PlanArmado = {
   items: ItemPlan[]

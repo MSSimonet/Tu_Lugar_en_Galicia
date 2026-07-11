@@ -63,7 +63,7 @@ export function omiteBusquedaVivienda(form: Pick<FormState, 'origenResidencia' |
 
 export type FormErrors = Partial<Record<keyof FormState, string>>
 
-export const INITIAL_STATE: FormState = {
+const INITIAL_STATE: FormState = {
   nombreCompleto: '',
   email: '',
   telefono: '',
@@ -187,7 +187,7 @@ function validate(form: FormState): FormErrors {
   return errors
 }
 
-export function toggleExclusivo<T extends string>(
+function toggleExclusivo<T extends string>(
   current: T[],
   value: T,
   exclusivaValue: T | null,

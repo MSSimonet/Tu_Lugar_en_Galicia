@@ -15,7 +15,7 @@ export type Opcion = {
   value: string
 }
 
-export type TipoPaso = 'botones' | 'input' | 'llm'
+type TipoPaso = 'botones' | 'input' | 'llm'
 
 export type Paso = {
   id: string

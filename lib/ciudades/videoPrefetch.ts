@@ -1,4 +1,4 @@
-export const videoSrcPorSlug: Record<string, string> = {
+const videoSrcPorSlug: Record<string, string> = {
   vigo: '/videos/Vigo.mp4',
   'a-coruna': '/videos/coruna.mp4',
   'santiago-de-compostela': '/videos/Santiago.mp4',

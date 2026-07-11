@@ -23,7 +23,7 @@ export type MarcadorData = {
   tiempoMedioSemanas: number
 }
 
-export const MARCADOR_FALLBACK: MarcadorData = {
+const MARCADOR_FALLBACK: MarcadorData = {
   anunciosContactados: 0,
   propietariosDijeronNo: 0,
   familiasUbicadas: 0,

@@ -58,7 +58,7 @@ function config() {
 }
 
 /** Busca un perfil de comunidad por email. Devuelve null si no existe. */
-export async function findComunidadByEmail(
+async function findComunidadByEmail(
   email: string,
 ): Promise<{ id: string; fields: Record<string, unknown> } | null> {
   const { apiKey, baseUrl } = config()
