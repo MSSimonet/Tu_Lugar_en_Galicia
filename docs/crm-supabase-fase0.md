@@ -151,18 +151,18 @@ que el panel sabe renderizar — cambiarlo ya es un cambio de código de todos m
 create table leads (
   id uuid primary key default gen_random_uuid(),
 
-  -- Datos personales
+  -- Datos personales — 🔧 corregido: solo email/nombre son universales (ver §8)
   nombre_completo text not null,
   email text not null,
-  telefono text not null,
-  pais_residencia text not null,
+  telefono text,
+  pais_residencia text,
 
   -- Composición del grupo familiar
   personas text,
   adultos text,
   ninos text,
   adolescentes text,
-  mascotas text not null,
+  mascotas text,
   detalle_mascotas text,
   mascota_tipo text[] not null default '{}',
   cantidad_perros text,
@@ -170,19 +170,19 @@ create table leads (
   mascota_peso text,
 
   -- Situación legal y laboral
-  documentacion text not null,
-  situacion_laboral text not null,
-  ingresos_mensuales text not null,
+  documentacion text,
+  situacion_laboral text,
+  ingresos_mensuales text,
 
   -- Garantías (multiselect)
   garantias text[] not null default '{}',
 
   -- Preferencias de vivienda
-  ciudad_destino text not null,
+  ciudad_destino text,
   tipo_inmueble text,
-  presupuesto_mensual text not null,
+  presupuesto_mensual text,
   habitaciones_minimas text,
-  amueblado text not null,
+  amueblado text,
   estacionamiento text,
   comodidades text[] not null default '{}',
 
@@ -192,7 +192,7 @@ create table leads (
   imprescindibles text[] not null default '{}',
 
   -- Logística — 🔧 corregido: NO es una fecha real, es un bucket categórico (ver §7.1)
-  fecha_llegada text not null,       -- 'menos-1-mes' | '1-3-meses' | '3-6-meses' | 'mas-6-meses' | 'sin-fecha'
+  fecha_llegada text,       -- 'menos-1-mes' | '1-3-meses' | '3-6-meses' | 'mas-6-meses' | 'sin-fecha'
   como_nos_conociste text,
 
   -- Scoring / clasificación (calculados por el motor, no editables a mano)
@@ -215,9 +215,9 @@ create table leads (
   consentimiento_rgpd boolean not null default false,
   consentimiento_rgpd_at timestamptz,   -- evidencia RGPD: cuándo se dio el consentimiento
 
-  -- Origen del lead (estructural)
+  -- Origen del lead (estructural) — 🔧 ampliado: 'contacto' es un tercer origen real (ver §8)
   fuente_lead text not null default 'web'
-    check (fuente_lead in ('web', 'gina')),
+    check (fuente_lead in ('web', 'gina', 'contacto')),
 
   -- Agenda Cal.com (hoy vive en Airtable: codigoAgenda, fechaHabilitacion, citaAgendada, fechaCita)
   codigo_agenda text,
@@ -248,6 +248,8 @@ comment on column leads.comunidad_email is
   'Cruce opcional con la tabla pública comunidad, cuando el mismo email aparece en ambos sistemas. Nullable, ON DELETE SET NULL: no forzar integridad si la persona borra su entrada de comunidad.';
 comment on column leads.fecha_llegada is
   'Bucket categórico de plazo (no fecha real) — igual en Gina (p4_plazo) y en el formulario web.';
+comment on column leads.nombre_completo is
+  'Único campo de contenido, junto con email, garantizado en los 4 orígenes de leads (Gina nivel1/parcial/completo, formulario web, contacto). Todo lo demás es nullable — ver §8.';
 
 create trigger trg_leads_updated_at
   before update on leads
@@ -397,6 +399,7 @@ decisión futura, no se implementa ahora (YAGNI).
 | `fecha_llegada` como `text`, NO `date` | `leads` | 🔧 Corregido — es un bucket categórico, no una fecha parseable (ver §7.1) |
 | `inicio_contrato` eliminado del schema | `leads` | Confirmado código muerto en todo el repo — ver §6.3 |
 | `codigo_agenda` con unique parcial | `leads` | `validateCodigoAgenda` necesita resolver a exactamente un lead |
+| Solo `nombre_completo`/`email` `not null`, resto nullable | `leads` | 🔧 Corregido post-aprobación — no todos los orígenes (contacto, nivel1 de Gina) tienen el resto de campos (ver §8) |
 | `id bigint identity` en vez de `uuid` | `lead_actividad` | Log de alto volumen, cronológico, sin necesidad de opacidad externa |
 | Solo bloquear UPDATE, no DELETE | `lead_actividad` | 🔧 Corregido — bloquear DELETE rompía el borrado en cascada RGPD (ver §7.3) |
 | `comunidad_email` como FK nullable, sin cascada dura | `leads` | Cruce informativo, no relación obligatoria |
@@ -781,6 +784,42 @@ solo `service_role` puede borrar, y en la práctica solo lo hace la cascada desd
 
 ---
 
+## 8. Corrección post-aprobación (2026-07-12, al arrancar Fase 1)
+
+Al empezar la implementación de `/api/contacto` (§5) se encontró que ese endpoint captura hoy
+**solo** `nombreCompleto`, `email`, `telefono` (opcional) y el mensaje libre — nada de
+`documentacion`, `situacionLaboral`, `ingresosMensuales`, `mascotas`, `ciudadDestino`,
+`presupuestoMensual`, `amueblado` ni `paisResidencia`. El DDL de §1.4, ya aprobado, marcaba todos
+esos campos `not null`, lo que habría hecho fallar el primer insert real de `/api/contacto` con una
+violación de constraint.
+
+El mismo problema existe, de forma más sutil, en el propio guardado `guardar_nivel1` de Gina: en
+ese punto **solo** están respondidos `nombreCompleto`, `email` y `telefono` — el resto de los
+campos "obligatorios" del DDL original tampoco existen todavía en ese momento. El código actual
+(`app/api/gina/route.ts:267`) ya refleja esto en el tipo de TypeScript
+(`Partial<LeadData> & Pick<LeadData, 'nombreCompleto' | 'email' | 'consentimientoRGPD'>`) — es
+decir, el propio contrato de tipos de la aplicación ya admite que casi todo es opcional al momento
+de guardar. El DDL debía reflejar esa misma realidad, no la forma "completa" de un lead que llegó
+al final del cuestionario.
+
+**Corrección aplicada a §1.4:** de todos los campos de contenido, solo `nombre_completo` y `email`
+quedan `not null` — son los únicos presentes en los 4 orígenes de leads (Gina nivel1/parcial/
+completo, formulario web `/conocernos`, `/api/contacto`). `telefono`, `pais_residencia`,
+`mascotas`, `documentacion`, `situacion_laboral`, `ingresos_mensuales`, `ciudad_destino`,
+`presupuesto_mensual`, `amueblado` y `fecha_llegada` pasan a nullable. Es una relajación de
+constraints (siempre segura/retrocompatible, nunca al revés) — la completitud de un lead para
+mostrarlo como "listo" en el dashboard se valida en la capa de aplicación (Zod), no en la base de
+datos, exactamente como ya lo hacía Airtable de facto al no forzar columnas requeridas.
+
+**Segundo ajuste relacionado:** `fuente_lead` tenía solo `'web' | 'gina'` en el `CHECK`, pero
+`/api/contacto` es un tercer origen real (ya tiene su propia `etiqueta: 'contacto-directo'` en el
+código actual) — forzarlo a `'web'` habría sido impreciso. Se amplía a
+`check (fuente_lead in ('web', 'gina', 'contacto'))`. Cada uno de los 3 endpoints de guardado debe
+setear su propio valor explícitamente; el `default 'web'` queda solo como red de seguridad del
+`NOT NULL`, no como comportamiento esperado.
+
+---
+
 ## Próximo paso
 
 Ok recibido (2026-07-12). Alcance completo de **Fase 1**, para dividir por carriles:
@@ -797,3 +836,25 @@ Ok recibido (2026-07-12). Alcance completo de **Fase 1**, para dividir por carri
    mutua) contra Supabase real, y login real de `/admin` probado end-to-end antes de certificar.
 
 Pendiente sin bloquear el inicio: §6.2 (ubicar `Briefing_CRM_Tu_Lugar_en_Galicia.md`).
+
+---
+
+## 9. Ajuste post-implementación (2026-07-12): dos timestamps de consentimiento RGPD
+
+Al reportar el cierre de Fase 1, `consentimiento_rgpd_at` había quedado sin escribir (no estaba en
+el pedido explícito de reescritura). El usuario decidió:
+
+- `consentimiento_rgpd_at` — se re-escribe en **cada guardado** del lead (última confirmación).
+  Implementado en `lib/leads.ts` (`toRow()` la estampa con `new Date().toISOString()` en cada
+  llamada a `saveLead`).
+- **`consentimiento_rgpd_primera_vez` (nueva columna)** — evidencia legal real de cuándo se dio el
+  consentimiento por primera vez, que RGPD exige poder demostrar. A diferencia de la anterior, es
+  **inmutable**: se fija una sola vez y ningún guardado posterior puede pisarla. La inmutabilidad
+  se garantiza con un trigger de Postgres (`set_consentimiento_rgpd_primera_vez`, ver
+  `supabase/migrations/0004_leads_schema.sql`), no con disciplina de la capa de aplicación — así
+  la garantía se sostiene aunque en el futuro otro código escriba en la tabla `leads` sin pasar por
+  `lib/leads.ts`. La aplicación nunca escribe este campo explícitamente; `toRow()` no lo incluye a
+  propósito, dejando que el trigger sea la única autoridad.
+
+Ambas columnas quedan expuestas en `LeadData` (`consentimientoRGPDAt`, `consentimientoRGPDPrimeraVez`)
+para que el panel admin pueda mostrarlas en la ficha del lead más adelante.
