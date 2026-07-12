@@ -4,6 +4,22 @@ Problemas conocidos del entorno/herramientas que no son bugs del producto — se
 
 ---
 
+## Pendiente técnico: `next-auth` en versión beta
+
+**Estado:** decisión consciente, no un bug — pero requiere revisión antes de producción real.
+
+El login de `/admin` (Fase 1 del CRM Supabase, ver `docs/crm-supabase-fase0.md` §6.1) usa
+`next-auth@5.0.0-beta.31` (Auth.js v5), elegido por compatibilidad de peer-deps con Next.js 16
+(`next-auth@4` no la declara). Sigue siendo software beta en la superficie más sensible del sitio
+(login con acceso a PII completa de leads).
+
+**Acción pendiente:** revisar/pinnear a una versión estable de NextAuth/Auth.js v5 antes de que
+haya leads reales en producción (hoy solo hay datos de test). Confirmar en ese momento si ya
+existe una release estable de v5, o si conviene bajar a v4 con el adapter/integración
+correspondiente para App Router.
+
+---
+
 ## Browser pane (Claude Code) — BrowserView queda en `hidden`, screenshot/IntersectionObserver no funcionan
 
 **Estado:** sin resolver. Causa raíz desconocida.
@@ -37,3 +53,5 @@ Esto sugiere que los re-renders de React no se están **comprometiendo al DOM vi
 **Consecuencia importante para testing futuro:** no se puede confiar en "click en botón → verificar cambio de UI" como método de verificación en sesiones afectadas por este bug, ni siquiera usando `.click()` nativo por DOM en lugar de clicks por coordenada. La navegación entre páginas (`navigate()` a una URL) sí funciona con normalidad — el problema es específico a cambios de estado in-page vía React. `read_page` en cambio SÍ parece reflejar el DOM real correctamente (se había sospechado que devolvía snapshots viejos, pero se confirmó que no — el widget realmente seguía abierto, `read_page` tenía razón).
 
 **Workaround adicional para este caso:** testing funcional vía llamadas directas a los API routes (`fetch()` desde `javascript_tool`, replicando el payload exacto que mandaría el cliente real) en vez de manejar la UI — verifica la misma lógica de servidor sin depender de que el click se refleje visualmente. No reemplaza la verificación de que la UI realmente responde a un click de un usuario real — eso queda pendiente hasta que el bug se resuelva.
+
+**Precisión importante (acota el bug):** el toggle nativo de `<details>/<summary>` (acordeón de FAQ) **sí funciona** con `.click()` — `details.open` cambia correctamente. Esto confirma que el bug es específico al **commit de React al DOM real** (setState → re-render → commit), no un bloqueo universal de interacción del navegador. Comportamiento nativo del motor (details/summary, navegación de links, formularios HTML nativos) funciona con normalidad; lo que falla es cualquier cambio de UI que dependa de que React aplique un nuevo estado.

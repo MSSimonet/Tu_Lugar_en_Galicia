@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 
 // Hashes SHA-256 de los <script> inline estáticos (JSON-LD + script de tema).
 // El script de tema también recibe el nonce dinámico desde layout.tsx — los hashes
@@ -17,7 +18,7 @@ const INLINE_SCRIPT_HASHES = [
   "'sha256-vKxaNcvBUyM57hJDfsI6keY5bWEfU28mdT21jXGvlhE='", // ciudades/santiago-de-compostela — faqSchema
 ].join(' ')
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   // Un nonce criptográfico por request. Next.js App Router lee 'x-nonce' de los
   // headers del request y estampa ese valor en todos los inline scripts que genera
   // durante el streaming RSC (__next_f.push(...)), habilitando la hidratación de React.
@@ -93,6 +94,35 @@ export function middleware(req: NextRequest) {
     isSensitiveRoute ? 'no-referrer' : 'strict-origin-when-cross-origin',
   )
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+
+  // Gate de sesión NextAuth para /admin/* (páginas HTML que abre Silvana en el
+  // navegador). NO cubre /api/admin/ ni /api/webhooks/ — esos siguen con su
+  // propio Bearer secret (lib/admin/auth.ts), pensado para llamadas de cron o
+  // servidor a servidor, no para un login humano.
+  const isAdminPage = pathname.startsWith('/admin/') && pathname !== '/admin/login'
+  if (isAdminPage) {
+    // secureCookie debe coincidir con el mismo cálculo que usa Auth.js al fijar
+    // la cookie (protocolo https → nombre con prefijo "__Secure-"); si no,
+    // getToken busca el nombre de cookie equivocado y nunca encuentra la sesión
+    // en producción, aunque el login haya sido exitoso.
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+      secureCookie: req.nextUrl.protocol === 'https:',
+    })
+    if (!token) {
+      const loginUrl = new URL('/admin/login', req.nextUrl)
+      loginUrl.searchParams.set('callbackUrl', pathname + req.nextUrl.search)
+      const redirectResponse = NextResponse.redirect(loginUrl)
+      redirectResponse.headers.set('Content-Security-Policy', csp)
+      redirectResponse.headers.set('X-Content-Type-Options', 'nosniff')
+      redirectResponse.headers.set('X-Frame-Options', 'DENY')
+      redirectResponse.headers.set('Referrer-Policy', 'no-referrer')
+      redirectResponse.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+      return redirectResponse
+    }
+  }
+
   return response
 }
 
