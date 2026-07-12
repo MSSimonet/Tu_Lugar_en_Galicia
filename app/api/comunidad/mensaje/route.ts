@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { getRealIp } from '@/lib/utils/ip'
-import { getSupabaseServerClient } from '@/lib/comunidad/supabase'
+import { getSupabaseServerClient } from '@/lib/supabase/serverClient'
 import { sendEmail } from '@/lib/admin/email'
 import { buildComunidadMensajeEmail } from '@/lib/comunidad/email'
 import type { ComunidadPerfil } from '@/lib/comunidad/types'
+import { isValidUuid } from '@/lib/utils/validation'
 
 const ratelimit =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
@@ -19,11 +20,6 @@ const ratelimit =
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-}
-
-// UUID v4 — mismo formato que gen_random_uuid() de Postgres.
-function isValidUuid(value: string): boolean {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
 }
 
 // Límites de longitud — sin esto, un cliente que no sea el formulario real puede mandar un

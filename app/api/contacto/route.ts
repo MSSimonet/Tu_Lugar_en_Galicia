@@ -3,6 +3,7 @@ import { sendEmail, buildContactoEmail } from '@/lib/admin/email'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { getRealIp } from '@/lib/utils/ip'
+import { saveLead, type LeadData } from '@/lib/leads'
 
 const ratelimit =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
@@ -80,60 +81,31 @@ export async function POST(req: NextRequest) {
   const telefonoLimpio = typeof telefono === 'string' && telefono.trim() ? telefono.trim() : undefined
   const mensajeLimpio  = mensaje.trim()
 
-  // ── 1. Guardar en Airtable PRIMERO ───────────────────────────────────────
+  // ── 1. Guardar en Supabase (tabla `leads`) PRIMERO ───────────────────────
   // Si falla aquí → error real al cliente (el contacto no quedó registrado).
-  // Requiere columna "notasContacto" (Long text) en Airtable para guardar el mensaje.
-  const apiKey    = process.env.AIRTABLE_API_KEY
-  const baseId    = process.env.AIRTABLE_BASE_ID
-  const tableName = process.env.AIRTABLE_TABLE_NAME
-
-  if (!apiKey || !baseId || !tableName) {
-    console.error('[contacto] Airtable no configurado: faltan variables de entorno')
-    return NextResponse.json({ error: 'Error interno. Intenta de nuevo.' }, { status: 500 })
-  }
-
-  const fields: Record<string, unknown> = {
-    nombreCompleto:     nombreLimpio,
-    email:              emailLimpio,
-    etiqueta:           'contacto-directo',
+  // Este formulario solo captura nombre/email/teléfono(opcional)/mensaje — el resto
+  // de los campos de LeadData quedan sin responder (nullable en la tabla `leads`,
+  // ver docs/crm-supabase-fase0.md §8).
+  const lead: Partial<LeadData> & Pick<LeadData, 'nombreCompleto' | 'email' | 'consentimientoRGPD'> = {
+    nombreCompleto: nombreLimpio,
+    email: emailLimpio,
+    etiqueta: 'contacto-directo',
     consentimientoRGPD: true,
-    notasContacto:      mensajeLimpio,
+    notasContacto: mensajeLimpio,
+    fuenteLead: 'contacto',
     ...(telefonoLimpio ? { telefono: telefonoLimpio } : {}),
   }
 
   try {
-    const airtableRes = await fetch(
-      `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fields }),
-        signal: AbortSignal.timeout(8000),
-      }
-    )
-    if (!airtableRes.ok) {
-      // Nunca volcar el body crudo — puede ecoar valores de campo (PII) en mensajes
-      // de validación de Airtable. Solo status + type estructurado si existe.
-      let type: string | undefined
-      try {
-        const errBody = (await airtableRes.json()) as { error?: { type?: string } }
-        type = errBody?.error?.type
-      } catch {
-        // cuerpo no parseable como JSON — no hay type disponible
-      }
-      console.error(`[contacto] Airtable devolvió error — status: ${airtableRes.status}, type: ${type ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
-      return NextResponse.json({ error: 'No se pudo registrar tu consulta. Intenta de nuevo.' }, { status: 500 })
-    }
+    await saveLead(lead as LeadData)
   } catch (err) {
-    console.error(`[contacto] Error de red al guardar en Airtable — ts: ${new Date().toISOString()}`, err instanceof Error ? err.name : 'unknown')
+    // Nunca volcar el mensaje de error crudo — puede ecoar valores de campo (PII).
+    console.error(`[contacto] Error al guardar en Supabase — ts: ${new Date().toISOString()}`, err instanceof Error ? err.name : 'unknown')
     return NextResponse.json({ error: 'No se pudo registrar tu consulta. Intenta de nuevo.' }, { status: 500 })
   }
 
   // ── 2. Notificación a Silvana — best-effort ───────────────────────────────
-  // El lead ya está en Airtable. Si el mail falla, el cliente ve éxito igualmente.
+  // El lead ya está guardado en Supabase. Si el mail falla, el cliente ve éxito igualmente.
   // Log sin PII: no se registra nombre, email ni teléfono (auditoría A02).
   const adminEmail = process.env.SILVANA_EMAIL
   if (!adminEmail) {

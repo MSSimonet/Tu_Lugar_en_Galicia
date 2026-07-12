@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorized } from '@/lib/admin/auth'
-import { getLeadsConCitaProxima, type AirtableRecord } from '@/lib/admin/airtable'
+import { getLeadsConCitaProxima, type AirtableRecord } from '@/lib/admin/leadsRepo'
 import { generateAdminToken } from '@/lib/admin/tokens'
 import { sendEmail, escapeHtml } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
@@ -244,8 +244,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     records = await getLeadsConCitaProxima()
   } catch (err) {
-    console.error('[recordatorio-silvana] Airtable error:', err)
-    return NextResponse.json({ error: 'Error consultando Airtable' }, { status: 500 })
+    console.error('[recordatorio-silvana] Supabase error:', err instanceof Error ? err.name : 'unknown')
+    return NextResponse.json({ error: 'Error consultando la base de datos' }, { status: 500 })
   }
 
   if (records.length === 0) {

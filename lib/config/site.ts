@@ -11,5 +11,5 @@ export const SITE_URL = "https://tulugarengalicia.com"
 // Zona horaria del servicio — España peninsular
 export const TIMEZONE = 'Europe/Madrid'
 
-// La validación de códigos de agenda es ahora dinámica via Airtable.
-// Ver: lib/admin/airtable.ts → validateCodigoAgenda()
+// La validación de códigos de agenda es ahora dinámica via Supabase.
+// Ver: lib/admin/leadsRepo.ts → validateCodigoAgenda()

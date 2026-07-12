@@ -7,7 +7,7 @@
  * o localStorage deshabilitado se degradan elegantemente sin romper el chat.
  *
  * RGPD: los datos personales solo permanecen el tiempo mínimo necesario
- * (máx. 24 h, o hasta que el lead se guarda en Airtable).
+ * (máx. 24 h, o hasta que el lead se guarda en Supabase).
  */
 
 import type { GinaSession } from './session'
@@ -33,7 +33,7 @@ type SesionGuardada = {
 
 /**
  * Persiste el estado actual en localStorage.
- * Si `sesion.completado === true`, elimina la entrada (lead ya enviado a Airtable).
+ * Si `sesion.completado === true`, elimina la entrada (lead ya enviado a Supabase).
  * Solo guarda mensajes con `pasoId` para excluir avisos transitorios
  * (errores, "Retomamos donde lo dejaste", etc.).
  */

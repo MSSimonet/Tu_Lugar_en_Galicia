@@ -87,25 +87,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'sesion inválida' }, { status: 400 })
   }
 
-  // Seguridad (C1): sesionCruda.airtableRecordId viene del cliente sin control del
-  // servidor — sin esta verificación, cualquiera podría inyectar el recordId de otro
-  // lead y sobrescribir sus datos vía PATCH. Solo se confía en el recordId si viene
+  // Seguridad (C1): sesionCruda.leadId viene del cliente sin control del
+  // servidor — sin esta verificación, cualquiera podría inyectar el leadId de otro
+  // lead y sobrescribir sus datos vía update. Solo se confía en el leadId si viene
   // acompañado de una firma HMAC válida (emitida por este mismo servidor al crearlo
   // en guardar_nivel1). Si falta o no valida, se descarta silenciosamente — el flujo
-  // continúa como si fuera una sesión nueva (crea un registro propio vía POST).
+  // continúa como si fuera una sesión nueva (crea un registro propio vía insert).
   let sesion = sesionCruda
-  if (sesion.airtableRecordId) {
+  if (sesion.leadId) {
     let firmaValida = false
-    if (typeof sesion.airtableRecordSig === 'string') {
+    if (typeof sesion.leadIdSig === 'string') {
       try {
-        verifyAdminToken(sesion.airtableRecordId, sesion.airtableRecordSig)
+        verifyAdminToken(sesion.leadId, sesion.leadIdSig)
         firmaValida = true
       } catch {
         firmaValida = false
       }
     }
     if (!firmaValida) {
-      sesion = { ...sesion, airtableRecordId: undefined, airtableRecordSig: undefined }
+      sesion = { ...sesion, leadId: undefined, leadIdSig: undefined }
     }
   }
 
@@ -164,41 +164,41 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // Guardado en Airtable según la acción del paso que se acaba de procesar.
-  // nivel1: bloqueante para capturar el record ID; usa conReintentos, fallo no bloquea al usuario.
+  // Guardado en Supabase según la acción del paso que se acaba de procesar.
+  // nivel1: bloqueante para capturar el id del lead; usa conReintentos, fallo no bloquea al usuario.
   // parcial/completo: awaited con reintentos; si fallan todos devuelve guardado:false al cliente.
   let sesionParaDevolver = sesionActualizada
   let guardado = true
 
   if (paso.accion === 'guardar_nivel1') {
-    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada))
-    if (recordId) {
+    const leadId = await conReintentos(() => guardarEnSupabase(sesionActualizada))
+    if (leadId) {
       sesionParaDevolver = {
         ...sesionActualizada,
-        airtableRecordId: recordId,
-        airtableRecordSig: generateAdminToken(recordId),
+        leadId,
+        leadIdSig: generateAdminToken(leadId),
       }
     } else {
-      console.error('[gina] nivel1 falló tras 3 intentos — el guardado completo hará POST como fallback')
+      console.error('[gina] nivel1 falló tras 3 intentos — el guardado completo hará insert como fallback')
     }
   } else if (paso.accion === 'guardar_lead_completo') {
     // Cuestionario completo: etiqueta derivada de calificacion ('califica' | 'seguimiento-futuro')
-    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true, true))
-    if (!recordId) {
+    const leadId = await conReintentos(() => guardarEnSupabase(sesionActualizada, true, true))
+    if (!leadId) {
       guardado = false
       console.error('[gina] guardado completo falló tras 3 intentos — lead perdido, revisar logs')
     }
   } else if (paso.accion === 'guardar_lead_parcial') {
     // Salida temprana (lead-en-preparacion): etiqueta ya en sesion.etiqueta, no es guardado completo
-    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true, false))
-    if (!recordId) {
+    const leadId = await conReintentos(() => guardarEnSupabase(sesionActualizada, true, false))
+    if (!leadId) {
       guardado = false
       console.error('[gina] guardado parcial falló tras 3 intentos — lead perdido, revisar logs')
     }
   } else if (paso.id === 'transicion_nivel2' && siguientePasoId === 'despedida') {
     // "No" al nivel 2: guardado incompleto (no llegó al paso atribucion)
-    const recordId = await conReintentos(() => guardarEnAirtable(sesionActualizada, true, false))
-    if (!recordId) {
+    const leadId = await conReintentos(() => guardarEnSupabase(sesionActualizada, true, false))
+    if (!leadId) {
       guardado = false
       console.error('[gina] guardado (transicion_nivel2→no) falló tras 3 intentos')
     }
@@ -213,8 +213,8 @@ export async function POST(req: NextRequest) {
 
 /**
  * Mapea las respuestas de la sesión al tipo LeadData y llama a saveLead.
- * Pasa sesion.airtableRecordId a saveLead: si existe hace PATCH, si no hace POST.
- * Devuelve el record ID resultante (nuevo en POST, el mismo en PATCH).
+ * Pasa sesion.leadId a saveLead: si existe hace update, si no hace insert.
+ * Devuelve el id resultante (nuevo en insert, el mismo en update).
  *
  * REGLA: un campo se incluye SOLO si fue respondido en sesion.respuestas.
  * Sin defaults: un campo no preguntado llega como undefined y JSON.stringify lo omite.
@@ -225,7 +225,7 @@ export async function POST(req: NextRequest) {
  * o se marca como 'incompleto'. La etiqueta 'lead-en-preparacion' ya en sesion.etiqueta
  * tiene prioridad y nunca se pisa.
  */
-async function guardarEnAirtable(
+async function guardarEnSupabase(
   sesion: GinaSession,
   incluirCalificacion = false,
   esGuardadoCompleto = false,
@@ -332,6 +332,7 @@ async function guardarEnAirtable(
     comprendeServicio: true,
 
     etiqueta,
+    fuenteLead: 'gina',
 
     modalidad:
       sesion.origenResidencia === 'fuera' ? 'antes-de-viajar'
@@ -341,7 +342,7 @@ async function guardarEnAirtable(
     ...(calificacion ? { calificacion } : {}),
   }
 
-  return saveLead(lead as LeadData, sesion.airtableRecordId)
+  return saveLead(lead as LeadData, sesion.leadId)
 }
 
 /**

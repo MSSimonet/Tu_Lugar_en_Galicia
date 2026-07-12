@@ -23,10 +23,10 @@ export type GinaSession = {
   etiqueta?: GinaEtiqueta
   /** true cuando se llega a un paso con accion:"fin" */
   completado: boolean
-  /** Record ID de Airtable creado en guardar_nivel1 — usado para PATCH en guardados posteriores */
-  airtableRecordId?: string
-  /** Firma HMAC de airtableRecordId (generateAdminToken) — evita que el cliente inyecte un recordId ajeno */
-  airtableRecordSig?: string
+  /** id (uuid) del lead en Supabase creado en guardar_nivel1 — usado para update en guardados posteriores */
+  leadId?: string
+  /** Firma HMAC de leadId (generateAdminToken) — evita que el cliente inyecte un leadId ajeno */
+  leadIdSig?: string
 }
 
 /** Crea una sesión inicial antes de mostrar el primer paso */

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorized } from '@/lib/admin/auth'
-import { getLeadsConCodigoActivo, patchRecord } from '@/lib/admin/airtable'
+import { getLeadsConCodigoActivo, patchRecord } from '@/lib/admin/leadsRepo'
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   if (!isAuthorized(req)) {
@@ -11,9 +11,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     vencidos = await getLeadsConCodigoActivo()
   } catch (err) {
-    const status = err instanceof Error ? err.message.match(/Airtable list (\d+)/)?.[1] : undefined
-    console.error(`[expirar-codigos] Airtable error — status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
-    return NextResponse.json({ error: 'Error consultando Airtable' }, { status: 500 })
+    console.error(`[expirar-codigos] Supabase error — ts: ${new Date().toISOString()}`, err instanceof Error ? err.name : 'unknown')
+    return NextResponse.json({ error: 'Error consultando la base de datos' }, { status: 500 })
   }
 
   const resultados = await Promise.allSettled(
@@ -24,8 +23,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   if (fallidos.length > 0) {
     fallidos.forEach((r, i) => {
       const reason = (r as PromiseRejectedResult).reason
-      const status = reason instanceof Error ? reason.message.match(/^Airtable PATCH (\d+)/)?.[1] : undefined
-      console.error(`[expirar-codigos] PATCH fallido — recordId: ${vencidos[i]?.id}, status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
+      console.error(`[expirar-codigos] update fallido — recordId: ${vencidos[i]?.id}, ts: ${new Date().toISOString()}`, reason instanceof Error ? reason.name : 'unknown')
     })
   }
 

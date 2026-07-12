@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
 import { verifyAdminToken } from '@/lib/admin/tokens'
-import { getRecord } from '@/lib/admin/airtable'
+import { getRecord } from '@/lib/admin/leadsRepo'
 import { HabilitarAgendaButton } from '@/components/admin/HabilitarAgendaButton'
+import { isValidUuid } from '@/lib/utils/validation'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
   referrer: 'no-referrer',
 }
 
-// ── Etiquetas legibles para cada campo de Airtable ──────────────────────────
+// ── Etiquetas legibles para cada campo del lead ──────────────────────────────
 const LABELS: Record<string, string> = {
   paisResidencia:      'País de residencia',
   ciudadActual:        'Ciudad actual',
@@ -201,7 +202,7 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
   const { recordId }  = await params
   const { token }     = await searchParams
 
-  if (!/^rec[a-zA-Z0-9]{14}$/.test(recordId)) {
+  if (!isValidUuid(recordId)) {
     return <ErrorPage mensaje="El enlace no es válido." />
   }
 
@@ -220,7 +221,7 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
   try {
     fields = await getRecord(recordId)
   } catch {
-    return <ErrorPage mensaje="No se encontró el lead en Airtable." />
+    return <ErrorPage mensaje="No se encontró el lead." />
   }
 
   const nombre         = String(fields.nombreCompleto ?? '—')
@@ -329,7 +330,7 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
           textAlign: 'center', fontSize: '11px', color: 'var(--color-pizarra)',
           fontFamily: 'var(--font-ui)', marginTop: '8px',
         }}>
-          ID Airtable: {recordId}
+          ID: {recordId}
         </p>
       </div>
     </main>

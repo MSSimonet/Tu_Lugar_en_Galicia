@@ -7,9 +7,44 @@ Prueba exhaustiva del guardado de leads de Gina.
 $ErrorActionPreference = "Stop"
 $API = "http://localhost:59163/api/gina"
 $envFile = "C:\Users\ACER\Tu_Lugar_en_Galicia\.env.local"
-$AT_KEY   = (Get-Content $envFile | Select-String "^AIRTABLE_API_KEY=").Line.Split("=",2)[1].Trim()
-$AT_BASE  = (Get-Content $envFile | Select-String "^AIRTABLE_BASE_ID=").Line.Split("=",2)[1].Trim()
-$AT_TABLE = (Get-Content $envFile | Select-String "^AIRTABLE_TABLE_NAME=").Line.Split("=",2)[1].Trim()
+
+function envVar($name) {
+    $line = (Get-Content $envFile | Select-String "^$name=" | Select-Object -First 1).Line
+    if ($line) { $line.Split("=",2)[1].Trim() } else { "" }
+}
+
+# Leads ahora viven en Supabase (tabla `leads`), no en Airtable — ver docs/crm-supabase-fase0.md.
+$SB_URL = envVar "SUPABASE_URL"
+if (-not $SB_URL) { $SB_URL = envVar "NEXT_PUBLIC_SUPABASE_URL" }
+$SB_KEY = envVar "SUPABASE_SERVICE_ROLE_KEY"
+
+# snake_case (columna real de `leads`) → camelCase (shape que ya esperan los check() de abajo).
+# Mismo mapeo que lib/admin/leadsRepo.ts — mantenerlos en sync si cambia el schema.
+$COLUMN_MAP = @{
+    nombre_completo = "nombreCompleto"; email = "email"; telefono = "telefono"
+    pais_residencia = "paisResidencia"; personas = "personas"; adultos = "adultos"
+    ninos = "ninos"; adolescentes = "adolescentes"; mascotas = "mascotas"
+    detalle_mascotas = "detalleMascotas"; mascota_tipo = "mascotaTipo"
+    cantidad_perros = "cantidadPerros"; cantidad_gatos = "cantidadGatos"
+    mascota_peso = "mascotaPeso"; documentacion = "documentacion"
+    situacion_laboral = "situacionLaboral"; ingresos_mensuales = "ingresosMensuales"
+    garantias = "garantias"; ciudad_destino = "ciudadDestino"; tipo_inmueble = "tipoInmueble"
+    presupuesto_mensual = "presupuestoMensual"; habitaciones_minimas = "habitacionesMinimas"
+    amueblado = "amueblado"; estacionamiento = "estacionamiento"; comodidades = "comodidades"
+    necesidades_especiales = "necesidadesEspeciales"; profesion = "profesion"
+    imprescindibles = "imprescindibles"; fecha_llegada = "fechaLlegada"
+    como_nos_conociste = "comoNosConociste"; calificacion = "calificacion"; etiqueta = "etiqueta"
+    notas_contacto = "notasContacto"; modalidad = "modalidad"; cuenta_bancaria = "cuentaBancaria"
+    comprende_honorarios = "comprendeHonorarios"; tipo_licencia = "tipoLicencia"
+    ciudad_actual = "ciudadActual"; tiempo_en_espana = "tiempoEnEspana"
+    objetivo_busqueda = "objetivoBusqueda"; nivel_estudios = "nivelEstudios"
+    comprende_servicio = "comprendeServicio"; consentimiento_rgpd = "consentimientoRGPD"
+    consentimiento_rgpd_at = "consentimientoRGPDAt"
+    consentimiento_rgpd_primera_vez = "consentimientoRGPDPrimeraVez"
+    fuente_lead = "fuenteLead"; codigo_agenda = "codigoAgenda"
+    fecha_habilitacion = "fechaHabilitacion"; cita_agendada = "citaAgendada"
+    fecha_cita = "fechaCita"; etapa_id = "etapaId"; comunidad_email = "comunidadEmail"
+}
 
 $recordIds   = [System.Collections.Generic.List[string]]::new()
 $discrepancias = [System.Collections.Generic.List[string]]::new()
@@ -28,13 +63,31 @@ function fresh() {
 }
 
 function at-get($id) {
-    (Invoke-RestMethod -Uri "https://api.airtable.com/v0/$AT_BASE/$AT_TABLE/$id" `
-        -Headers @{ Authorization = "Bearer $AT_KEY" }).fields
+    $headers = @{ apikey = $SB_KEY; Authorization = "Bearer $SB_KEY" }
+    $row = (Invoke-RestMethod -Uri "$SB_URL/rest/v1/leads?id=eq.$id&select=*" -Headers $headers)
+    if ($row -is [array]) { $row = $row[0] }
+    if (-not $row) { return $null }
+
+    # Devuelve el mismo shape camelCase que antes daba Airtable (fields) — campos_custom
+    # (plataformaVideollamada, horaCita) se mezcla al mismo nivel, igual que rowToRecord()
+    # en lib/admin/leadsRepo.ts.
+    $result = [ordered]@{}
+    foreach ($prop in $row.PSObject.Properties) {
+        $key = $prop.Name
+        if ($key -in @("id", "created_at", "updated_at")) { continue }
+        if ($key -eq "campos_custom" -and $prop.Value) {
+            foreach ($cp in $prop.Value.PSObject.Properties) { $result[$cp.Name] = $cp.Value }
+            continue
+        }
+        $camelKey = if ($COLUMN_MAP.ContainsKey($key)) { $COLUMN_MAP[$key] } else { $key }
+        $result[$camelKey] = $prop.Value
+    }
+    [PSCustomObject]$result
 }
 
 function at-delete($id) {
-    Invoke-RestMethod -Uri "https://api.airtable.com/v0/$AT_BASE/$AT_TABLE/$id" `
-        -Method DELETE -Headers @{ Authorization = "Bearer $AT_KEY" } | Out-Null
+    $headers = @{ apikey = $SB_KEY; Authorization = "Bearer $SB_KEY" }
+    Invoke-RestMethod -Uri "$SB_URL/rest/v1/leads?id=eq.$id" -Method DELETE -Headers $headers | Out-Null
 }
 
 # Registra un record para limpieza y lo devuelve (puede ser $null)
@@ -46,7 +99,7 @@ function track($id) {
 # Comparación campo a campo: expected puede ser $null (campo debe estar ausente)
 function check($run, $field, $actual, $expected) {
     if ($null -eq $expected) {
-        # El campo NO debe existir en Airtable
+        # El campo NO debe existir (columna null) en el lead
         if ($null -ne $actual) {
             $msg = "[$run] FALLO: $field debería ser VACÍO pero vale '$actual'"
             $script:discrepancias.Add($msg)
@@ -85,7 +138,7 @@ banner "RUN 0 - Corte tras nivel1"
 $s = fresh
 $r = step $s "Test R0 Corte"; $s = $r.sesionActualizada                    # p1_nombre
 $r = step $s "r0@test.com";   $s = $r.sesionActualizada                    # p2_email
-$r = step $s "+34600000000";  $s = $r.sesionActualizada; $id0 = track $s.airtableRecordId # p15_telefono → guardar_nivel1
+$r = step $s "+34600000000";  $s = $r.sesionActualizada; $id0 = track $s.leadId # p15_telefono → guardar_nivel1
 Write-Host "Run0 recordId=$id0, guardado=$($r.guardado), siguientePaso=$($r.siguientePaso.id)"
 
 $f = at-get $id0
@@ -109,7 +162,7 @@ banner "RUN 1 - lead-en-preparacion (fuera, sin-ingresos + ninguna)"
 $s = fresh
 $r = step $s "Test R1 Prep";   $s = $r.sesionActualizada
 $r = step $s "r1@test.com";    $s = $r.sesionActualizada
-$r = step $s "+34600000001";   $s = $r.sesionActualizada; $id1 = track $s.airtableRecordId  # guardar_nivel1
+$r = step $s "+34600000001";   $s = $r.sesionActualizada; $id1 = track $s.leadId  # guardar_nivel1
 $r = step $s "fuera";          $s = $r.sesionActualizada   # p3_origen
 $r = step $s "Argentina";      $s = $r.sesionActualizada   # p3b_pais
 $r = step $s "1-3-meses";      $s = $r.sesionActualizada   # p4_plazo
@@ -146,7 +199,7 @@ check "R1" "consentimientoRGPD" $f.consentimientoRGPD $true
 # DEBEN ESTAR AUSENTES
 check "R1" "ninos"             $f.ninos             $null
 check "R1" "adolescentes"      $f.adolescentes      $null
-check "R1" "mascotaTipo"       $f.mascotaTipo       $null
+check "R1" "mascotaTipo"       $f.mascotaTipo       @()   # text[] not null default (Postgres, no Airtable): ausente = array vacío, no null
 check "R1" "presupuestoMensual" $f.presupuestoMensual $null
 check "R1" "cuentaBancaria"    $f.cuentaBancaria    $null
 check "R1" "comprendeHonorarios" $f.comprendeHonorarios $null
@@ -163,7 +216,7 @@ banner "RUN 2 - transicion_nivel2=no → incompleto (fuera, perro+gato)"
 $s = fresh
 $r = step $s "Test R2 TransNo"; $s = $r.sesionActualizada
 $r = step $s "r2@test.com";     $s = $r.sesionActualizada
-$r = step $s "+34600000002";    $s = $r.sesionActualizada; $id2 = track $s.airtableRecordId
+$r = step $s "+34600000002";    $s = $r.sesionActualizada; $id2 = track $s.leadId
 $r = step $s "fuera";           $s = $r.sesionActualizada   # p3_origen
 $r = step $s "Venezuela";       $s = $r.sesionActualizada   # p3b_pais
 $r = step $s "menos-1-mes";     $s = $r.sesionActualizada   # p4_plazo
@@ -230,7 +283,7 @@ banner "RUN 3 - en_espana, estudio(skip-p22), califica"
 $s = fresh
 $r = step $s "Test R3 Califica"; $s = $r.sesionActualizada
 $r = step $s "r3@test.com";      $s = $r.sesionActualizada
-$r = step $s "+34600000003";     $s = $r.sesionActualizada; $id3 = track $s.airtableRecordId
+$r = step $s "+34600000003";     $s = $r.sesionActualizada; $id3 = track $s.leadId
 $r = step $s "en_espana";        $s = $r.sesionActualizada   # p3_origen
 $r = step $s "3-6-meses";        $s = $r.sesionActualizada   # p4_plazo
 $r = step $s "a-coruna";         $s = $r.sesionActualizada   # p5_ciudad
@@ -309,7 +362,7 @@ banner "RUN 4 - en_espana, integrarse, licencia=origen, seguimiento-futuro"
 $s = fresh
 $r = step $s "Test R4 Integrarse"; $s = $r.sesionActualizada
 $r = step $s "r4@test.com";        $s = $r.sesionActualizada
-$r = step $s "+34600000004";       $s = $r.sesionActualizada; $id4 = track $s.airtableRecordId
+$r = step $s "+34600000004";       $s = $r.sesionActualizada; $id4 = track $s.leadId
 $r = step $s "en_espana";          $s = $r.sesionActualizada
 $r = step $s "mas-6-meses";        $s = $r.sesionActualizada
 $r = step $s "lugo";               $s = $r.sesionActualizada
@@ -374,8 +427,8 @@ check "R4" "mascotaPeso"       $f.mascotaPeso       $null
 check "R4" "tipoInmueble"      $f.tipoInmueble      $null
 check "R4" "habitacionesMinimas" $f.habitacionesMinimas $null
 check "R4" "amueblado"         $f.amueblado         $null
-check "R4" "imprescindibles"   $f.imprescindibles   $null
-check "R4" "comodidades"       $f.comodidades       $null
+check "R4" "imprescindibles"   $f.imprescindibles   @()   # text[] not null default: ausente = array vacío, no null
+check "R4" "comodidades"       $f.comodidades       @()   # text[] not null default: ausente = array vacío, no null
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RUN 5: Fuera, perro solo (1 perro, 0-5kg), sin menores, nacionalidad-en-tramite,
@@ -386,7 +439,7 @@ banner "RUN 5 - fuera, perro solo, piso 4hab, seguimiento-futuro"
 $s = fresh
 $r = step $s "Test R5 Piso";   $s = $r.sesionActualizada
 $r = step $s "r5@test.com";    $s = $r.sesionActualizada
-$r = step $s "+34600000005";   $s = $r.sesionActualizada; $id5 = track $s.airtableRecordId
+$r = step $s "+34600000005";   $s = $r.sesionActualizada; $id5 = track $s.leadId
 $r = step $s "fuera";          $s = $r.sesionActualizada
 $r = step $s "Mexico";         $s = $r.sesionActualizada   # p3b_pais
 $r = step $s "sin-fecha";      $s = $r.sesionActualizada
@@ -467,7 +520,7 @@ banner "RUN 6 - en_espana, ninos=0 adol=3+, turista, casa, busca-vivienda"
 $s = fresh
 $r = step $s "Test R6 Casa";   $s = $r.sesionActualizada
 $r = step $s "r6@test.com";    $s = $r.sesionActualizada
-$r = step $s "+34600000006";   $s = $r.sesionActualizada; $id6 = track $s.airtableRecordId
+$r = step $s "+34600000006";   $s = $r.sesionActualizada; $id6 = track $s.leadId
 $r = step $s "en_espana";      $s = $r.sesionActualizada
 $r = step $s "1-3-meses";      $s = $r.sesionActualizada
 $r = step $s "indiferente";    $s = $r.sesionActualizada
@@ -533,7 +586,7 @@ check "R6" "etiqueta"          $f.etiqueta          "seguimiento-futuro"
 check "R6" "calificacion"      $f.calificacion      "bajo"   # turista → bajo directo
 check "R6" "consentimientoRGPD" $f.consentimientoRGPD $true
 # AUSENTES
-check "R6" "mascotaTipo"       $f.mascotaTipo       $null
+check "R6" "mascotaTipo"       $f.mascotaTipo       @()   # text[] not null default: ausente = array vacío, no null
 check "R6" "cantidadPerros"    $f.cantidadPerros    $null
 check "R6" "cantidadGatos"     $f.cantidadGatos     $null
 check "R6" "mascotaPeso"       $f.mascotaPeso       $null
@@ -549,7 +602,7 @@ banner "RUN 7 - fuera, busca-empleo, habitacion, ninguna comodidades"
 $s = fresh
 $r = step $s "Test R7 Habitacion"; $s = $r.sesionActualizada
 $r = step $s "r7@test.com";        $s = $r.sesionActualizada
-$r = step $s "+34600000007";       $s = $r.sesionActualizada; $id7 = track $s.airtableRecordId
+$r = step $s "+34600000007";       $s = $r.sesionActualizada; $id7 = track $s.leadId
 $r = step $s "fuera";              $s = $r.sesionActualizada
 $r = step $s "Colombia";           $s = $r.sesionActualizada
 $r = step $s "3-6-meses";          $s = $r.sesionActualizada
@@ -620,12 +673,12 @@ check "R7" "objetivoBusqueda"  $f.objetivoBusqueda  $null
 check "R7" "cantidadGatos"     $f.cantidadGatos     $null
 
 # ─────────────────────────────────────────────────────────────────────────────
-# PRUEBA DE ROBUSTEZ - guardado:false cuando Airtable falla
+# PRUEBA DE ROBUSTEZ - guardado:false cuando Supabase falla
 # Se verifica en las respuestas de los runs que fallaron (si los hubo).
 # Verificación por inspección del código: conReintentos retorna null → guardado=false.
 # ─────────────────────────────────────────────────────────────────────────────
 banner "ROBUSTEZ - verificación de guardado:false"
-Write-Host "Todos los runs completados con guardado=true (Airtable operativo)."
+Write-Host "Todos los runs completados con guardado=true (Supabase operativo)."
 Write-Host "La prueba de guardado=false requiere un fallo forzado - ver informe."
 
 # ─────────────────────────────────────────────────────────────────────────────

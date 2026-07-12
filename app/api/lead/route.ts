@@ -11,7 +11,7 @@
  * Seguridad:
  *   - No loguea datos personales — solo tipo de error y timestamp
  *   - Header X-RateLimit-Policy documenta la política (rate limiting real en Vercel/Cloudflare)
- *   - Clave de Airtable nunca sale del servidor
+ *   - Clave de Supabase (service_role) nunca sale del servidor
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -442,6 +442,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Consentimientos
       comprendeServicio: true,
       consentimientoRGPD: true,
+
+      // Origen del lead
+      fuenteLead: 'web',
     }
 
     // 4. Guardar el lead
@@ -450,7 +453,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err)
 
-      if (errorMessage.startsWith('Airtable no configurado')) {
+      if (errorMessage.startsWith('Supabase no configurado')) {
         console.error('[api/lead] Integración no configurada —', new Date().toISOString())
         return errorResponse(
           'El sistema de registro no está configurado aún. Tu consulta fue recibida y te contactaremos por email.',

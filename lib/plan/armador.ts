@@ -18,7 +18,7 @@ import type { LeadData } from '../leads'
 
 /**
  * Subconjunto de LeadData relevante para armar el plan.
- * Usa los nombres exactos de campo que Gina guarda en Airtable.
+ * Usa los nombres exactos de campo que Gina guarda en Supabase (tabla `leads`).
  *
  * Nota sobre `paisResidencia`: Gina guarda 'en_espana' cuando el usuario
  * selecciona "Ya vivo en España" (paso p3_origen). Si selecciona "Vengo de fuera",

@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
-import { findLeadByEmail, patchRecord } from '@/lib/admin/airtable'
+import { findLeadByEmail, patchRecord } from '@/lib/admin/leadsRepo'
 import { generateAdminToken } from '@/lib/admin/tokens'
 import { sendEmail, escapeHtml, buildEmailShell } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
@@ -202,8 +202,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     record = await findLeadByEmail(clientEmail)
   } catch (err) {
-    const status = err instanceof Error ? err.message.match(/\d{3}/)?.[0] : undefined
-    console.error(`[calcom] Error buscando lead por email — status: ${status ?? 'red'}, ts: ${new Date().toISOString()}`)
+    console.error(`[calcom] Error buscando lead por email — ts: ${new Date().toISOString()}`, err instanceof Error ? err.name : 'unknown')
     // Continuamos sin lead — al menos notificamos a Silvana
   }
 
@@ -213,13 +212,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (record) {
     tasks.push(
       patchRecord(record.id, {
-        citaAgendada:          'true',
+        citaAgendada:          true,
         fechaCita:             startTime,  // ISO string — usado en getLeadsConCitaProxima()
         horaCita,
         plataformaVideollamada: plataforma,
       }).catch(err => {
-        const status = err instanceof Error ? err.message.match(/^Airtable PATCH (\d+)/)?.[1] : undefined
-        console.error(`[calcom] PATCH Airtable — recordId: ${record.id}, status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
+        console.error(`[calcom] update Supabase falló — recordId: ${record.id}, ts: ${new Date().toISOString()}`, err instanceof Error ? err.name : 'unknown')
       })
     )
 
@@ -238,7 +236,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       )
     }
   } else {
-    console.warn('[calcom] BOOKING_CREATED sin lead asociado en Airtable')
+    console.warn('[calcom] BOOKING_CREATED sin lead asociado en Supabase')
     if (silvanaEmail) {
       tasks.push(
         sendEmail({

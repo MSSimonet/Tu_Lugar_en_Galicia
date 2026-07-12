@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from './supabase'
+import { getSupabaseServerClient } from '@/lib/supabase/serverClient'
 import type { ComunidadPerfil, Actividad } from './types'
 
 export interface UpsertPerfilInput {

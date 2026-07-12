@@ -3,9 +3,10 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { verifyAdminToken } from '@/lib/admin/tokens'
 import { generateAgendaCode } from '@/lib/admin/codes'
-import { getRecord, patchRecord } from '@/lib/admin/airtable'
+import { getRecord, patchRecord } from '@/lib/admin/leadsRepo'
 import { sendEmail, buildAgendaEmail } from '@/lib/admin/email'
 import { getRealIp } from '@/lib/utils/ip'
+import { isValidUuid } from '@/lib/utils/validation'
 
 const ratelimit =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
@@ -33,7 +34,7 @@ export async function POST(
 
   const { recordId } = await params
 
-  if (!recordId || !/^rec[a-zA-Z0-9]{14}$/.test(recordId)) {
+  if (!recordId || !isValidUuid(recordId)) {
     return NextResponse.json({ error: 'ID de registro inválido' }, { status: 400 })
   }
 
@@ -61,7 +62,7 @@ export async function POST(
     )
   }
 
-  // Leer el registro en Airtable
+  // Leer el registro en Supabase
   let fields: Record<string, unknown>
   try {
     fields = await getRecord(recordId)
@@ -85,16 +86,15 @@ export async function POST(
     )
   }
 
-  // Generar código + guardar en Airtable
+  // Generar código + guardar en Supabase
   const codigo = generateAgendaCode()
   const fechaHabilitacion = new Date().toISOString()
 
   try {
     await patchRecord(recordId, { codigoAgenda: codigo, fechaHabilitacion })
   } catch (err) {
-    const status = err instanceof Error ? err.message.match(/^Airtable PATCH (\d+)/)?.[1] : undefined
-    console.error(`[habilitar-agenda] Airtable PATCH fallido — recordId: ${recordId}, status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
-    return NextResponse.json({ error: 'Error al guardar el código en Airtable' }, { status: 500 })
+    console.error(`[habilitar-agenda] Supabase update fallido — recordId: ${recordId}, ts: ${new Date().toISOString()}`, err instanceof Error ? err.name : 'unknown')
+    return NextResponse.json({ error: 'Error al guardar el código' }, { status: 500 })
   }
 
   // Enviar mail cálido al cliente

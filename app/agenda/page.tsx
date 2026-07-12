@@ -2,7 +2,7 @@ import { getNextMetadata } from '@/lib/seo/metadata'
 import { CalEmbed } from '@/components/shared/CalEmbed'
 import { AgendaPublica } from '@/components/agenda/AgendaPublica'
 
-import { validateCodigoAgenda } from '@/lib/admin/airtable'
+import { validateCodigoAgenda } from '@/lib/admin/leadsRepo'
 
 export const metadata = getNextMetadata('agenda')
 
@@ -18,7 +18,7 @@ export default async function AgendaPage({ searchParams }: PageProps) {
   try {
     isValid = rawCode ? await validateCodigoAgenda(rawCode) : false
   } catch {
-    // Airtable no disponible — fail closed (mostrar página pública)
+    // Supabase no disponible — fail closed (mostrar página pública)
     isValid = false
   }
 

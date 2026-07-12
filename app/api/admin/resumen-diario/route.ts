@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorized } from '@/lib/admin/auth'
-import { listAllRecords, patchRecord, type AirtableRecord } from '@/lib/admin/airtable'
+import { listRecordsPorCalificacion, patchRecord, type AirtableRecord } from '@/lib/admin/leadsRepo'
 import { generateAdminToken } from '@/lib/admin/tokens'
 import { sendEmail } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
@@ -353,12 +353,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   let records: AirtableRecord[]
   try {
-    records = await listAllRecords(
-      'OR({calificacion}="potencial",{calificacion}="potencial-alto",{calificacion}="en-desarrollo")'
-    )
+    records = await listRecordsPorCalificacion(['potencial', 'potencial-alto', 'en-desarrollo'])
   } catch (err) {
-    console.error('[resumen-diario] Airtable error:', err)
-    return NextResponse.json({ error: 'Error consultando Airtable' }, { status: 500 })
+    console.error('[resumen-diario] Supabase error:', err instanceof Error ? err.name : 'unknown')
+    return NextResponse.json({ error: 'Error consultando la base de datos' }, { status: 500 })
   }
 
   // ── 1. Expirar códigos vencidos (>7 días) antes de construir el mail ─────────

@@ -6,6 +6,7 @@ import { armarPlan } from '@/lib/plan/armador'
 import { generarPlanPdf } from '@/lib/plan/generarPdf'
 import { verifyAdminToken } from '@/lib/admin/tokens'
 import { getRealIp } from '@/lib/utils/ip'
+import { isValidUuid } from '@/lib/utils/validation'
 
 const ratelimit =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
@@ -33,7 +34,7 @@ export async function GET(
 
   const { recordId } = await params
 
-  if (!recordId || !/^rec[a-zA-Z0-9]{14}$/.test(recordId)) {
+  if (!recordId || !isValidUuid(recordId)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
 
@@ -49,7 +50,7 @@ export async function GET(
     lead = await getLead(recordId)
   } catch (err) {
     const msg = err instanceof Error ? err.message : ''
-    const status = msg.includes('HTTP 404') ? 404 : 500
+    const status = msg === 'Lead no encontrado' ? 404 : 500
     return NextResponse.json(
       { error: status === 404 ? 'Lead no encontrado' : 'Error interno' },
       { status },
