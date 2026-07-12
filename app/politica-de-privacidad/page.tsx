@@ -163,12 +163,22 @@ export default function PoliticaDePrivacidadPage() {
             <p className="mb-[var(--space-3)]">
               Los datos personales no se ceden a terceros salvo obligación legal.
             </p>
+            <p className="mb-[var(--space-3)]">
+              Los datos personales recabados a través del asistente conversacional, el formulario
+              de diagnóstico y el formulario de contacto se almacenan en una base de datos
+              gestionada por Supabase Inc., que actúa como encargado del tratamiento al amparo de
+              un contrato de encargo conforme al RGPD. Supabase aloja estos datos en servidores
+              ubicados en Alemania, dentro de la Unión Europea, por lo que el tratamiento se
+              realiza íntegramente dentro del Espacio Económico Europeo.
+            </p>
             <p>
-              Se utilizan servicios de almacenamiento en la nube (Airtable, Inc.) como encargados
-              del tratamiento, con quienes existen garantías contractuales adecuadas de conformidad
-              con el RGPD. Airtable procesa los datos en servidores ubicados en los Estados Unidos,
-              al amparo de las garantías establecidas en las Cláusulas Contractuales Tipo aprobadas
-              por la Comisión Europea.
+              Adicionalmente, los datos facilitados por quienes se registran en la sección
+              &quot;Comunidad de Acogida&quot; (nombre, correo electrónico, ubicación aproximada y,
+              en su caso, teléfono de contacto) se replican en una tabla de Airtable, Inc., que
+              actúa como encargado del tratamiento para esta finalidad específica, con garantías
+              contractuales adecuadas de conformidad con el RGPD. Airtable procesa estos datos en
+              servidores ubicados en los Estados Unidos, al amparo de las Cláusulas Contractuales
+              Tipo aprobadas por la Comisión Europea.
             </p>
           </section>
 

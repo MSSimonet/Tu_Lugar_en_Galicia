@@ -4,6 +4,21 @@ Problemas conocidos del entorno/herramientas que no son bugs del producto — se
 
 ---
 
+## Pendiente legal: confirmar DPA/términos de Supabase Inc. antes de tráfico real
+
+**Estado:** sin verificar — asumido, no confirmado.
+
+Al reescribir la Política de Privacidad (sección 5, Destinatarios) tras la migración a
+Supabase, se asumió que el DPA/términos estándar de tratamiento de datos de Supabase Inc.
+ya están aceptados para este proyecto — mismo supuesto que ya se venía asumiendo para
+Airtable, Inc. Nadie con criterio legal lo verificó formalmente.
+
+**Acción pendiente:** confirmar antes de que la web reciba tráfico real (no solo datos de
+test) que el DPA de Supabase está efectivamente aceptado para el proyecto usado en
+producción.
+
+---
+
 ## Pendiente técnico: `next-auth` en versión beta
 
 **Estado:** decisión consciente, no un bug — pero requiere revisión antes de producción real.
