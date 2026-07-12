@@ -13,6 +13,7 @@ const ratelimit =
         redis: Redis.fromEnv(),
         limiter: Ratelimit.slidingWindow(20, '10 m'),
         analytics: false,
+        prefix: 'ratelimit:habilitar-agenda',
       })
     : null
 

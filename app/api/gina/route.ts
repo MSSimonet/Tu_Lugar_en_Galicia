@@ -27,6 +27,7 @@ const ratelimit =
         // Máx. 44 pasos en rama más larga del flow + 25% margen = 60
         limiter: Ratelimit.slidingWindow(60, '10 m'),
         analytics: false,
+        prefix: 'ratelimit:gina',
       })
     : null
 

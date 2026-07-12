@@ -36,6 +36,7 @@ const ratelimit =
         redis: Redis.fromEnv(),
         limiter: Ratelimit.slidingWindow(10, '1 h'),
         analytics: false,
+        prefix: 'ratelimit:lead',
       })
     : null
 

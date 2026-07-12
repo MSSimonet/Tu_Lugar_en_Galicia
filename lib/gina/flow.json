@@ -11,6 +11,7 @@
   {
     "id": "rgpd",
     "tipo": "botones",
+    "campo": "rgpd",
     "texto": "Antes de continuar, quiero ser transparente contigo desde el principio: para poder ayudarte, voy a guardar las respuestas que me des (como tu nombre, tu contacto y lo que me cuentes de tu situación). Las usamos solo para preparar tu plan y para que el equipo de Tu Lugar en Galicia pueda contactarte. No se las damos a nadie más, y puedes pedirnos ver o borrar tus datos cuando quieras. ¿Te parece bien?",
     "opciones": [
       { "label": "Sí, me parece bien", "value": "acepto" },

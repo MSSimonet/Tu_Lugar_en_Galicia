@@ -10,6 +10,7 @@ const ratelimit =
         redis: Redis.fromEnv(),
         limiter: Ratelimit.slidingWindow(5, '10 m'),
         analytics: false,
+        prefix: 'ratelimit:contacto',
       })
     : null
 
