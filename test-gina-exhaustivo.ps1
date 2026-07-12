@@ -5,12 +5,15 @@ Prueba exhaustiva del guardado de leads de Gina.
 #>
 
 $ErrorActionPreference = "Stop"
-$API = "http://localhost:59163/api/gina"
+$API = "http://localhost:3000/api/gina"
 $envFile = "C:\Users\ACER\Tu_Lugar_en_Galicia\.env.local"
 
 function envVar($name) {
     $line = (Get-Content $envFile | Select-String "^$name=" | Select-Object -First 1).Line
-    if ($line) { $line.Split("=",2)[1].Trim() } else { "" }
+    if (-not $line) { return "" }
+    $value = $line.Split("=",2)[1].Trim()
+    # .env.local puede envolver el valor en comillas dobles — Trim() no las saca.
+    $value.Trim('"')
 }
 
 # Leads ahora viven en Supabase (tabla `leads`), no en Airtable — ver docs/crm-supabase-fase0.md.
@@ -55,16 +58,29 @@ $FAIL = 0
 
 function step($sesion, $respuesta) {
     $body = @{ sesion = $sesion; respuesta = $respuesta } | ConvertTo-Json -Depth 20 -Compress
-    Invoke-RestMethod -Uri $API -Method POST -Body $body -ContentType "application/json"
+    # /api/gina exige el header Origin (fail-closed, ver app/api/gina/route.ts) — solo
+    # localhost:3000 está permitido en NODE_ENV=development.
+    Invoke-RestMethod -Uri $API -Method POST -Body $body -ContentType "application/json" `
+        -Headers @{ Origin = "http://localhost:3000" }
 }
 
 function fresh() {
-    [PSCustomObject]@{ pasoActual = "p1_nombre"; respuestas = [PSCustomObject]@{}; completado = $false }
+    # Camina bienvenida -> rgpd (acepto) -> p1_nombre de verdad, en vez de arrancar
+    # directo en p1_nombre: si no, ningún run pasa por el paso "rgpd" y
+    # consentimientoRGPD queda false siempre, sin que sea un bug real (ver sesión
+    # de fix del campo "rgpd" en flow.json).
+    $s0 = [PSCustomObject]@{ pasoActual = "bienvenida"; respuestas = [PSCustomObject]@{}; completado = $false }
+    $r1 = step $s0 "empecemos"
+    $r2 = step $r1.sesionActualizada "acepto"
+    $r2.sesionActualizada
 }
 
 function at-get($id) {
     $headers = @{ apikey = $SB_KEY; Authorization = "Bearer $SB_KEY" }
-    $row = (Invoke-RestMethod -Uri "$SB_URL/rest/v1/leads?id=eq.$id&select=*" -Headers $headers)
+    # -UserAgent no-navegador: las claves sb_secret_... nuevas de Supabase rechazan con
+    # 403 "Forbidden use of secret API key in browser" si detectan un User-Agent que
+    # parece de navegador (el default de Invoke-RestMethod incluye "Mozilla/5.0...").
+    $row = (Invoke-RestMethod -Uri "$SB_URL/rest/v1/leads?id=eq.$id&select=*" -Headers $headers -UserAgent "supabase-ps-test/1.0")
     if ($row -is [array]) { $row = $row[0] }
     if (-not $row) { return $null }
 
@@ -87,7 +103,7 @@ function at-get($id) {
 
 function at-delete($id) {
     $headers = @{ apikey = $SB_KEY; Authorization = "Bearer $SB_KEY" }
-    Invoke-RestMethod -Uri "$SB_URL/rest/v1/leads?id=eq.$id" -Method DELETE -Headers $headers | Out-Null
+    Invoke-RestMethod -Uri "$SB_URL/rest/v1/leads?id=eq.$id" -Method DELETE -Headers $headers -UserAgent "supabase-ps-test/1.0" | Out-Null
 }
 
 # Registra un record para limpieza y lo devuelve (puede ser $null)
@@ -332,7 +348,11 @@ check "R3" "garantias"         $f.garantias         @("garantia-adicional","segu
 check "R3" "presupuestoMensual" $f.presupuestoMensual "1000-1400"
 check "R3" "cuentaBancaria"    $f.cuentaBancaria    "no"
 check "R3" "comprendeHonorarios" $f.comprendeHonorarios "pide-explicacion"
-check "R3" "comprendeServicio" $f.comprendeServicio $false
+# comprendeServicio se fija SIEMPRE en true en el mapper (app/api/gina/route.ts:332),
+# se le haya explicado o no (ver docs/gina-flujo.md, paso p14_servicio) — esta
+# aserción esperaba $false para "pide-explicacion", que nunca fue el comportamiento
+# real de la app. Bug del test, no del producto ni de la migración a Supabase.
+check "R3" "comprendeServicio" $f.comprendeServicio $true
 check "R3" "necesidadesEspeciales" $f.necesidadesEspeciales "no"
 check "R3" "tipoLicencia"      $f.tipoLicencia      "no-tiene"
 check "R3" "ciudadActual"      $f.ciudadActual      "Ferrol"
