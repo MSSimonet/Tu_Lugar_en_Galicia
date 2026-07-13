@@ -104,7 +104,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const nonce = (await headers()).get('x-nonce') ?? ''
+  const requestHeaders = await headers()
+  const nonce = requestHeaders.get('x-nonce') ?? ''
+  // Seteado en middleware.ts para toda ruta /admin/* — el panel interno no
+  // muestra el header/footer/widget de Gina del sitio público.
+  const isAdminRoute = requestHeaders.get('x-admin-route') === '1'
   return (
     <html
       lang="es"
@@ -116,10 +120,10 @@ export default async function RootLayout({
             el browser elimina el atributo nonce del DOM después de evaluar el script (seguridad),
             lo que causaría un falso mismatch de hidratación. */}
         <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `(function(){const s=localStorage.getItem('tlg-theme');const p=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',s?s==='dark':p);})();` }} />
-        <Header />
+        {!isAdminRoute && <Header />}
         <main id="main-content" className="flex-1">{children}</main>
-        <Footer />
-        <GinaWidget />
+        {!isAdminRoute && <Footer />}
+        {!isAdminRoute && <GinaWidget />}
       </body>
     </html>
   );

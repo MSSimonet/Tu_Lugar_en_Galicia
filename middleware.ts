@@ -30,6 +30,12 @@ export async function middleware(req: NextRequest) {
   const requestHeaders = new Headers(req.headers)
   requestHeaders.set('x-nonce', nonce)
 
+  // app/layout.tsx lee este header para NO renderizar el Header/Footer/GinaWidget
+  // del sitio público en ninguna página de /admin/* (login, dashboard, inbox,
+  // ficha 360°, la ficha con token de Fase 1) — es un panel interno, no debe
+  // mostrar la navegación ni el widget de cara al cliente.
+  requestHeaders.set('x-admin-route', pathname.startsWith('/admin/') ? '1' : '0')
+
   const response = NextResponse.next({
     request: { headers: requestHeaders },
   })
