@@ -219,8 +219,13 @@ function toRow(data: LeadData): Record<string, unknown> {
   }
 }
 
-/** Traduce una fila de `leads` (snake_case) de vuelta a LeadData (camelCase). */
-function fromRow(row: Record<string, unknown>): LeadData {
+/**
+ * Traduce una fila de `leads` (snake_case) de vuelta a LeadData (camelCase).
+ * Exportada (además de usarse en getLead() más abajo) para que lib/admin/inboxRepo.ts
+ * pueda mapear filas crudas de Supabase a LeadData sin duplicar este mapeo — es el único
+ * punto del proyecto que conoce la traducción snake_case → camelCase de `leads`.
+ */
+export function fromRow(row: Record<string, unknown>): LeadData {
   const str = (key: string, fallback = ''): string =>
     typeof row[key] === 'string' ? (row[key] as string) : fallback
   const bool = (key: string): boolean => row[key] === true

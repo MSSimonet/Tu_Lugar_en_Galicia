@@ -5,6 +5,8 @@
  * No se persiste en base de datos en Etapa 1: vive en el estado React del widget.
  */
 
+import type { TranscripcionEntry } from './transcripcion'
+
 type GinaEtiqueta =
   | 'lead-en-preparacion'
   | 'seguimiento-futuro'
@@ -27,6 +29,14 @@ export type GinaSession = {
   leadId?: string
   /** Firma HMAC de leadId (generateAdminToken) — evita que el cliente inyecte un leadId ajeno */
   leadIdSig?: string
+  /**
+   * Buffer de mensajes del transcript aún no persistidos (Fase 2, ficha 360°).
+   * Solo se usa ANTES de que exista leadId (bienvenida→rgpd→p1_nombre→p2_email);
+   * una vez creado el lead en guardar_nivel1, cada turno se persiste directo y este
+   * buffer queda vacío. Guardado 100% aditivo — no afecta a `respuestas` ni al
+   * resto de la sesión.
+   */
+  transcripcionPendiente?: TranscripcionEntry[]
 }
 
 /** Crea una sesión inicial antes de mostrar el primer paso */

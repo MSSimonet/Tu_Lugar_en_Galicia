@@ -11,10 +11,13 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { procesarRespuesta, obtenerPaso } from '@/lib/gina/flowEngine'
+import type { Paso } from '@/lib/gina/flowEngine'
 import type { GinaSession } from '@/lib/gina/session'
 import { saveLead } from '@/lib/leads'
 import type { LeadData } from '@/lib/leads'
 import { calcularCalificacion } from '@/lib/gina/scoring'
+import { guardarTranscripcion } from '@/lib/gina/transcripcion'
+import type { TranscripcionEntry } from '@/lib/gina/transcripcion'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { getRealIp } from '@/lib/utils/ip'
@@ -204,11 +207,87 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // ── Transcript de la conversación (Fase 2, ficha 360°) — guardado 100% aditivo ──
+  // No modifica ninguno de los guardados de arriba ni lib/gina/flowEngine.ts: solo
+  // persiste, en paralelo, los mensajes de este turno. Antes de que exista leadId
+  // (bienvenida→p2_email) se acumulan en sesion.transcripcionPendiente; en cuanto
+  // hay leadId, cada turno se persiste directo y el buffer queda vacío. Un fallo acá
+  // nunca bloquea la respuesta al usuario ni afecta `guardado`.
+  const nuevasEntradasTranscript = construirNuevasEntradas(paso, respuesta, siguientePaso, sesionActualizada)
+  const leadIdParaTranscript = sesionParaDevolver.leadId
+  if (leadIdParaTranscript) {
+    const pendientes = [...(sesion.transcripcionPendiente ?? []), ...nuevasEntradasTranscript]
+    try {
+      await guardarTranscripcion(leadIdParaTranscript, pendientes)
+    } catch (err) {
+      console.error(
+        `[gina] fallo guardando transcripción (no bloquea el flujo) — ts: ${new Date().toISOString()}`,
+        err instanceof Error ? err.name : 'unknown',
+      )
+    }
+    sesionParaDevolver = { ...sesionParaDevolver, transcripcionPendiente: [] }
+  } else {
+    sesionParaDevolver = {
+      ...sesionParaDevolver,
+      transcripcionPendiente: [...(sesion.transcripcionPendiente ?? []), ...nuevasEntradasTranscript],
+    }
+  }
+
   return NextResponse.json({
     sesionActualizada: sesionParaDevolver,
     siguientePaso,
     guardado,
   })
+}
+
+/**
+ * Interpola {{nombre}} en un texto de Gina con el nombre real de la sesión —
+ * mismo placeholder que ya usa flow.json, resuelto acá solo para el transcript
+ * (el widget hace su propia interpolación para lo que le muestra al usuario).
+ */
+function interpolarTexto(texto: string, sesion: GinaSession): string {
+  return texto.replace(/\{\{nombre\}\}/g, sesion.nombre || '')
+}
+
+/** Traduce la respuesta cruda (value/values) a su label legible, si el paso tiene opciones. */
+function formatearRespuestaUsuario(paso: Paso, respuesta: string | string[]): string {
+  if (!paso.opciones || paso.opciones.length === 0) {
+    return Array.isArray(respuesta) ? respuesta.join(', ') : String(respuesta)
+  }
+  const labelPorValor = new Map(paso.opciones.map((o) => [o.value, o.label]))
+  const valores = Array.isArray(respuesta) ? respuesta : [respuesta]
+  return valores.map((v) => labelPorValor.get(v) ?? v).join(', ')
+}
+
+/**
+ * Arma las entradas nuevas del transcript para este turno: el mensaje de Gina que
+ * se acaba de responder + la respuesta del usuario y, si el siguiente paso es
+ * terminal ("fin"), también ese último mensaje de Gina — porque no va a haber
+ * otro request que lo capture. Los pasos virtuales (texto vacío, cortocircuitados
+ * por flowEngine) no generan entradas.
+ */
+function construirNuevasEntradas(
+  paso: Paso,
+  respuesta: string | string[],
+  siguientePaso: Paso,
+  sesion: GinaSession,
+): TranscripcionEntry[] {
+  if (!paso.texto) return []
+
+  const entradas: TranscripcionEntry[] = [
+    { rol: 'gina', mensaje: interpolarTexto(paso.texto, sesion), pasoId: paso.id },
+    { rol: 'usuario', mensaje: formatearRespuestaUsuario(paso, respuesta), pasoId: paso.id },
+  ]
+
+  if (siguientePaso.accion === 'fin' && siguientePaso.texto) {
+    entradas.push({
+      rol: 'gina',
+      mensaje: interpolarTexto(siguientePaso.texto, sesion),
+      pasoId: siguientePaso.id,
+    })
+  }
+
+  return entradas
 }
 
 /**

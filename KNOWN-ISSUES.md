@@ -4,6 +4,28 @@ Problemas conocidos del entorno/herramientas que no son bugs del producto — se
 
 ---
 
+## Browser pane (Claude Code) — `preview_stop`/`preview_start` no mata el proceso Node real
+
+**Estado:** sin resolver, causa raíz desconocida (herramienta, no producto).
+
+Verificado en la sesión de debugging del login de NextAuth (Fase 2): tras editar `.env.local`
+y llamar `preview_stop` seguido de `preview_start`, el proceso `next dev` seguía siendo el
+mismo (mismo PID, mismo `StartTime`) — los cambios de variables de entorno nunca se
+reflejaban, porque Next.js solo lee `.env.local` una vez al arrancar el proceso. `preview_start`
+reportaba un servidor "nuevo" (`reused: false`, `serverId` distinto) pero el proceso `node`
+subyacente era el mismo de antes.
+
+**Workaround usado:** matar los procesos `node` a mano por PID (`Get-Process -Name node |
+Stop-Process -Force`) antes de cada `preview_start`, confirmando con `Get-Process` que el
+`StartTime` del proceso resultante es realmente nuevo antes de asumir que el servidor recargó
+las variables de entorno.
+
+**Impacto:** cualquier cambio a `.env.local` (o a cualquier variable de entorno) durante una
+sesión con el Browser pane requiere este workaround — un `preview_stop`/`preview_start` normal
+no alcanza.
+
+---
+
 ## Pendiente legal: confirmar DPA/términos de Supabase Inc. antes de tráfico real
 
 **Estado:** sin verificar — asumido, no confirmado.
