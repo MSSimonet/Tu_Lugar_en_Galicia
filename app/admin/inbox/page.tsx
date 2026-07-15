@@ -13,7 +13,7 @@ export default async function InboxPage() {
 
   return (
     <main style={{ background: 'var(--color-niebla)', minHeight: '100vh', paddingBottom: '60px' }}>
-      <AdminHeader title="Inbox" subtitle={`${leads.length} lead${leads.length !== 1 ? 's' : ''}`} />
+      <AdminHeader title="Inbox" subtitle={`${leads.length} lead${leads.length !== 1 ? 's' : ''}`} activo="inbox" />
 
       <div style={{ maxWidth: '820px', margin: '0 auto', padding: '24px' }}>
         {leads.length === 0 ? (

@@ -9,6 +9,7 @@
  */
 
 import type { ReactNode, CSSProperties } from 'react'
+import Link from 'next/link'
 
 // ── Colores por calificación de lead (mismo criterio que admin/lead) ────────
 export const CALIFICACION_STYLE: Record<string, { bg: string; color: string; label: string }> = {
@@ -107,8 +108,39 @@ export function KpiCard({ label, value }: { label: string; value: string }) {
   )
 }
 
+const NAV_LINKS: { href: string; label: string; seccion: SeccionAdmin }[] = [
+  { href: '/admin/dashboard', label: 'Dashboard', seccion: 'dashboard' },
+  { href: '/admin/inbox', label: 'Inbox', seccion: 'inbox' },
+  { href: '/admin/kanban', label: 'Kanban', seccion: 'kanban' },
+]
+
+export type SeccionAdmin = 'dashboard' | 'inbox' | 'kanban'
+
+/** Navegación cruzada chica entre las 3 secciones del panel — usada en AdminHeader. */
+function AdminNav({ activo }: { activo: SeccionAdmin }) {
+  return (
+    <nav style={{ display: 'flex', gap: '16px', marginTop: '16px' }}>
+      {NAV_LINKS.map(link => (
+        <Link
+          key={link.seccion}
+          href={link.href}
+          style={{
+            fontSize: '13px', fontFamily: 'var(--font-ui)', fontWeight: 500,
+            textDecoration: 'none',
+            color: link.seccion === activo ? 'var(--color-blanco)' : 'var(--color-laton-claro)',
+            borderBottom: link.seccion === activo ? '2px solid var(--color-laton-claro)' : '2px solid transparent',
+            paddingBottom: '4px',
+          }}
+        >
+          {link.label}
+        </Link>
+      ))}
+    </nav>
+  )
+}
+
 /** Cabecera oscura, igual look que admin/lead pero sin datos de un lead puntual. */
-export function AdminHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+export function AdminHeader({ title, subtitle, activo }: { title: string; subtitle?: string; activo?: SeccionAdmin }) {
   return (
     <header style={{ background: 'var(--color-granito)', padding: '0' }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 24px 28px' }}>
@@ -129,6 +161,7 @@ export function AdminHeader({ title, subtitle }: { title: string; subtitle?: str
             {subtitle}
           </p>
         )}
+        {activo && <AdminNav activo={activo} />}
       </div>
     </header>
   )

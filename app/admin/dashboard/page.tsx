@@ -25,7 +25,7 @@ export default async function DashboardPage() {
 
   return (
     <main style={{ background: 'var(--color-niebla)', minHeight: '100vh', paddingBottom: '60px' }}>
-      <AdminHeader title="Dashboard" subtitle="Resumen del mes y tendencias de leads" />
+      <AdminHeader title="Dashboard" subtitle="Resumen del mes y tendencias de leads" activo="dashboard" />
 
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px' }}>
         <div style={{
