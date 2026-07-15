@@ -146,6 +146,11 @@ export type LeadData = {
   // este archivo — se exponen acá para que getLead() los devuelva.
   consentimientoRGPDAt?: string
   consentimientoRGPDPrimeraVez?: string
+
+  // Campos ad-hoc definidos desde el panel (Fase 3, campos_custom_definiciones +
+  // leads.campos_custom jsonb). De solo lectura acá: se escriben vía patchRecord()
+  // en lib/admin/leadsRepo.ts (que mergea, no pisa), nunca a través de saveLead().
+  camposCustom?: Record<string, unknown>
 }
 
 /**
@@ -284,6 +289,7 @@ export function fromRow(row: Record<string, unknown>): LeadData {
     fuenteLead: opt('fuente_lead') as LeadData['fuenteLead'],
     consentimientoRGPDAt: opt('consentimiento_rgpd_at'),
     consentimientoRGPDPrimeraVez: opt('consentimiento_rgpd_primera_vez'),
+    camposCustom: (row['campos_custom'] as Record<string, unknown> | null) ?? {},
   }
 }
 

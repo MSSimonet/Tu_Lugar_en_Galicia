@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getFicha360 } from '@/lib/admin/inboxRepo'
+import { listarDefinicionesCamposCustom } from '@/lib/admin/camposCustomRepo'
 import { isValidUuid } from '@/lib/utils/validation'
 import {
   Badge, Card, FieldRow, ErrorPage,
@@ -10,6 +11,7 @@ import { getSeccionesVisibles, LABELS } from '@/components/admin/ficha/camposFic
 import { TranscripcionChat } from '@/components/admin/ficha/TranscripcionChat'
 import { Timeline } from '@/components/admin/ficha/Timeline'
 import { NuevaNotaForm } from '@/components/admin/ficha/NuevaNotaForm'
+import { CamposCustomSection } from '@/components/admin/ficha/CamposCustomSection'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -35,6 +37,9 @@ export default async function FichaLeadPage({ params }: PageProps) {
   const { lead, esNacional, notasTareas, actividad, transcripcion } = ficha
   const calStyle = getCalificacionStyle(lead.calificacion)
   const secciones = getSeccionesVisibles(esNacional)
+
+  const definicionesCamposCustom = await listarDefinicionesCamposCustom(true)
+  const camposCustomValores = lead.camposCustom ?? {}
 
   return (
     <main style={{ background: 'var(--color-niebla)', minHeight: '100vh', paddingBottom: '60px' }}>
@@ -97,6 +102,14 @@ export default async function FichaLeadPage({ params }: PageProps) {
             <NuevaNotaForm leadId={lead.id} />
           </div>
           <Timeline leadId={lead.id} notasTareas={notasTareas} actividad={actividad} />
+        </Card>
+
+        <Card title="Campos personalizados">
+          <CamposCustomSection
+            leadId={lead.id}
+            definiciones={definicionesCamposCustom}
+            valores={camposCustomValores}
+          />
         </Card>
 
         <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--color-pizarra)', fontFamily: 'var(--font-ui)', marginTop: '8px' }}>

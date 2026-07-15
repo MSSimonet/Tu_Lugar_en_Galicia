@@ -20,8 +20,11 @@ export interface AirtableRecord {
   fields: Record<string, unknown>
 }
 
-// camelCase (fields) → snake_case (columna real de `leads`)
-const COLUMN_MAP: Record<string, string> = {
+// camelCase (fields) → snake_case (columna real de `leads`). Exportado para que
+// lib/admin/camposCustomRepo.ts pueda rechazar una `clave` de campo custom que
+// colisione con una columna real — si no, patchRecord() la trataría como columna
+// real en vez de guardarla en campos_custom, pisando el dato verdadero en silencio.
+export const COLUMN_MAP: Record<string, string> = {
   nombreCompleto: 'nombre_completo',
   email: 'email',
   telefono: 'telefono',
@@ -217,26 +220,23 @@ export async function getLeadsConCitaProxima(): Promise<AirtableRecord[]> {
 
 /**
  * Actualiza solo los campos indicados de un lead existente (fields en camelCase).
- * Los campos sin columna propia (ej. plataformaVideollamada, horaCita) se guardan
- * en la columna jsonb `campos_custom`, mezclados con lo que ya hubiera ahí.
+ * Los campos sin columna propia (ej. plataformaVideollamada, horaCita) se guardan en la
+ * columna jsonb `campos_custom`, fusionados con lo que ya hubiera ahí vía la función SQL
+ * merge_campos_custom() (migración 0006) — la fusión ocurre en una sola sentencia dentro de
+ * Postgres (operador `||`), no con un read-merge-write desde la app, para que dos PATCH
+ * concurrentes a campos custom distintos del mismo lead no se pisen entre sí.
  */
 export async function patchRecord(leadId: string, fields: Record<string, unknown>): Promise<void> {
   const supabase = getSupabaseServerClient()
   const { columns, custom } = splitFields(fields)
 
-  let update: Record<string, unknown> = { ...columns }
-
-  if (Object.keys(custom).length > 0) {
-    const { data: current, error: readError } = await supabase
-      .from('leads')
-      .select('campos_custom')
-      .eq('id', leadId)
-      .maybeSingle()
-    if (readError) throw new Error(`Supabase patchRecord (lectura campos_custom): ${readError.message}`)
-    const existing = (current?.campos_custom as Record<string, unknown> | null) ?? {}
-    update = { ...update, campos_custom: { ...existing, ...custom } }
+  if (Object.keys(columns).length > 0) {
+    const { error } = await supabase.from('leads').update(columns).eq('id', leadId)
+    if (error) throw new Error(`Supabase patchRecord: ${error.message}`)
   }
 
-  const { error } = await supabase.from('leads').update(update).eq('id', leadId)
-  if (error) throw new Error(`Supabase patchRecord: ${error.message}`)
+  if (Object.keys(custom).length > 0) {
+    const { error } = await supabase.rpc('merge_campos_custom', { p_lead_id: leadId, p_patch: custom })
+    if (error) throw new Error(`Supabase patchRecord (merge_campos_custom): ${error.message}`)
+  }
 }
