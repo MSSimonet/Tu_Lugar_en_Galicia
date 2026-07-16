@@ -112,7 +112,7 @@ export function Header() {
       </a>
 
       <header
-        className="h-16 2xl:h-[92px]"
+        className="h-16 xl:h-[92px]"
         style={{
           background: 'var(--color-header-bg)',
           borderBottom: '1px solid var(--color-laton-borde)',
@@ -123,16 +123,14 @@ export function Header() {
       >
         {/*
           Grid 1fr auto 1fr: col izquierda y derecha iguales → nav centrado sin overlap.
-          Breakpoint en 2xl (1536px) en vez de xl (1280px) a propósito: con los 7 links
-          actuales del nav, el contenido no entra en 1280px — el logo (col 1) quedaba
-          aplastado a ~94px y su texto se pisaba con "Inicio" (bug real, visto en producción).
-          max-w-[1440px] (en vez de max-w-7xl/1280px) le da a las 2 columnas 1fr suficiente
-          margen para no colapsar a su ancho mínimo. Si se agrega otro link al nav, volver a
-          verificar con el navegador en ~1536-1600px de viewport.
+          Breakpoint en xl (1280px, estándar de industria) — antes era 2xl (1536px) porque a
+          1280px el contenido no entraba con el gap/tamaño original. Se resolvió reduciendo
+          gap del nav (28px→20px) y de las CTAs (10px→8px) en vez de subir el breakpoint tan
+          alto, verificado con el navegador a 1280×800 (sin overflow ni solapamiento).
         */}
         <div
-          className="max-w-[1440px] mx-auto h-full flex justify-between items-center 2xl:grid"
-          style={{ padding: '0 24px', gridTemplateColumns: '1fr auto 1fr', columnGap: '32px' }}
+          className="max-w-[1440px] mx-auto h-full flex justify-between items-center xl:grid"
+          style={{ padding: '0 20px', gridTemplateColumns: '200px auto minmax(220px, 1fr)', columnGap: '20px' }}
         >
 
           {/* Col 1: Logo — izquierda */}
@@ -148,7 +146,7 @@ export function Header() {
                 flexShrink: 0,
               }}
             >
-              <span className="block h-10 2xl:h-[70px]" style={{ flexShrink: 0 }}>
+              <span className="block h-10 xl:h-[70px]" style={{ flexShrink: 0 }}>
                 <Image
                   src="/images/aldaba.png"
                   alt=""
@@ -176,8 +174,8 @@ export function Header() {
           {/* Col 2: Nav links — centro exacto (md+) */}
           <nav
             aria-label="Navegación principal"
-            className="hidden 2xl:flex items-center"
-            style={{ gap: '28px' }}
+            className="hidden xl:flex items-center"
+            style={{ gap: '12px' }}
           >
             {navLinks.map(({ label, href }) => {
               const active = isActive(href)
@@ -186,15 +184,17 @@ export function Header() {
                   key={href}
                   href={href}
                   aria-current={active ? 'page' : undefined}
+                  className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton-borde)]"
                   style={{
                     position: 'relative',
                     fontFamily: 'var(--font-cormorant)',
-                    fontSize: '13px',
+                    fontSize: '12px',
                     fontWeight: 500,
                     color: active ? 'var(--color-laton-claro)' : 'var(--color-nav-muted)',
-                    letterSpacing: '0.1em',
+                    letterSpacing: '0.06em',
                     textTransform: 'uppercase',
                     textDecoration: 'none',
+                    whiteSpace: 'nowrap',
                     transition: 'color 200ms ease',
                   }}
                   onMouseEnter={e => { if (!active) e.currentTarget.style.color = 'var(--color-laton-claro)' }}
@@ -223,7 +223,7 @@ export function Header() {
           <div className="flex items-center justify-end">
 
             {/* ── CTAs desktop — orden: [Agenda] [✦ Hablar con Gina] [🌙/☀️] ── */}
-            <div className="hidden 2xl:flex items-center" style={{ gap: '10px' }}>
+            <div className="hidden xl:flex items-center" style={{ gap: '6px' }}>
 
               {/* 1. Agenda */}
               <Link
@@ -233,9 +233,9 @@ export function Header() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   height: '36px',
-                  padding: '0 18px',
+                  padding: '0 14px',
                   fontFamily: 'var(--font-cormorant)',
-                  fontSize: '13px',
+                  fontSize: '12px',
                   fontWeight: 500,
                   color: 'var(--color-laton-claro)',
                   border: '1px solid rgba(212,175,106,0.5)',
@@ -262,7 +262,7 @@ export function Header() {
                   justifyContent: 'center',
                   gap: '7px',
                   height: '36px',
-                  padding: '0 20px',
+                  padding: '0 14px',
                   fontFamily: 'var(--font-ui)',
                   fontSize: '12px',
                   fontWeight: 700,
@@ -305,7 +305,7 @@ export function Header() {
               aria-expanded={menuOpen}
               aria-controls={menuOpen ? 'mobile-menu' : undefined}
               aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-              className="2xl:hidden flex flex-col justify-center gap-1.5 w-11 h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton-borde)]"
+              className="xl:hidden flex flex-col justify-center gap-1.5 w-11 h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton-borde)]"
             >
               <span className={['block h-0.5 w-6 bg-white transition-transform duration-200', menuOpen ? 'translate-y-2 rotate-45' : ''].join(' ')} />
               <span className={['block h-0.5 w-6 bg-white transition-opacity duration-200', menuOpen ? 'opacity-0' : ''].join(' ')} />
@@ -319,7 +319,7 @@ export function Header() {
           <nav
             id="mobile-menu"
             aria-label="Navegación móvil"
-            className="2xl:hidden px-6 py-5 flex flex-col gap-5"
+            className="xl:hidden px-6 py-5 flex flex-col gap-5"
             style={{ background: 'var(--color-header-bg)', borderTop: '1px solid rgba(184,148,63,0.3)' }}
           >
             {/* Nav links */}
