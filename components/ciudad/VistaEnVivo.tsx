@@ -21,7 +21,7 @@ export function VistaEnVivo({ descripcionUbicacion }: VistaEnVivoProps) {
       minHeight: '220px',
       borderRadius: '1rem',
       overflow: 'hidden',
-      background: 'var(--color-granito)',
+      background: 'var(--color-header-bg)', // fijo, no invierte en dark (a diferencia de --color-granito) — necesario para que el texto blanco siga contrastando en ambos modos
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -46,12 +46,12 @@ export function VistaEnVivo({ descripcionUbicacion }: VistaEnVivoProps) {
       </svg>
 
       {/* Texto principal */}
-      <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+      <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
         Cámara en vivo
       </span>
 
       {/* Subtexto */}
-      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
+      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
         Próximamente
       </span>
 
@@ -75,7 +75,7 @@ export function VistaEnVivo({ descripcionUbicacion }: VistaEnVivoProps) {
           position: 'absolute', bottom: 10, left: 10, right: 10,
           pointerEvents: 'none',
         }}>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 1 }}>Vista desde</div>
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 1 }}>Vista desde</div>
           <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: 500 }}>{descripcionUbicacion}</div>
         </div>
       )}

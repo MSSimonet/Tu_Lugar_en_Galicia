@@ -32,13 +32,15 @@ const cifrasDinamicas: { key: keyof MarcadorData; etiqueta: string; unidad?: str
     { key: "tiempoMedioSemanas", etiqueta: "Semanas de tiempo medio", unidad: "sem" },
   ];
 
+// --color-sobre-laton (#fff, fijo) en vez de --color-blanco (invierte en dark): --po-terra
+// tampoco invierte, así que el texto necesita un token igual de fijo para mantener contraste.
 const numberStyle: React.CSSProperties = {
   display: 'block',
   fontFamily: 'var(--font-playfair)',
   fontWeight: 700,
   fontSize: '32px',
   lineHeight: 1,
-  color: '#F5EFE4',
+  color: 'var(--color-sobre-laton)',
 };
 
 const labelStyle: React.CSSProperties = {
@@ -48,8 +50,7 @@ const labelStyle: React.CSSProperties = {
   fontSize: '9px',
   letterSpacing: '0.1em',
   textTransform: 'uppercase',
-  color: '#F5EFE4',
-  opacity: 0.9,
+  color: 'var(--color-sobre-laton)',
 };
 
 const cardStyle: React.CSSProperties = {
@@ -148,7 +149,7 @@ export function ElMarcador() {
               fontSize: '10px',
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              color: 'rgba(245,240,232,0.80)',
+              color: 'var(--color-sobre-laton)',
             }}
           >
             En tiempo real
@@ -161,7 +162,7 @@ export function ElMarcador() {
               fontWeight: 700,
               fontSize: '32px',
               lineHeight: 1.1,
-              color: '#F5EFE4',
+              color: 'var(--color-sobre-laton)',
             }}
           >
             El Marcador
