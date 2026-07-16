@@ -57,9 +57,14 @@ correspondiente para App Router.
 
 ---
 
-## Browser pane (Claude Code) — BrowserView queda en `hidden`, screenshot/IntersectionObserver no funcionan
+## Browser pane (Claude Code Desktop) — el preview no pinta cuando no está en foco (screenshot/IntersectionObserver no funcionan)
 
-**Estado:** sin resolver. Causa raíz desconocida.
+**Estado:** confirmado. Es un bug de **Claude Code Desktop** (capa Electron), no de este proyecto:
+el `BrowserWindow`/`BrowserView` que renderiza el preview no pinta frames mientras no está "en
+foco" dentro de la gestión interna de paneles de la app — independientemente de que la ventana de
+Claude esté en foreground a nivel de sistema operativo. **No es resoluble desde este repo ni por
+el usuario**; requiere un fix de Anthropic del lado de la herramienta. No hay ninguna acción
+pendiente de nuestro lado sobre esto — no reintentar diagnosticarlo de nuevo en sesiones futuras.
 
 **Síntoma:**
 - `computer{action:"screenshot"}` da timeout a los 30s en cualquier página, incluso simples y sin video (ej. `/faq`).
@@ -73,32 +78,37 @@ correspondiente para App Router.
 - Foco de ventana de Windows — se confirmó que la ventana de Claude Desktop está en foreground y no minimizada; el problema no es a nivel de ventana de SO.
 - `tabs_select` (frontear la pestaña dentro de la gestión propia del Browser pane) y `window.focus()` desde JS de la página — ninguno cambia el estado `hidden`.
 
-**Hipótesis no descartada:** el `BrowserView` nunca se marca como "shown" dentro de la gestión interna de paneles de Claude Desktop, independientemente de que el panel se vea correctamente en pantalla del lado del usuario. Podría ser un bug de la herramienta en sí (no reproducible/arreglable desde el lado del repo o del sistema operativo).
+**Conclusión:** el `BrowserView` nunca se marca como "shown"/en foco dentro de la gestión interna
+de paneles de Claude Code Desktop, aunque el panel se vea correctamente en pantalla del lado del
+usuario. Es un bug de la app, no del sistema operativo ni del proyecto.
 
 **Impacto:** no se puede verificar visualmente (screenshots) ni depender de APIs que requieren que la página esté "visible" (`IntersectionObserver`, `requestAnimationFrame`-driven behavior) durante el testing con el Browser pane.
 
-**Workaround usado:** verificación funcional vía `get_page_text`, `read_page` (árbol de accesibilidad), `javascript_tool` (DOM, computed styles, `fetch` directo a APIs), `read_network_requests`, `read_console_messages` y `preview_logs`. Cubre lógica, validaciones, llamadas a API y contenido renderizado real — no cubre verificación visual/pixel-perfect (layout, animaciones, contraste), que queda pendiente de confirmación manual por el usuario o de una sesión futura donde el bug esté resuelto.
+**Práctica permanente (no un workaround temporal):** en toda sesión, verificar siempre vía
+`get_page_text`, `read_page` (árbol de accesibilidad), `javascript_tool` (DOM, computed styles,
+`fetch` directo a APIs), `read_network_requests`, `read_console_messages` y `preview_logs`. No
+volver a intentar `computer{action:"screenshot"}` como método de verificación, y no tratar este
+comportamiento como algo "pendiente de arreglar" — es el modo de operar estándar del Browser pane
+hasta que Anthropic libere un fix. Cubre lógica, validaciones, llamadas a API y contenido
+renderizado real; no cubre verificación visual/pixel-perfect (layout, animaciones, contraste) —
+para eso, pedirle al usuario que confirme manualmente.
 
-**Próximo paso si se retoma:** confirmar del lado del usuario si el panel del Browser pane está realmente abierto/visible en su layout de Claude Desktop en el momento de la falla (posible causa: el panel no es el "activo" dentro de la UI de la app, aun estando la ventana de Claude en foreground a nivel de SO).
-
-### Actualización — el bug es más profundo: los clicks no logran que React actualice el DOM
+### El mismo bug también impide que los clicks comprometan cambios de React al DOM
 
 Verificado en sesión de testing exhaustivo (Gina/formularios): `computer{action:"left_click", ref}` sobre un botón real (cerrar el widget de Gina, `onClick={() => setAbierto(false)}`, sin ninguna lógica de reapertura en el código) **no cierra el widget**. Se probó también disparando el evento nativo directamente vía `element.click()` desde `javascript_tool`, con espera explícita de 1s antes de re-chequear — mismo resultado: el DOM sigue mostrando el estado anterior. Se revisó el código fuente (`GinaWidget.tsx`) y se descartó que sea un bug de producto (no hay ningún efecto que fuerce la reapertura).
 
-Esto sugiere que los re-renders de React no se están **comprometiendo al DOM visible** en esta sesión — coherente con la misma causa raíz que bloquea IntersectanObserver/paint (probablemente ambos dependen del mismo scheduler de rendering interno del `BrowserView`).
+Esto es consistente con la misma causa raíz (el `BrowserView` sin foco no pinta/ejecuta su ciclo de rendering): los re-renders de React no se comprometen al DOM visible mientras el panel no está "en foco" internamente.
 
-**Consecuencia importante para testing futuro:** no se puede confiar en "click en botón → verificar cambio de UI" como método de verificación en sesiones afectadas por este bug, ni siquiera usando `.click()` nativo por DOM en lugar de clicks por coordenada. La navegación entre páginas (`navigate()` a una URL) sí funciona con normalidad — el problema es específico a cambios de estado in-page vía React. `read_page` en cambio SÍ parece reflejar el DOM real correctamente (se había sospechado que devolvía snapshots viejos, pero se confirmó que no — el widget realmente seguía abierto, `read_page` tenía razón).
+**Consecuencia permanente para testing:** no confiar en "click en botón → verificar cambio de UI" como método de verificación, ni siquiera usando `.click()` nativo por DOM en lugar de clicks por coordenada. La navegación entre páginas (`navigate()` a una URL) sí funciona con normalidad — el problema es específico a cambios de estado in-page vía React. `read_page` en cambio SÍ refleja el DOM real correctamente (se había sospechado que devolvía snapshots viejos, pero se confirmó que no — el widget realmente seguía abierto, `read_page` tenía razón).
 
-**Workaround adicional para este caso:** testing funcional vía llamadas directas a los API routes (`fetch()` desde `javascript_tool`, replicando el payload exacto que mandaría el cliente real) en vez de manejar la UI — verifica la misma lógica de servidor sin depender de que el click se refleje visualmente. No reemplaza la verificación de que la UI realmente responde a un click de un usuario real — eso queda pendiente hasta que el bug se resuelva.
+**Práctica permanente para este caso:** testing funcional vía llamadas directas a los API routes (`fetch()` desde `javascript_tool`, replicando el payload exacto que mandaría el cliente real) en vez de manejar la UI — verifica la misma lógica de servidor sin depender de que el click se refleje visualmente. Para confirmar que la UI responde a un click real, pedirle al usuario que lo pruebe manualmente.
 
 **Precisión importante (acota el bug):** el toggle nativo de `<details>/<summary>` (acordeón de FAQ) **sí funciona** con `.click()` — `details.open` cambia correctamente. Esto confirma que el bug es específico al **commit de React al DOM real** (setState → re-render → commit), no un bloqueo universal de interacción del navegador. Comportamiento nativo del motor (details/summary, navegación de links, formularios HTML nativos) funciona con normalidad; lo que falla es cualquier cambio de UI que dependa de que React aplique un nuevo estado.
 
-### Variante nueva (sesión de verificación Fase 3, Kanban/campos custom) — distinta a las anteriores, no asumir misma causa raíz
+### Variante observada en Fase 3 (Kanban/campos custom) — mismo bug de fondo, síntoma distinto en `read_page`
 
 **Síntoma:**
-- `computer{action:"screenshot"}` da timeout — mismo síntoma superficial que la variante de arriba, pero **no se confirmó** en esta sesión que las otras causas descartadas arriba (memoria, proceso GPU, `document.hidden`, foco de ventana) apliquen acá; no se repitió esa investigación.
-- `read_page` devuelve **"(empty page)"** específicamente en la ruta de la Ficha 360° (`/admin/leads/[id]`), incluso después de recargar. Esto es distinto del comportamiento documentado arriba: antes `read_page` sí reflejaba el DOM real correctamente (fue la señal que confirmó que el bug era de rendering/paint, no de snapshot viejo) — acá directamente no devuelve contenido para esa ruta puntual. No se probó si otras rutas de `/admin` también lo hacen, ni si es específico a algo de esa página (ej. tamaño del árbol de accesibilidad, algún componente que rompe el serializador).
+- `computer{action:"screenshot"}` da timeout — mismo síntoma superficial que arriba.
+- `read_page` devuelve **"(empty page)"** específicamente en la ruta de la Ficha 360° (`/admin/leads/[id]`), incluso después de recargar. Esto es distinto del comportamiento general documentado arriba (donde `read_page` sí refleja el DOM real correctamente) — acá directamente no devuelve contenido para esa ruta puntual. No se probó si otras rutas de `/admin` también lo hacen.
 
-**Workaround usado:** igual que la variante de arriba — `javascript_tool` (DOM directo, `fetch()` autenticado replicando el payload real) y `read_network_requests` en vez de `read_page`/`screenshot` para esa ruta específica. Permitió verificar creación de campos custom (POST 201) y guardado de valores (PATCH 200) con persistencia confirmada tras recarga, sin poder ver el árbol de accesibilidad ni una captura de esa página.
-
-**No confirmado:** si esta variante comparte causa raíz con la de arriba (BrowserView en `hidden`) o es un problema distinto y nuevo del serializador de `read_page` para esa ruta en particular. Queda para una sesión futura con el bug activo investigar si se repite en otras rutas de `/admin` o es específico de la Ficha 360°.
+**Práctica permanente para este caso:** igual que arriba — `javascript_tool` (DOM directo, `fetch()` autenticado replicando el payload real) y `read_network_requests` en vez de `read_page`/`screenshot` para rutas donde `read_page` falle. Permitió verificar creación de campos custom (POST 201) y guardado de valores (PATCH 200) con persistencia confirmada tras recarga, sin poder ver el árbol de accesibilidad ni una captura de esa página. No es necesario determinar el mecanismo exacto de esta variante — la práctica de verificación (evitar `read_page`/`screenshot`, usar `javascript_tool`/`fetch`/`read_network_requests`) es la misma independientemente de la causa puntual.
