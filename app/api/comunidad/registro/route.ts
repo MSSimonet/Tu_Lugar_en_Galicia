@@ -4,7 +4,6 @@ import { Redis } from '@upstash/redis'
 import { getRealIp } from '@/lib/utils/ip'
 import { geocodificarInterseccion } from '@/lib/comunidad/nominatim'
 import { upsertPerfilComunidad } from '@/lib/comunidad/perfil'
-import { upsertComunidadByEmail } from '@/lib/comunidad/airtable'
 import type { Actividad, ComunidadRegistroInput } from '@/lib/comunidad/types'
 
 const ACTIVIDADES_VALIDAS: Actividad[] = ['cafe_cerveza_mate', 'caminata', 'apoyo_emocional']
@@ -15,7 +14,7 @@ const ACTIVIDADES_VALIDAS: Actividad[] = ['cafe_cerveza_mate', 'caminata', 'apoy
 const CIUDADES_VALIDAS = ['Vigo', 'A Coruña', 'Santiago de Compostela', 'Pontevedra', 'Lugo']
 
 // Límites de longitud — sin esto, un cliente que no sea el formulario real puede mandar
-// strings arbitrariamente largos que se guardan tal cual en Supabase/Airtable y se
+// strings arbitrariamente largos que se guardan tal cual en Supabase y se
 // interpolan en el HTML del mail de mensaje privado.
 const MAX_NOMBRE = 80
 const MAX_CALLE = 120
@@ -134,17 +133,9 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // 4. Doble escritura en paralelo (Vía B — docs/comunidad-de-acogida.md §3 y §7).
-  //    Ambos upserts se disparan al mismo tiempo con Promise.allSettled, no uno tras
-  //    otro: Supabase es la fuente de verdad para el mapa (si falla, el registro falla);
-  //    Airtable es best-effort (igual que la notificación por mail en /api/contacto) — si
-  //    falla, el usuario ya quedó registrado y puede verse en el mapa. La actualización de
-  //    Airtable usa `updated_at` generado en el momento de la request, no el que devuelve
-  //    Supabase, precisamente porque corren en paralelo y no hay orden garantizado entre sí.
-  const ahora = new Date().toISOString()
-
-  const [resultadoSupabase, resultadoAirtable] = await Promise.allSettled([
-    upsertPerfilComunidad({
+  // 4. Registro en Supabase — única fuente de verdad del mapa de Comunidad.
+  try {
+    await upsertPerfilComunidad({
       email,
       nombre,
       fotoUrl,
@@ -152,28 +143,10 @@ export async function POST(req: NextRequest) {
       lng: coords.lng,
       disponibilidad,
       contacto,
-    }),
-    upsertComunidadByEmail({
-      email,
-      nombre,
-      foto_url: fotoUrl,
-      lat: coords.lat,
-      lng: coords.lng,
-      disponibilidad,
-      contacto,
-      updated_at: ahora,
-    }),
-  ])
-
-  if (resultadoSupabase.status === 'rejected') {
-    const err = resultadoSupabase.reason
+    })
+  } catch (err) {
     console.error(`[comunidad/registro] Supabase upsert falló — ts: ${new Date().toISOString()}`, err instanceof Error ? err.name : 'unknown')
     return NextResponse.json({ error: 'No se pudo completar el registro. Intenta de nuevo.' }, { status: 500 })
-  }
-
-  if (resultadoAirtable.status === 'rejected') {
-    const err = resultadoAirtable.reason
-    console.error(`[comunidad/registro] Airtable upsert falló (Supabase sí quedó guardado) — ts: ${new Date().toISOString()}`, err instanceof Error ? err.name : 'unknown')
   }
 
   return NextResponse.json({ ok: true })
