@@ -12,6 +12,7 @@ import { TranscripcionChat } from '@/components/admin/ficha/TranscripcionChat'
 import { Timeline } from '@/components/admin/ficha/Timeline'
 import { NuevaNotaForm } from '@/components/admin/ficha/NuevaNotaForm'
 import { CamposCustomSection } from '@/components/admin/ficha/CamposCustomSection'
+import { DeleteLeadButton } from '@/components/admin/ficha/DeleteLeadButton'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -68,6 +69,7 @@ export default async function FichaLeadPage({ params }: PageProps) {
               {lead.etiqueta && (
                 <Badge text={lead.etiqueta} bg="var(--color-acordeon-bg)" color="var(--color-laton-claro)" />
               )}
+              <DeleteLeadButton leadId={lead.id} />
             </div>
           </div>
           <p style={{ fontSize: '12px', color: 'var(--color-header-subtle)', fontFamily: 'var(--font-ui)', marginTop: '16px' }}>

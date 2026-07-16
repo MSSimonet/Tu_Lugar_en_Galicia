@@ -194,7 +194,10 @@ export async function validateCodigoAgenda(code: string): Promise<boolean> {
 /** Busca un lead por su email (case-insensitive). Devuelve null si no existe. */
 export async function findLeadByEmail(email: string): Promise<AirtableRecord | null> {
   const supabase = getSupabaseServerClient()
-  const { data, error } = await supabase.from('leads').select('*').ilike('email', email).limit(1)
+  // Escapa los wildcards de ILIKE (%, _) y el propio backslash de escape — sin esto, un email
+  // con esos caracteres se interpreta como patrón en vez de texto literal.
+  const emailEscapado = email.replace(/[\\%_]/g, '\\$&')
+  const { data, error } = await supabase.from('leads').select('*').ilike('email', emailEscapado).limit(1)
   if (error) throw new Error(`Supabase findLeadByEmail: ${error.message}`)
   const row = data?.[0]
   return row ? rowToRecord(row as Record<string, unknown>) : null
@@ -239,4 +242,15 @@ export async function patchRecord(leadId: string, fields: Record<string, unknown
     const { error } = await supabase.rpc('merge_campos_custom', { p_lead_id: leadId, p_patch: custom })
     if (error) throw new Error(`Supabase patchRecord (merge_campos_custom): ${error.message}`)
   }
+}
+
+/**
+ * Borra un lead (derecho al olvido RGPD). El ON DELETE CASCADE de las migraciones
+ * 0004/0005 se encarga de notas_tareas, lead_actividad y gina_transcripciones —
+ * no hace falta borrar nada más a mano.
+ */
+export async function deleteRecord(leadId: string): Promise<void> {
+  const supabase = getSupabaseServerClient()
+  const { error } = await supabase.from('leads').delete().eq('id', leadId)
+  if (error) throw new Error(`Supabase deleteRecord: ${error.message}`)
 }
