@@ -1,5 +1,9 @@
 'use client'
 
+import { motion } from 'motion/react'
+import { Button } from '@/components/ui/Button'
+import { fadeUp } from '@/lib/motion/variants'
+
 function abrirGina() {
   window.dispatchEvent(new CustomEvent('gina:open'))
 }
@@ -11,7 +15,13 @@ export function CTAFinal() {
       style={{ backgroundColor: 'var(--po-hero-bg)' }}
       aria-labelledby="cta-final-heading"
     >
-      <div className="mx-auto max-w-2xl text-center animate-fade-in-up">
+      <motion.div
+        className="mx-auto max-w-2xl text-center"
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.4 }}
+      >
         <h2
           id="cta-final-heading"
           className="[font-size:var(--text-2xl)] leading-[var(--leading-titulo)] md:[font-size:var(--text-3xl)]"
@@ -30,24 +40,11 @@ export function CTAFinal() {
         </p>
 
         <div className="mt-[var(--space-8)] flex justify-center">
-          <button
-            type="button"
-            onClick={abrirGina}
-            className="inline-flex items-center justify-center px-[var(--space-8)] py-[var(--space-4)] text-[var(--text-sm)] font-bold uppercase tracking-[0.10em] transition-brand focus-visible:outline-2 focus-visible:outline-offset-2"
-            style={{
-              fontFamily: 'var(--font-lato)',
-              borderRadius: '4px',
-              backgroundColor: 'var(--po-ouro)',
-              color: '#1A1410',
-              border: 'none',
-              cursor: 'pointer',
-              outlineColor: 'var(--po-ouro)',
-            }}
-          >
+          <Button type="button" onClick={abrirGina} size="lg" style={{ boxShadow: 'var(--po-shadow-md)' }}>
             Cuéntame de ti
-          </button>
+          </Button>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

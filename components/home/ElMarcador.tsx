@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
+import { staggerContainer, fadeUp } from "@/lib/motion/variants";
 
 interface MarcadorData {
   anunciosContactados: number;
@@ -55,39 +57,14 @@ const labelStyle: React.CSSProperties = {
 
 const cardStyle: React.CSSProperties = {
   textAlign: 'center',
-  borderRadius: '4px',
+  borderRadius: 'var(--po-radius-card)',
   background: 'rgba(255,255,255,0.12)',
   padding: '18px 10px',
 };
 
-function useEnPantalla<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.2 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return { ref, visible };
-}
-
 export function ElMarcador() {
   const [data, setData] = useState<MarcadorData | null>(null);
   const [loading, setLoading] = useState(true);
-  const { ref: sectionRef, visible } = useEnPantalla<HTMLElement>();
 
   useEffect(() => {
     fetch("/api/marcador")
@@ -112,15 +89,6 @@ export function ElMarcador() {
           grid-template-columns: repeat(7, 1fr);
           gap: 12px;
         }
-        .marcador-card {
-          opacity: 0;
-          transform: translateY(14px);
-          transition: opacity .6s ease, transform .6s ease;
-        }
-        .marcador-grid.visible .marcador-card {
-          opacity: 1;
-          transform: translateY(0);
-        }
         @media (max-width: 900px) {
           .marcador-grid {
             grid-template-columns: none;
@@ -135,7 +103,6 @@ export function ElMarcador() {
         }
       `}</style>
       <section
-        ref={sectionRef}
         className="marcador-section"
         style={{ backgroundColor: 'var(--po-terra)' }}
         aria-label="El marcador — cifras de trayectoria y en tiempo real"
@@ -168,17 +135,22 @@ export function ElMarcador() {
             El Marcador
           </p>
 
-          <ul
-            className={`marcador-grid${visible ? ' visible' : ''}`}
+          <motion.ul
+            className="marcador-grid"
             style={{ listStyle: 'none', margin: 0, padding: 0 }}
             tabIndex={0}
             aria-label="Estadísticas de El Marcador, desplazate con las flechas del teclado"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
           >
-            {todasLasCifras.map((cifra, i) => (
-              <li
+            {todasLasCifras.map((cifra) => (
+              <motion.li
                 key={cifra.tipo === 'estatica' ? cifra.etiqueta : cifra.key}
-                className="marcador-card"
-                style={{ ...cardStyle, transitionDelay: `${i * 70}ms` }}
+                variants={fadeUp}
+                whileHover={{ y: -4, boxShadow: 'var(--po-shadow-md)' }}
+                style={cardStyle}
               >
                 {cifra.tipo === 'dinamica' && loading ? (
                   <div
@@ -208,9 +180,9 @@ export function ElMarcador() {
                   </span>
                 )}
                 <span style={labelStyle}>{cifra.etiqueta}</span>
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         </div>
       </section>
     </>

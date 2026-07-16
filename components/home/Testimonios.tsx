@@ -1,6 +1,10 @@
+"use client";
+
 // TODO: reemplazar avatares placeholder con fotos reales
 
 import Image from "next/image";
+import { motion } from "motion/react";
+import { staggerContainer, fadeUp } from "@/lib/motion/variants";
 
 const testimonios = [
   {
@@ -52,16 +56,25 @@ export function Testimonios() {
           Testimonios
         </p>
 
-        <ul className="grid grid-cols-1 gap-[var(--space-8)] lg:grid-cols-3">
+        <motion.ul
+          className="grid grid-cols-1 gap-[var(--space-8)] lg:grid-cols-3"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {testimonios.map(
             ({ nombre, ciudadOrigen, ciudadGalicia, texto, avatar }) => (
-              <li
+              <motion.li
                 key={nombre}
-                className="flex flex-col p-[var(--space-8)] shadow-md transition-shadow duration-300 hover:shadow-lg"
+                className="flex flex-col p-[var(--space-8)]"
+                variants={fadeUp}
+                whileHover={{ y: -4, boxShadow: 'var(--po-shadow-lg)' }}
                 style={{
-                  borderRadius: '4px',
+                  borderRadius: 'var(--po-radius-card)',
                   border: '1px solid var(--po-borde)',
                   backgroundColor: 'var(--po-areia)',
+                  boxShadow: 'var(--po-shadow-sm)',
                 }}
               >
                 <div className="flex items-center gap-[var(--space-4)]">
@@ -96,10 +109,10 @@ export function Testimonios() {
                     &ldquo;{texto}&rdquo;
                   </p>
                 </blockquote>
-              </li>
+              </motion.li>
             )
           )}
-        </ul>
+        </motion.ul>
       </div>
     </section>
   );

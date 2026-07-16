@@ -3,6 +3,9 @@
 import Link from 'next/link'
 import { Pause, Play } from 'lucide-react'
 import { useVideoPauseToggle } from '@/lib/hooks/useVideoPauseToggle'
+import { Eyebrow } from '@/components/ui/Eyebrow'
+import { Button } from '@/components/ui/Button'
+import { SparkleIcon } from '@/components/ui/SparkleIcon'
 
 const POSTER = "/images/home/hero-lanzada-poster.jpg"
 const VIDEO  = "/videos/hero-lanzada.mp4"
@@ -79,25 +82,10 @@ export function HeroPedraEOuro() {
             paddingBottom: "clamp(32px, 4vw, 56px)",
           }}
         >
-          {/* Eyebrow — píldora semitransparente; letter-spacing responsivo vía .hero-eyebrow */}
-          <p
-            className="hero-eyebrow"
-            style={{
-              display: "inline-block",
-              fontFamily: "var(--font-lato)",
-              fontWeight: 700,
-              fontSize: "12px",
-              textTransform: "uppercase",
-              color: "var(--po-ouro)",
-              background: "rgba(0,0,0,0.45)",
-              borderRadius: "999px",
-              padding: "4px 12px",
-              marginBottom: "1.25rem",
-              textShadow: "0 1px 4px rgba(0,0,0,0.60)",
-            }}
-          >
+          {/* Eyebrow — letter-spacing responsivo heredado de .hero-eyebrow (ver Eyebrow.tsx) */}
+          <Eyebrow className="hero-eyebrow mb-5">
             Relocation especializado en Galicia
-          </p>
+          </Eyebrow>
 
           {/* Titular */}
           <h1
@@ -149,52 +137,16 @@ export function HeroPedraEOuro() {
           </p>
 
           {/* Botón primario — abre el widget de Gina */}
-          <button
+          <Button
             type="button"
             onClick={abrirGina}
-            className="inline-flex items-center gap-2 rounded-[4px] transition-brand cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
-            style={{
-              background: "var(--po-ouro)",
-              color: "#1A1410",
-              paddingLeft: "1.1rem",
-              paddingRight: "1.35rem",
-              paddingTop: "0.75rem",
-              paddingBottom: "0.75rem",
-              fontFamily: "var(--font-lato)",
-              fontWeight: 700,
-              fontSize: "0.875rem",
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              border: "none",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-              marginBottom: "1rem",
-              outlineColor: "var(--po-ouro)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "var(--po-ouro-hover)"
-              e.currentTarget.style.transform = "translateY(-1px)"
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "var(--po-ouro)"
-              e.currentTarget.style.transform = "translateY(0)"
-            }}
+            size="lg"
+            className="gap-2 mb-4"
+            style={{ boxShadow: 'var(--po-shadow-md)' }}
           >
-            <svg
-              className="w-5 h-5 shrink-0"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
-              />
-            </svg>
+            <SparkleIcon className="w-5 h-5 shrink-0" />
             Cuéntale tu caso a Gina
-          </button>
+          </Button>
 
           {/* Enlace al formulario */}
           <p
