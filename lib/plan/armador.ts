@@ -20,11 +20,11 @@ import type { LeadData } from '../leads'
  * Subconjunto de LeadData relevante para armar el plan.
  * Usa los nombres exactos de campo que Gina guarda en Supabase (tabla `leads`).
  *
- * Nota sobre `paisResidencia`: Gina guarda 'en_espana' cuando el usuario
- * selecciona "Ya vivo en España" (paso p3_origen). Si selecciona "Vengo de fuera",
- * p3b_pais sobreescribe este campo con el nombre del país (texto libre).
- * Por tanto, `paisResidencia === 'en_espana'` es la forma correcta de detectar
- * que la persona ya reside en España.
+ * Nota sobre `modalidad`: es el campo correcto para detectar si la persona ya
+ * reside en España ('ya-en-espana') o viene de fuera ('antes-de-viajar') — lo
+ * setean explícitamente tanto Gina como el formulario web, sin re-derivarlo de
+ * `paisResidencia` (que para quien ya vive en España vale el string 'España',
+ * no un valor centinela).
  */
 export type RespuestasLead = Pick<LeadData,
   | 'paisResidencia'
@@ -32,6 +32,7 @@ export type RespuestasLead = Pick<LeadData,
   | 'situacionLaboral'
   | 'mascotas'
 > & {
+  modalidad?: LeadData['modalidad']
   cuentaBancaria?: LeadData['cuentaBancaria']
   tipoLicencia?: LeadData['tipoLicencia']
   nivelEstudios?: LeadData['nivelEstudios']
@@ -149,7 +150,7 @@ function n(texto: string, fase: Fase): NotaEspecial {
 
 /** true si el lead viene de fuera de España (no seleccionó "ya vivo en España") */
 function vieneDeFuera(r: RespuestasLead): boolean {
-  return r.paisResidencia !== 'en_espana'
+  return r.modalidad !== 'ya-en-espana'
 }
 
 /**

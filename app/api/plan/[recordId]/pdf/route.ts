@@ -59,6 +59,7 @@ export async function GET(
 
   const planArmado = armarPlan({
     paisResidencia:        lead.paisResidencia,
+    modalidad:             lead.modalidad,
     documentacion:         lead.documentacion,
     situacionLaboral:      lead.situacionLaboral,
     mascotas:              lead.mascotas,
