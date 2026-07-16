@@ -66,6 +66,7 @@ La colección instalada tiene +200 agentes genéricos. En este repo se usan úni
 | Base de datos (Fase 5) | `Database Optimizer` | `/lib/db`, migraciones |
 | Marca | `Brand Guardian` | `/docs/design-system.md` |
 | Diseño UI | `UI Designer` | `/docs/design-system.md`, `tailwind.config.ts`, `app/globals.css` (solo tokens) |
+| Animación/interacción | `Motion Designer` | solo props de animación en componentes ya construidos (`variants`, `transition`, `className` `animate-*`, `ScrollTrigger`) — nunca estructura, lógica de negocio ni fetching |
 | Builder principal | `Frontend Developer` | `/app`, `/components` (excepto `/app/api`) |
 | IA | `AI Engineer` | `/app/api/gina`, `/lib/ai` |
 | Scraping | `Data Engineer` | `/workers/scraper` |
@@ -232,12 +233,24 @@ El orquestador está SIEMPRE activo. Antes de ejecutar cualquier tarea evaluar:
 
 **Skills de proyecto (.claude/skills/):**
 - `voz-tu-lugar-en-galicia` → TODO el copy que se escribe — sin excepción
+- `motion-tu-lugar-en-galicia` → toda animación/transición nueva (easing de marca, duraciones
+  máximas, `prefers-reduced-motion` obligatorio, prohibido animar layout shift)
 
 **Rules activas (~/.claude/rules/ecc/):**
 - `common/security.md` → endpoints y datos
 - `common/testing.md` → cobertura mínima
 - `common/git-workflow.md` → commits y branches
 - `typescript/patterns.md` → código TypeScript
+
+**MCP servers del proyecto (`.mcp.json`, versionado, scope de proyecto):**
+- `playwright` (`@playwright/mcp`, Microsoft, gratis) → `Accessibility Auditor`/`Reality Checker`
+  verifican transiciones reales con capturas antes/después, no solo revisión de código estático.
+- `chrome-devtools` (`chrome-devtools-mcp`, Google, gratis) → `Performance Benchmarker` mide
+  CLS/INP en vivo tras cada animación nueva, en vez de depender solo de Lighthouse estático.
+- `context7` (`@upstash/context7-mcp`, gratis, rate limit ampliable con API key) → todos los
+  agentes consultan documentación actualizada de `motion`/gsap/shadcn en vez de memoria vieja.
+- **Figma MCP (Dev Mode) NO está configurado** — requiere plan de Figma con asiento Dev o Full;
+  preguntar antes de intentar conectarlo.
 
 ### Flujo obligatorio por tipo de tarea
 
