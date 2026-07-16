@@ -492,14 +492,9 @@ export function armarPlan(r: RespuestasLead): PlanArmado {
   return { items, advertencias }
 }
 
-/**
- * Caso fuera de alcance del armador automático:
- *
- * "Familiar de ciudadano español" — surge en la conversación con Silvana
- * (no hay campo en Gina que lo capture). Trámite asociado: [10] Autorización
- * de residencia de familiares de españoles (régimen RD 1155/2024, Título X).
- * El armador NO genera una rama automática para este caso.
- */
-export const CASOS_FUERA_DE_ALCANCE = [
-  'familiar-de-espanol',
-] as const
+// Casos fuera de alcance del armador automático:
+//
+// "familiar-de-espanol" — "Familiar de ciudadano español" surge en la conversación con
+// Silvana (no hay campo en Gina que lo capture). Trámite asociado: [10] Autorización de
+// residencia de familiares de españoles (régimen RD 1155/2024, Título X). El armador NO
+// genera una rama automática para este caso.

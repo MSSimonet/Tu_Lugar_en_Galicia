@@ -44,16 +44,14 @@ const ratelimit =
 // Helpers
 // ---------------------------------------------------------------------------
 
-const COMMON_HEADERS = {}
-
 function errorResponse(message: string, status: number): NextResponse {
-  return NextResponse.json({ error: message }, { status, headers: COMMON_HEADERS })
+  return NextResponse.json({ error: message }, { status })
 }
 
 function successResponse(): NextResponse {
   return NextResponse.json(
     { success: true, message: 'Recibimos tu consulta. Te respondemos en 48 horas hábiles.' },
-    { status: 200, headers: COMMON_HEADERS }
+    { status: 200 }
   )
 }
 

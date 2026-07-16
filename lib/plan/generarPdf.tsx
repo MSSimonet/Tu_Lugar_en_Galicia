@@ -442,7 +442,7 @@ function stripMd(text: string) {
   return text.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1')
 }
 
-function BloqueTramiте({
+function BloqueTramitePdf({
   item,
   tramites,
   paisOrigen,
@@ -555,7 +555,7 @@ function PlanDocument({
             </View>
             {items.map((item, i) =>
               item.tipo === 'tramite' ? (
-                <BloqueTramiте key={i} item={item} tramites={tramites} paisOrigen={lead.paisResidencia} />
+                <BloqueTramitePdf key={i} item={item} tramites={tramites} paisOrigen={lead.paisResidencia} />
               ) : (
                 <BloqueNota key={i} item={item} />
               )
