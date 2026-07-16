@@ -379,7 +379,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         r.fields.codigoAgenda = 'expirado' // actualizar en memoria
         seguimiento.push(r)
       } catch (err) {
-        console.error(`[resumen-diario] Error expirando ${r.id}:`, err)
+        console.error(`[resumen-diario] Error expirando ${r.id}:`, err instanceof Error ? err.name : 'unknown')
       }
     })
   )
