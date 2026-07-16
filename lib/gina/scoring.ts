@@ -39,8 +39,12 @@ export function calcularCalificacion(input: ScoringInput): Calificacion {
     input.ingresosMensuales === 'sin-ingresos' || input.ingresosMensuales === 'menos-1500'
   if (tieneNinguna && !tieneOtraGarantia && ingresosBajos) return 'bajo'
 
-  // PASO 2: Cap máximo en-desarrollo para estancia-estudios
-  const capEnDesarrollo = input.documentacion === 'estancia-estudios'
+  // PASO 2: Cap máximo en-desarrollo para estudiantes — mismo campo/valor que ya usa
+  // lib/plan/armador.ts para disparar el trámite [48] (Visado/Estancia por Estudios).
+  // 'estancia-estudios' nunca existió como valor de documentacion (confirmado con
+  // git log -S sobre todo el historial); situacionLaboral === 'estudiante' es el valor
+  // real que identifica este caso en el resto del código.
+  const capEnDesarrollo = input.situacionLaboral === 'estudiante'
 
   // PASO 3: Puntuación porcentual (solo cuentan dimensiones respondidas)
   const dims: (Dim | null)[] = []
