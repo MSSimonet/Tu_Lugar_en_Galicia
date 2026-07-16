@@ -171,6 +171,8 @@ export function ElMarcador() {
           <ul
             className={`marcador-grid${visible ? ' visible' : ''}`}
             style={{ listStyle: 'none', margin: 0, padding: 0 }}
+            tabIndex={0}
+            aria-label="Estadísticas de El Marcador, desplazate con las flechas del teclado"
           >
             {todasLasCifras.map((cifra, i) => (
               <li

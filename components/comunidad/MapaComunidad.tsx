@@ -102,7 +102,11 @@ export function MapaComunidad() {
         const perfiles = (data ?? []) as ComunidadPerfilPublico[]
 
         perfiles.forEach((perfil) => {
-          const marcador = L.marker([perfil.lat, perfil.lng])
+          // `alt` es opción de Marker (no de Icon) — reemplaza el "Marker" genérico
+          // por un nombre accesible real (A3-5).
+          const marcador = L.marker([perfil.lat, perfil.lng], {
+            alt: perfil.nombre ? `Familia ${perfil.nombre} en el mapa` : 'Familia en el mapa de comunidad',
+          })
           const contenedorPopup = document.createElement('div')
           const raiz = createRoot(contenedorPopup)
           raicesPopup.push(raiz)
@@ -136,7 +140,12 @@ export function MapaComunidad() {
 
   return (
     <div className="relative h-full w-full">
-      <div ref={contenedorRef} className="h-full w-full" style={{ backgroundColor: 'var(--po-areia)' }} />
+      <div
+        ref={contenedorRef}
+        className="h-full w-full"
+        style={{ backgroundColor: 'var(--po-areia)' }}
+        aria-label="Mapa de familias en Galicia"
+      />
 
       {estado === 'cargando' && (
         <div

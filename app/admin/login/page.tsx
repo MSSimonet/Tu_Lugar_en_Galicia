@@ -62,7 +62,7 @@ export default function AdminLoginPage() {
           maxWidth: '360px',
         }}
       >
-        <p
+        <h1
           style={{
             fontSize: '11px',
             fontWeight: 500,
@@ -74,7 +74,7 @@ export default function AdminLoginPage() {
           }}
         >
           Tu Lugar en Galicia — Admin
-        </p>
+        </h1>
 
         <label
           htmlFor="admin-email"
@@ -155,6 +155,7 @@ export default function AdminLoginPage() {
         <button
           type="submit"
           disabled={loading}
+          className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton-borde)]"
           style={{
             width: '100%',
             padding: '10px',

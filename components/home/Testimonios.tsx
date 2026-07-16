@@ -32,6 +32,7 @@ const testimonios = [
 export function Testimonios() {
   return (
     <section
+      id="testimonios"
       className="px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
       style={{ backgroundColor: 'var(--po-luz)' }}
       aria-labelledby="testimonios-heading"
