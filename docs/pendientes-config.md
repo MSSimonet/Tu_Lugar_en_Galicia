@@ -66,6 +66,15 @@ Cada ítem tiene su estado actual, qué hay que hacer y dónde se hace.
 | **Qué hacer** | Crear una Google Sheet con 4 celdas nombradas: `anuncios_contactados`, `dijeron_no`, `familias_ubicadas`, `tiempo_medio`. Obtener el ID de la hoja y pegarlo en la variable `SHEET_MARCADOR_ID`. Si se usa API privada, crear Service Account en Google Cloud Console y compartir la Sheet con su email. |
 | **Dónde** | Google Sheets + Google Cloud Console (Service Account). El ID se carga en Vercel (ítem 5) |
 
+> ⚠️ **Pendiente a revisar (2026-07-16, sin arreglar todavía):** en Vercel, la variable está
+> guardada como `google_sheets_api_key` (minúsculas), pero `lib/marcador.ts:53` lee
+> `process.env.GOOGLE_SHEETS_API_KEY` (mayúsculas). En Windows/local esto puede pasar
+> desapercibido porque el SO no distingue mayúsculas de minúsculas en env vars, pero Vercel
+> corre en Linux, donde `process.env` sí distingue — es la causa probable de que **El Marcador
+> no esté funcionando hoy en producción**. Fix pendiente: renombrar la variable en Vercel a
+> `GOOGLE_SHEETS_API_KEY` (o ajustar el código para que lea el nombre real, aunque lo primero
+> es más consistente con el resto de las env vars del proyecto, todas en mayúsculas).
+
 ---
 
 ## 7. Página de política de privacidad (RGPD)
