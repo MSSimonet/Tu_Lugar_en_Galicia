@@ -3,12 +3,17 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Pause, Play } from 'lucide-react'
+import { motion } from 'motion/react'
 import { FAQAccordionPedraEOuro } from '@/components/ciudades/FAQAccordionPedraEOuro'
 import { ClimaActual } from '@/components/ciudad/ClimaActual'
 import { VistaEnVivo } from '@/components/ciudad/VistaEnVivo'
+import { Eyebrow } from '@/components/ui/Eyebrow'
+import { Button } from '@/components/ui/Button'
+import { SparkleIcon } from '@/components/ui/SparkleIcon'
 import { faqSchema } from '@/lib/seo/schemas'
 import { prefetchCiudadVideo } from '@/lib/ciudades/videoPrefetch'
 import { useVideoPauseToggle } from '@/lib/hooks/useVideoPauseToggle'
+import { fadeUp, staggerContainer } from '@/lib/motion/variants'
 
 export interface CiudadLayoutProps {
   nombre: string
@@ -130,19 +135,9 @@ export function CiudadLayout({
         {/* Contenido hero */}
         <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 max-w-5xl" style={{ paddingTop: '64px' }}>
           {/* Eyebrow pill */}
-          <span
-            className="inline-flex self-start items-center px-3 py-1 rounded-full mb-4 tracking-widest uppercase border"
-            style={{
-              fontFamily: 'var(--font-lato)',
-              fontWeight: 700,
-              fontSize: '10px',
-              color: 'var(--po-ouro)',
-              background: 'rgba(0,0,0,0.42)',
-              borderColor: 'rgba(255,255,255,0.18)',
-            }}
-          >
+          <Eyebrow className="self-start mb-4">
             Tu Lugar en Galicia · {nombre}
-          </span>
+          </Eyebrow>
 
           {/* H1 */}
           <h1
@@ -162,13 +157,10 @@ export function CiudadLayout({
 
           {/* CTAs */}
           <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={abrirGina}
-              className="inline-flex items-center gap-2 px-5 py-2.5 font-semibold text-sm text-white uppercase tracking-wide transition-all duration-200 hover:brightness-110 active:scale-95"
-              style={{ fontFamily: 'var(--font-lato)', background: 'var(--po-ouro)', color: '#1A1410', borderRadius: '4px' }}
-            >
-              <span aria-hidden="true">✨</span> Hablar con Gina
-            </button>
+            <Button onClick={abrirGina} className="gap-2" style={{ boxShadow: 'var(--po-shadow-md)' }}>
+              <SparkleIcon size={16} />
+              Hablar con Gina
+            </Button>
             <Link
               href="/conocernos"
               className="text-xs text-white/55 hover:text-white/80 transition-colors underline-offset-2 hover:underline"
@@ -184,9 +176,15 @@ export function CiudadLayout({
       <div className="px-6 md:px-8 py-7 space-y-5 max-w-7xl mx-auto w-full" style={{ backgroundColor: 'var(--po-luz)' }}>
 
         {/* Fila 1: Descripción + Clima */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-5">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-5"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {/* Descripción larga */}
-          <div className="p-6" style={{ backgroundColor: 'var(--po-areia)', borderRadius: '8px', border: '1px solid var(--po-borde)' }}>
+          <div className="p-6" style={{ backgroundColor: 'var(--po-areia)', borderRadius: 'var(--po-radius-card)', border: '1px solid var(--po-borde)' }}>
             <h2
               className="text-[10px] tracking-widest uppercase mb-4"
               style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
@@ -205,13 +203,23 @@ export function CiudadLayout({
           <div>
             <ClimaActual slug={slug} />
           </div>
-        </div>
+        </motion.div>
 
         {/* Fila 2: Barrios / Alquileres / Video */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-5"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
 
           {/* Barrios más buscados */}
-          <div className="p-5" style={{ backgroundColor: 'var(--po-areia)', borderRadius: '8px' }}>
+          <motion.div
+            className="p-5"
+            whileHover={{ y: -4, boxShadow: 'var(--po-shadow-md)' }}
+            style={{ backgroundColor: 'var(--po-areia)', borderRadius: 'var(--po-radius-card)' }}
+          >
             <h2
               className="text-[10px] tracking-widest uppercase mb-4"
               style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
@@ -230,10 +238,14 @@ export function CiudadLayout({
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Alquileres orientativos */}
-          <div className="p-5" style={{ backgroundColor: 'var(--po-areia)', borderRadius: '8px' }}>
+          <motion.div
+            className="p-5"
+            whileHover={{ y: -4, boxShadow: 'var(--po-shadow-md)' }}
+            style={{ backgroundColor: 'var(--po-areia)', borderRadius: 'var(--po-radius-card)' }}
+          >
             <h2
               className="text-[10px] tracking-widest uppercase mb-4"
               style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
@@ -259,7 +271,7 @@ export function CiudadLayout({
             <p className="mt-3 leading-snug" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)', fontSize: '10px' }}>
               Orientativos. Varían según barrio y estado del inmueble.
             </p>
-          </div>
+          </motion.div>
 
           {/* Vista en vivo Windy */}
           <VistaEnVivo
@@ -268,10 +280,17 @@ export function CiudadLayout({
             nombreCiudad={nombre}
             descripcionUbicacion={vistaEnVivo.descripcionUbicacion}
           />
-        </div>
+        </motion.div>
 
         {/* Fila 3: FAQ ancho completo */}
-        <div className="p-6" style={{ backgroundColor: 'var(--po-areia)', borderRadius: '8px', border: '1px solid var(--po-borde)' }}>
+        <motion.div
+          className="p-6"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          style={{ backgroundColor: 'var(--po-areia)', borderRadius: 'var(--po-radius-card)', border: '1px solid var(--po-borde)' }}
+        >
           <h2
             className="text-2xl font-normal mb-5"
             style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-pedra)' }}
@@ -279,12 +298,16 @@ export function CiudadLayout({
             Preguntas frecuentes sobre {nombre}
           </h2>
           <FAQAccordionPedraEOuro faqs={faqsMapped} />
-        </div>
+        </motion.div>
 
         {/* Fila 4: Guía de apps para recién llegados */}
-        <div
+        <motion.div
           className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-          style={{ backgroundColor: 'var(--po-areia)', borderRadius: '8px', border: '1px solid var(--po-borde)' }}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          style={{ backgroundColor: 'var(--po-areia)', borderRadius: 'var(--po-radius-card)', border: '1px solid var(--po-borde)' }}
         >
           <div>
             <h2
@@ -307,7 +330,7 @@ export function CiudadLayout({
           >
             Ver la guía →
           </Link>
-        </div>
+        </motion.div>
 
       </div>
 
@@ -323,15 +346,21 @@ export function CiudadLayout({
               >
                 Otras ciudades
               </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <motion.div
+                className="grid grid-cols-2 md:grid-cols-4 gap-4"
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+              >
                 {otras.map(ciudad => (
+                  <motion.div key={ciudad.slug} variants={fadeUp} whileHover={{ y: -4, boxShadow: 'var(--po-shadow-lg)' }}>
                   <Link
-                    key={ciudad.slug}
                     href={`/ciudades/${ciudad.slug}`}
                     onMouseEnter={() => prefetchCiudadVideo(ciudad.slug)}
                     onTouchStart={() => prefetchCiudadVideo(ciudad.slug)}
                     className="group block overflow-hidden relative"
-                    style={{ aspectRatio: '4/3', borderRadius: '8px' }}
+                    style={{ aspectRatio: '4/3', borderRadius: 'var(--po-radius-card)' }}
                   >
                     <Image
                       src={ciudad.imagen}
@@ -355,8 +384,9 @@ export function CiudadLayout({
                       </p>
                     </div>
                   </Link>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </div>
           </section>
         )
