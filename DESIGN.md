@@ -5,6 +5,16 @@
 > El `UI Designer` y el `Frontend Developer` usan este archivo como referencia operativa.
 > Ante conflicto entre este archivo y el código, el código gana.
 
+> ⚠️ **Nota de discrepancia (2026-07-16):** las secciones §2 (paleta laton/atlántico/coral) y
+> §3 (Fraunces/Plus Jakarta) describen un sistema de diseño que **ya no es el vigente en el sitio
+> real** — el código en producción usa el sistema **Pedra e Ouro** (tokens `--po-*` en
+> `app/globals.css`, ver también `docs/adr/010-stack-animacion-interaccion.md`). Esta discrepancia
+> existía porque `components/ui/Button.tsx` (la fuente citada arriba) usaba tokens `--color-laton`
+> que nadie más en el sitio consumía — se corrigió en este mismo pase (ver §4 Button abajo), pero
+> el resto de §1-§3 y §6-§8 sigue describiendo el sistema viejo y necesita una revisión completa
+> en una sesión futura. No asumas que §2/§3 reflejan el sitio real sin verificar contra
+> `app/globals.css` primero.
+
 ---
 
 ## 1. Tema visual y atmósfera
@@ -125,15 +135,21 @@ Los valores de referencia son los del bloque `@theme` en `app/globals.css`.
 
 ### Button (`components/ui/Button.tsx`)
 
-Tres variantes, tres tamaños. Siempre `rounded-pill` (999px), `font-ui`, `font-medium`.
+**Actualizado 2026-07-16 — reescrito a tokens Pedra e Ouro** (antes usaba `--color-laton`, un
+sistema que ningún otro CTA del sitio consumía; por eso nadie usaba este componente para el CTA
+dorado real). Ver `docs/adr/010-stack-animacion-interaccion.md` para el detalle completo.
+
+Tres variantes, tres tamaños. Siempre `rounded-pill` (999px), `font-ui`, `font-medium`. Construido
+sobre `motion.button` (librería `motion`) — hover/tap animados vía `whileHover`/`whileTap`
+(`transform: translateY`/`scale`, easing de marca `cubic-bezier(0.4, 0, 0.2, 1)`), no CSS puro.
 
 **Variantes:**
 
 | Variante | Fondo | Texto | Hover | Extra |
 |---|---|---|---|---|
-| `primario` | `laton` (#8F722B) | `white` | `laton-oscuro` | `tracking-ui`, `uppercase` |
-| `secundario` | `coral` (#D4694F) | `white` | coral –15% dark | — |
-| `fantasma` | transparente | `laton-text` | bg `laton-text` / text white | `border: 1px laton` |
+| `primario` | `--po-ouro` (#C89B3C) | `--po-ouro-ink` (#1A1410) | `--po-ouro-hover` | `tracking-ui`, `uppercase` |
+| `secundario` | `--po-pedra` | `--po-luz` | pedra –15% dark | — |
+| `fantasma` | transparente | `--po-ouro-text` | bg `--po-ouro-text` / text `--po-luz` | `border: 1px --po-ouro` |
 
 **Tamaños:**
 
@@ -143,7 +159,9 @@ Tres variantes, tres tamaños. Siempre `rounded-pill` (999px), `font-ui`, `font-
 | `md` | `space-6` (24px) | `space-3` (12px) | `text-sm` (16px) |
 | `lg` | `space-8` (32px) | `space-4` (16px) | `text-md` (20px) |
 
-**Estados:** `transition-all 200ms ease-in-out` · `active:scale-[0.98]` · `focus-visible:outline-2 laton` · `disabled:opacity-60`
+**Estados:** `whileHover`/`whileTap` de `motion` (200ms, easing de marca) · `focus-visible:outline-2
+--po-ouro` · `disabled:opacity-60`. Sombra recomendada en uso: `boxShadow: 'var(--po-shadow-md)'`
+inline (no forma parte del componente, se agrega por consumidor según contexto).
 
 ### Header (`components/layout/Header.tsx`)
 
