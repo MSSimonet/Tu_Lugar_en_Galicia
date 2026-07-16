@@ -2,11 +2,13 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { Pause, Play } from 'lucide-react'
 import { FAQAccordionPedraEOuro } from '@/components/ciudades/FAQAccordionPedraEOuro'
 import { ClimaActual } from '@/components/ciudad/ClimaActual'
 import { VistaEnVivo } from '@/components/ciudad/VistaEnVivo'
 import { faqSchema } from '@/lib/seo/schemas'
 import { prefetchCiudadVideo } from '@/lib/ciudades/videoPrefetch'
+import { useVideoPauseToggle } from '@/lib/hooks/useVideoPauseToggle'
 
 export interface CiudadLayoutProps {
   nombre: string
@@ -49,6 +51,7 @@ export function CiudadLayout({
 }: CiudadLayoutProps) {
   const faqsMapped = faqs.map(f => ({ question: f.pregunta, answer: f.respuesta }))
   const schema = faqSchema(faqsMapped)
+  const { videoRef, isPlaying, toggle } = useVideoPauseToggle()
 
   function abrirGina() {
     if (typeof window !== 'undefined') {
@@ -82,6 +85,7 @@ export function CiudadLayout({
             sizes="100vw"
           />
           <video
+            ref={videoRef}
             autoPlay
             muted
             loop
@@ -103,6 +107,24 @@ export function CiudadLayout({
               ].join(', '),
             }}
           />
+
+          {/* Pausa/reproduce el video de fondo — WCAG 2.2.2 */}
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={isPlaying ? 'Pausar video de fondo' : 'Reproducir video de fondo'}
+            className="absolute bottom-4 right-4 z-10 flex items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--po-ouro)]"
+            style={{
+              width: '40px',
+              height: '40px',
+              background: 'rgba(0,0,0,0.45)',
+              border: '1px solid rgba(255,255,255,0.25)',
+              color: 'var(--color-sobre-laton)',
+              cursor: 'pointer',
+            }}
+          >
+            {isPlaying ? <Pause size={16} strokeWidth={1.8} /> : <Play size={16} strokeWidth={1.8} />}
+          </button>
         </div>
 
         {/* Contenido hero */}

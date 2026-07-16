@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { Pause, Play } from 'lucide-react'
+import { useVideoPauseToggle } from '@/lib/hooks/useVideoPauseToggle'
 
 const POSTER = "/images/home/hero-lanzada-poster.jpg"
 const VIDEO  = "/videos/hero-lanzada.mp4"
@@ -10,6 +12,8 @@ function abrirGina() {
 }
 
 export function HeroPedraEOuro() {
+  const { videoRef, isPlaying, toggle } = useVideoPauseToggle()
+
   return (
     <section
       className="relative flex flex-col"
@@ -17,14 +21,16 @@ export function HeroPedraEOuro() {
       aria-labelledby="hero-po-heading"
     >
       {/* ── Capa de fondo: video + degradado esfumado ── */}
-      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div className="absolute inset-0 overflow-hidden">
         <video
+          ref={videoRef}
           autoPlay
           muted
           loop
           playsInline
           poster={POSTER}
           preload="metadata"
+          aria-hidden="true"
           // @ts-expect-error — fetchPriority es válido en HTML pero los tipos de React aún no lo tipan para <video>
           fetchPriority="high"
           style={{
@@ -41,6 +47,24 @@ export function HeroPedraEOuro() {
 
         {/* Sombreado esfumado lateral (desktop) / desde abajo (móvil) */}
         <div className="absolute inset-0 hero-lateral-gradient" style={{ pointerEvents: "none" }} />
+
+        {/* Pausa/reproduce el video de fondo — WCAG 2.2.2 */}
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={isPlaying ? 'Pausar video de fondo' : 'Reproducir video de fondo'}
+          className="absolute bottom-4 right-4 z-10 flex items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--po-ouro)]"
+          style={{
+            width: '40px',
+            height: '40px',
+            background: 'rgba(0,0,0,0.45)',
+            border: '1px solid rgba(255,255,255,0.25)',
+            color: 'var(--color-sobre-laton)',
+            cursor: 'pointer',
+          }}
+        >
+          {isPlaying ? <Pause size={16} strokeWidth={1.8} /> : <Play size={16} strokeWidth={1.8} />}
+        </button>
       </div>
 
       {/* ── Contenido principal — centrado vertical, alineado a la izquierda ── */}
