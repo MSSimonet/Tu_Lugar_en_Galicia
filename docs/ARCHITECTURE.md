@@ -208,6 +208,9 @@ elimina del repo. El puente de Comunidad (`lib/comunidad/airtable.ts`) se elimin
   la usa el CRM de leads) — el cliente de Supabase se generalizó a `lib/supabase/serverClient.ts`,
   compartido entre `lib/leads.ts` y `lib/comunidad/*`.
 
+**ADR-010 — Stack de animación e interacción:** vive en `docs/adr/010-stack-animacion-interaccion.md`
+(carpeta separada, no inline acá) — continúa la numeración secuencial de esta lista.
+
 ---
 
 ## 6. Guía de despliegue: Cloudflare → Vercel
