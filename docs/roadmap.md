@@ -30,7 +30,7 @@ base desplegándose sola.
 
 ---
 
-## Fase 1 — Sitio de marketing + SEO (SIN base de datos)
+## Fase 1 — Sitio de marketing + SEO (sin base de datos de contenido — el CRM de leads sí migró a Supabase el 2026-07-12, ver `docs/crm-supabase-fase0.md`)
 
 **Objetivo:** que un emigrante llegue por Google, entienda el servicio, lea su ciudad y deje su consulta.
 
@@ -39,7 +39,8 @@ base desplegándose sola.
   Instagram + preview del muro de llaves + WhatsApp flotante.
 - 5 páginas de ciudad: Vigo, A Coruña, Santiago, Pontevedra, Lugo.
 - "Cómo funciona", "Sobre Silvana", FAQ.
-- **Formulario de diagnóstico** (el de viabilidad) → guarda lead en Airtable/Sheets.
+- **Formulario de diagnóstico** (el de viabilidad) → guarda lead en Supabase (tabla `leads`;
+  antes Airtable, migrado el 2026-07-12 — ver `docs/crm-supabase-fase0.md`).
 - Agenda de videollamada (Cal.com embebido).
 - SEO técnico: metadata, sitemap, robots, schema por ciudad.
 
@@ -48,7 +49,7 @@ base desplegándose sola.
 2. `SEO Specialist` → mapa de keywords + estructura de URLs + schema.
 3. `Content Creator` → textos de home, ciudades, FAQ, "Sobre Silvana".
 4. `Frontend Developer` → todas las páginas y componentes.
-5. `Backend Architect` → API route del formulario → Airtable/Sheets.
+5. `Backend Architect` → API route del formulario → Supabase.
 6. Puerta de calidad: `Accessibility Auditor` + `Performance Benchmarker` + `Code Reviewer`.
 7. `Reality Checker` → certifica la fase.
 

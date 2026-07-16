@@ -7,7 +7,7 @@
 
 ```
 Gina (cuestionario completo)
-  → Airtable guarda lead + calificación automática
+  → Supabase guarda lead + calificación automática
   → Cron diario → mail resumen a Silvana
   → Silvana lee perfil completo → pulsa "Habilitar agenda"
   → Endpoint genera código único → mail cálido al cliente
@@ -19,10 +19,10 @@ Gina (cuestionario completo)
 
 ---
 
-## Pieza 1 — Calificación en Airtable (ya implementado)
+## Pieza 1 — Calificación en Supabase (ya implementado, migrado desde Airtable el 2026-07-12)
 
-Gina guarda el lead completo en Airtable con todos los campos del flujo.
-La calificación se almacena en el campo **`calificacion`** en Airtable con tres valores:
+Gina guarda el lead completo en Supabase (tabla `leads`) con todos los campos del flujo.
+La calificación se almacena en la columna **`calificacion`** con tres valores:
 - `potencial-alto`
 - `en-desarrollo`
 - `no-califica`
@@ -48,8 +48,8 @@ No hay cambios en esta pieza.
    - Ciudad de destino
    - País de origen
    - Plazo de llegada
-   - Resumen de 2-3 líneas generado automáticamente desde los campos de Airtable
-   - Días en Airtable sin respuesta (urgencia visual: > 3 días = naranja, > 7 días = rojo)
+   - Resumen de 2-3 líneas generado automáticamente desde los campos de Supabase
+   - Días sin respuesta (urgencia visual: > 3 días = naranja, > 7 días = rojo)
    - Botón **"Ver perfil completo"** → `/admin/lead/[recordId]` (página privada)
    - Botón **"Habilitar agenda"** → llama a `/api/admin/habilitar-agenda/[recordId]`
 
@@ -85,8 +85,8 @@ Página privada, solo accesible desde el link del mail (no indexada, no en el na
 **Qué hace:**
 1. Verifica que el lead existe y no tiene código ya asignado
 2. Genera un código único: 8 caracteres alfanuméricos en mayúsculas (ej: `X7KP2QNR`)
-3. Guarda el código en Airtable en el campo `codigoAgenda`
-4. Guarda `fechaHabilitacion` en Airtable
+3. Guarda el código en Supabase en la columna `codigo_agenda`
+4. Guarda `fecha_habilitacion` en Supabase
 5. Dispara Resend → mail cálido al cliente (ver Pieza 5)
 6. Responde con `{ ok: true }` → el botón en el mail/perfil muestra "✓ Habilitado"
 
@@ -141,14 +141,15 @@ Tu Lugar en Galicia
 **Cron:** el mismo job diario verifica códigos expirados sin uso.
 
 Si el código expiró sin que el cliente agendara:
-- El campo `codigoAgenda` se marca como `expirado` en Airtable
+- La columna `codigo_agenda` se marca como `expirado` en Supabase
 - En el mail diario de Silvana aparece una sección "Seguimiento pendiente" con el nombre del cliente y un botón para regenerar el código o contactarlo manualmente
 
 Si el cliente no abrió el mail en 48hs (detectable con Resend tracking):
 - En el mail diario de Silvana aparece una alerta suave: *"[nombre] aún no abrió el mail con su código."*
 - **Pendiente de activar con dominio propio:** requiere webhook de Resend (eventos `email.opened`).
-  Crear campo `mailAbierto` (Single line text) en Airtable. El webhook escribe la fecha de apertura.
-  El cron lee ese campo para incluir la alerta en el resumen.
+  Guardar la fecha de apertura en `campos_custom` (jsonb, sin migración — ver `docs/crm-supabase-fase0.md` §1.3)
+  o agregar una columna `mail_abierto` si se vuelve un campo consultado con frecuencia.
+  El cron lee ese valor para incluir la alerta en el resumen.
 
 ---
 
@@ -165,8 +166,8 @@ Si el cliente no abrió el mail en 48hs (detectable con Resend tracking):
 - Verifica firma HMAC-SHA256 via header `X-Cal-Signature-256` con `CALCOM_WEBHOOK_SECRET`
 - Solo procesa eventos `BOOKING_CREATED`; devuelve `{ ok: true }` para el resto
 - Extrae nombre, email, `startTime` y `location` del payload
-- Busca el lead en Airtable por email (`findLeadByEmail`)
-- PATCH: `citaAgendada: 'true'`, `fechaCita` (ISO timestamp), `horaCita`, `plataformaVideollamada`
+- Busca el lead en Supabase por email (`findLeadByEmail`, en `lib/admin/leadsRepo.ts`)
+- Actualiza: `citaAgendada: true` (booleano real, ya no el string `'true'` heredado de Airtable), `fechaCita` (ISO timestamp), `horaCita` y `plataformaVideollamada` (estos dos últimos sin columna propia — se guardan en `campos_custom`)
 - Envía mail de confirmación a Silvana con nombre, fecha, hora, plataforma y link al perfil
 - Siempre devuelve `{ ok: true }` — nunca bloquea Cal.com ante errores internos
 
@@ -175,13 +176,13 @@ Si el cliente no abrió el mail en 48hs (detectable con Resend tracking):
 - URL: `https://tulugarengalicia.com/api/webhooks/calcom`
 - Eventos: `BOOKING_CREATED`
 
-**Campos nuevos en Airtable** (Silvana los crea manualmente, tipo Single line text):
+**Campos en Supabase** (columnas reales de la tabla `leads`, creadas por migración — ver `docs/crm-supabase-fase0.md` §1.4; ya no se crean a mano como en Airtable):
 | Campo | Descripción |
 |---|---|
-| `citaAgendada` | `'true'` cuando el cliente reservó; vacío si no |
-| `fechaCita` | ISO timestamp del `startTime` de Cal.com (para comparación en recordatorio) |
-| `horaCita` | Hora formateada en hora España (ej: `10:00`) |
-| `plataformaVideollamada` | Meet / Zoom / URL / WhatsApp — puede editarse en Airtable |
+| `cita_agendada` | `boolean` real — `true` cuando el cliente reservó |
+| `fecha_cita` | ISO timestamp del `startTime` de Cal.com (para comparación en recordatorio) |
+| `horaCita` | Sin columna propia — vive en `campos_custom` (jsonb), hora formateada en hora España (ej: `10:00`) |
+| `plataformaVideollamada` | Sin columna propia — vive en `campos_custom` (jsonb): Meet / Zoom / URL / WhatsApp |
 
 ---
 
@@ -197,7 +198,7 @@ Si el cliente no abrió el mail en 48hs (detectable con Resend tracking):
 > GitHub → Settings → Secrets and variables → Actions → New repository secret.
 
 **Lógica:**
-- `getLeadsConCitaProxima()` en `lib/admin/airtable.ts`: filtra leads con `citaAgendada === 'true'` cuya `fechaCita` (ISO) cae entre `Date.now()` y `Date.now() + 75 minutos`
+- `getLeadsConCitaProxima()` en `lib/admin/leadsRepo.ts`: filtra leads con `cita_agendada = true` cuya `fecha_cita` (ISO) cae entre `Date.now()` y `Date.now() + 75 minutos`
 - Si no hay citas próximas: devuelve `{ ok: true, enviados: 0 }` sin enviar mail
 - Si hay citas: envía mail a Silvana con tarjeta por cada lead
 
@@ -214,9 +215,9 @@ Si el cliente no abrió el mail en 48hs (detectable con Resend tracking):
 
 ## Pieza 9 — `/agenda?code=` (ya implementado)
 
-Sin cambios en el comportamiento actual. Solo actualizar:
-- `AGENDA_VALID_CODES` en `lib/config/site.ts` pasa a ser dinámico: el endpoint de validación consulta Airtable en lugar del array hardcodeado
-- Validación: código existe en Airtable + no está expirado + no está ya usado
+Sin cambios en el comportamiento actual. Ya implementado:
+- `AGENDA_VALID_CODES` en `lib/config/site.ts` es dinámico: el endpoint de validación consulta Supabase (`validateCodigoAgenda` en `lib/admin/leadsRepo.ts`) en lugar de un array hardcodeado
+- Validación: código existe en Supabase + no está expirado + no está ya usado
 
 ---
 
@@ -240,7 +241,7 @@ CRON_SECRET                      — ya existe: Vercel lo inyecta en crons
 2. Pieza 5 — mail al cliente (Resend, usa dominio actual como fallback)
 3. Pieza 3 — página perfil completo `/admin/lead/[recordId]`
 4. Pieza 2 — mail diario a Silvana + cron
-5. Pieza 9 — validación dinámica contra Airtable (reemplaza array hardcodeado)
+5. Pieza 9 — validación dinámica contra Supabase (reemplaza array hardcodeado)
 6. Pieza 6 — expiración de códigos
 7. Pieza 7 — webhook Cal.com
 8. Pieza 8 — recordatorio a Silvana
@@ -254,7 +255,7 @@ CRON_SECRET                      — ya existe: Vercel lo inyecta en crons
 
 | Pieza | Estado |
 |---|---|
-| 1 — Calificación Airtable | ✅ hecho |
+| 1 — Calificación Supabase | ✅ hecho |
 | 2 — Mail diario Silvana | ✅ hecho |
 | 3 — Página perfil `/admin/lead/` | ✅ hecho |
 | 4 — Endpoint habilitar-agenda | ✅ hecho |

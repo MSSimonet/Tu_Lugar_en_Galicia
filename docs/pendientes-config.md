@@ -53,7 +53,7 @@ Cada ítem tiene su estado actual, qué hay que hacer y dónde se hace.
 |---|---|
 | **Estado actual** | Definidas como nombres en `.env.local.example`; sin valores reales en Vercel |
 | **Qué hacer** | Agregar los valores reales en Vercel → Settings → Environment Variables para los entornos Production y Preview |
-| **Variables de Fase 1** | `AIRTABLE_API_KEY` (o `GOOGLE_SHEETS_CLIENT_EMAIL` + `GOOGLE_SHEETS_PRIVATE_KEY`), `SHEET_MARCADOR_ID` |
+| **Variables de Fase 1** | `NEXT_PUBLIC_SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` (leads, migrado desde Airtable el 2026-07-12 — ver `docs/crm-supabase-fase0.md`), `SHEET_MARCADOR_ID` |
 | **Dónde** | Panel de Vercel → proyecto → Settings → Environment Variables. Referencia completa en `docs/ARCHITECTURE.md §4` y `.env.local.example` |
 
 ---
@@ -121,14 +121,14 @@ Fuentes de referencia: `/docs/gina-flujo.md` y `/docs/gina-barandas.md`.
 
 ---
 
-### A4-3. Persistencia de leads — mismo destino que el formulario
+### A4-3. Persistencia de leads — mismo destino que el formulario — ✅ IMPLEMENTADO, migrado a Supabase
 
 | Campo | Detalle |
 |---|---|
-| **Estado actual** | El formulario de diagnóstico guarda leads via `lib/leads.ts` → Airtable. Gina todavía no tiene destino definido. |
-| **Decisión tomada** | Gina debe guardar los datos capturados en el **mismo destino** que el formulario (`lib/leads.ts` / Airtable). No crear una base de datos separada ni una tabla nueva. |
-| **Instrucción para el AI Engineer** | Reutilizar o extender `lib/leads.ts` para el volcado del chat. Si Airtable necesita campos nuevos (p. ej. `canal: "gina"`), agregarlos a la tabla existente, no crear una nueva. |
-| **Dónde** | `lib/leads.ts` + tabla de Airtable existente (Fase 1). |
+| **Estado actual** | El formulario de diagnóstico y Gina guardan leads via `lib/leads.ts` → Supabase (tabla `leads`). Migrado desde Airtable el 2026-07-12 — ver `docs/crm-supabase-fase0.md`. |
+| **Decisión tomada** | Gina guarda los datos capturados en el **mismo destino** que el formulario (`lib/leads.ts` / Supabase). No hay una base de datos separada ni una tabla distinta para cada canal. |
+| **Instrucción para el AI Engineer** | Reutilizar o extender `lib/leads.ts` para el volcado del chat. Si se necesitan campos nuevos, usar `campos_custom` (jsonb, sin migración) en vez de una tabla nueva. |
+| **Dónde** | `lib/leads.ts` + tabla `leads` en Supabase. |
 
 ---
 
@@ -184,7 +184,7 @@ Fuentes de referencia: `/docs/gina-flujo.md` y `/docs/gina-barandas.md`.
 
 | Campo | Detalle |
 |---|---|
-| **Decisión** | Gina **NO corta la conversación** a quien no califica. Completa el cuestionario completo con todos los usuarios para capturar el máximo de datos. La calificación opera a nivel de **etiqueta interna** en Airtable ("califica" / "no califica"), no de corte de la charla. |
+| **Decisión** | Gina **NO corta la conversación** a quien no califica. Completa el cuestionario completo con todos los usuarios para capturar el máximo de datos. La calificación opera a nivel de **etiqueta interna** en la tabla `leads` de Supabase ("califica" / "no califica"), no de corte de la charla. |
 | **Beneficio** | Silvana puede priorizar su atención hacia los leads calificados; los no calificados quedan en la base de datos para nurturing futuro y reciben el Plan Estratégico con pasos de mejora (ver A4-2). |
 | **Instrucción para el AI Engineer** | Las preguntas P9 y P10 del flujo determinan la etiqueta interna. El flujo no tiene ramas de "cierre prematuro" salvo el límite de 3 desvíos consecutivos ya definido en `gina-barandas.md`. |
 | **Estado** | ✅ Cerrado. Documentar las condiciones exactas de etiquetado en `docs/gina-flujo.md` (P9, P10) antes de construir. |

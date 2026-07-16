@@ -702,51 +702,56 @@
 
 ---
 
-## Mapa de campos → Airtable
+## Mapa de campos → Supabase
 
-| Campo Airtable | Paso | Tipo Airtable | Notas |
+> Migrado desde Airtable el 2026-07-12 (ver `docs/crm-supabase-fase0.md`). La columna "Campo
+> Airtable" de antes pasa a ser la columna real de la tabla `leads` en Postgres (`snake_case`);
+> el mapeo completo camelCase↔snake_case vive en `lib/leads.ts` (`toRow()`/`fromRow()`) y
+> `lib/admin/leadsRepo.ts` (`COLUMN_MAP`).
+
+| Columna `leads` (Supabase) | Paso | Tipo Postgres | Notas |
 |---|---|---|---|
-| `nombreCompleto` | `p1_nombre` | Single line | Guardado en nivel1 |
-| `email` | `p2_email` | Single line | Guardado en nivel1 |
-| `telefono` | `p15_telefono` | Single line | Guardado en nivel1 |
-| `paisResidencia` | `p3_origen` o `p3b_pais` | Single line | `en_espana` o el texto del país |
-| `fechaLlegada` | `p4_plazo` | Single line | `menos-1-mes` \| `1-3-meses` \| `3-6-meses` \| `mas-6-meses` \| `sin-fecha` |
-| `ciudadDestino` | `p5_ciudad` | Single select | `vigo` \| `a-coruna` \| `santiago` \| `pontevedra` \| `lugo` \| `indiferente` |
-| `adultos` | `p6a_adultos` | Single select | `1` \| `2` \| `3` \| `4+` |
-| `ninos` | `p6c_ninos` | Single select | `0` \| `1` \| `2` \| `3+` (solo si hay menores) |
-| `adolescentes` | `p6d_adolescentes` | Single select | `0` \| `1` \| `2` \| `3+` (solo si hay menores) |
-| `mascotas` | `p7_mascotas` | Single select | `si` \| `no` |
-| `mascotaTipo` | `p7b_tipo` | Multiple select | `perro` \| `gato` \| `otro` (solo si mascotas=si) |
-| `cantidadPerros` | `p7c_cant_perros` | Single select | `1` \| `2` \| `3+` (solo si mascotaTipo incluye perro) |
-| `cantidadGatos` | `p7c_cant_gatos` | Single select | `1` \| `2` \| `3+` (solo si mascotaTipo incluye gato) |
-| `mascotaPeso` | `p7b_peso` | Single select | `0-5 kg` \| `5-10 kg` \| `+10 kg` (solo si mascotaTipo incluye perro) |
-| `documentacion` | `p8_documentacion` | Single select | 6 opciones |
-| `situacionLaboral` | `p9_laboral` | Single select | 7 opciones |
-| `ingresosMensuales` | `p10_ingresos` | Single line | 5 opciones |
-| `garantias` | `p11_garantias` | Multiple select | `garantia-adicional` \| `aval-bancario` \| `avalista` \| `seguro-impago` \| `ninguna` |
-| `presupuestoMensual` | `p12_presupuesto` | Single select | `menos-700` \| `700-1000` \| `1000-1400` \| `mas-1400` |
-| `cuentaBancaria` | `p13_banco` | Single select | `si` \| `no` |
-| `comprendeHonorarios` | `p14_servicio` | Single select | `entiende` \| `pide-explicacion` |
-| `necesidadesEspeciales` | `p16_accesibilidad` | Single line | `si` \| `no` |
-| `tipoLicencia` | `p17_licencia` | Single select | `espanola` \| `europea` \| `origen` \| `no-tiene` |
-| `ciudadActual` | `p18a_ciudad` | Single line | Texto libre *(solo rama "ya vive en España")* |
-| `tiempoEnEspana` | `p19a_tiempo` | Single select | `menos-1-ano` \| `1-5-anos` \| `mas-5-anos` *(solo rama España)* |
-| `objetivoBusqueda` | `p20a_objetivo` | Single select | `busca-vivienda` \| `integrarse` *(solo rama España)* |
-| `tipoInmueble` | `p21_tipo_inmueble` | Single select | `habitacion` \| `estudio` \| `piso` \| `casa` |
-| `habitacionesMinimas` | `p22_habitaciones` | Single select | `1` \| `2` \| `3` \| `4+` (no aplica a estudio) |
-| `amueblado` | `p23_amueblado` | Single select | `si` \| `no` \| `indiferente` |
-| `imprescindibles` | `p24_imprescindibles` | Multiple select | `ascensor` \| `garaje` \| `calefaccion` \| `terraza` \| `no` |
-| `comodidades` | `p24b_comodidades` | Multiple select | `transporte` \| `zona-tranquila` \| `cerca-colegios` \| `internet` \| `ninguna` |
-| `profesion` | `p26_profesion` | Long text | Texto libre |
-| `nivelEstudios` | `p27_estudios` | Single select | `sin-estudios` \| `bachillerato` \| `tecnico` \| `universitario` \| `posgrado` |
-| `comoNosConociste` | `atribucion` | Single select | `instagram` \| `facebook` \| `tiktok` \| `google` \| `recomendacion` \| `otro` |
-| `comprendeServicio` | *(automático)* | Checkbox | Siempre `true` — se añade en el mapper de `route.ts` |
-| `consentimientoRGPD` | *(automático)* | Checkbox | Siempre `true` — se añade en el mapper de `route.ts` |
+| `nombre_completo` | `p1_nombre` | `text` | Guardado en nivel1 |
+| `email` | `p2_email` | `text` | Guardado en nivel1 |
+| `telefono` | `p15_telefono` | `text` | Guardado en nivel1 |
+| `pais_residencia` | `p3_origen` o `p3b_pais` | `text` | `en_espana` o el texto del país |
+| `fecha_llegada` | `p4_plazo` | `text` | `menos-1-mes` \| `1-3-meses` \| `3-6-meses` \| `mas-6-meses` \| `sin-fecha` (bucket categórico, no fecha real) |
+| `ciudad_destino` | `p5_ciudad` | `text` | `vigo` \| `a-coruna` \| `santiago` \| `pontevedra` \| `lugo` \| `indiferente` |
+| `adultos` | `p6a_adultos` | `text` | `1` \| `2` \| `3` \| `4+` |
+| `ninos` | `p6c_ninos` | `text` | `0` \| `1` \| `2` \| `3+` (solo si hay menores) |
+| `adolescentes` | `p6d_adolescentes` | `text` | `0` \| `1` \| `2` \| `3+` (solo si hay menores) |
+| `mascotas` | `p7_mascotas` | `text` | `si` \| `no` |
+| `mascota_tipo` | `p7b_tipo` | `text[]` | `perro` \| `gato` \| `otro` (solo si mascotas=si) |
+| `cantidad_perros` | `p7c_cant_perros` | `text` | `1` \| `2` \| `3+` (solo si mascotaTipo incluye perro) |
+| `cantidad_gatos` | `p7c_cant_gatos` | `text` | `1` \| `2` \| `3+` (solo si mascotaTipo incluye gato) |
+| `mascota_peso` | `p7b_peso` | `text` | `0-5 kg` \| `5-10 kg` \| `+10 kg` (solo si mascotaTipo incluye perro) |
+| `documentacion` | `p8_documentacion` | `text` | 6 opciones |
+| `situacion_laboral` | `p9_laboral` | `text` | 7 opciones |
+| `ingresos_mensuales` | `p10_ingresos` | `text` | 5 opciones |
+| `garantias` | `p11_garantias` | `text[]` | `garantia-adicional` \| `aval-bancario` \| `avalista` \| `seguro-impago` \| `ninguna` |
+| `presupuesto_mensual` | `p12_presupuesto` | `text` | `menos-700` \| `700-1000` \| `1000-1400` \| `mas-1400` |
+| `cuenta_bancaria` | `p13_banco` | `text` | `si` \| `no` |
+| `comprende_honorarios` | `p14_servicio` | `text` | `entiende` \| `pide-explicacion` |
+| `necesidades_especiales` | `p16_accesibilidad` | `text` | `si` \| `no` |
+| `tipo_licencia` | `p17_licencia` | `text` | `espanola` \| `europea` \| `origen` \| `no-tiene` |
+| `ciudad_actual` | `p18a_ciudad` | `text` | Texto libre *(solo rama "ya vive en España")* |
+| `tiempo_en_espana` | `p19a_tiempo` | `text` | `menos-1-ano` \| `1-5-anos` \| `mas-5-anos` *(solo rama España)* |
+| `objetivo_busqueda` | `p20a_objetivo` | `text` | `busca-vivienda` \| `integrarse` *(solo rama España)* |
+| `tipo_inmueble` | `p21_tipo_inmueble` | `text` | `habitacion` \| `estudio` \| `piso` \| `casa` |
+| `habitaciones_minimas` | `p22_habitaciones` | `text` | `1` \| `2` \| `3` \| `4+` (no aplica a estudio) |
+| `amueblado` | `p23_amueblado` | `text` | `si` \| `no` \| `indiferente` |
+| `imprescindibles` | `p24_imprescindibles` | `text[]` | `ascensor` \| `garaje` \| `calefaccion` \| `terraza` \| `no` |
+| `comodidades` | `p24b_comodidades` | `text[]` | `transporte` \| `zona-tranquila` \| `cerca-colegios` \| `internet` \| `ninguna` |
+| `profesion` | `p26_profesion` | `text` | Texto libre |
+| `nivel_estudios` | `p27_estudios` | `text` | `sin-estudios` \| `bachillerato` \| `tecnico` \| `universitario` \| `posgrado` |
+| `como_nos_conociste` | `atribucion` | `text` | `instagram` \| `facebook` \| `tiktok` \| `google` \| `recomendacion` \| `otro` |
+| `comprende_servicio` | *(automático)* | `boolean` | Siempre `true` — se añade en el mapper de `route.ts` |
+| `consentimiento_rgpd` | *(automático)* | `boolean` | Siempre `true` — se añade en el mapper de `route.ts` |
 
-**Campos en Airtable que Gina NO pregunta** (presentes en el formulario web `/conocernos`):
-- `co-living` como opción de `tipoInmueble` — solo disponible en el formulario web.
+**Campos en Supabase que Gina NO pregunta** (presentes en el formulario web `/conocernos`):
+- `co-living` como opción de `tipo_inmueble` — solo disponible en el formulario web.
 
-**Campos que Gina pregunta pero NO se guardan en Airtable** (enrutamiento puro):
+**Campos que Gina pregunta pero NO se guardan en Supabase** (enrutamiento puro):
 - Respuesta a `p6b_menores` (si/no menores) — solo enruta (el conteo real queda en `ninos`/`adolescentes`)
 - Respuesta a `p14_explicacion` (mensaje informativo, solo "continuar")
 - Respuesta a `p17b_canje` (orientación de canje de licencia — solo informa, no se guarda)

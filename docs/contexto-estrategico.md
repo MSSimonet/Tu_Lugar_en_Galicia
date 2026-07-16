@@ -201,6 +201,12 @@ No es hacer lo mismo que todos pero mejor — es ser el único especialista con 
 | Agenda | Cal.com (gratuito) | 0€ |
 | **Total básico** | | **~25-35€/mes** |
 
+> **Nota (2026-07-16):** esta arquitectura es un diseño especulativo para un agente de WhatsApp
+> que nunca se construyó (ver CLAUDE.md §9, ítem A08 — WhatsApp fue reemplazado por el formulario
+> de contacto). El CRM real del proyecto ya no es Airtable: si este agente se retoma en el futuro,
+> debe reutilizar la tabla `leads` en Supabase (`docs/crm-supabase-fase0.md`), no crear una
+> integración nueva a Airtable ni a Notion.
+
 ### Personalidad del agente
 - Nombre: Asistente de Tu Lugar en Galicia
 - Tono: cálido, directo, "tú" neutro (español internacional; nunca "vos" ni "che")

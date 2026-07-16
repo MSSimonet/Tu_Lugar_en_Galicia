@@ -11,7 +11,7 @@ Sitio web y sistema de calificación de leads para el primer servicio de **reloc
 - **Framework:** Next.js 16 (App Router) + TypeScript + Tailwind CSS 4
 - **Deploy:** Vercel (auto-deploy desde `main`)
 - **CDN / DNS:** Cloudflare
-- **CRM:** Airtable
+- **CRM (leads):** Supabase/Postgres (migrado desde Airtable el 2026-07-12, ver [`docs/crm-supabase-fase0.md`](docs/crm-supabase-fase0.md))
 - **IA (Gina):** API de Gemini (Google)
 - **Clima:** API AEMET (España)
 - **Agenda:** Cal.com embebido
@@ -26,9 +26,9 @@ Sitio web y sistema de calificación de leads para el primer servicio de **reloc
 
 ```
 app/                  — Páginas y API routes (Next.js App Router)
-├── api/gina/         — Motor conversacional de Gina → Airtable
+├── api/gina/         — Motor conversacional de Gina → Supabase
 ├── api/clima/        — Clima en tiempo real por ciudad (AEMET, caché 6h)
-├── api/lead/         — Formulario de diagnóstico → Airtable
+├── api/lead/         — Formulario de diagnóstico → Supabase
 ├── api/plan/         — Generación de PDF del Plan Estratégico
 ├── api/comunidad/    — Registro y mensajería de Comunidad de Acogida
 ├── api/admin/        — Endpoints internos (códigos de agenda, recordatorios, resumen diario)
@@ -46,7 +46,7 @@ components/           — Componentes React
 lib/gina/             — Flujo JSON + motor de estados + persistencia
 lib/comunidad/        — Comunidad de Acogida: Supabase, Nominatim, puente a Airtable
 lib/plan/             — Armador del Plan Estratégico + generación de PDF
-lib/admin/            — Tokens HMAC, Airtable, email transaccional
+lib/admin/            — Tokens HMAC, leads (Supabase), email transaccional
 docs/                 — Arquitectura, roadmap, design-system, contexto estratégico
 ├── comunidad-de-acogida.md  — Mapa de comunidad: implementado y verificado end-to-end (§8)
 sonar-project.properties — Config de análisis estático (SonarQube)
@@ -60,11 +60,15 @@ CLAUDE.md             — Reglas del proyecto para Claude Code
 Crear `.env.local` en la raíz con:
 
 ```env
-AIRTABLE_API_KEY=
-AIRTABLE_BASE_ID=
-AIRTABLE_TABLE_NAME=
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 GEMINI_API_KEY=
 AEMET_API_KEY=
+
+# Solo para el puente de Comunidad (lib/comunidad/airtable.ts) — leads ya no las usa.
+AIRTABLE_API_KEY=
+AIRTABLE_BASE_ID=
 ```
 
 Las mismas variables deben estar configuradas en Vercel (Settings → Environment Variables).
@@ -90,7 +94,7 @@ npx tsc --noEmit # TypeScript
 
 ## Gina
 
-Gina es el asistente conversacional que califica leads antes de que lleguen a Silvana. El flujo vive en `lib/gina/flow.json` (~47 pasos, con bifurcaciones por perfil). Al terminar, guarda el lead en Airtable con una calificación (`potencial` / `en-desarrollo` / `bajo`) y una etiqueta (`califica` / `seguimiento-futuro` / `lead-en-preparacion` / `incompleto`).
+Gina es el asistente conversacional que califica leads antes de que lleguen a Silvana. El flujo vive en `lib/gina/flow.json` (~47 pasos, con bifurcaciones por perfil). Al terminar, guarda el lead en Supabase con una calificación (`potencial` / `en-desarrollo` / `bajo`) y una etiqueta (`califica` / `seguimiento-futuro` / `lead-en-preparacion` / `incompleto`).
 
 La sesión persiste en `localStorage` por 24 horas para no perder conversaciones a mitad en móvil.
 

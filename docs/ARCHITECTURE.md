@@ -22,7 +22,7 @@ Cloudflare (DNS + SSL + CDN)
 Vercel  ──►  Next.js app
                 ├── páginas (SSR/SSG) ── SEO
                 └── /app/api/*  (backend)
-                        ├── /lead  → Airtable/Sheets   (Fase 1)
+                        ├── /lead  → Supabase          (Fase 1, migrado desde Airtable el 2026-07-12)
                         └── /gina  → API de Gemini     (Fase 4)
 Cloudflare Worker (cron 15 días) → precios → la web los lee   (Fase 3)
 ```
@@ -80,6 +80,8 @@ Cloudflare Worker (cron 15 días) → precios → la web los lee   (Fase 3)
 **Decisión:** leads a Airtable/Google Sheets; El Marcador lee una Google Sheet; contenido en
 el repo (MDX). La DB entra solo cuando hay estado multiusuario (mapa, presupuesto, CRM).
 **Consecuencia:** Fase 1 sale rápido y barato; menos superficie de fallo y de RGPD al inicio.
+**Superado por ADR-009** (2026-07-12): la decisión de negocio de abandonar Airtable por completo
+adelantó la introducción de la base de datos — hoy los leads ya persisten en Supabase/Postgres.
 
 ### ADR-003 — Cloudflare para DNS/SSL y para el cron del scraper
 **Contexto:** cuenta free ya creada.
@@ -103,7 +105,8 @@ de entorno de Vercel, nunca en el cliente ni en el repo.
 
 | Variable | Fase | Uso |
 |---|---|---|
-| `AIRTABLE_API_KEY` / `GOOGLE_SHEETS_*` | 1 | guardar leads |
+| `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | 1 | guardar leads (migrado desde Airtable, ADR-009) |
+| `AIRTABLE_API_KEY` / `AIRTABLE_BASE_ID` | — | solo puente de Comunidad (`lib/comunidad/airtable.ts`), pendiente de eliminación |
 | `SHEET_MARCADOR_ID` | 1 | leer El Marcador |
 | `OPENWEATHER_API_KEY` | 2 | clima por ciudad |
 | `GEMINI_API_KEY` | 4 | Gina (Gemini) |
@@ -177,6 +180,30 @@ sin cambios como System Prompt independientemente del proveedor.
 - La tabla de variables de entorno en §4 se actualiza: la entrada de Fase 4 pasa de
   `ANTHROPIC_API_KEY` a `GEMINI_API_KEY`.
 
+### ADR-009 — Migración del CRM de leads de Airtable a Supabase/Postgres
+
+**Status:** Accepted — 2026-07-12
+
+**Contexto:** ADR-002 asumía Airtable/Google Sheets para leads hasta la Fase 5. El 2026-07-12 se
+tomó la decisión de negocio de abandonar Airtable por completo y unificar el 100% del sistema
+(leads + Comunidad) en Supabase/Postgres, sin arquitectura híbrida ni dual-write. El detalle
+completo del schema y el plan de reescritura vive en `docs/crm-supabase-fase0.md`.
+
+**Decisión:** `lib/leads.ts` y todos los endpoints de admin que antes usaban `lib/admin/airtable.ts`
+pasan a Supabase (tabla `leads`, ver `docs/crm-supabase-fase0.md` §1). `lib/admin/airtable.ts` se
+elimina del repo. El único uso de Airtable que queda tras esta migración es el puente de Comunidad
+(`lib/comunidad/airtable.ts`), documentado como pendiente de eliminación en la Fase 5 de retiro de
+Airtable (`docs/crm-supabase-fase0.md` §3).
+
+**Consecuencias:**
+- ADR-002 queda superado en la práctica (ver nota agregada ahí) — hoy sí hay base de datos en
+  producción, antes de la Fase 5 originalmente planeada.
+- `AIRTABLE_TABLE_NAME` (la tabla de leads) queda huérfana — nadie la lee. `AIRTABLE_API_KEY` y
+  `AIRTABLE_BASE_ID` siguen en uso, pero solo para el puente de Comunidad, no para leads.
+- Nueva variable de entorno: `SUPABASE_SERVICE_ROLE_KEY` (ya existía por Comunidad, ahora también
+  la usa el CRM de leads) — el cliente de Supabase se generalizó a `lib/supabase/serverClient.ts`,
+  compartido entre `lib/leads.ts` y `lib/comunidad/*`.
+
 ---
 
 ## 6. Guía de despliegue: Cloudflare → Vercel
@@ -202,8 +229,8 @@ previa con Vercel o Cloudflare. Ejecutá cada sección en orden.
 
    | Variable | Fase | Descripción |
    |---|---|---|
-   | `AIRTABLE_API_KEY` | 1 | Clave de Airtable para guardar leads |
-   | `GOOGLE_SHEETS_*` | 1 | Credenciales de Google Sheets (alternativa a Airtable) |
+   | `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | 1 | Supabase para guardar leads (migrado desde Airtable, ADR-009) |
+   | `AIRTABLE_API_KEY` / `AIRTABLE_BASE_ID` | — | Solo puente de Comunidad, ya no para leads |
    | `SHEET_MARCADOR_ID` | 1 | ID de la hoja de El Marcador |
    | `OPENWEATHER_API_KEY` | 2 | Clima por ciudad |
    | `GEMINI_API_KEY` | 4 | API de Gemini para Gina |

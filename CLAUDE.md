@@ -31,11 +31,16 @@ Contexto completo del negocio, marca, competencia y producto en:
 - **Framework:** Next.js (App Router) + TypeScript + Tailwind CSS
 - **Deploy:** Vercel (auto-deploy desde GitHub `main`)
 - **DNS / SSL / CDN / cron del scraper:** Cloudflare (free)
-- **Leads / CRM (Fase 1):** Airtable o Google Sheets — NO base de datos todavía
+- **Leads / CRM:** **Supabase/Postgres** (tabla `leads`) — migrado desde Airtable el 2026-07-12,
+  ver `docs/crm-supabase-fase0.md`. Airtable ya no se usa para leads; a la fecha de esta nota
+  sigue en uso solo por el puente de Comunidad (`lib/comunidad/airtable.ts`), pendiente de
+  eliminación (ver Fase 5 de eliminación de Airtable).
 - **IA (Gina):** **API de Gemini (Google)** llamada desde API routes de Next.js (clave solo en servidor).
   Decisión vigente: Gemini por costo. NO volver a la API de Claude/Anthropic sin un ADR.
   La clave va en `GEMINI_API_KEY` (solo servidor) — nunca en el cliente ni en el repo.
-- **Base de datos:** se introduce SOLO en Fase 5 (Vercel Postgres / Neon / Supabase)
+- **Base de datos:** Supabase/Postgres — en producción desde la migración de leads (2026-07-12) y
+  desde Comunidad (Fase 5, ver más abajo). La idea original de "sin base de datos hasta Fase 5"
+  quedó superada por la decisión de negocio de abandonar Airtable por completo.
 - **Agenda:** Cal.com embebido — **Pagos:** Stripe (Fase 6)
 - **Comunidad (Fase 5):** **Supabase** — dependencia sumada al stack (`@supabase/supabase-js`,
   `leaflet`, `react-leaflet`, `leaflet.markercluster`), implementada y verificada end-to-end

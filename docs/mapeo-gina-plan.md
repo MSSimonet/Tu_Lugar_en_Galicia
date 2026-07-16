@@ -2,7 +2,7 @@
 
 > **Qué es:** tabla de referencia que conecta cada pregunta de **Gina** (el cuestionario) con los
 > **trámites** que activa en el **Plan Estratégico**. Gina es el patrón: los valores de la columna
-> "Respuesta (value)" son los que el motor guarda en Airtable, exactos.
+> "Respuesta (value)" son los que el motor guarda en Supabase (tabla `leads`), exactos.
 >
 > **Fuentes cruzadas:** `gina-flujo.md` (preguntas y values) · `plan-estrategico.md` (lógica de
 > armado) · `tramites-galicia.md` (fichas 1–55).

@@ -14,7 +14,7 @@
 | **Rama activa** | `main` — working tree limpio, sin cambios pendientes |
 | **Auto-deploy** | Vercel ← GitHub `main` |
 | **CDN / DNS / SSL** | Cloudflare (pendiente: apuntar dominio propio) |
-| **CRM / Leads** | Airtable (sin base de datos hasta Fase 5) |
+| **CRM / Leads** | Supabase/Postgres (migrado desde Airtable el 2026-07-12 — ver `docs/crm-supabase-fase0.md`) |
 | **IA (Gina)** | Gemini API (ADR-008 vigente — NO cambiar a Claude sin ADR) |
 | **tsc** | 0 errores (verificado en `c960296`) |
 | **build** | no re-verificado tras `c960296` — pendiente correr `npm run build` en próxima sesión |
@@ -121,6 +121,11 @@ Todos con evidencia concreta (tsc + build + test en producción o revisión de c
 
 ### Flujo de agenda — 9 piezas completas (sesiones anteriores)
 
+> Nota (2026-07-16): las descripciones de abajo son el registro histórico de lo que cada commit
+> hizo en su momento, contra Airtable. Desde el 2026-07-12 todo el CRM de leads vive en Supabase
+> — ver `docs/crm-supabase-fase0.md`. No se reescriben las filas para mantener el registro fiel a
+> lo que cada commit realmente hizo.
+
 | Pieza | Commit | Descripción |
 |---|---|---|
 | Pieza 1 — Calificación Airtable | (sesiones anteriores) | Lead guardado con `calificacion` en Airtable |
@@ -148,7 +153,7 @@ Todos con evidencia concreta (tsc + build + test en producción o revisión de c
 
 | Pieza | Estado | Bloqueado por |
 |---|---|---|
-| 1 — Calificación Airtable | ✅ Funciona en producción | — |
+| 1 — Calificación Supabase (migrado desde Airtable el 2026-07-12) | ✅ Funciona en producción | — |
 | 2 — Mail diario Silvana | ✅ Funciona en producción | — |
 | 3 — Perfil `/admin/lead/[recordId]` | ✅ Funciona | — |
 | 4 — Endpoint habilitar-agenda | ✅ Funciona | — |
@@ -221,7 +226,7 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 Esta sesión cubrió solo la **fase de seguridad** de una auditoría global más amplia. Quedan sin hacer:
 - **Limpieza de código muerto / assets sin usar** (ej. dependencias de fuentes no usadas en `package.json` — `@fontsource/dm-sans`, `@fontsource/mulish`, `@fontsource/source-sans-3` — ya detectadas en `docs/auditoria-2026-07-01.md` §3, sin confirmar si siguen sin uso tras esta sesión).
 - **Performance** (Lighthouse en producción — pendiente desde certificación de Fase 1, criterio C6 nunca verificado con medición real).
-- **QA funcional end-to-end** — recorrido completo de los flujos de negocio (Gina → Airtable → agenda → PDF → mails) verificando comportamiento, no solo seguridad.
+- **QA funcional end-to-end** — recorrido completo de los flujos de negocio (Gina → Supabase → agenda → PDF → mails) verificando comportamiento, no solo seguridad.
 
 ---
 
@@ -268,7 +273,7 @@ Fraunces (documentado) vs. Cormorant Garamond + Mulish (real, en 20+ archivos). 
 Generar token → probar `/admin/lead/recgLT5e61Im5mrhN` → confirmar que el PDF se genera sin errores visuales (colores, fuentes, layout).
 
 ### 5. Reserva real de prueba end-to-end del flujo de agenda
-Confirmar que `POST /api/webhooks/calcom` actualiza Airtable y dispara mail a Silvana con una reserva real (no solo el ping test ya verificado).
+Confirmar que `POST /api/webhooks/calcom` actualiza Supabase y dispara mail a Silvana con una reserva real (no solo el ping test ya verificado).
 
 ### 6. Rediseño páginas de ciudad: tabs + cámara MeteoGalicia
 - Tabs para secciones (Barrios, Clima, Colegios, Transporte, etc.)
@@ -290,9 +295,11 @@ M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, perform
 
 | Variable | Propósito | Vercel Prod | GitHub Actions | `.env.local.example` |
 |---|---|---|---|---|
-| `AIRTABLE_API_KEY` | Leads y flujo agenda | ✅ Configurada | — | ✅ |
-| `AIRTABLE_BASE_ID` | ID base Airtable | ✅ Configurada | — | ✅ |
-| `AIRTABLE_TABLE_NAME` | Nombre tabla | ✅ Configurada | — | ✅ |
+| `NEXT_PUBLIC_SUPABASE_URL` | Leads (tabla `leads`) y Comunidad | ✅ Configurada | — | ✅ |
+| `SUPABASE_SERVICE_ROLE_KEY` | Leads y Comunidad (bypassea RLS, server-only) | ✅ Configurada | — | ✅ |
+| `AIRTABLE_API_KEY` | Solo puente Comunidad — ya no leads, migrado a Supabase el 2026-07-12 | ✅ Configurada | — | ✅ |
+| `AIRTABLE_BASE_ID` | Solo puente Comunidad — ya no leads | ✅ Configurada | — | ✅ |
+| `AIRTABLE_TABLE_NAME` | Huérfana — la tabla de leads en Airtable ya no se lee desde ningún código | — | — | ❌ Eliminada de `.env.local.example` (Fase 5 de retiro de Airtable) |
 | `GEMINI_API_KEY` | IA Gina (servidor only) | ✅ Verificar vigente | — | ✅ |
 | `INTERNAL_API_SECRET` | Auth endpoints admin + HMAC | ✅ Rotado y verificado HTTP 200 producción (R3 resuelto 2026-07-03) | ✅ Verificado | ✅ |
 | `RESEND_API_KEY` | Envío de emails | ✅ Configurada | — | ✅ |
@@ -319,7 +326,7 @@ M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, perform
 
 | Ruta | Método | Auth | Propósito |
 |---|---|---|---|
-| `/api/gina` | POST | Rate limit Upstash (**60**/10min) + origin allowlist + firma HMAC del `airtableRecordId` (C1, `generateAdminToken`/`verifyAdminToken`) | IA Gina → Gemini, guarda lead en Airtable. Runtime Node (ya no edge, por `crypto` de Node) |
+| `/api/gina` | POST | Rate limit Upstash (**60**/10min) + origin allowlist + firma HMAC del `leadId` (C1, `generateAdminToken`/`verifyAdminToken`) | IA Gina → Gemini, guarda lead en Supabase. Runtime Node (ya no edge, por `crypto` de Node) |
 | `/api/lead` | POST | Origin check | Guardar lead de FormularioDiagnostico |
 | `/api/marcador` | GET | — | Lee Google Sheets → métricas El Marcador |
 | `/api/clima/[ciudad]` | GET | — | Clima por ciudad (AEMET) |
@@ -328,7 +335,7 @@ M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, perform
 | `/api/admin/habilitar-agenda/[recordId]` | POST | Token HMAC en query param | Genera código agenda, mail al cliente |
 | `/api/admin/recordatorio-silvana` | GET | `Authorization: Bearer INTERNAL_API_SECRET` | Cron horario → recordatorio 1h antes |
 | `/api/admin/expirar-codigos` | GET | `Authorization: Bearer INTERNAL_API_SECRET` | Expira códigos >7 días |
-| `/api/webhooks/calcom` | POST | HMAC-SHA256 `X-Cal-Signature-256` (`CALCOM_WEBHOOK_SECRET`) | Webhook Cal.com → actualiza Airtable + mail Silvana |
+| `/api/webhooks/calcom` | POST | HMAC-SHA256 `X-Cal-Signature-256` (`CALCOM_WEBHOOK_SECRET`) | Webhook Cal.com → actualiza Supabase + mail Silvana |
 
 ### Componentes clave
 
