@@ -53,3 +53,6 @@ docs/auditoria-tlg8.md
 
 # marcador de sesión — no commitear
 .claude/.precompact-done
+
+*storybook.log
+storybook-static
