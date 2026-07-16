@@ -1,0 +1,15 @@
+name: Instagram — refrescar token
+on:
+  schedule:
+    - cron: '30 * * * *'  # cada hora UTC (mismo patrón que recordatorio-silvana.yml)
+  workflow_dispatch:      # permite disparo manual desde GitHub UI
+
+jobs:
+  refrescar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar endpoint de refresco
+        run: |
+          curl -f -X GET \
+            -H "Authorization: Bearer ${{ secrets.INTERNAL_API_SECRET }}" \
+            https://tu-lugar-en-galicia.vercel.app/api/admin/instagram/refrescar-token
