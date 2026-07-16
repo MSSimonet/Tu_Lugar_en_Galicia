@@ -1,0 +1,16 @@
+-- 0007_revoke_public_execute_merge_campos_custom.sql — cierra el grant a PUBLIC que
+-- Postgres otorga por defecto a las funciones nuevas (a diferencia de las tablas, que no
+-- reciben grant a PUBLIC automáticamente).
+--
+-- La migración 0006 ya hizo `revoke all on function merge_campos_custom(uuid, jsonb)
+-- from anon, authenticated`, pero eso no incluye el privilegio EXECUTE que Postgres le
+-- da a PUBLIC en toda función nueva por defecto — el propio comentario de 0006 sugiere
+-- una garantía ("solo service_role puede ejecutar esta función") que en la práctica la
+-- da otra capa (la función no es SECURITY DEFINER, así que el UPDATE interno corre con
+-- los privilegios de quien invoca, y anon/authenticated nunca tuvieron UPDATE en `leads`
+-- por la migración 0004) — pero el grant a PUBLIC sigue abierto y es higiene real
+-- pendiente, no solo cosmética.
+--
+-- NOTA: esta migración NO se aplicó contra producción en esta sesión — igual que las
+-- 6 anteriores, se aplica manualmente pegando en el SQL Editor de Supabase.
+revoke execute on function merge_campos_custom(uuid, jsonb) from public;
