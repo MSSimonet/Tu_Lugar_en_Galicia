@@ -109,7 +109,7 @@ de entorno de Vercel, nunca en el cliente ni en el repo.
 | ~~`AIRTABLE_API_KEY` / `AIRTABLE_BASE_ID`~~ | — | Eliminadas — el puente de Comunidad que las usaba se retiró el 2026-07-16 (ADR-009). El proyecto ya no usa Airtable en ningún código. |
 | `SHEET_MARCADOR_ID` | 1 | leer El Marcador |
 | `OPENWEATHER_API_KEY` | 2 | clima por ciudad |
-| `GEMINI_API_KEY` | 4 | Gina (Gemini) |
+| ~~`GEMINI_API_KEY`~~ | — | Descartada — Gina es motor de reglas puro, sin IA (ADR-008 superseded) |
 | `DATABASE_URL` | 5 | base de datos |
 | `STRIPE_SECRET_KEY` | 6 | pagos |
 
@@ -160,25 +160,30 @@ en CLAUDE.md §3). No se crean carpetas vacías en el scaffold para no generar a
 - Un `create-next-app` posterior en la misma carpeta fallaría por nombre con mayúsculas; si se
   necesita reinicializar, hacerlo en una carpeta temporal y mover como se hizo en este scaffold.
 
-### ADR-008 — Modelo de IA para Gina: Gemini en lugar de Claude
+### ADR-008 — Modelo de IA para Gina: descartado, Gina es motor de reglas puro
 
-**Status:** Accepted — 2026-05-31
+**Status:** Superseded — 2026-07-16 (originalmente Accepted — 2026-05-31, nunca implementado)
 
-**Contexto:** Gina necesita un modelo de lenguaje para los pasos `[llm]` del cuestionario
+**Contexto:** Gina necesitaba un modelo de lenguaje para los pasos `[llm]` del cuestionario
 (texto libre). El stack inicial asumía Claude (Anthropic), ya integrado en el proyecto.
-Se evaluaron Claude Haiku y Gemini Flash en términos de costo a escala.
+Se evaluaron Claude Haiku y Gemini Flash en términos de costo a escala, y en 2026-05-31 se
+aceptó Gemini por costo. Esa integración nunca se construyó: `lib/ai/` no existe, no hay
+ninguna referencia a Gemini/`GoogleGenerativeAI` en el código, y `lib/gina/flowEngine.ts` es
+—y siempre fue— un motor puro sin llamadas de IA ni de red (los pasos `[llm]` se procesan
+como input de texto normal). Confirmado en la auditoría técnica de 2026-07-16
+(`docs/auditoria-tecnica-2026-07.md`, hallazgo crítico #4).
 
-**Decisión:** Se usa **Gemini** (Google) como modelo de IA para Gina, por costo a escala.
-Las barandas definidas en `docs/gina-barandas.md` son agnósticas al modelo y se aplican
-sin cambios como System Prompt independientemente del proveedor.
+**Decisión:** Se descarta la integración de un LLM externo para Gina. Motivo: evitar
+alucinaciones del modelo en preguntas sobre visado/documentación migratoria, donde una
+respuesta incorrecta tiene consecuencias reales para el usuario. Gina sigue siendo un motor
+de reglas determinista (`lib/gina/flowEngine.ts` + `lib/gina/flow.json`), sin dependencia de
+Gemini, Claude ni ningún otro proveedor de IA.
 
 **Consecuencias:**
-- Variable de entorno: `GEMINI_API_KEY` (en lugar de `ANTHROPIC_API_KEY` para Gina).
-- El cliente SDK en `lib/ai/` usará el SDK de Google Generative AI.
-- `ANTHROPIC_API_KEY` queda disponible para otros usos futuros si se incorpora Claude
-  en otra parte del stack.
-- La tabla de variables de entorno en §4 se actualiza: la entrada de Fase 4 pasa de
-  `ANTHROPIC_API_KEY` a `GEMINI_API_KEY`.
+- `GEMINI_API_KEY` se elimina de `.env.local.example` — no hay ningún consumidor real.
+- La tabla de variables de entorno en §4 refleja que la fila de Gemini nunca se usó.
+- Si en el futuro se reconsidera un LLM para Gina, requiere un nuevo ADR con mitigación
+  explícita de alucinaciones (barandas + validación) antes de aceptarse.
 
 ### ADR-009 — Migración del CRM de leads de Airtable a Supabase/Postgres
 
@@ -232,7 +237,7 @@ previa con Vercel o Cloudflare. Ejecutá cada sección en orden.
    | ~~`AIRTABLE_API_KEY` / `AIRTABLE_BASE_ID`~~ | — | Eliminadas — el proyecto ya no usa Airtable (ADR-009) |
    | `SHEET_MARCADOR_ID` | 1 | ID de la hoja de El Marcador |
    | `OPENWEATHER_API_KEY` | 2 | Clima por ciudad |
-   | `GEMINI_API_KEY` | 4 | API de Gemini para Gina |
+   | ~~`GEMINI_API_KEY`~~ | — | Descartada — Gina es motor de reglas puro, sin IA (ADR-008 superseded) |
    | `DATABASE_URL` | 5 | Conexión a base de datos |
    | `STRIPE_SECRET_KEY` | 6 | Pagos con Stripe |
 
