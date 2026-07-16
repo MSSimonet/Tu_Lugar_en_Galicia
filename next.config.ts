@@ -8,6 +8,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "placehold.co",
       },
+      {
+        // CDN de las imágenes del feed de Instagram (subdominio variable, ej. scontent-xxx-1)
+        protocol: "https",
+        hostname: "*.cdninstagram.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.fbcdn.net",
+      },
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
