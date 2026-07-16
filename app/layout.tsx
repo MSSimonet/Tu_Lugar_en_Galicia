@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { GinaWidget } from "@/components/gina/GinaWidget";
+import { MotionProvider } from "@/components/shared/MotionProvider";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin", "latin-ext"],
@@ -120,10 +121,12 @@ export default async function RootLayout({
             el browser elimina el atributo nonce del DOM después de evaluar el script (seguridad),
             lo que causaría un falso mismatch de hidratación. */}
         <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `(function(){const s=localStorage.getItem('tlg-theme');const p=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',s?s==='dark':p);})();` }} />
-        {!isAdminRoute && <Header />}
-        <main id="main-content" className="flex-1">{children}</main>
-        {!isAdminRoute && <Footer />}
-        {!isAdminRoute && <GinaWidget />}
+        <MotionProvider>
+          {!isAdminRoute && <Header />}
+          <main id="main-content" className="flex-1">{children}</main>
+          {!isAdminRoute && <Footer />}
+          {!isAdminRoute && <GinaWidget />}
+        </MotionProvider>
       </body>
     </html>
   );

@@ -185,10 +185,12 @@ details > dd {
 
 /* ── Hero eyebrow — letter-spacing responsive ──────────────────────────── */
 /* Desktop: tracking amplio para dar presencia de badge */
-.hero-eyebrow { letter-spacing: 0.32em; }
+/* --eyebrow-tracking: leído por components/ui/Eyebrow.tsx (con fallback propio) —
+   permite que este hero override el tracking del componente compartido sin !important. */
+.hero-eyebrow { --eyebrow-tracking: 0.32em; }
 /* Móvil: tracking reducido para que quepa en una sola línea dentro de la píldora */
 @media (max-width: 767px) {
-  .hero-eyebrow { letter-spacing: 0.14em; }
+  .hero-eyebrow { --eyebrow-tracking: 0.14em; }
 }
 
 /* ── Hero content animation ──────────────────────────────────────────────── */
@@ -257,6 +259,8 @@ details > dd {
   --po-ouro:        #C89B3C; /* ouro artesanal — acento principal, fijo */
   --po-ouro-hover:  #A67C25; /* ouro profundo — hover, fijo */
   --po-ouro-text:   #8A6220; /* ouro oscurecido — texto AA sobre areia/luz (4.68:1); en dark usa --po-ouro (5.98:1) */
+  --po-ouro-ink:    #1A1410; /* texto sobre fondo --po-ouro (botón dorado) — 7.14:1, fijo. Antes
+                                 hardcodeado como #1A1410 en 7+ archivos, ahora un solo token. */
   --po-terra:       #8B6E4E; /* terra media — secciones secundarias, fijo */
   --po-areia:       #F2EDE4; /* areia — canvas claro (invierte en dark) */
   --po-luz:         #FBF8F2; /* luz — superficie muy clara (invierte en dark) */
@@ -271,6 +275,16 @@ details > dd {
 
   --font-po-display: var(--font-playfair), 'Georgia', serif;
   --font-po-ui:      var(--font-lato), 'Helvetica Neue', system-ui, sans-serif;
+
+  /* Radius/sombra — aditivos, namespace --po-* a propósito: no tocan --radius-card/
+     --radius-pill genéricos (los usan CalEmbed.tsx y FormularioDiagnostico.tsx, fuera
+     de este pase de diseño). Tarjetas más suaves + elevación real en hover. */
+  --po-radius-card: 12px;
+  /* Sombra con tinte cálido (--po-hero-bg, fijo, no invierte) en vez de negro puro —
+     coherente en claro y oscuro sin necesitar overrides bajo .dark. */
+  --po-shadow-sm: 0 1px 3px color-mix(in srgb, var(--po-hero-bg) 12%, transparent);
+  --po-shadow-md: 0 4px 12px color-mix(in srgb, var(--po-hero-bg) 18%, transparent);
+  --po-shadow-lg: 0 12px 32px color-mix(in srgb, var(--po-hero-bg) 24%, transparent);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
