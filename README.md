@@ -44,7 +44,7 @@ components/           — Componentes React
 ├── ciudades/         — Layout y FAQ de páginas de ciudad
 ├── comunidad/         — Formulario y mapa de Comunidad de Acogida
 lib/gina/             — Flujo JSON + motor de estados + persistencia
-lib/comunidad/        — Comunidad de Acogida: Supabase, Nominatim, puente a Airtable
+lib/comunidad/        — Comunidad de Acogida: Supabase, Nominatim (puente a Airtable eliminado 2026-07-16)
 lib/plan/             — Armador del Plan Estratégico + generación de PDF
 lib/admin/            — Tokens HMAC, leads (Supabase), email transaccional
 docs/                 — Arquitectura, roadmap, design-system, contexto estratégico
@@ -65,11 +65,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 GEMINI_API_KEY=
 AEMET_API_KEY=
-
-# Solo para el puente de Comunidad (lib/comunidad/airtable.ts) — leads ya no las usa.
-AIRTABLE_API_KEY=
-AIRTABLE_BASE_ID=
 ```
+
+El proyecto ya no usa Airtable en ningún código (leads migró a Supabase el 2026-07-12, el puente
+de Comunidad se eliminó el 2026-07-16 — ver `docs/crm-supabase-fase0.md`).
 
 Las mismas variables deben estar configuradas en Vercel (Settings → Environment Variables).
 

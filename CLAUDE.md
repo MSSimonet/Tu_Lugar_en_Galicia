@@ -32,9 +32,9 @@ Contexto completo del negocio, marca, competencia y producto en:
 - **Deploy:** Vercel (auto-deploy desde GitHub `main`)
 - **DNS / SSL / CDN / cron del scraper:** Cloudflare (free)
 - **Leads / CRM:** **Supabase/Postgres** (tabla `leads`) — migrado desde Airtable el 2026-07-12,
-  ver `docs/crm-supabase-fase0.md`. Airtable ya no se usa para leads; a la fecha de esta nota
-  sigue en uso solo por el puente de Comunidad (`lib/comunidad/airtable.ts`), pendiente de
-  eliminación (ver Fase 5 de eliminación de Airtable).
+  ver `docs/crm-supabase-fase0.md`. El proyecto ya no usa Airtable en ningún código: el puente de
+  Comunidad (`lib/comunidad/airtable.ts`) también se eliminó, el 2026-07-16 (Fase 5 de retiro de
+  Airtable, ver `docs/crm-supabase-fase0.md` §3).
 - **IA (Gina):** **API de Gemini (Google)** llamada desde API routes de Next.js (clave solo en servidor).
   Decisión vigente: Gemini por costo. NO volver a la API de Claude/Anthropic sin un ADR.
   La clave va en `GEMINI_API_KEY` (solo servidor) — nunca en el cliente ni en el repo.

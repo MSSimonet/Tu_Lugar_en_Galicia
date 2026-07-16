@@ -297,9 +297,10 @@ M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, perform
 |---|---|---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | Leads (tabla `leads`) y Comunidad | ✅ Configurada | — | ✅ |
 | `SUPABASE_SERVICE_ROLE_KEY` | Leads y Comunidad (bypassea RLS, server-only) | ✅ Configurada | — | ✅ |
-| `AIRTABLE_API_KEY` | Solo puente Comunidad — ya no leads, migrado a Supabase el 2026-07-12 | ✅ Configurada | — | ✅ |
-| `AIRTABLE_BASE_ID` | Solo puente Comunidad — ya no leads | ✅ Configurada | — | ✅ |
-| `AIRTABLE_TABLE_NAME` | Huérfana — la tabla de leads en Airtable ya no se lee desde ningún código | — | — | ❌ Eliminada de `.env.local.example` (Fase 5 de retiro de Airtable) |
+| `AIRTABLE_API_KEY` | Eliminada — el puente de Comunidad que la usaba se retiró el 2026-07-16 | — | — | ❌ Eliminada de `.env.local.example` (Fase 5 de retiro de Airtable) |
+| `AIRTABLE_BASE_ID` | Eliminada — mismo motivo | — | — | ❌ Eliminada de `.env.local.example` |
+| `AIRTABLE_TABLE_NAME` | Eliminada — huérfana desde que leads migró a Supabase el 2026-07-12 | — | — | ❌ Eliminada de `.env.local.example` |
+| `AIRTABLE_COMUNIDAD_TABLE_NAME` | Eliminada — el puente de Comunidad que la usaba se retiró el 2026-07-16 | — | — | ❌ Eliminada de `.env.local.example` |
 | `GEMINI_API_KEY` | IA Gina (servidor only) | ✅ Verificar vigente | — | ✅ |
 | `INTERNAL_API_SECRET` | Auth endpoints admin + HMAC | ✅ Rotado y verificado HTTP 200 producción (R3 resuelto 2026-07-03) | ✅ Verificado | ✅ |
 | `RESEND_API_KEY` | Envío de emails | ✅ Configurada | — | ✅ |

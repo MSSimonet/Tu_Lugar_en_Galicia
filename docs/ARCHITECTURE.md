@@ -106,7 +106,7 @@ de entorno de Vercel, nunca en el cliente ni en el repo.
 | Variable | Fase | Uso |
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | 1 | guardar leads (migrado desde Airtable, ADR-009) |
-| `AIRTABLE_API_KEY` / `AIRTABLE_BASE_ID` | — | solo puente de Comunidad (`lib/comunidad/airtable.ts`), pendiente de eliminación |
+| ~~`AIRTABLE_API_KEY` / `AIRTABLE_BASE_ID`~~ | — | Eliminadas — el puente de Comunidad que las usaba se retiró el 2026-07-16 (ADR-009). El proyecto ya no usa Airtable en ningún código. |
 | `SHEET_MARCADOR_ID` | 1 | leer El Marcador |
 | `OPENWEATHER_API_KEY` | 2 | clima por ciudad |
 | `GEMINI_API_KEY` | 4 | Gina (Gemini) |
@@ -191,15 +191,14 @@ completo del schema y el plan de reescritura vive en `docs/crm-supabase-fase0.md
 
 **Decisión:** `lib/leads.ts` y todos los endpoints de admin que antes usaban `lib/admin/airtable.ts`
 pasan a Supabase (tabla `leads`, ver `docs/crm-supabase-fase0.md` §1). `lib/admin/airtable.ts` se
-elimina del repo. El único uso de Airtable que queda tras esta migración es el puente de Comunidad
-(`lib/comunidad/airtable.ts`), documentado como pendiente de eliminación en la Fase 5 de retiro de
-Airtable (`docs/crm-supabase-fase0.md` §3).
+elimina del repo. El puente de Comunidad (`lib/comunidad/airtable.ts`) se eliminó el 2026-07-16
+(`docs/crm-supabase-fase0.md` §3) — el proyecto ya no usa Airtable en ningún código.
 
 **Consecuencias:**
 - ADR-002 queda superado en la práctica (ver nota agregada ahí) — hoy sí hay base de datos en
   producción, antes de la Fase 5 originalmente planeada.
-- `AIRTABLE_TABLE_NAME` (la tabla de leads) queda huérfana — nadie la lee. `AIRTABLE_API_KEY` y
-  `AIRTABLE_BASE_ID` siguen en uso, pero solo para el puente de Comunidad, no para leads.
+- `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`, `AIRTABLE_TABLE_NAME` y `AIRTABLE_COMUNIDAD_TABLE_NAME`
+  quedaron todas huérfanas y se retiraron de `.env.local.example` el 2026-07-16 — nadie las lee.
 - Nueva variable de entorno: `SUPABASE_SERVICE_ROLE_KEY` (ya existía por Comunidad, ahora también
   la usa el CRM de leads) — el cliente de Supabase se generalizó a `lib/supabase/serverClient.ts`,
   compartido entre `lib/leads.ts` y `lib/comunidad/*`.
@@ -230,7 +229,7 @@ previa con Vercel o Cloudflare. Ejecutá cada sección en orden.
    | Variable | Fase | Descripción |
    |---|---|---|
    | `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | 1 | Supabase para guardar leads (migrado desde Airtable, ADR-009) |
-   | `AIRTABLE_API_KEY` / `AIRTABLE_BASE_ID` | — | Solo puente de Comunidad, ya no para leads |
+   | ~~`AIRTABLE_API_KEY` / `AIRTABLE_BASE_ID`~~ | — | Eliminadas — el proyecto ya no usa Airtable (ADR-009) |
    | `SHEET_MARCADOR_ID` | 1 | ID de la hoja de El Marcador |
    | `OPENWEATHER_API_KEY` | 2 | Clima por ciudad |
    | `GEMINI_API_KEY` | 4 | API de Gemini para Gina |
