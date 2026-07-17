@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import { getUltimosPosts } from '@/lib/instagram/posts';
+import { InstagramCarrusel3D } from './InstagramCarrusel3D';
 
 // Server Component async: necesita leer el token de Instagram desde Supabase, así que no
 // puede ser "use client". Mientras no haya ninguna cuenta conectada (o Instagram falle),
@@ -35,60 +35,6 @@ function PlaceholderGrid() {
   );
 }
 
-function Carrusel({ posts }: { posts: Awaited<ReturnType<typeof getUltimosPosts>> }) {
-  return (
-    <ul
-      className="flex snap-x snap-mandatory gap-[var(--space-4)] overflow-x-auto pb-[var(--space-2)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      aria-label="Carrusel de publicaciones de Instagram"
-      tabIndex={0}
-    >
-      {posts.map((post) => (
-        <li key={post.id} className="w-[65%] shrink-0 snap-start sm:w-[42%] md:w-[30%] lg:w-[22%]">
-          <a
-            href={post.permalink}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={post.caption ? `Abrir publicación: ${post.caption.slice(0, 80)}` : 'Abrir publicación en Instagram'}
-          >
-            <div
-              className="relative aspect-square overflow-hidden"
-              style={{ borderRadius: '4px', backgroundColor: 'var(--po-muted)' }}
-            >
-              <Image
-                src={post.imageUrl}
-                alt={post.caption ? post.caption.slice(0, 140) : 'Publicación de Instagram'}
-                fill
-                sizes="(min-width: 1024px) 22vw, (min-width: 640px) 42vw, 65vw"
-                className="transition-brand object-cover hover:scale-[1.03]"
-              />
-              {post.isVideo && (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="absolute right-2 top-2 h-5 w-5 drop-shadow"
-                  style={{ color: 'var(--po-luz)' }}
-                  aria-hidden="true"
-                >
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              )}
-            </div>
-            {post.caption && (
-              <p
-                className="mt-[var(--space-2)] line-clamp-2 [font-size:var(--text-xs)]"
-                style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
-              >
-                {post.caption}
-              </p>
-            )}
-          </a>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 export async function FeedInstagram() {
   const posts = await getUltimosPosts(10);
 
@@ -113,7 +59,7 @@ export async function FeedInstagram() {
           @tulugarengalicia en Instagram
         </p>
 
-        {posts.length > 0 ? <Carrusel posts={posts} /> : <PlaceholderGrid />}
+        {posts.length > 0 ? <InstagramCarrusel3D posts={posts} /> : <PlaceholderGrid />}
 
         <p
           className="mt-[var(--space-8)] text-center [font-size:var(--text-xs)]"
