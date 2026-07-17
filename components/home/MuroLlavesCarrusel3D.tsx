@@ -77,7 +77,7 @@ export function MuroLlavesCarrusel3D({ fotos }: MuroLlavesCarrusel3DProps) {
       }}
     >
       <div
-        className="relative mx-auto h-[220px] max-w-2xl sm:h-[260px] md:h-[300px]"
+        className="relative h-[300px] w-full sm:h-[380px] md:h-[460px]"
         style={{ perspective: '1200px' }}
       >
         {fotos.map((foto, i) => {
@@ -109,7 +109,7 @@ export function MuroLlavesCarrusel3D({ fotos }: MuroLlavesCarrusel3DProps) {
                 tabIndex={-1}
                 aria-label={`Ver foto ${i + 1} de ${total}: ${foto.alt}`}
                 className={[
-                  'relative aspect-square w-[38vw] max-w-[200px] overflow-hidden rounded-[4px]',
+                  'relative aspect-square w-[46vw] max-w-[320px] overflow-hidden rounded-[4px]',
                   isActive ? 'ring-2 ring-[var(--po-ouro)]' : '',
                 ]
                   .filter(Boolean)
@@ -119,7 +119,7 @@ export function MuroLlavesCarrusel3D({ fotos }: MuroLlavesCarrusel3DProps) {
                   src={foto.src}
                   alt={foto.alt}
                   fill
-                  sizes="(min-width: 768px) 200px, 38vw"
+                  sizes="(min-width: 768px) 320px, 46vw"
                   className="object-cover"
                 />
               </motion.button>
