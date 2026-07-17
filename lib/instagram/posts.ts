@@ -23,7 +23,7 @@ export async function getUltimosPosts(limit = 10): Promise<InstagramPost[]> {
   if (!token) return []
 
   try {
-    const media = await fetchUltimosMedia(token.accessToken, limit)
+    const media = await fetchUltimosMedia(token.igUserId, token.accessToken, limit)
     return media
       .map((m) => ({
         id: m.id,

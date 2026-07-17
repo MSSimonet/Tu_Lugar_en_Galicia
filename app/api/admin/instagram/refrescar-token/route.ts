@@ -1,18 +1,19 @@
 /**
- * GET /api/admin/instagram/refrescar-token — mantiene vivo el long-lived token (expira a los
- * ~60 días; Meta exige refrescarlo con el token ya emitido, no desde cero). Disparado cada
- * hora por .github/workflows/instagram-refrescar-token.yml — hora de más no rompe nada
- * (el token solo se toca cuando faltan REFRESH_ANTES_DE_DIAS o menos para que expire), y así
- * el margen queda cubierto incluso si alguna corrida horaria falla.
+ * GET /api/admin/instagram/refrescar-token — mantiene viva la conexión: extiende el long-lived
+ * user token (expira a los ~60 días; Meta exige refrescarlo con el token ya emitido, no desde
+ * cero, vía fb_exchange_token) y re-deriva el Page Access Token desde /me/accounts (Meta no
+ * expone un refresh directo de este último). Disparado cada hora por
+ * .github/workflows/instagram-refrescar-token.yml — hora de más no rompe nada (el token solo
+ * se toca cuando faltan REFRESH_ANTES_DE_DIAS o menos para que expire), y así el margen queda
+ * cubierto incluso si alguna corrida horaria falla.
  *
  * No-op silencioso si todavía no hay ninguna cuenta conectada (getInstagramToken() → null) —
- * es el estado esperado hasta que se corra /api/admin/instagram/conectar una vez con el
- * short-lived token real.
+ * es el estado esperado hasta que Silvana apruebe la conexión vía /api/admin/instagram/autorizar.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorized } from '@/lib/admin/auth'
-import { refreshLongLivedToken } from '@/lib/instagram/graph'
+import { exchangeLongLivedUserToken, fetchPaginaConInstagram } from '@/lib/instagram/graph'
 import { getInstagramToken, saveInstagramToken } from '@/lib/instagram/tokenRepo'
 
 const REFRESH_ANTES_DE_DIAS = 10
@@ -33,8 +34,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const { accessToken, expiresAt } = await refreshLongLivedToken(token.accessToken)
-    await saveInstagramToken({ igUserId: token.igUserId, accessToken, expiresAt })
+    const { accessToken: userAccessToken, expiresAt } = await exchangeLongLivedUserToken(token.userAccessToken)
+    const { pageId, pageAccessToken, igUserId } = await fetchPaginaConInstagram(userAccessToken)
+    await saveInstagramToken({ igUserId, pageId, accessToken: pageAccessToken, userAccessToken, expiresAt })
     return NextResponse.json({ ok: true, accion: 'refrescado', expiresAt })
   } catch (err) {
     console.error('[instagram/refrescar-token] error:', err instanceof Error ? err.message : 'unknown')

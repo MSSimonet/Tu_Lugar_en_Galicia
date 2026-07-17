@@ -1,11 +1,12 @@
 /**
  * GET /api/admin/instagram/callback — destino del link de autorización que abre Silvana
- * (link armado a mano con lib/instagram/graph.ts buildAuthorizeUrl, no hay una pantalla propia
- * que lo genere: es una acción de conexión única, no una feature recurrente).
+ * (/api/admin/instagram/autorizar).
  *
- * Instagram redirige el navegador de Silvana acá con ?code=...&state=... después de que ella
- * inicia sesión y aprueba el permiso en la propia pantalla de Instagram — este endpoint nunca
- * ve ni maneja su contraseña.
+ * Facebook redirige el navegador de Silvana acá con ?code=...&state=... después de que ella
+ * inicia sesión y aprueba el permiso en la propia pantalla de Facebook — este endpoint nunca
+ * ve ni maneja su contraseña. Cadena completa: code → short-lived user token → long-lived user
+ * token → Página de Facebook con Instagram vinculado → Page Access Token (lo que de verdad
+ * lee /media, ver lib/instagram/graph.ts).
  *
  * Sin Authorization: Bearer (no puede llevarlo una navegación de navegador real). La seguridad
  * acá es: (1) `state` firmado con TTL de 10 min (lib/instagram/oauthState.ts, CSRF), y (2) el
@@ -15,7 +16,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyOAuthState } from '@/lib/instagram/oauthState'
-import { exchangeCodeForShortLivedToken, exchangeLongLivedToken } from '@/lib/instagram/graph'
+import { exchangeCodeForShortLivedToken, exchangeLongLivedUserToken, fetchPaginaConInstagram } from '@/lib/instagram/graph'
 import { saveInstagramToken } from '@/lib/instagram/tokenRepo'
 
 function paginaResultado(titulo: string, mensaje: string): NextResponse {
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const errorParam = req.nextUrl.searchParams.get('error')
 
   if (errorParam) {
-    return paginaResultado('Conexión cancelada', 'No se aprobó el permiso en Instagram. Pedile a Silvana que vuelva a abrir el link cuando quiera intentarlo de nuevo.')
+    return paginaResultado('Conexión cancelada', 'No se aprobó el permiso en Facebook. Pedile a Silvana que vuelva a abrir el link cuando quiera intentarlo de nuevo.')
   }
 
   if (!code || !state || !verifyOAuthState(state)) {
@@ -48,9 +49,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const { accessToken: shortLivedToken, igUserId } = await exchangeCodeForShortLivedToken(code, redirectUri(req))
-    const { accessToken, expiresAt } = await exchangeLongLivedToken(shortLivedToken)
-    await saveInstagramToken({ igUserId, accessToken, expiresAt })
+    const { accessToken: shortLivedToken } = await exchangeCodeForShortLivedToken(code, redirectUri(req))
+    const { accessToken: longLivedUserToken, expiresAt } = await exchangeLongLivedUserToken(shortLivedToken)
+    const { pageId, pageAccessToken, igUserId } = await fetchPaginaConInstagram(longLivedUserToken)
+    await saveInstagramToken({ igUserId, pageId, accessToken: pageAccessToken, userAccessToken: longLivedUserToken, expiresAt })
   } catch (err) {
     console.error('[instagram/callback] error:', err instanceof Error ? err.message : 'unknown')
     return paginaResultado('No se pudo conectar', 'Hubo un error conectando la cuenta de Instagram. Avisale al equipo técnico.')

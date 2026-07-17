@@ -1,31 +1,25 @@
 /**
- * lib/instagram/graph.ts — cliente de la "Instagram API with Instagram Login"
- * (graph.instagram.com), la vía vigente de Meta para leer el feed de una cuenta profesional
- * sin depender de una Página de Facebook vinculada. Los tres endpoints que usa este archivo:
+ * lib/instagram/graph.ts — cliente de la Instagram Graph API vía "Inicio de sesión con
+ * Facebook" (graph.facebook.com), que es el producto real configurado en la app de Meta
+ * (caso de uso "Administrar mensajes y contenido en Instagram", ver Configuración → Casos de
+ * uso). La cuenta de Instagram se lee a través de la Página de Facebook vinculada — no hay
+ * conexión directa a Instagram sin pasar por ahí.
  *
- *   - GET /access_token (grant_type=ig_exchange_token) — canjea el short-lived token que se
- *     genera a mano en developers.facebook.com por uno de larga duración (~60 días).
- *   - GET /refresh_access_token (grant_type=ig_refresh_token) — extiende un long-lived token
- *     ya emitido otros ~60 días. Requiere que el token tenga al menos 24 h de antigüedad.
- *   - GET /{version}/me/media — últimos posts de la cuenta.
- *
- * Ninguna de estas llamadas se ejecuta todavía en producción: falta el short-lived token real
- * (se genera manualmente en el dashboard de Meta) para completar la primera conexión vía
- * app/api/admin/instagram/conectar.
+ * Cadena completa: code (OAuth) → short-lived user token → long-lived user token (~60 días)
+ * → lista de Páginas del usuario (/me/accounts, cada una con su propio Page Access Token) →
+ * Página con instagram_business_account → ese Page Access Token es el que se usa para leer
+ * /{ig-user-id}/media. El refresco periódico extiende el long-lived user token
+ * (grant_type=fb_exchange_token reusando el propio token) y vuelve a derivar el Page Access
+ * Token — Meta no expone un refresh directo del Page token.
  */
 
 const GRAPH_VERSION = 'v22.0'
+const GRAPH_BASE = `https://graph.facebook.com/${GRAPH_VERSION}`
 
 interface TokenResponse {
   access_token: string
   token_type: string
   expires_in: number // segundos
-}
-
-function appSecret(): string {
-  const s = process.env.INSTAGRAM_APP_SECRET
-  if (!s) throw new Error('INSTAGRAM_APP_SECRET no configurado')
-  return s
 }
 
 function appId(): string {
@@ -34,89 +28,97 @@ function appId(): string {
   return s
 }
 
+function appSecret(): string {
+  const s = process.env.INSTAGRAM_APP_SECRET
+  if (!s) throw new Error('INSTAGRAM_APP_SECRET no configurado')
+  return s
+}
+
 function expiresAtFrom(expiresInSeconds: number): string {
   return new Date(Date.now() + expiresInSeconds * 1000).toISOString()
 }
 
-export async function exchangeLongLivedToken(
-  shortLivedToken: string,
-): Promise<{ accessToken: string; expiresAt: string }> {
-  const url = new URL('https://graph.instagram.com/access_token')
-  url.searchParams.set('grant_type', 'ig_exchange_token')
-  url.searchParams.set('client_secret', appSecret())
-  url.searchParams.set('access_token', shortLivedToken)
-
-  const res = await fetch(url, { cache: 'no-store' })
-  if (!res.ok) throw new Error(`Instagram exchange_token error — status: ${res.status}`)
-  const json = (await res.json()) as TokenResponse
-  return { accessToken: json.access_token, expiresAt: expiresAtFrom(json.expires_in) }
-}
-
-export async function refreshLongLivedToken(
-  accessToken: string,
-): Promise<{ accessToken: string; expiresAt: string }> {
-  const url = new URL('https://graph.instagram.com/refresh_access_token')
-  url.searchParams.set('grant_type', 'ig_refresh_token')
-  url.searchParams.set('access_token', accessToken)
-
-  const res = await fetch(url, { cache: 'no-store' })
-  if (!res.ok) throw new Error(`Instagram refresh_access_token error — status: ${res.status}`)
-  const json = (await res.json()) as TokenResponse
-  return { accessToken: json.access_token, expiresAt: expiresAtFrom(json.expires_in) }
-}
-
 /**
- * URL de autorización de "Instagram Login" (www.instagram.com/oauth/authorize) — el link que
- * abre Silvana para conectar la cuenta ella misma: inicia sesión con SU propia contraseña
- * directamente en Instagram (nunca la ve ni el desarrollador ni esta app) y aprueba el permiso.
- * Instagram la redirige a `redirectUri` con ?code=...&state=... para app/api/admin/instagram/callback.
+ * URL de autorización de Facebook Login — el link que abre Silvana para conectar la cuenta
+ * ella misma: inicia sesión con SU propia contraseña directamente en Facebook (nunca la ve ni
+ * el desarrollador ni esta app) y aprueba los permisos. Facebook la redirige a `redirectUri`
+ * con ?code=...&state=... para app/api/admin/instagram/callback.
  */
 export function buildAuthorizeUrl(redirectUri: string, state: string): string {
-  const url = new URL('https://www.instagram.com/oauth/authorize')
+  const url = new URL(`https://www.facebook.com/${GRAPH_VERSION}/dialog/oauth`)
   url.searchParams.set('client_id', appId())
   url.searchParams.set('redirect_uri', redirectUri)
   url.searchParams.set('response_type', 'code')
-  url.searchParams.set('scope', 'instagram_business_basic')
+  url.searchParams.set('scope', 'pages_show_list,pages_read_engagement,instagram_basic')
   url.searchParams.set('state', state)
   return url.toString()
 }
 
-/**
- * Canjea el `code` de un solo uso (recibido en el callback) por el short-lived token inicial.
- * POST a api.instagram.com (no graph.instagram.com — este endpoint específico vive en el
- * dominio de autenticación, no en el de la API de datos).
- */
+/** Canjea el `code` de un solo uso (recibido en el callback) por el short-lived user token inicial. */
 export async function exchangeCodeForShortLivedToken(
   code: string,
   redirectUri: string,
-): Promise<{ accessToken: string; igUserId: string }> {
-  const body = new URLSearchParams({
-    client_id: appId(),
-    client_secret: appSecret(),
-    grant_type: 'authorization_code',
-    redirect_uri: redirectUri,
-    code,
-  })
-
-  const res = await fetch('https://api.instagram.com/oauth/access_token', {
-    method: 'POST',
-    body,
-    cache: 'no-store',
-  })
-  if (!res.ok) throw new Error(`Instagram oauth/access_token error — status: ${res.status}`)
-  const json = (await res.json()) as { access_token: string; user_id: number }
-  return { accessToken: json.access_token, igUserId: String(json.user_id) }
-}
-
-export async function fetchInstagramUserId(accessToken: string): Promise<string> {
-  const url = new URL(`https://graph.instagram.com/${GRAPH_VERSION}/me`)
-  url.searchParams.set('fields', 'id')
-  url.searchParams.set('access_token', accessToken)
+): Promise<{ accessToken: string; expiresAt: string }> {
+  const url = new URL(`${GRAPH_BASE}/oauth/access_token`)
+  url.searchParams.set('client_id', appId())
+  url.searchParams.set('client_secret', appSecret())
+  url.searchParams.set('redirect_uri', redirectUri)
+  url.searchParams.set('code', code)
 
   const res = await fetch(url, { cache: 'no-store' })
-  if (!res.ok) throw new Error(`Instagram /me error — status: ${res.status}`)
-  const json = (await res.json()) as { id: string }
-  return json.id
+  if (!res.ok) throw new Error(`Facebook oauth/access_token (code) error — status: ${res.status}`)
+  const json = (await res.json()) as TokenResponse
+  return { accessToken: json.access_token, expiresAt: expiresAtFrom(json.expires_in) }
+}
+
+/** Canjea un short-lived (o el propio long-lived vigente, para refrescarlo) user token por uno long-lived (~60 días). */
+export async function exchangeLongLivedUserToken(
+  userToken: string,
+): Promise<{ accessToken: string; expiresAt: string }> {
+  const url = new URL(`${GRAPH_BASE}/oauth/access_token`)
+  url.searchParams.set('grant_type', 'fb_exchange_token')
+  url.searchParams.set('client_id', appId())
+  url.searchParams.set('client_secret', appSecret())
+  url.searchParams.set('fb_exchange_token', userToken)
+
+  const res = await fetch(url, { cache: 'no-store' })
+  if (!res.ok) throw new Error(`Facebook oauth/access_token (fb_exchange_token) error — status: ${res.status}`)
+  const json = (await res.json()) as TokenResponse
+  return { accessToken: json.access_token, expiresAt: expiresAtFrom(json.expires_in) }
+}
+
+export interface CuentaInstagramConectada {
+  pageId: string
+  pageAccessToken: string
+  igUserId: string
+}
+
+interface PageConIg {
+  id: string
+  access_token: string
+  instagram_business_account?: { id: string }
+}
+
+/**
+ * Recorre las Páginas de Facebook que administra el usuario y devuelve la primera que tenga
+ * una cuenta de Instagram profesional vinculada — es lo que necesitamos para leer /media.
+ * Lanza si el usuario no administra ninguna Página con Instagram vinculado.
+ */
+export async function fetchPaginaConInstagram(longLivedUserToken: string): Promise<CuentaInstagramConectada> {
+  const url = new URL(`${GRAPH_BASE}/me/accounts`)
+  url.searchParams.set('fields', 'id,access_token,instagram_business_account')
+  url.searchParams.set('access_token', longLivedUserToken)
+
+  const res = await fetch(url, { cache: 'no-store' })
+  if (!res.ok) throw new Error(`Facebook /me/accounts error — status: ${res.status}`)
+  const json = (await res.json()) as { data?: PageConIg[] }
+  const pagina = (json.data ?? []).find((p) => p.instagram_business_account?.id)
+
+  if (!pagina?.instagram_business_account) {
+    throw new Error('Ninguna Página de Facebook administrada tiene una cuenta de Instagram vinculada')
+  }
+
+  return { pageId: pagina.id, pageAccessToken: pagina.access_token, igUserId: pagina.instagram_business_account.id }
 }
 
 export interface RawInstagramMedia {
@@ -130,14 +132,18 @@ export interface RawInstagramMedia {
 }
 
 /** Últimos `limit` posts de la cuenta conectada. `next.revalidate` los cachea 10 min (ver lib/instagram/posts.ts). */
-export async function fetchUltimosMedia(accessToken: string, limit: number): Promise<RawInstagramMedia[]> {
-  const url = new URL(`https://graph.instagram.com/${GRAPH_VERSION}/me/media`)
+export async function fetchUltimosMedia(
+  igUserId: string,
+  pageAccessToken: string,
+  limit: number,
+): Promise<RawInstagramMedia[]> {
+  const url = new URL(`${GRAPH_BASE}/${igUserId}/media`)
   url.searchParams.set('fields', 'id,caption,media_type,media_url,permalink,thumbnail_url,timestamp')
   url.searchParams.set('limit', String(limit))
-  url.searchParams.set('access_token', accessToken)
+  url.searchParams.set('access_token', pageAccessToken)
 
   const res = await fetch(url, { next: { revalidate: 600 } })
-  if (!res.ok) throw new Error(`Instagram /me/media error — status: ${res.status}`)
+  if (!res.ok) throw new Error(`Instagram /media error — status: ${res.status}`)
   const json = (await res.json()) as { data?: RawInstagramMedia[] }
   return json.data ?? []
 }
