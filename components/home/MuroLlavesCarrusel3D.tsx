@@ -4,14 +4,9 @@ import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { BRAND_EASE } from '@/lib/motion/variants';
-import type { InstagramPost } from '@/lib/instagram/posts';
 
-// Cover-flow 3D: la activa queda centrada y grande, las adyacentes más chicas y rotadas hacia
-// los costados (offset ±1, ±2 visibles; más allá se oculta). Diferenciado a propósito del
-// futuro carrusel de "Casos de éxito" (no existe todavía, ver conversación): formato cuadrado
-// 1:1 nativo de Instagram en vez de retrato, anillo dorado (--po-ouro) solo en la tarjeta
-// activa, y autoplay con pausa explícita en vez de solo-manual — si casos de éxito termina
-// siendo solo-manual, esta sigue distinguiéndose por formato y color.
+// Cover-flow 3D: la foto activa queda centrada y grande, las adyacentes más chicas y rotadas
+// hacia los costados (offset ±1, ±2 visibles; más allá se oculta).
 //
 // Solo transform/opacity animados (x %, scale, rotateY, opacity) — nunca width/height/margin,
 // para no disparar layout shift (skill motion-tu-lugar-en-galicia). El offset se expresa en %
@@ -33,17 +28,22 @@ function signedOffset(index: number, active: number, total: number): number {
   return diff;
 }
 
-interface InstagramCarrusel3DProps {
-  posts: InstagramPost[];
+export interface FotoMuroLlaves {
+  src: string;
+  alt: string;
 }
 
-export function InstagramCarrusel3D({ posts }: InstagramCarrusel3DProps) {
+interface MuroLlavesCarrusel3DProps {
+  fotos: FotoMuroLlaves[];
+}
+
+export function MuroLlavesCarrusel3D({ fotos }: MuroLlavesCarrusel3DProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [userPaused, setUserPaused] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isFocusedWithin, setIsFocusedWithin] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  const total = posts.length;
+  const total = fotos.length;
 
   const goTo = useCallback(
     (index: number) => setActiveIndex(((index % total) + total) % total),
@@ -63,7 +63,7 @@ export function InstagramCarrusel3D({ posts }: InstagramCarrusel3DProps) {
     return () => clearInterval(id);
   }, [autoplayHabilitado, total]);
 
-  const activo = posts[activeIndex];
+  const activa = fotos[activeIndex];
 
   return (
     <div
@@ -80,7 +80,7 @@ export function InstagramCarrusel3D({ posts }: InstagramCarrusel3DProps) {
         className="relative mx-auto h-[220px] max-w-2xl sm:h-[260px] md:h-[300px]"
         style={{ perspective: '1200px' }}
       >
-        {posts.map((post, i) => {
+        {fotos.map((foto, i) => {
           const offset = signedOffset(i, activeIndex, total);
           const abs = Math.abs(offset);
           const visible = abs <= 2;
@@ -90,7 +90,7 @@ export function InstagramCarrusel3D({ posts }: InstagramCarrusel3DProps) {
 
           return (
             <div
-              key={post.id}
+              key={foto.src}
               className="absolute inset-0 flex items-center justify-center"
               style={{ zIndex: 30 - abs }}
             >
@@ -107,7 +107,7 @@ export function InstagramCarrusel3D({ posts }: InstagramCarrusel3DProps) {
                 style={{ pointerEvents: visible ? 'auto' : 'none' }}
                 aria-hidden={!visible}
                 tabIndex={-1}
-                aria-label={`Ver publicación ${i + 1} de ${total}${post.caption ? `: ${post.caption.slice(0, 60)}` : ''}`}
+                aria-label={`Ver foto ${i + 1} de ${total}: ${foto.alt}`}
                 className={[
                   'relative aspect-square w-[38vw] max-w-[200px] overflow-hidden rounded-[4px]',
                   isActive ? 'ring-2 ring-[var(--po-ouro)]' : '',
@@ -116,24 +116,12 @@ export function InstagramCarrusel3D({ posts }: InstagramCarrusel3DProps) {
                   .join(' ')}
               >
                 <Image
-                  src={post.imageUrl}
-                  alt={post.caption ? post.caption.slice(0, 140) : 'Publicación de Instagram'}
+                  src={foto.src}
+                  alt={foto.alt}
                   fill
                   sizes="(min-width: 768px) 200px, 38vw"
                   className="object-cover"
                 />
-                {post.isVideo && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="absolute right-2 top-2 h-5 w-5 drop-shadow"
-                    style={{ color: 'var(--po-luz)' }}
-                    aria-hidden="true"
-                  >
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                )}
               </motion.button>
             </div>
           );
@@ -145,7 +133,7 @@ export function InstagramCarrusel3D({ posts }: InstagramCarrusel3DProps) {
           <button
             type="button"
             onClick={anterior}
-            aria-label="Publicación anterior"
+            aria-label="Foto anterior"
             className="transition-brand [font-size:var(--text-lg)] hover:opacity-70"
             style={{ color: 'var(--po-pedra)' }}
           >
@@ -163,7 +151,7 @@ export function InstagramCarrusel3D({ posts }: InstagramCarrusel3DProps) {
           <button
             type="button"
             onClick={siguiente}
-            aria-label="Publicación siguiente"
+            aria-label="Foto siguiente"
             className="transition-brand [font-size:var(--text-lg)] hover:opacity-70"
             style={{ color: 'var(--po-pedra)' }}
           >
@@ -174,9 +162,9 @@ export function InstagramCarrusel3D({ posts }: InstagramCarrusel3DProps) {
 
       <div aria-live="polite" className="mt-[var(--space-4)] text-center">
         <AnimatePresence mode="wait">
-          {activo?.caption && (
+          {activa && (
             <motion.p
-              key={activo.id}
+              key={activa.src}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -184,21 +172,10 @@ export function InstagramCarrusel3D({ posts }: InstagramCarrusel3DProps) {
               className="line-clamp-2 [font-size:var(--text-xs)]"
               style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
             >
-              {activo.caption}
+              {activa.alt}
             </motion.p>
           )}
         </AnimatePresence>
-        {activo && (
-          <a
-            href={activo.permalink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-[var(--space-2)] inline-block [font-size:var(--text-xs)] underline"
-            style={{ color: 'var(--po-ouro-text)', textUnderlineOffset: '3px' }}
-          >
-            Ver en Instagram
-          </a>
-        )}
       </div>
     </div>
   );
