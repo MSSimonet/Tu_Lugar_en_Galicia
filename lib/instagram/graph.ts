@@ -28,6 +28,12 @@ function appSecret(): string {
   return s
 }
 
+function appId(): string {
+  const s = process.env.INSTAGRAM_APP_ID
+  if (!s) throw new Error('INSTAGRAM_APP_ID no configurado')
+  return s
+}
+
 function expiresAtFrom(expiresInSeconds: number): string {
   return new Date(Date.now() + expiresInSeconds * 1000).toISOString()
 }
@@ -57,6 +63,49 @@ export async function refreshLongLivedToken(
   if (!res.ok) throw new Error(`Instagram refresh_access_token error — status: ${res.status}`)
   const json = (await res.json()) as TokenResponse
   return { accessToken: json.access_token, expiresAt: expiresAtFrom(json.expires_in) }
+}
+
+/**
+ * URL de autorización de "Instagram Login" (www.instagram.com/oauth/authorize) — el link que
+ * abre Silvana para conectar la cuenta ella misma: inicia sesión con SU propia contraseña
+ * directamente en Instagram (nunca la ve ni el desarrollador ni esta app) y aprueba el permiso.
+ * Instagram la redirige a `redirectUri` con ?code=...&state=... para app/api/admin/instagram/callback.
+ */
+export function buildAuthorizeUrl(redirectUri: string, state: string): string {
+  const url = new URL('https://www.instagram.com/oauth/authorize')
+  url.searchParams.set('client_id', appId())
+  url.searchParams.set('redirect_uri', redirectUri)
+  url.searchParams.set('response_type', 'code')
+  url.searchParams.set('scope', 'instagram_business_basic')
+  url.searchParams.set('state', state)
+  return url.toString()
+}
+
+/**
+ * Canjea el `code` de un solo uso (recibido en el callback) por el short-lived token inicial.
+ * POST a api.instagram.com (no graph.instagram.com — este endpoint específico vive en el
+ * dominio de autenticación, no en el de la API de datos).
+ */
+export async function exchangeCodeForShortLivedToken(
+  code: string,
+  redirectUri: string,
+): Promise<{ accessToken: string; igUserId: string }> {
+  const body = new URLSearchParams({
+    client_id: appId(),
+    client_secret: appSecret(),
+    grant_type: 'authorization_code',
+    redirect_uri: redirectUri,
+    code,
+  })
+
+  const res = await fetch('https://api.instagram.com/oauth/access_token', {
+    method: 'POST',
+    body,
+    cache: 'no-store',
+  })
+  if (!res.ok) throw new Error(`Instagram oauth/access_token error — status: ${res.status}`)
+  const json = (await res.json()) as { access_token: string; user_id: number }
+  return { accessToken: json.access_token, igUserId: String(json.user_id) }
 }
 
 export async function fetchInstagramUserId(accessToken: string): Promise<string> {
