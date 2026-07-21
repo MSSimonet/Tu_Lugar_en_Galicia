@@ -4,7 +4,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { staggerContainer, fadeUp } from "@/lib/motion/variants";
+import { staggerContainer, fadeUp, cardHover } from "@/lib/motion/variants";
 
 const testimonios = [
   {
@@ -12,7 +12,7 @@ const testimonios = [
     ciudadOrigen: "Bogotá, Colombia",
     ciudadGalicia: "Vigo",
     texto:
-      "Yo no creía que fuera posible alquilar sin estar presente. El equipo nos mandó videos de los departamentos, nos explicó el barrio, habló con el propietario y cuando llegamos con las valijas, las llaves ya nos esperaban. No imaginaba que el primer día en Galicia pudiera ser tan tranquilo.",
+      "Yo no creía que fuera posible alquilar sin estar presente. El equipo nos mandó videos de los departamentos, nos explicó el barrio, habló con el propietario y cuando llegamos con las valijas, las llaves ya nos esperaban.",
     avatar: "https://placehold.co/80x80/8B6E4E/F2EDE4?text=VR",
   },
   {
@@ -20,7 +20,7 @@ const testimonios = [
     ciudadOrigen: "Montevideo, Uruguay",
     ciudadGalicia: "A Coruña",
     texto:
-      "Llevábamos meses mirando Idealista sin entender nada. Los propietarios no contestaban, no sabíamos qué documentación pedir. Contratamos a Tu Lugar en Galicia y en tres semanas teníamos piso. Nos ahorró meses de angustia. Vale cada euro.",
+      "Llevábamos meses mirando Idealista sin entender nada. Contratamos a Tu Lugar en Galicia y en tres semanas teníamos piso. Nos ahorró meses de angustia. Vale cada euro.",
     avatar: "https://placehold.co/80x80/8B6E4E/F2EDE4?text=MF",
   },
   {
@@ -28,91 +28,96 @@ const testimonios = [
     ciudadOrigen: "Buenos Aires, Argentina",
     ciudadGalicia: "Santiago de Compostela",
     texto:
-      "Lo que más me sorprendió fue que el equipo entendía exactamente lo que estábamos viviendo. No era una agencia fría dando respuestas de manual — era gente que realmente quería que nos instaláramos bien. Y lo logramos.",
+      "Lo que más me sorprendió fue que el equipo entendía exactamente lo que estábamos viviendo. No era una agencia fría dando respuestas de manual — era gente que realmente quería que nos instaláramos bien.",
     avatar: "https://placehold.co/80x80/8B6E4E/F2EDE4?text=DC",
   },
 ];
+
+function TarjetaTestimonio({ t, destacar }: { t: (typeof testimonios)[number]; destacar?: boolean }) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      {...cardHover}
+      className={destacar ? "sm:col-span-2 sm:max-w-md sm:mx-auto" : undefined}
+      style={{
+        borderRadius: 'var(--dz-radius-card)',
+        backgroundColor: 'var(--dz-luz)',
+        border: '1px solid var(--dz-borde)',
+        boxShadow: 'var(--dz-shadow-sm)',
+        padding: 'var(--space-6)',
+      }}
+    >
+      <blockquote>
+        <p
+          className="[font-size:var(--text-sm)] italic leading-[var(--leading-cuerpo)]"
+          style={{ fontFamily: 'var(--font-playfair)', fontWeight: 500, color: 'var(--dz-ink)' }}
+        >
+          &ldquo;{t.texto}&rdquo;
+        </p>
+      </blockquote>
+
+      <div className="mt-[var(--space-4)] flex items-center gap-[var(--space-3)]">
+        <Image
+          src={t.avatar}
+          alt=""
+          width={36}
+          height={36}
+          className="rounded-full flex-shrink-0"
+        />
+        <div className="text-left">
+          <p
+            className="[font-size:var(--text-xs)] font-bold"
+            style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
+          >
+            {t.nombre}
+          </p>
+          <p
+            className="[font-size:0.7rem]"
+            style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)' }}
+          >
+            {t.ciudadOrigen} → {t.ciudadGalicia}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export function Testimonios() {
   return (
     <section
       id="testimonios"
       className="px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
-      style={{ backgroundColor: 'var(--po-luz)' }}
+      style={{ backgroundColor: 'var(--dz-papel)' }}
       aria-labelledby="testimonios-heading"
     >
-      <div className="mx-auto max-w-5xl">
-        <h2
-          id="testimonios-heading"
+      <div className="mx-auto max-w-3xl">
+        {/* Eyebrow como <p> y título visual como <h2> (auditoría 2026-07-19, A2.1) */}
+        <p
           className="mb-[var(--space-2)] text-center [font-size:var(--text-xs)] tracking-[var(--tracking-ui)] uppercase"
-          style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-muted)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', fontWeight: 700, color: 'var(--dz-muted)' }}
         >
           Lo que dicen las familias
-        </h2>
-        <p
-          className="mb-[var(--space-12)] text-center [font-size:var(--text-xl)] md:[font-size:var(--text-2xl)]"
-          style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-pedra)' }}
+        </p>
+        <h2
+          id="testimonios-heading"
+          className="mb-[var(--space-8)] text-center [font-size:var(--text-xl)] md:[font-size:var(--text-2xl)]"
+          style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-ink)' }}
         >
           Testimonios
-        </p>
+        </h2>
 
-        <motion.ul
-          className="grid grid-cols-1 gap-[var(--space-8)] lg:grid-cols-3"
+        <motion.div
+          className="grid grid-cols-1 gap-[var(--space-5)] sm:grid-cols-2"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          {testimonios.map(
-            ({ nombre, ciudadOrigen, ciudadGalicia, texto, avatar }) => (
-              <motion.li
-                key={nombre}
-                className="flex flex-col p-[var(--space-8)]"
-                variants={fadeUp}
-                whileHover={{ y: -4, boxShadow: 'var(--po-shadow-lg)' }}
-                style={{
-                  borderRadius: 'var(--po-radius-card)',
-                  border: '1px solid var(--po-borde)',
-                  backgroundColor: 'var(--po-areia)',
-                  boxShadow: 'var(--po-shadow-sm)',
-                }}
-              >
-                <div className="flex items-center gap-[var(--space-4)]">
-                  <Image
-                    src={avatar}
-                    alt={`Foto de perfil de ${nombre}`}
-                    width={64}
-                    height={64}
-                    className="rounded-full flex-shrink-0"
-                  />
-                  <div>
-                    <p
-                      className="[font-size:var(--text-sm)] font-bold"
-                      style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
-                    >
-                      {nombre}
-                    </p>
-                    <p
-                      className="[font-size:var(--text-xs)]"
-                      style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
-                    >
-                      {ciudadOrigen} → {ciudadGalicia}
-                    </p>
-                  </div>
-                </div>
-
-                <blockquote className="mt-[var(--space-6)] flex-1">
-                  <p
-                    className="[font-size:var(--text-sm)] italic leading-[var(--leading-cuerpo)]"
-                    style={{ fontFamily: 'var(--font-playfair)', color: 'var(--po-muted)' }}
-                  >
-                    &ldquo;{texto}&rdquo;
-                  </p>
-                </blockquote>
-              </motion.li>
-            )
-          )}
-        </motion.ul>
+          {testimonios.map((t, i) => (
+            <TarjetaTestimonio key={t.nombre} t={t} destacar={i === testimonios.length - 1 && testimonios.length % 2 === 1} />
+          ))}
+        </motion.div>
       </div>
     </section>
   );

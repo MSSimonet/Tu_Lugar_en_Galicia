@@ -21,7 +21,7 @@ export default function ComoFuncionaPage() {
       {/* ── Divisor ── */}
       <div style={{
         height: '1px',
-        background: 'linear-gradient(to right, transparent, var(--po-ouro), transparent)',
+        background: 'linear-gradient(to right, transparent, var(--dz-accent), transparent)',
         margin: '0 64px',
       }} />
 
@@ -31,7 +31,7 @@ export default function ComoFuncionaPage() {
       {/* ── Divisor ── */}
       <div style={{
         height: '1px',
-        background: 'linear-gradient(to right, transparent, var(--po-ouro), transparent)',
+        background: 'linear-gradient(to right, transparent, var(--dz-accent), transparent)',
         margin: '0 64px',
       }} />
     </>

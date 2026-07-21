@@ -118,13 +118,13 @@ export function CiudadLayout({
             type="button"
             onClick={toggle}
             aria-label={isPlaying ? 'Pausar video de fondo' : 'Reproducir video de fondo'}
-            className="absolute bottom-4 right-4 z-10 flex items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--po-ouro)]"
+            className="absolute bottom-4 right-4 z-10 flex items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]"
             style={{
               width: '40px',
               height: '40px',
               background: 'rgba(0,0,0,0.45)',
               border: '1px solid rgba(255,255,255,0.25)',
-              color: 'var(--color-sobre-laton)',
+              color: 'var(--dz-hero-text)',
               cursor: 'pointer',
             }}
           >
@@ -132,48 +132,58 @@ export function CiudadLayout({
           </button>
         </div>
 
-        {/* Contenido hero */}
-        <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 max-w-5xl" style={{ paddingTop: '64px' }}>
+        {/* Contenido hero — entrada escalonada al montar (no whileInView: ya está sobre el fold) */}
+        <motion.div
+          className="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 max-w-5xl"
+          style={{ paddingTop: '64px' }}
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
           {/* Eyebrow pill */}
-          <Eyebrow className="self-start mb-4">
-            Tu Lugar en Galicia · {nombre}
-          </Eyebrow>
+          <motion.div variants={fadeUp} className="self-start mb-4">
+            <Eyebrow>
+              Tu Lugar en Galicia · {nombre}
+            </Eyebrow>
+          </motion.div>
 
           {/* H1 */}
-          <h1
+          <motion.h1
+            variants={fadeUp}
             className="text-white font-normal leading-tight mb-3"
-            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 900, fontSize: 'clamp(2.2rem, 5vw, 3.8rem)' }}
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 900, fontSize: 'clamp(1.9rem, 4.25vw, 3.25rem)' }}
           >
             {nombre}
-          </h1>
+          </motion.h1>
 
           {/* Descripción corta */}
-          <p
+          <motion.p
+            variants={fadeUp}
             className="text-white/80 text-sm md:text-base max-w-lg leading-relaxed mb-6"
-            style={{ fontFamily: 'var(--font-lato)' }}
+            style={{ fontFamily: 'var(--font-dz-ui)' }}
           >
             {descripcionCorta}
-          </p>
+          </motion.p>
 
           {/* CTAs */}
-          <div className="flex flex-wrap items-center gap-3">
-            <Button onClick={abrirGina} className="gap-2" style={{ boxShadow: 'var(--po-shadow-md)' }}>
+          <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3">
+            <Button onClick={abrirGina} className="gap-2" style={{ boxShadow: 'var(--dz-shadow-md)' }}>
               <SparkleIcon size={16} />
               Hablar con Gina
             </Button>
             <Link
               href="/conocernos"
               className="text-xs text-white/55 hover:text-white/80 transition-colors underline-offset-2 hover:underline"
-              style={{ fontFamily: 'var(--font-lato)' }}
+              style={{ fontFamily: 'var(--font-dz-ui)' }}
             >
               O completa el formulario
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* ── CUERPO ── */}
-      <div className="px-6 md:px-8 py-7 space-y-5 max-w-7xl mx-auto w-full" style={{ backgroundColor: 'var(--po-luz)' }}>
+      <div className="px-6 md:px-8 py-7 space-y-5 max-w-7xl mx-auto w-full" style={{ backgroundColor: 'var(--dz-luz)' }}>
 
         {/* Fila 1: Descripción + Clima */}
         <motion.div
@@ -184,17 +194,17 @@ export function CiudadLayout({
           viewport={{ once: true, amount: 0.2 }}
         >
           {/* Descripción larga */}
-          <div className="p-6" style={{ backgroundColor: 'var(--po-areia)', borderRadius: 'var(--po-radius-card)', border: '1px solid var(--po-borde)' }}>
+          <div className="p-6" style={{ backgroundColor: 'var(--dz-papel)', borderRadius: 'var(--dz-radius-card)', border: '1px solid var(--dz-borde)' }}>
             <h2
               className="text-[10px] tracking-widest uppercase mb-4"
-              style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-ui)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               La ciudad
             </h2>
-            <p className="text-sm leading-[1.75] mb-4" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}>
+            <p className="text-sm leading-[1.75] mb-4" style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}>
               {descripcionLarga}
             </p>
-            <p className="text-sm leading-[1.75]" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}>
+            <p className="text-sm leading-[1.75]" style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)' }}>
               {descripcionLarga2}
             </p>
           </div>
@@ -217,22 +227,22 @@ export function CiudadLayout({
           {/* Barrios más buscados */}
           <motion.div
             className="p-5"
-            whileHover={{ y: -4, boxShadow: 'var(--po-shadow-md)' }}
-            style={{ backgroundColor: 'var(--po-areia)', borderRadius: 'var(--po-radius-card)' }}
+            whileHover={{ y: -4, boxShadow: 'var(--dz-shadow-md)' }}
+            style={{ backgroundColor: 'var(--dz-papel)', borderRadius: 'var(--dz-radius-card)' }}
           >
             <h2
               className="text-[10px] tracking-widest uppercase mb-4"
-              style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-ui)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               Los barrios más buscados
             </h2>
-            <ul className="space-y-0 divide-y" style={{ borderColor: 'var(--po-borde)' }}>
+            <ul className="space-y-0 divide-y" style={{ borderColor: 'var(--dz-borde)' }}>
               {barrios.map((b, i) => (
                 <li key={i} className="py-3 first:pt-0 last:pb-0">
-                  <p className="font-semibold text-sm mb-0.5" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}>
+                  <p className="font-semibold text-sm mb-0.5" style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}>
                     {b.nombre}
                   </p>
-                  <p className="text-xs leading-snug" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}>
+                  <p className="text-xs leading-snug" style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)' }}>
                     {b.descripcion}
                   </p>
                 </li>
@@ -243,12 +253,12 @@ export function CiudadLayout({
           {/* Alquileres orientativos */}
           <motion.div
             className="p-5"
-            whileHover={{ y: -4, boxShadow: 'var(--po-shadow-md)' }}
-            style={{ backgroundColor: 'var(--po-areia)', borderRadius: 'var(--po-radius-card)' }}
+            whileHover={{ y: -4, boxShadow: 'var(--dz-shadow-md)' }}
+            style={{ backgroundColor: 'var(--dz-papel)', borderRadius: 'var(--dz-radius-card)' }}
           >
             <h2
               className="text-[10px] tracking-widest uppercase mb-4"
-              style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-ui)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               Alquileres orientativos · 2025
             </h2>
@@ -257,18 +267,18 @@ export function CiudadLayout({
                 <li
                   key={i}
                   className="flex justify-between items-center px-3 py-2"
-                  style={{ backgroundColor: 'var(--po-luz)', borderRadius: '6px' }}
+                  style={{ backgroundColor: 'var(--dz-luz)', borderRadius: '8px' }}
                 >
-                  <span className="text-xs" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}>
+                  <span className="text-xs" style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)' }}>
                     {a.habitaciones}
                   </span>
-                  <span className="text-xs font-semibold" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}>
+                  <span className="text-xs font-semibold" style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}>
                     {a.rango}
                   </span>
                 </li>
               ))}
             </ul>
-            <p className="mt-3 leading-snug" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)', fontSize: '10px' }}>
+            <p className="mt-3 leading-snug" style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)', fontSize: '10px' }}>
               Orientativos. Varían según barrio y estado del inmueble.
             </p>
           </motion.div>
@@ -289,47 +299,15 @@ export function CiudadLayout({
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          style={{ backgroundColor: 'var(--po-areia)', borderRadius: 'var(--po-radius-card)', border: '1px solid var(--po-borde)' }}
+          style={{ backgroundColor: 'var(--dz-papel)', borderRadius: 'var(--dz-radius-card)', border: '1px solid var(--dz-borde)' }}
         >
           <h2
             className="text-2xl font-normal mb-5"
-            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-pedra)' }}
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-ink)' }}
           >
             Preguntas frecuentes sobre {nombre}
           </h2>
           <FAQAccordionPedraEOuro faqs={faqsMapped} />
-        </motion.div>
-
-        {/* Fila 4: Guía de apps para recién llegados */}
-        <motion.div
-          className="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          style={{ backgroundColor: 'var(--po-areia)', borderRadius: 'var(--po-radius-card)', border: '1px solid var(--po-borde)' }}
-        >
-          <div>
-            <h2
-              className="text-[10px] tracking-widest uppercase mb-2"
-              style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
-            >
-              Para tu llegada
-            </h2>
-            <p className="font-semibold text-sm mb-1" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}>
-              ¿Ya tienes las apps que vas a necesitar desde el primer día?
-            </p>
-            <p className="text-xs leading-snug" style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}>
-              Transporte, salud, banca y trámites — las apps esenciales para recién llegados en Galicia.
-            </p>
-          </div>
-          <Link
-            href="/apps-utiles"
-            className="text-xs font-semibold uppercase tracking-wide whitespace-nowrap shrink-0 px-4 py-2 transition-opacity hover:opacity-70"
-            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-ouro-text)', border: '1px solid var(--po-ouro)', borderRadius: '999px' }}
-          >
-            Ver la guía →
-          </Link>
         </motion.div>
 
       </div>
@@ -338,11 +316,11 @@ export function CiudadLayout({
       {(() => {
         const otras = TODAS_LAS_CIUDADES.filter(c => c.slug !== slug)
         return (
-          <section className="px-6 md:px-8 py-7" style={{ backgroundColor: 'var(--po-areia)' }}>
+          <section className="px-6 md:px-8 py-7" style={{ backgroundColor: 'var(--dz-papel)' }}>
             <div className="max-w-7xl mx-auto">
               <h2
                 className="text-[10px] tracking-widest uppercase mb-5"
-                style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+                style={{ fontFamily: 'var(--font-dz-ui)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
               >
                 Otras ciudades
               </h2>
@@ -354,13 +332,13 @@ export function CiudadLayout({
                 viewport={{ once: true, amount: 0.2 }}
               >
                 {otras.map(ciudad => (
-                  <motion.div key={ciudad.slug} variants={fadeUp} whileHover={{ y: -4, boxShadow: 'var(--po-shadow-lg)' }}>
+                  <motion.div key={ciudad.slug} variants={fadeUp} whileHover={{ y: -4, boxShadow: 'var(--dz-shadow-lg)' }}>
                   <Link
                     href={`/ciudades/${ciudad.slug}`}
                     onMouseEnter={() => prefetchCiudadVideo(ciudad.slug)}
                     onTouchStart={() => prefetchCiudadVideo(ciudad.slug)}
                     className="group block overflow-hidden relative"
-                    style={{ aspectRatio: '4/3', borderRadius: 'var(--po-radius-card)' }}
+                    style={{ aspectRatio: '4/3', borderRadius: 'var(--dz-radius-card)' }}
                   >
                     <Image
                       src={ciudad.imagen}
@@ -378,7 +356,7 @@ export function CiudadLayout({
                     <div className="absolute bottom-0 left-0 right-0 p-3">
                       <p
                         className="text-white font-normal leading-tight"
-                        style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)' }}
+                        style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)' }}
                       >
                         {ciudad.nombre}
                       </p>

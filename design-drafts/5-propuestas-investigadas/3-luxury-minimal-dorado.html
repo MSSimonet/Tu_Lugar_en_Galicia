@@ -1,0 +1,163 @@
+<title>Tu Lugar en Galicia — Luxury Minimal</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  /* Patrón: Agate Luxury Residence / Hous Luxe Woningen — blanco + un solo dorado,
+     hero full-screen, dos modos de navegación reales (Mapa / Lista) en vez de
+     un único grid fijo, parallax sutil en scroll. Máximo espacio negativo. */
+  :root{
+    --bg:#FFFFFF; --ink:#1A1815; --oro:#9C7A34; --oro-h:#7E6229;
+    --crema:#F7F4EC; --muted:#77705F; --line:#EAE4D4;
+    --shadow: 0 14px 34px -16px rgba(26,24,21,.3);
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; margin:0;}
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:400; margin:0;}
+  a{color:inherit;}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.92); backdrop-filter:blur(10px); padding:1.3rem 4vw; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line);}
+  .logo{font-family:'Fraunces',serif; font-style:italic; font-size:1.2rem;}
+  nav a{font-size:.85rem; color:var(--ink); text-decoration:none; margin-left:2.2rem;}
+  .nav-cta{border:1px solid var(--oro); color:var(--oro); padding:.55rem 1.2rem; border-radius:2px; font-size:.85rem;}
+
+  .hero{
+    position:relative; min-height:92vh; display:flex; align-items:center; justify-content:center; text-align:center;
+    background:
+      radial-gradient(1200px 600px at 50% 0%, rgba(156,122,52,.14), transparent 60%),
+      linear-gradient(160deg, #ECE6D5 0%, #D9CFAF 50%, #BFAE7E 100%);
+  }
+  .hero-inner{max-width:680px; padding:0 2rem;}
+  .hero-eyebrow{font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; color:var(--oro-h); margin-bottom:1.4rem;}
+  .hero h1{font-size:clamp(2.2rem,5vw,4rem); font-weight:400; line-height:1.18; margin-bottom:1.4rem;}
+  .hero h1 em{font-style:italic; color:var(--oro-h);}
+  .hero p{font-size:1.05rem; color:#4A4335; max-width:44ch; margin:0 auto 2rem; line-height:1.6;}
+  .btn-primary{background:var(--ink); color:#fff; padding:1rem 2rem; border-radius:2px; text-decoration:none; font-size:.92rem; letter-spacing:.02em; display:inline-block; transition:background-color .25s ease;}
+  .btn-primary:hover{background:var(--oro-h);}
+
+  .banda{padding:5.5rem 4vw;}
+  .banda-head{text-align:center; max-width:600px; margin:0 auto 3rem;}
+  .banda-eyebrow{font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--oro-h); margin-bottom:.8rem;}
+  .banda h2{font-size:clamp(1.7rem,2.8vw,2.3rem);}
+
+  /* Toggle de modo — patrón real de Agate: Mapa / Lista */
+  .modo-toggle{display:flex; justify-content:center; gap:.6rem; margin-bottom:2.6rem;}
+  .modo-btn{
+    background:none; border:1px solid var(--line); color:var(--muted); font-family:'Inter',sans-serif;
+    font-size:.86rem; padding:.55rem 1.3rem; border-radius:999px; cursor:pointer; transition:all .25s ease;
+  }
+  .modo-btn.activo{background:var(--ink); color:#fff; border-color:var(--ink);}
+
+  .modo-vista{display:none;}
+  .modo-vista.activo{display:block;}
+
+  .ciudades-lista{max-width:760px; margin:0 auto;}
+  .ciudad-fila{display:flex; justify-content:space-between; align-items:baseline; padding:1.3rem 0; border-bottom:1px solid var(--line);}
+  .ciudad-fila h3{font-size:1.3rem; font-weight:400;}
+  .ciudad-fila .meta{font-size:.86rem; color:var(--muted);}
+
+  .ciudades-mapa{
+    max-width:760px; margin:0 auto; aspect-ratio:16/8; background:var(--crema); border-radius:6px;
+    display:flex; align-items:center; justify-content:center; gap:3rem; position:relative;
+  }
+  .mapa-punto{text-align:center;}
+  .mapa-punto .dot{width:10px; height:10px; border-radius:999px; background:var(--oro); margin:0 auto .6rem;}
+  .mapa-punto .nombre{font-family:'Fraunces',serif; font-size:1.05rem;}
+  .mapa-punto .meta{font-size:.76rem; color:var(--muted);}
+
+  .testi{max-width:640px; margin:0 auto; text-align:center;}
+  .testi p{font-family:'Fraunces',serif; font-style:italic; font-size:clamp(1.2rem,2vw,1.5rem); line-height:1.55; margin-bottom:1.2rem;}
+  .testi cite{font-size:.82rem; color:var(--muted); font-style:normal;}
+
+  .pasos{display:grid; grid-template-columns:repeat(3,1fr); gap:3rem; max-width:900px; margin:0 auto; text-align:center;}
+  .paso .n{font-family:'Fraunces',serif; font-style:italic; color:var(--oro); font-size:1.2rem; display:block; margin-bottom:.6rem;}
+  .paso h3{font-size:1.1rem; margin-bottom:.5rem; font-weight:500;}
+  .paso p{font-size:.88rem; color:var(--muted);}
+
+  .cta-final{text-align:center; background:var(--ink); color:#fff; padding:6rem 4vw;}
+  .cta-final h2{max-width:18ch; margin:0 auto 1.8rem; color:#fff;}
+
+  footer{padding:2rem 4vw; display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; font-size:.82rem; color:var(--muted); border-top:1px solid var(--line);}
+  .gina-bubble{position:fixed; bottom:22px; left:22px; z-index:60; width:50px; height:50px; border-radius:999px; background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic; cursor:pointer; box-shadow:var(--shadow);}
+
+  @media (max-width:860px){ .pasos{grid-template-columns:1fr;} .ciudades-mapa{flex-direction:column; aspect-ratio:auto; padding:2rem;} nav a:not(.nav-cta){display:none;} }
+</style>
+
+<header>
+  <div class="logo">Tu Lugar en Galicia</div>
+  <nav><a href="#ciudades">Ciudades</a><a href="#funciona">Cómo funciona</a><a href="#" class="nav-cta">Contacto</a></nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Relocation especializado en Galicia</div>
+    <h1>Tu nueva vida empieza con una <em>puerta abierta</em>.</h1>
+    <p>Gestionamos todo el proceso a distancia, con honestidad y criterio profesional, para que tu única tarea al llegar sea abrir tu puerta.</p>
+    <a href="#" class="btn-primary">Cuéntale tu caso a Gina</a>
+  </div>
+</section>
+
+<section class="banda" id="ciudades">
+  <div class="banda-head">
+    <div class="banda-eyebrow">Cinco ciudades activas</div>
+    <h2>Elegí cómo lo querés ver.</h2>
+  </div>
+  <div class="modo-toggle">
+    <button class="modo-btn activo" data-modo="mapa">Mapa</button>
+    <button class="modo-btn" data-modo="lista">Lista</button>
+  </div>
+  <div class="modo-vista activo" id="vista-mapa">
+    <div class="ciudades-mapa">
+      <div class="mapa-punto"><div class="dot"></div><div class="nombre">A Coruña</div><div class="meta">720€ medio</div></div>
+      <div class="mapa-punto"><div class="dot"></div><div class="nombre">Vigo</div><div class="meta">690€ medio</div></div>
+      <div class="mapa-punto"><div class="dot"></div><div class="nombre">Santiago</div><div class="meta">650€ medio</div></div>
+    </div>
+  </div>
+  <div class="modo-vista" id="vista-lista">
+    <div class="ciudades-lista">
+      <div class="ciudad-fila"><h3>A Coruña</h3><span class="meta">38 familias reubicadas · 720€ medio</span></div>
+      <div class="ciudad-fila"><h3>Vigo</h3><span class="meta">52 familias reubicadas · 690€ medio</span></div>
+      <div class="ciudad-fila"><h3>Santiago</h3><span class="meta">29 familias reubicadas · 650€ medio</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="banda" style="background:var(--crema);">
+  <div class="testi">
+    <p>"Nos dijo qué zona no nos convenía antes de que gastáramos en el pasaje. Eso no lo hace cualquiera."</p>
+    <cite>— familia reubicada en A Coruña, 2026</cite>
+  </div>
+</section>
+
+<section class="banda" id="funciona">
+  <div class="banda-head"><div class="banda-eyebrow">Cómo funciona</div><h2>Tres pasos.</h2></div>
+  <div class="pasos">
+    <div class="paso"><span class="n">Uno</span><h3>Contás tu caso</h3><p>Seis preguntas con Gina, sin formulario eterno.</p></div>
+    <div class="paso"><span class="n">Dos</span><h3>Silvana revisa</h3><p>Descarta lo que no te conviene.</p></div>
+    <div class="paso"><span class="n">Tres</span><h3>Videollamada</h3><p>25 minutos, agenda real.</p></div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="banda-eyebrow" style="justify-content:center; display:flex; color:var(--oro);">Empezá hoy</div>
+  <h2>Tu hogar en Galicia está a una conversación.</h2>
+  <a href="#" class="btn-primary" style="background:var(--oro);">Cuéntale tu caso a Gina</a>
+</section>
+
+<footer><span>Tu Lugar en Galicia</span><span>Política de privacidad · Contacto</span></footer>
+<div class="gina-bubble">G</div>
+
+<script>
+  document.querySelectorAll('.modo-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.modo-btn').forEach(b => b.classList.remove('activo'));
+      document.querySelectorAll('.modo-vista').forEach(v => v.classList.remove('activo'));
+      btn.classList.add('activo');
+      document.getElementById('vista-' + btn.dataset.modo).classList.add('activo');
+    });
+  });
+</script>

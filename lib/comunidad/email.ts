@@ -26,11 +26,11 @@ export function buildComunidadMensajeEmail(params: {
           <tr>
             <td style="padding:32px 40px;color:#2D2926;font-size:15px;line-height:1.7;">
               <p style="margin:0 0 8px;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#B8943F;">
-                Comunidad de Acogida — mensaje privado
+                Formando comunidad — mensaje privado
               </p>
               <p style="margin:0 0 20px;">Hola ${destinatarioNombre},</p>
               <p style="margin:0 0 20px;">
-                <strong>${remitenteNombre}</strong> te escribió desde el mapa de Comunidad de Acogida:
+                <strong>${remitenteNombre}</strong> te escribió desde el mapa de Formando comunidad:
               </p>
               <div style="background:#F5F0E8;border-radius:6px;padding:16px 20px;font-size:14px;line-height:1.7;color:#1E1C19;white-space:pre-wrap;">${mensaje}</div>
               <p style="margin:28px 0 0;font-size:13px;color:#696560;">
@@ -41,12 +41,12 @@ export function buildComunidadMensajeEmail(params: {
           </tr>
           <tr>
             <td style="background:#f5f0e8;padding:16px 40px;text-align:center;font-size:11px;color:#696560;font-family:Georgia,serif;">
-              Comunidad de Acogida — Tu Lugar en Galicia
+              Formando comunidad — Tu Lugar en Galicia
             </td>
           </tr>`
 
   return buildEmailShell({
-    title: 'Nuevo mensaje — Comunidad de Acogida',
+    title: 'Nuevo mensaje — Formando comunidad',
     tableWidth: 600,
     tableStyle: 'background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;',
     rows,

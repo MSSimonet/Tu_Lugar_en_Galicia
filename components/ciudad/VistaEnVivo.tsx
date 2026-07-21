@@ -21,7 +21,7 @@ export function VistaEnVivo({ descripcionUbicacion }: VistaEnVivoProps) {
       minHeight: '220px',
       borderRadius: '1rem',
       overflow: 'hidden',
-      background: 'var(--color-header-bg)', // fijo, no invierte en dark (a diferencia de --color-granito) — necesario para que el texto blanco siga contrastando en ambos modos
+      background: 'var(--color-header-bg)', // fijo, no invierte en dark (a diferencia de --dz-ink) — necesario para que el texto blanco siga contrastando en ambos modos
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',

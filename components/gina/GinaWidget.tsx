@@ -145,7 +145,7 @@ export function GinaWidget() {
         className={`
           fixed bottom-6 right-6 z-50
           flex flex-col
-          bg-[color:var(--color-blanco)] rounded-2xl shadow-2xl overflow-hidden
+          bg-[color:var(--color-blanco)] rounded-2xl shadow-[var(--dz-shadow-lg)] overflow-hidden
           transition-all duration-300 ease-in-out
           ${abierto
             ? 'opacity-100 translate-y-0 pointer-events-auto'
@@ -155,6 +155,10 @@ export function GinaWidget() {
         style={{
           width: 'min(400px, 92vw)',
           height: 'min(640px, 88vh)',
+          // Único punto de inyección de tipografía: cascada por herencia CSS a
+          // GinaConversation/GinaMessages/GinaInput/GinaButtons — cero cambios de lógica
+          // en esos archivos (NO-TOCAR.md §3: forma/color/animación sí, funcionamiento no).
+          fontFamily: 'var(--font-dz-ui)',
         }}
       >
         {/* Cabecera */}

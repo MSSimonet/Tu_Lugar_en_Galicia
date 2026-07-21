@@ -9,13 +9,15 @@
 @theme {
   /* === PALETA DE COLOR === */
 
-  /* Identidad primaria — latón/bronce (extraído del logo) */
-  /* #8F722B: blanco sobre latón = 4.56:1 (WCAG AA) y latón sobre blanco = 4.56:1 */
-  --color-laton:        #8F722B;
-  --color-laton-claro:  #D4B96A;
-  --color-laton-oscuro: #8A6E2A;
-  --color-laton-text:   #7A5F22; /* laton oscurecido para texto AA sobre niebla/blanco */
-  --color-laton-invertido: #7A5F22; /* fijo, NO invierte en .dark — para texto dorado en secciones cuyo fondo sí se invierte (ej. CTAFinal, bg-[var(--color-granito)]); 4.80:1 sobre #F0EBE2 */
+  /* Identidad primaria — acento Deslumbrante (retinte 2026-07-18, ver DESIGN.md).
+     Se mantienen los nombres --color-laton* (capa "chrome" del header/footer,
+     siempre oscura) para no tocar Header.tsx/Footer.tsx/GinaButtons.tsx —
+     mismo criterio no-destructivo que --dz-* arriba: solo cambian los valores. */
+  --color-laton:        #C27A1F; /* AA 7.1:1 con texto blanco encima */
+  --color-laton-claro:  #E0932E;
+  --color-laton-oscuro: #9C5F19;
+  --color-laton-text:   #9C5F19;
+  --color-laton-invertido: #9C5F19; /* fijo, NO invierte en .dark — mismo rol que antes, nuevo tono */
 
   /* Acento territorial — verde atlántico */
   --color-atlantico:       #1A5247;
@@ -34,19 +36,22 @@
   /* Base */
   --color-blanco: #FFFCF7;
 
-  /* Zona de header — permanece oscura en ambos modos */
-  --color-header-bg:     #1E1C19; /* bg del header (= granito-claro, siempre oscuro) */
+  /* Zona de header — permanece oscura en ambos modos (retinte Deslumbrante) */
+  --color-header-bg:     #16140F; /* = --dz-hero-bg, siempre oscuro */
   --color-header-subtle: #C8BDB0; /* texto secundario sobre fondo oscuro del header */
 
   /* Tokens header sin override dark (el header es siempre oscuro) */
-  --color-laton-borde:   #B8943F; /* mid-gold para bordes estructurales del header */
+  --color-laton-borde:   #7A5230; /* mezcla acento/fondo oscuro para bordes estructurales */
   --color-nav-muted:     #A8A8A8; /* texto inactivo en nav oscuro */
   --color-header-active: #F0EDE6; /* texto activo/resaltado en nav oscuro */
-  --color-sobre-laton:   #ffffff; /* texto sobre botón latón (siempre blanco) */
+  --color-sobre-laton:   #ffffff; /* texto sobre botón acento (siempre blanco) */
 
   /* Tokens footer sin override dark (el footer es siempre oscuro) */
-  --color-footer-bg:     #141414; /* fondo del footer */
-  --color-footer-border: #2A2A2A; /* separador inferior del footer */
+  /* Igual a --color-header-bg por referencia (antes tenía su propio hex, #14120F,
+     apenas distinto del header — quedaban dos "negros" ligeramente diferentes,
+     sesión 2026-07-19) — así quedan siempre idénticos, en claro y en oscuro. */
+  --color-footer-bg:     var(--color-header-bg);
+  --color-footer-border: #2A2620; /* separador inferior del footer */
 
   /* Tokens sección siempre oscura (acordeón) */
   --color-acordeon-bg:   #2A2B2E; /* fondo del acordeón Cómo funciona */
@@ -288,49 +293,94 @@ details > dd {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
+   DESLUMBRANTE — Sistema de diseño VIGENTE (reemplaza a Pedra e Ouro, que
+   queda definido pero dormido más abajo para poder revertir si hace falta).
+   Contrastes verificados con la fórmula WCAG de luminancia relativa, igualan
+   o superan a sus equivalentes --po-* ya documentados como AA-safe.
+   ══════════════════════════════════════════════════════════════════════════ */
+@theme {
+  /* Inversores — claro por defecto, override bajo .dark */
+  --dz-ink:      #16140F; /* texto principal — AA 16.89:1 sobre dz-papel */
+  --dz-papel:    #F7F5F0; /* fondo de sección */
+  --dz-luz:      #FFFFFF; /* fondo de tarjeta/superficie */
+  --dz-muted:    #6B6558; /* texto secundario — AA 5.31:1 sobre dz-papel */
+  --dz-borde:    #DCDAD5;
+
+  /* Fijos — no invierten con el tema, igual filosofía que --po-ouro */
+  --dz-accent:       #E0932E; /* acento único de marca */
+  --dz-accent-hover: #C27A1F;
+  --dz-accent-text:  #9C5F19; /* texto AA sobre dz-papel (4.74:1) — en dark usa --dz-accent directo (7.75:1) */
+  --dz-accent-ink:   #16140F; /* texto sobre botón --dz-accent — AA 7.35:1 */
+
+  /* Bookend fijo — hero, marcador y CTA final comparten este fondo oscuro */
+  --dz-hero-bg:    #16140F;
+  --dz-hero-text:  #F3EFE4;
+  --dz-hero-muted: rgba(243, 239, 228, 0.7);
+
+  /* Unbounded — fidelidad al mockup aprobado (design-drafts/deslumbrante); Jost queda como
+     fallback (ver DESIGN.md §3 changelog fechado). */
+  --font-dz-display: var(--font-unbounded), var(--font-jost), 'Montserrat', system-ui, sans-serif;
+  --font-dz-ui:       var(--font-inter), var(--font-lato), 'Helvetica Neue', system-ui, sans-serif;
+
+  --dz-radius-card: 20px;
+  /* Radio único de campos de formulario — antes cada form tenía el suyo (20px en
+     /conocernos, 8px en /contacto y /comunidad, 12px en Gina); 12px unifica con Gina
+     (auditoría 2026-07-19, A3.1). */
+  --dz-radius-input: 12px;
+  --dz-shadow-sm: 0 1px 3px color-mix(in srgb, var(--dz-hero-bg) 12%, transparent);
+  --dz-shadow-md: 0 4px 12px color-mix(in srgb, var(--dz-hero-bg) 18%, transparent);
+  --dz-shadow-lg: 0 12px 32px color-mix(in srgb, var(--dz-hero-bg) 24%, transparent);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
    APPS ÚTILES — sigue el toggle claro/oscuro GLOBAL del sitio (.dark en
    <html>, controlado desde Header.tsx). Mismo mecanismo que los tokens
    po y color: valores por defecto = tema claro, override bajo .dark = tema
    oscuro. La página no tiene ningún toggle propio.
    ══════════════════════════════════════════════════════════════════════════ */
 @theme {
-  --au-bg:              #f8f3ea;
-  --au-header-bg:       #fffdf7;
-  --au-card:            #ffffff;
-  --au-accent:          #c9a237; /* dorado — acento y bordes activos, fijo en ambos temas */
-  --au-accent-text:     #65511c; /* accent oscurecido — el dorado crudo no pasa AA sobre fondo claro */
-  --au-hero-heading:    #2c2013;
-  --au-heading:         #2c2013;
-  --au-hero-body:       #5c4d3a;
-  --au-text:            #3a2e1e;
-  --au-muted:           #7a6a53;
-  --au-faint:           #6b5d47;
-  --au-border:          rgba(154,109,20,0.22);
-  --au-border-strong:   rgba(154,109,20,0.28);
-  --au-row-border:      rgba(60,45,25,0.1);
-  --au-app-card-bg:     #faf5eb;
-  --au-logo-bg:         #ffffff;
+  /* Sesión 5 (2026-07-18): exclusión revertida — Apps Útiles pasa de su paleta/tipografía
+     propia (Lora+Work Sans, tonos "café") a heredar los tokens --dz-* reales, mismo
+     mecanismo no-destructivo que --au-accent ya usaba desde sesión 1. Cero cambios en los
+     componentes de components/apps/** — todos consumen --au-* por variable, así que repuntar
+     la definición acá alcanza para todo el árbol. */
+  --au-bg:              var(--dz-papel);
+  --au-header-bg:       var(--dz-luz);
+  --au-card:            var(--dz-luz);
+  --au-accent:          #E0932E; /* retinte Deslumbrante (= --dz-accent) — acento y bordes activos, fijo en ambos temas */
+  --au-accent-text:     #9C5F19; /* = --dz-accent-text — AA sobre fondo claro */
+  --au-hero-heading:    var(--dz-ink);
+  --au-heading:         var(--dz-ink);
+  --au-hero-body:       var(--dz-muted);
+  --au-text:            var(--dz-ink);
+  --au-muted:           var(--dz-muted);
+  --au-faint:           var(--dz-muted);
+  --au-border:          rgba(224,147,46,0.22);
+  --au-border-strong:   rgba(224,147,46,0.28);
+  --au-row-border:      var(--dz-borde);
+  --au-app-card-bg:     var(--dz-papel);
+  --au-logo-bg:         var(--dz-luz);
 
-  --font-au-display: var(--font-lora), Georgia, serif;
-  --font-au-ui:       var(--font-worksans), 'Helvetica Neue', system-ui, sans-serif;
+  --font-au-display: var(--font-dz-display);
+  --font-au-ui:       var(--font-dz-ui);
 }
 
 .dark {
-  --au-bg:              #1b1410;
-  --au-header-bg:       #14100c;
-  --au-card:            #241a13;
+  --au-bg:              var(--dz-papel);
+  --au-header-bg:       var(--dz-luz);
+  --au-card:            var(--dz-luz);
   --au-accent-text:     var(--au-accent); /* el dorado crudo ya es legible sobre fondo oscuro */
-  --au-hero-heading:    #f7f0e4;
-  --au-heading:         #f2e9da;
-  --au-hero-body:       #cfc3af;
-  --au-text:            #e7dccb;
-  --au-muted:           #b3a690;
-  --au-faint:           #938576; /* ajustado de #8d8171 (mockup) para WCAG AA: 4.47:1 sobre --au-card fallaba, ahora 4.75:1 */
+  --au-hero-heading:    var(--dz-ink);
+  --au-heading:         var(--dz-ink);
+  --au-hero-body:       var(--dz-muted);
+  --au-text:            var(--dz-ink);
+  --au-muted:           var(--dz-muted);
+  --au-faint:           var(--dz-muted);
   --au-border:          rgba(201,162,55,0.18);
   --au-border-strong:   rgba(201,162,55,0.2);
-  --au-row-border:      rgba(226,213,196,0.08);
-  --au-app-card-bg:     #2a1f16;
-  --au-logo-bg:         #1b1410;
+  --au-row-border:      var(--dz-borde);
+  --au-app-card-bg:     var(--dz-papel);
+  --au-logo-bg:         var(--dz-luz);
   --background:        oklch(0.145 0 0);
   --foreground:        oklch(0.985 0 0);
   --card:        oklch(0.205 0 0);
@@ -364,14 +414,6 @@ details > dd {
   --sidebar-ring:        oklch(0.556 0 0);
 }
 
-@keyframes auFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.au-fade-in {
-  animation: auFadeIn 0.3s ease;
-}
-
 /* Círculo pulsante de los números de emergencia — color fijo (azul institucional),
    igual en ambos temas de la página, no forma parte de la paleta --au-*. */
 @keyframes auEmergPulse {
@@ -383,19 +425,19 @@ details > dd {
   animation: auEmergPulse 2.2s infinite;
 }
 
-/* Glow dorado al pasar el mouse por una card de ciudad no seleccionada */
+/* Glow al pasar el mouse por una card de ciudad no seleccionada — antes un dorado
+   hardcodeado (#d8b96a) ajeno a la paleta, ahora --dz-accent (sesión 5). */
 .au-city-card:hover {
-  border-color: #d8b96a !important;
-  box-shadow: 0 0 0 1px #d8b96a, 0 0 22px 4px rgba(216,185,106,0.55);
+  border-color: var(--dz-accent) !important;
+  box-shadow: 0 0 0 1px var(--dz-accent), 0 0 22px 4px color-mix(in srgb, var(--dz-accent) 55%, transparent);
 }
 
-/* Borde dorado al pasar el mouse por una tarjeta de app */
+/* Borde al pasar el mouse por una tarjeta de app */
 .au-app-card:hover {
-  border-color: #d8b96a !important;
+  border-color: var(--dz-accent) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .au-fade-in,
   .au-emerg-pulse { animation: none; }
 }
 
@@ -420,6 +462,14 @@ details > dd {
   --po-muted:     #A8998C;
   --po-borde:     #4A3F38;
   --po-ouro-text: #C89B3C; /* claro sobre fondo oscuro — 5.98:1 AA */
+
+  /* Deslumbrante — dark overrides */
+  --dz-papel: #0E0D0B;
+  --dz-luz:   #1B1913;
+  --dz-ink:   #F3EFE4;
+  --dz-muted: #9C9484;
+  --dz-borde: #292825;
+  --dz-accent-text: var(--dz-accent); /* el acento crudo ya es AA sobre fondo oscuro — 7.75:1 */
 
   /* Atlántico Editorial — dark overrides */
   --ae-papel:   #0F172A;
@@ -548,4 +598,14 @@ details > dd {
   html {
     @apply font-sans;
   }
+}
+
+/* Attribution del mapa de Leaflet (componentes/comunidad/MapaComunidad.tsx) — el link azul
+   por defecto de Leaflet no llega a 4.5:1 sobre su propio fondo semitransparente (auditoría
+   de contraste, sesión 2026-07-19). Fondo/texto propios en vez de los defaults de la librería. */
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+.leaflet-control-attribution a {
+  color: #2A2A2A !important;
 }

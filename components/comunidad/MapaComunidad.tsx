@@ -23,6 +23,48 @@ const MARKER_SHADOW = '/leaflet/marker-shadow.png'
 const GALICIA_CENTER: [number, number] = [42.75, -7.9]
 const GALICIA_ZOOM = 9
 
+// Encuadre que cubre el territorio gallego sin llegar a mostrar Portugal ni el resto de
+// España — límite duro de paneo/zoom (setMaxBounds), no solo el encuadre inicial.
+const GALICIA_BOUNDS: [[number, number], [number, number]] = [
+  [41.79, -9.42], // suroeste
+  [43.85, -6.68], // noreste
+]
+const GALICIA_MIN_ZOOM = 8
+
+// Un color por ciudad, elegido para máxima distinción entre sí (5 hues separados en la
+// rueda de color) y coherentes en saturación/peso con la paleta Deslumbrante — ninguno
+// domina sobre los demás. Cada perfil se asigna a la ciudad más cercana por distancia — la
+// tabla `comunidad` no guarda la ciudad, solo lat/lng geocodificados en el alta (ver
+// lib/comunidad/nominatim.ts).
+const CIUDAD_COLORES: Record<string, string> = {
+  'A Coruña': '#C0392B', // rojo teja
+  Vigo: '#2E5A8C', // azul petróleo
+  Pontevedra: '#E0932E', // dorado — dz-accent
+  'Santiago de Compostela': '#6B4A8C', // violeta
+  Lugo: '#4A7856', // verde bosque
+}
+
+const CIUDAD_CENTROS: { nombre: string; lat: number; lng: number }[] = [
+  { nombre: 'A Coruña', lat: 43.3623, lng: -8.4115 },
+  { nombre: 'Vigo', lat: 42.2406, lng: -8.7207 },
+  { nombre: 'Pontevedra', lat: 42.431, lng: -8.6444 },
+  { nombre: 'Santiago de Compostela', lat: 42.8782, lng: -8.5448 },
+  { nombre: 'Lugo', lat: 43.0097, lng: -7.5567 },
+]
+
+function colorPorCiudadMasCercana(lat: number, lng: number): string {
+  let masCercana = CIUDAD_CENTROS[0]
+  let distanciaMinima = Infinity
+  for (const ciudad of CIUDAD_CENTROS) {
+    const distancia = (ciudad.lat - lat) ** 2 + (ciudad.lng - lng) ** 2
+    if (distancia < distanciaMinima) {
+      distanciaMinima = distancia
+      masCercana = ciudad
+    }
+  }
+  return CIUDAD_COLORES[masCercana.nombre]
+}
+
 type EstadoMapa = 'cargando' | 'listo' | 'error'
 
 export function MapaComunidad() {
@@ -56,13 +98,19 @@ export function MapaComunidad() {
         shadowUrl: MARKER_SHADOW,
       })
 
-      const mapa = L.map(contenedorRef.current).setView(GALICIA_CENTER, GALICIA_ZOOM)
+      const mapa = L.map(contenedorRef.current, {
+        maxBounds: GALICIA_BOUNDS,
+        maxBoundsViscosity: 1,
+        minZoom: GALICIA_MIN_ZOOM,
+      }).setView(GALICIA_CENTER, GALICIA_ZOOM)
+      mapa.fitBounds(GALICIA_BOUNDS)
       mapaRef.current = mapa
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
         maxZoom: 19,
+        minZoom: GALICIA_MIN_ZOOM,
       }).addTo(mapa)
 
       // Retoca el chrome del popup de Leaflet (blanco por defecto) con los tokens Pedra e
@@ -75,8 +123,8 @@ export function MapaComunidad() {
         const contenido = el.querySelector<HTMLElement>('.leaflet-popup-content')
         const tip = el.querySelector<HTMLElement>('.leaflet-popup-tip')
         if (wrapper) {
-          wrapper.style.backgroundColor = 'var(--po-luz)'
-          wrapper.style.border = '1px solid var(--po-borde)'
+          wrapper.style.backgroundColor = 'var(--dz-luz)'
+          wrapper.style.border = '1px solid var(--dz-borde)'
           wrapper.style.borderRadius = '4px'
           wrapper.style.boxShadow = '0 8px 24px rgba(0,0,0,0.18)'
         }
@@ -84,7 +132,7 @@ export function MapaComunidad() {
           contenido.style.margin = '0'
         }
         if (tip) {
-          tip.style.backgroundColor = 'var(--po-luz)'
+          tip.style.backgroundColor = 'var(--dz-luz)'
         }
       })
 
@@ -102,9 +150,18 @@ export function MapaComunidad() {
         const perfiles = (data ?? []) as ComunidadPerfilPublico[]
 
         perfiles.forEach((perfil) => {
+          const color = colorPorCiudadMasCercana(perfil.lat, perfil.lng)
+          const icono = L.divIcon({
+            className: '',
+            html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.4);"></span>`,
+            iconSize: [16, 16],
+            iconAnchor: [8, 8],
+            popupAnchor: [0, -8],
+          })
           // `alt` es opción de Marker (no de Icon) — reemplaza el "Marker" genérico
           // por un nombre accesible real (A3-5).
           const marcador = L.marker([perfil.lat, perfil.lng], {
+            icon: icono,
             alt: perfil.nombre ? `Familia ${perfil.nombre} en el mapa` : 'Familia en el mapa de comunidad',
           })
           const contenedorPopup = document.createElement('div')
@@ -143,16 +200,16 @@ export function MapaComunidad() {
       <div
         ref={contenedorRef}
         className="h-full w-full"
-        style={{ backgroundColor: 'var(--po-areia)' }}
+        style={{ backgroundColor: 'var(--dz-papel)' }}
         aria-label="Mapa de familias en Galicia"
       />
 
       {estado === 'cargando' && (
         <div
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
-          style={{ backgroundColor: 'var(--po-areia)' }}
+          style={{ backgroundColor: 'var(--dz-papel)' }}
         >
-          <p style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-sm)', color: 'var(--po-muted)' }}>
+          <p style={{ fontFamily: 'var(--font-dz-ui)', fontSize: 'var(--text-sm)', color: 'var(--dz-muted)' }}>
             Cargando el mapa de la comunidad…
           </p>
         </div>
@@ -164,11 +221,11 @@ export function MapaComunidad() {
             role="alert"
             className="pointer-events-auto px-4 py-3"
             style={{
-              fontFamily: 'var(--font-lato)',
+              fontFamily: 'var(--font-dz-ui)',
               fontSize: 'var(--text-sm)',
-              color: 'var(--po-pedra)',
-              backgroundColor: 'var(--po-luz)',
-              border: '1px solid var(--po-borde)',
+              color: 'var(--dz-ink)',
+              backgroundColor: 'var(--dz-luz)',
+              border: '1px solid var(--dz-borde)',
               borderRadius: '4px',
             }}
           >

@@ -2,13 +2,20 @@
 
 import Link from 'next/link'
 import { Pause, Play } from 'lucide-react'
+import { motion, useReducedMotion } from 'motion/react'
 import { useVideoPauseToggle } from '@/lib/hooks/useVideoPauseToggle'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { Button } from '@/components/ui/Button'
 import { SparkleIcon } from '@/components/ui/SparkleIcon'
+import { staggerContainer, fadeUp } from '@/lib/motion/variants'
 
 const POSTER = "/images/home/hero-lanzada-poster.jpg"
 const VIDEO  = "/videos/hero-lanzada.mp4"
+
+// Titular kinético: cada palabra entra con fadeUp escalonado (staggerContainer,
+// 70ms entre palabras) — reusa las variants de marca, no inventa timing nuevo.
+const LINEA_1 = ["Tu", "nueva", "vida", "en", "Galicia"]
+const LINEA_2 = ["empieza", "con", "una"]
 
 function abrirGina() {
   window.dispatchEvent(new CustomEvent('gina:open'))
@@ -16,8 +23,21 @@ function abrirGina() {
 
 export function HeroPedraEOuro() {
   const { videoRef, isPlaying, toggle } = useVideoPauseToggle()
+  const prefersReducedMotion = useReducedMotion()
 
   return (
+    <>
+    <style>{`
+      .scroll-cue-line { position: relative; overflow: hidden; }
+      .scroll-cue-line::after {
+        content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%;
+        background: var(--dz-accent); animation: heroScrollCue 1.8s ease-in-out infinite;
+      }
+      @keyframes heroScrollCue { 0% { top: -100%; } 60% { top: 100%; } 100% { top: 100%; } }
+      @media (prefers-reduced-motion: reduce) {
+        .scroll-cue-line::after { animation: none; top: 100%; }
+      }
+    `}</style>
     <section
       className="relative flex flex-col"
       style={{ minHeight: '100svh', backgroundColor: '#0B1012' }}
@@ -56,13 +76,13 @@ export function HeroPedraEOuro() {
           type="button"
           onClick={toggle}
           aria-label={isPlaying ? 'Pausar video de fondo' : 'Reproducir video de fondo'}
-          className="absolute bottom-4 right-4 z-10 flex items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--po-ouro)]"
+          className="absolute bottom-4 right-4 z-10 flex items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]"
           style={{
             width: '40px',
             height: '40px',
             background: 'rgba(0,0,0,0.45)',
             border: '1px solid rgba(255,255,255,0.25)',
-            color: 'var(--color-sobre-laton)',
+            color: 'var(--dz-hero-text)',
             cursor: 'pointer',
           }}
         >
@@ -87,24 +107,48 @@ export function HeroPedraEOuro() {
             Relocation especializado en Galicia
           </Eyebrow>
 
-          {/* Titular */}
-          <h1
+          {/* Titular — palabra por palabra, fadeUp escalonado (motion-tu-lugar-en-galicia) */}
+          <motion.h1
             id="hero-po-heading"
+            variants={staggerContainer}
+            initial={prefersReducedMotion ? false : "hidden"}
+            animate="visible"
             style={{
-              fontFamily: "var(--font-playfair)",
-              fontWeight: 900,
-              fontSize: "clamp(2.8rem, 5vw, 4.5rem)",
+              fontFamily: "var(--font-dz-display)",
+              fontWeight: 800,
+              fontSize: "clamp(2.4rem, 4.25vw, 3.8rem)",
               lineHeight: 1.15,
               color: "#F7F4ED",
               marginBottom: "1.25rem",
               textShadow: "0 2px 12px rgba(0,0,0,0.7)",
             }}
           >
-            Tu nueva vida en Galicia<br />empieza con una{" "}
-            <em style={{ fontStyle: "italic", color: "var(--po-ouro)", textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
+            {LINEA_1.map((palabra, i) => (
+              <motion.span key={palabra} variants={fadeUp} style={{ display: "inline-block" }}>
+                {palabra}
+                {i < LINEA_1.length - 1 ? " " : ""}
+              </motion.span>
+            ))}
+            <br />
+            {LINEA_2.map((palabra) => (
+              <motion.span key={palabra} variants={fadeUp} style={{ display: "inline-block" }}>
+                {palabra}
+                {" "}
+              </motion.span>
+            ))}
+            <motion.em
+              variants={fadeUp}
+              style={{
+                display: "inline-block",
+                fontFamily: "var(--font-playfair)",
+                fontStyle: "italic",
+                color: "var(--dz-accent)",
+                textShadow: "0 1px 8px rgba(0,0,0,0.5)",
+              }}
+            >
               puerta abierta...
-            </em>
-          </h1>
+            </motion.em>
+          </motion.h1>
 
           {/* Línea dorada */}
           <div
@@ -113,7 +157,7 @@ export function HeroPedraEOuro() {
               width: "100%",
               maxWidth: "600px",
               height: "1px",
-              backgroundColor: "var(--po-ouro)",
+              backgroundColor: "var(--dz-accent)",
               opacity: 0.55,
               marginBottom: "1.25rem",
             }}
@@ -122,7 +166,7 @@ export function HeroPedraEOuro() {
           {/* Subtítulo */}
           <p
             style={{
-              fontFamily: "var(--font-lato)",
+              fontFamily: "var(--font-dz-ui)",
               fontWeight: 400,
               fontSize: "1.05rem",
               lineHeight: 1.78,
@@ -142,16 +186,16 @@ export function HeroPedraEOuro() {
             onClick={abrirGina}
             size="lg"
             className="gap-2 mb-4"
-            style={{ boxShadow: 'var(--po-shadow-md)' }}
+            style={{ boxShadow: 'var(--dz-shadow-md)' }}
           >
             <SparkleIcon className="w-5 h-5 shrink-0" />
-            Cuéntale tu caso a Gina
+            Queremos conocerte
           </Button>
 
           {/* Enlace al formulario */}
           <p
             style={{
-              fontFamily: "var(--font-lato)",
+              fontFamily: "var(--font-dz-ui)",
               fontSize: "0.82rem",
               color: "#aab2af",
             }}
@@ -170,6 +214,19 @@ export function HeroPedraEOuro() {
           </p>
         </div>
       </div>
+
+      {/* Scroll-cue decorativo — pura indicación visual, no interactivo */}
+      <div
+        aria-hidden="true"
+        className="absolute z-10 hidden flex-col items-center gap-2 md:flex"
+        style={{ bottom: '1.6rem', right: '5vw', color: 'rgba(243,239,228,0.75)' }}
+      >
+        <span style={{ fontFamily: 'var(--font-dz-ui)', fontSize: '0.7rem', letterSpacing: '0.08em' }}>
+          SCROLL
+        </span>
+        <span className="scroll-cue-line" style={{ width: '1px', height: '34px', background: 'rgba(243,239,228,0.5)' }} />
+      </div>
     </section>
+    </>
   )
 }

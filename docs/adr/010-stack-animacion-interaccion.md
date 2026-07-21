@@ -146,3 +146,54 @@ como A05 en `CLAUDE.md` §9): `script-src` con nonce por-request + hashes SHA-25
   ese momento, no asumir que este análisis sigue vigente sin revisar.
 
 No se modificó `middleware.ts` — no hace falta ningún cambio hoy.
+
+---
+
+## Addendum — 2026-07-18: GSAP instalado (caso de uso concreto), Lenis sigue sin instalarse
+
+Se instalaron `gsap` + `@gsap/react` al aplicar fielmente el mockup `design-drafts/deslumbrante/
+index.html` sobre el Home real (`app/page.tsx`), aprobado explícitamente por el usuario. El caso
+de uso concreto que este ADR pedía como condición ya existe:
+
+- `components/home/CiudadesDestacadas.tsx` — scroll horizontal pineado (`ScrollTrigger` +
+  `pin` + `scrub`), exactamente el escenario "scroll-driven timeline" que el punto 2 de este ADR
+  reservaba. Gateado por `gsap.matchMedia('(min-width: 860px)')` + `prefers-reduced-motion`.
+- `components/home/ComoFuncionaTeaser.tsx` — línea que se dibuja con el scroll (`scrub`, sin
+  `pin`).
+
+Todo se monta/limpia con `useGSAP` de `@gsap/react` (context-scoped, auto-revert en unmount) —
+evita el leak de instancias de `ScrollTrigger` entre navegaciones client-side de Next.js que el
+ADR original no necesitaba prevenir porque GSAP no estaba instalado.
+
+**Lenis sigue sin instalarse.** El mockup lo especifica para scroll con inercia, pero es un
+cambio de comportamiento en **todo el sitio** (no solo el Home) con riesgo real de accesibilidad
+(teclado, lectores de pantalla) que no estaba dentro de lo que el usuario aprobó en esta sesión
+— la aprobación fue para el Home, vía fidelidad al mockup en su estructura visual/interacciones
+locales, no para alterar el scroll nativo de todas las páginas. Sigue "aprobado condicionalmente,
+no instalado" — mismo criterio que el resto de este ADR: instalar cuando haya un pedido explícito
+con ese alcance, no especulativamente.
+
+CSP: se confirmó en el navegador (consola + `read_network_requests`) durante la verificación de
+esta sesión que GSAP no genera ninguna violación de `script-src`/`style-src` — consistente con el
+análisis original de este ADR (animación vía CSSOM, sin `<style>` inyectado ni `eval`).
+
+---
+
+## Addendum — 2026-07-18 (sesión 3): extensión sitewide de tipografía/tokens — Lenis reconfirmado sin instalar, sin nuevo uso de GSAP fuera del Home
+
+El pedido de esta sesión fue propagar **tipografía (Unbounded/Inter), paleta y tokens** de
+Deslumbrante a toda la web pública (Header, Footer, Gina y páginas interiores incluidos) — no
+componentes ni comportamientos de scroll nuevos. En consecuencia:
+
+- **GSAP no se usa en ningún archivo nuevo de esta sesión.** Sigue acotado a los dos casos ya
+  documentados en el addendum de sesión 2 (`CiudadesDestacadas.tsx`, `ComoFuncionaTeaser.tsx`,
+  ambos exclusivos del Home). Ninguna página interior sumó `ScrollTrigger`/`pin`/`scrub`.
+- **Lenis sigue sin instalarse.** El pedido explícito de esta sesión fue tipografía/tokens/
+  lenguaje visual — no incluyó scroll con inercia, ni para el Home ni para el resto del sitio.
+  El razonamiento del addendum de sesión 2 (riesgo de accesibilidad sitewide, sin pedido
+  explícito de ese alcance) sigue vigente sin cambios.
+- **`motion` (ya instalado)** siguió siendo la única librería de animación tocada indirectamente:
+  `GinaWidget.tsx` no sumó ninguna animación nueva, solo un `fontFamily` estático en su raíz.
+
+No hay nada que actualizar en la tabla de dependencias de este ADR — el stack de animación queda
+exactamente como lo dejó el addendum de sesión 2.

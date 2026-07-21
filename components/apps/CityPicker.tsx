@@ -17,8 +17,9 @@ export function CityPicker({ seleccionada, onSelect }: Props) {
             type="button"
             onClick={() => onSelect(ciudad.key)}
             aria-pressed={activa}
-            className="au-city-card flex flex-col items-center gap-3 rounded-2xl p-3 text-left transition-colors md:gap-[14px] md:p-4 focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="au-city-card flex flex-col items-center gap-3 p-3 text-left transition-colors md:gap-[14px] md:p-4 focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{
+              borderRadius: 'var(--dz-radius-card)',
               border: `2px solid ${activa ? 'var(--au-accent)' : 'var(--au-border-strong)'}`,
               backgroundColor: activa ? 'color-mix(in srgb, var(--au-accent) 12%, transparent)' : 'var(--au-card)',
               outlineColor: 'var(--au-accent)',

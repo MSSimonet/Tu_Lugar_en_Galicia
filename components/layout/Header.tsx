@@ -35,7 +35,20 @@ export function Header() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [isDark, setIsDark] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const hamburgerRef = useRef<HTMLButtonElement>(null)
+
+  // Estado de scroll — mismo umbral (~40px) que el mockup (design-drafts/deslumbrante),
+  // agrega sombra/blur al header una vez que el contenido pasa debajo. Listener pasivo,
+  // sin depender de GSAP/ScrollTrigger para un toggle booleano tan simple.
+  useEffect(() => {
+    function handleScroll() {
+      setScrolled(window.scrollY > 40)
+    }
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
@@ -106,7 +119,7 @@ export function Header() {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--color-laton-borde)] focus:text-white focus:rounded-lg focus:font-[family-name:var(--font-ui)]"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--color-laton-borde)] focus:text-white focus:rounded-lg focus:font-[family-name:var(--font-dz-ui)]"
       >
         Ir al contenido principal
       </a>
@@ -116,6 +129,8 @@ export function Header() {
         style={{
           background: 'var(--color-header-bg)',
           borderBottom: '1px solid var(--color-laton-borde)',
+          boxShadow: scrolled ? 'var(--dz-shadow-md)' : 'none',
+          transition: 'box-shadow 250ms ease',
           position: 'sticky',
           top: 0,
           zIndex: 50,
@@ -156,6 +171,11 @@ export function Header() {
                   priority
                 />
               </span>
+              <span
+                aria-hidden="true"
+                className="block h-6 xl:h-10"
+                style={{ width: '1px', backgroundColor: 'var(--color-laton-borde)', flexShrink: 0 }}
+              />
               <span style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: '20px',
@@ -263,7 +283,7 @@ export function Header() {
                   gap: '7px',
                   height: '36px',
                   padding: '0 14px',
-                  fontFamily: 'var(--font-ui)',
+                  fontFamily: 'var(--font-dz-ui)',
                   fontSize: '12px',
                   fontWeight: 700,
                   color: 'var(--color-sobre-laton)',
@@ -332,7 +352,7 @@ export function Header() {
                   onClick={() => setMenuOpen(false)}
                   aria-current={active ? 'page' : undefined}
                   style={{
-                    fontFamily: 'var(--font-ui)',
+                    fontFamily: 'var(--font-dz-ui)',
                     fontSize: '13px',
                     fontWeight: 300,
                     color: active ? 'var(--color-header-active)' : 'var(--color-nav-muted)',
@@ -355,7 +375,7 @@ export function Header() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                fontFamily: 'var(--font-ui)',
+                fontFamily: 'var(--font-dz-ui)',
                 fontSize: '13px',
                 fontWeight: 300,
                 color: 'var(--color-nav-muted)',
@@ -402,7 +422,7 @@ export function Header() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
-                  fontFamily: 'var(--font-ui)',
+                  fontFamily: 'var(--font-dz-ui)',
                   fontSize: '13px',
                   fontWeight: 300,
                   color: 'var(--color-nav-muted)',

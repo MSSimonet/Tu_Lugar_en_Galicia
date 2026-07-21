@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { LegalHero } from '@/components/legal/LegalHero'
+import { LegalSection } from '@/components/legal/LegalSection'
 
 export const metadata: Metadata = {
   title: 'Términos y Condiciones',
@@ -8,32 +10,20 @@ export const metadata: Metadata = {
 export default function TerminosYCondicionesPage() {
   return (
     <>
-      <section
-        className="pb-[var(--space-16)] px-[var(--space-6)]"
-        style={{ backgroundColor: 'var(--po-hero-bg)', paddingTop: 'calc(64px + 60px)' }}
-      >
-        <div className="mx-auto max-w-3xl">
-          <h1
-            className="[font-size:var(--text-2xl)] leading-[var(--leading-titulo)] md:[font-size:var(--text-3xl)]"
-            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 900, color: 'var(--po-hero-text)' }}
-          >
-            Términos y Condiciones
-          </h1>
-        </div>
-      </section>
+      <LegalHero titulo="Términos y Condiciones" />
 
-      <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]" style={{ backgroundColor: 'var(--po-luz)' }}>
+      <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
         <div
           className="flex flex-col gap-[var(--space-10)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)]"
-          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
         >
 
-          <section aria-labelledby="construccion">
-            <div className="p-[var(--space-8)]" style={{ borderRadius: '4px', border: '1px solid var(--po-borde)', backgroundColor: 'var(--po-areia)' }}>
+          <LegalSection ariaLabelledby="construccion">
+            <div className="p-[var(--space-8)]" style={{ borderRadius: 'var(--dz-radius-card)', border: '1px solid var(--dz-borde)', backgroundColor: 'var(--dz-papel)' }}>
               <h2
                 id="construccion"
                 className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-                style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+                style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
               >
                 Página en construcción
               </h2>
@@ -44,18 +34,18 @@ export default function TerminosYCondicionesPage() {
               <a
                 href="mailto:hola@tulugarengalicia.com"
                 className="font-medium underline underline-offset-2"
-                style={{ color: 'var(--po-ouro-text)' }}
+                style={{ color: 'var(--dz-accent-text)' }}
               >
                 hola@tulugarengalicia.com
               </a>
             </div>
-          </section>
+          </LegalSection>
 
-          <section aria-labelledby="servicio">
+          <LegalSection ariaLabelledby="servicio">
             <h2
               id="servicio"
               className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               Sobre el servicio
             </h2>
@@ -63,13 +53,13 @@ export default function TerminosYCondicionesPage() {
               <strong>Tu Lugar en Galicia</strong> ofrece un servicio de relocation para familias que desean
               establecerse en Galicia, ayudándoles a encontrar vivienda y facilitando su proceso de llegada.
             </p>
-          </section>
+          </LegalSection>
 
-          <section aria-labelledby="contacto">
+          <LegalSection ariaLabelledby="contacto">
             <h2
               id="contacto"
               className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               Contacto
             </h2>
@@ -78,13 +68,13 @@ export default function TerminosYCondicionesPage() {
               <a
                 href="mailto:hola@tulugarengalicia.com"
                 className="underline underline-offset-2"
-                style={{ color: 'var(--po-ouro-text)' }}
+                style={{ color: 'var(--dz-accent-text)' }}
               >
                 hola@tulugarengalicia.com
               </a>
               .
             </p>
-          </section>
+          </LegalSection>
 
         </div>
       </article>

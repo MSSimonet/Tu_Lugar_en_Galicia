@@ -26,13 +26,13 @@ function ColTitle({ children }: { children: React.ReactNode }) {
     <p
       aria-hidden="true"
       style={{
-        fontFamily: 'var(--font-ui)',
+        fontFamily: 'var(--font-dz-ui)',
         fontSize: '0.68rem',
         fontWeight: 300,
         letterSpacing: '0.2em',
         textTransform: 'uppercase',
-        color: 'var(--color-laton-borde)',
-        marginBottom: '1.25rem',
+        color: 'var(--color-nav-muted)',
+        marginBottom: '0.75rem',
       }}
     >
       {children}
@@ -55,10 +55,15 @@ function NavLink({
     color: 'var(--color-nav-muted)',
     textDecoration: 'none',
     lineHeight: 1.5,
-    fontFamily: 'var(--font-ui)',
+    fontFamily: 'var(--font-dz-ui)',
     transition: 'color 200ms ease',
     display: 'block',
   }
+
+  // Foco visible de marca — sin esto caía el outline default del navegador,
+  // casi invisible sobre el fondo oscuro del footer (auditoría 2026-07-19, A3.2).
+  const focusClass =
+    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]'
 
   if (external) {
     return (
@@ -67,7 +72,7 @@ function NavLink({
         target="_blank"
         rel="noopener noreferrer"
         style={style}
-        className="hover:[color:var(--color-laton-claro)]"
+        className={`hover:[color:var(--color-laton-claro)] ${focusClass}`}
       >
         {children}
         <span className="sr-only">(abre en nueva pestaña)</span>
@@ -76,7 +81,7 @@ function NavLink({
   }
 
   return (
-    <Link href={href} style={style} className="hover:[color:var(--color-laton-claro)]">
+    <Link href={href} style={style} className={`hover:[color:var(--color-laton-claro)] ${focusClass}`}>
       {children}
     </Link>
   )
@@ -126,7 +131,7 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer style={{ background: 'var(--color-footer-bg)', fontFamily: 'var(--font-ui)' }}>
+    <footer style={{ background: 'var(--color-footer-bg)', fontFamily: 'var(--font-dz-ui)' }}>
 
       {/* Separador dorado superior */}
       <div style={{ height: '1px', background: 'var(--color-laton-borde)', opacity: 0.7 }} />
@@ -134,26 +139,30 @@ export function Footer() {
       {/* ── Cuerpo principal ─────────────────────────────── */}
       <div
         className="mx-auto max-w-7xl"
-        style={{ padding: '4rem 5rem 3.5rem' }}
+        style={{ padding: '3.5rem 5rem 3rem' }}
       >
-        <div className="grid grid-cols-1 gap-12 md:gap-10 lg:gap-14 md:grid-cols-[2.1fr_1.1fr_1.1fr_1.5fr]">
+        <div className="grid grid-cols-1 gap-8 md:gap-8 lg:gap-10 md:grid-cols-[2.1fr_1.1fr_1.1fr_1.5fr]">
 
           {/* ── Columna 1 — Marca ────────────────────────── */}
-          <div className="flex flex-col gap-5 items-center text-center md:items-start md:text-left">
+          <div className="flex flex-col gap-4 items-center text-center md:items-start md:text-left">
 
             {/* Logo footer */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '18px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '14px' }}>
               <Image
                 src="/images/aldaba.png"
                 alt=""
-                width={72}
-                height={93}
-                style={{ objectFit: 'contain', display: 'block', flexShrink: 0, width: 'auto', height: 'auto' }}
+                width={58}
+                height={75}
+                style={{ objectFit: 'contain', display: 'block', flexShrink: 0, width: 'auto', height: '58px' }}
                 priority
+              />
+              <span
+                aria-hidden="true"
+                style={{ width: '1px', height: '36px', backgroundColor: 'var(--color-laton-borde)', flexShrink: 0 }}
               />
               <span style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontSize: '24px',
+                fontSize: '20px',
                 fontWeight: 400,
                 fontStyle: 'italic',
                 color: 'var(--color-laton-claro)',
@@ -161,7 +170,7 @@ export function Footer() {
                 lineHeight: 1.2,
                 whiteSpace: 'nowrap',
               }}>
-                Tu Lugar<br />en Galicia
+                Tu Lugar en Galicia
               </span>
             </div>
 
@@ -182,31 +191,19 @@ export function Footer() {
             </p>
 
             {/* Descripción — C1: "+200" en línea propia */}
-            <div>
-              <p
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 300,
-                  color: 'var(--color-nav-muted)',
-                  lineHeight: 1.8,
-                  margin: '0 0 8px 0',
-                  maxWidth: '300px',
-                }}
-              >
-                Ayudamos a familias latinoamericanas a conseguir su hogar en
-                Galicia antes de llegar.
-              </p>
-              <p
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 400,
-                  color: 'var(--color-laton-claro)',
-                  margin: 0,
-                }}
-              >
-                +200 familias reubicadas.
-              </p>
-            </div>
+            <p
+              style={{
+                fontSize: '14px',
+                fontWeight: 300,
+                color: 'var(--color-nav-muted)',
+                lineHeight: 1.5,
+                margin: 0,
+                maxWidth: '300px',
+              }}
+            >
+              Ayudamos a familias latinoamericanas a conseguir su hogar en
+              Galicia antes de llegar. <span style={{ fontWeight: 400, color: 'var(--color-laton-claro)' }}>+200 familias reubicadas.</span>
+            </p>
           </div>
 
           {/* ── Columnas 2 y 3 — Servicios + Legal (C3: 2 col en mobile) */}
@@ -215,7 +212,7 @@ export function Footer() {
             {/* Columna 2 — Servicios */}
             <nav aria-label="Servicios">
               <ColTitle>Servicios</ColTitle>
-              <ul className="flex flex-col gap-[0.85rem]">
+              <ul className="flex flex-col gap-[0.7rem]">
                 {serviceLinks.map(({ label, href }) => (
                   <li key={href}>
                     <NavLink href={href}>{label}</NavLink>
@@ -227,7 +224,7 @@ export function Footer() {
             {/* Columna 3 — Legal */}
             <nav aria-label="Información legal">
               <ColTitle>Legal</ColTitle>
-              <ul className="flex flex-col gap-[0.85rem]">
+              <ul className="flex flex-col gap-[0.7rem]">
                 {legalLinks.map(({ label, href }) => (
                   <li key={href}>
                     <NavLink href={href}>{label}</NavLink>
@@ -241,7 +238,7 @@ export function Footer() {
           {/* ── Columna 4 — Contacto ─────────────────────── */}
           <div>
             <ColTitle>Contacto</ColTitle>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2.5">
 
               {/* Contacto */}
               <NavLink href="/contacto">Contáctanos</NavLink>
@@ -254,58 +251,41 @@ export function Footer() {
                   fontWeight: 300,
                   color: 'var(--color-nav-muted)',
                   textDecoration: 'none',
-                  fontFamily: 'var(--font-ui)',
+                  fontFamily: 'var(--font-dz-ui)',
                   transition: 'color 200ms ease',
                 }}
-                className="hover:[color:var(--color-laton-claro)]"
+                className="hover:[color:var(--color-laton-claro)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]"
               >
                 hola@tulugarengalicia.com
               </a>
 
-              {/* C2: RRSS con nombre de usuario */}
-              <a
-                href="https://www.instagram.com/tulugarengalicia/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '14px',
-                  fontWeight: 400,
-                  color: 'var(--color-nav-muted)',
-                  textDecoration: 'none',
-                  transition: 'color 200ms ease',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-laton-claro)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-nav-muted)')}
-              >
-                <InstagramIcon />
-                <span>@tulugarengalicia</span>
-                <span className="sr-only">(abre en nueva pestaña)</span>
-              </a>
-
-              <a
-                href="https://www.facebook.com/p/Tu-lugar-en-Galicia-100075983977059/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  fontSize: '14px',
-                  fontWeight: 400,
-                  color: 'var(--color-nav-muted)',
-                  textDecoration: 'none',
-                  transition: 'color 200ms ease',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-laton-claro)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-nav-muted)')}
-              >
-                <FacebookIcon />
-                <span>Tu Lugar en Galicia</span>
-                <span className="sr-only">(abre en nueva pestaña)</span>
-              </a>
+              {/* C2: RRSS — íconos en una sola fila, prolijo */}
+              <div className="flex items-center gap-4" style={{ marginTop: '0.15rem' }}>
+                <a
+                  href="https://www.instagram.com/tulugarengalicia/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Tu Lugar en Galicia en Instagram (abre en nueva pestaña)"
+                  className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]"
+                  style={{ color: 'var(--color-nav-muted)', transition: 'color 200ms ease' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-laton-claro)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-nav-muted)')}
+                >
+                  <InstagramIcon />
+                </a>
+                <a
+                  href="https://www.facebook.com/p/Tu-lugar-en-Galicia-100075983977059/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Tu Lugar en Galicia en Facebook (abre en nueva pestaña)"
+                  className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]"
+                  style={{ color: 'var(--color-nav-muted)', transition: 'color 200ms ease' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-laton-claro)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-nav-muted)')}
+                >
+                  <FacebookIcon />
+                </a>
+              </div>
 
             </div>
           </div>
@@ -316,7 +296,7 @@ export function Footer() {
       <div style={{ borderTop: '1px solid var(--color-footer-border)' }}>
         <div
           className="mx-auto max-w-7xl flex flex-col gap-1 text-center md:flex-row md:justify-between md:items-center md:text-left"
-          style={{ padding: '1.1rem 5rem' }}
+          style={{ padding: '0.95rem 5rem' }}
         >
           <p
             style={{

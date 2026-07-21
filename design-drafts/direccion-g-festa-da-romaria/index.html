@@ -1,0 +1,149 @@
+<title>Festa da Romaría — Dirección G</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --fr-crema:#FFF8EC;
+    --fr-frambuesa:#E63462;
+    --fr-frambuesa-hover:#C71F4D;
+    --fr-cielo:#3AAED8;
+    --fr-sol:#F4B740;
+    --fr-tinta:#231F20;
+    --fr-blanco:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--fr-crema); color:var(--fr-tinta); font-family:'Outfit',sans-serif; margin:0;}
+  .font-display{font-family:'Baloo 2',sans-serif;}
+  .eyebrow{font-family:'Outfit',sans-serif; font-weight:700; font-size:.76rem; letter-spacing:.14em; text-transform:uppercase; color:var(--fr-frambuesa);}
+
+  .confetti-strip{height:16px; background:repeating-linear-gradient(90deg, var(--fr-frambuesa) 0 24px, var(--fr-sol) 24px 48px, var(--fr-cielo) 48px 72px);}
+
+  header{position:sticky; top:0; z-index:50; background:var(--fr-crema); padding:20px 6vw; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--fr-tinta);}
+  .logo-mark{font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1.2rem; color:var(--fr-tinta);}
+  .logo-mark span{color:var(--fr-frambuesa);}
+  nav a{font-weight:600; font-size:.86rem; color:var(--fr-tinta); text-decoration:none; margin-left:2rem; position:relative;}
+  nav a::after{content:''; position:absolute; left:-6px; right:-6px; bottom:-4px; height:8px; background:var(--fr-sol); z-index:-1; transform:scaleX(0); transform-origin:left; transition:transform .3s ease;}
+  nav a:hover::after{transform:scaleX(1);}
+
+  .hero{position:relative; padding:6rem 6vw 5.5rem; overflow:hidden; background:var(--fr-crema);}
+  .confetto{position:absolute; border-radius:3px;}
+  .hero-content{position:relative; z-index:2; max-width:760px;}
+  .hero h1{font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(2.4rem,5.6vw,4.8rem); line-height:1.05; margin:.8rem 0 1.5rem; color:var(--fr-tinta);}
+  .hero h1 .hl{color:var(--fr-frambuesa);}
+  .hero h1 .hl2{color:var(--fr-cielo);}
+  .hero p.lead{font-size:1.14rem; max-width:54ch; line-height:1.6; color:#4A4344; margin-bottom:2.2rem;}
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:.6rem; background:var(--fr-frambuesa); color:var(--fr-blanco);
+    font-weight:700; font-size:.96rem; padding:1rem 1.9rem; border-radius:999px; text-decoration:none;
+    border:3px solid var(--fr-tinta); box-shadow:4px 4px 0 var(--fr-tinta);
+    transition:transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+  }
+  .btn-primary:hover{background:var(--fr-frambuesa-hover); transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--fr-tinta);}
+  .btn-secondary{display:inline-flex; align-items:center; gap:.5rem; color:var(--fr-tinta); font-weight:700; text-decoration:none; margin-left:1.6rem; border-bottom:3px solid var(--fr-cielo); padding-bottom:2px;}
+
+  .section{padding:6rem 6vw;}
+  .section-head{max-width:640px; margin-bottom:3rem;}
+  .section-head h2{font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(1.8rem,3.2vw,2.5rem); color:var(--fr-tinta); margin:.5rem 0 0;}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.8rem;}
+  .city-card{background:var(--fr-blanco); border:3px solid var(--fr-tinta); border-radius:22px; overflow:hidden; transition:transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease;}
+  .city-card:nth-child(1){box-shadow:5px 5px 0 var(--fr-frambuesa);}
+  .city-card:nth-child(2){box-shadow:5px 5px 0 var(--fr-cielo);}
+  .city-card:nth-child(3){box-shadow:5px 5px 0 var(--fr-sol);}
+  .city-card:hover{transform:translateY(-6px) rotate(-1deg);}
+  .city-photo{height:200px; position:relative; background:linear-gradient(135deg, var(--fr-cielo), var(--fr-frambuesa));}
+  .city-body{padding:1.4rem 1.5rem 1.7rem;}
+  .city-eyebrow{font-weight:700; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--fr-cielo);}
+  .city-title{font-family:'Baloo 2',sans-serif; font-weight:700; font-size:1.6rem; color:var(--fr-tinta); margin:.35rem 0 .5rem;}
+  .city-meta{font-size:.87rem; color:#5A5354; line-height:1.5;}
+
+  .gina-bubble{position:fixed; bottom:28px; right:28px; z-index:60; width:64px; height:64px; border-radius:999px; background:var(--fr-sol); border:3px solid var(--fr-tinta); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:4px 4px 0 var(--fr-tinta); animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);}}
+  .gina-bubble .star{font-size:1.3rem;}
+  .gina-panel{position:fixed; bottom:104px; right:28px; z-index:60; width:320px; max-width:88vw; background:var(--fr-blanco); border:3px solid var(--fr-tinta); border-radius:24px; overflow:hidden; box-shadow:6px 6px 0 var(--fr-frambuesa); transform:scale(.7) rotate(6deg); opacity:0; pointer-events:none; transform-origin:bottom right;}
+  .gina-panel.open{transform:scale(1) rotate(0); opacity:1; pointer-events:auto; transition:transform .5s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;}
+  .gina-panel-head{background:var(--fr-frambuesa); color:var(--fr-blanco); padding:.9rem 1.1rem; font-family:'Baloo 2',sans-serif; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
+  .gina-panel-body{padding:1rem 1.1rem 1.2rem; font-size:.86rem;}
+  .gina-msg{background:var(--fr-crema); border:2px solid var(--fr-tinta); border-radius:14px; padding:.7rem .9rem; margin-bottom:.6rem;}
+
+  .specimen{background:var(--fr-tinta); color:var(--fr-crema); padding:4rem 6vw;}
+  .swatches{display:flex; gap:1rem; flex-wrap:wrap; margin:1.4rem 0 2.2rem;}
+  .swatch{width:120px;}
+  .swatch-color{height:64px; border-radius:12px; border:2px solid var(--fr-crema);}
+  .swatch small{font-size:.72rem; opacity:.75; display:block; margin-top:.4rem;}
+
+  .reveal{opacity:0; transform:translateY(20px) rotate(-3deg);}
+</style>
+
+<header>
+  <div class="logo-mark">Tu Lugar en <span>Galicia</span></div>
+  <nav><a href="#ciudades">Ciudades</a><a href="#gina">Gina</a><a href="#specimen">Sistema</a></nav>
+</header>
+<div class="confetti-strip"></div>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="eyebrow">Relocation que se celebra</div>
+    <h1>Tu hogar en Galicia es <span class="hl">fiesta</span>, no <span class="hl2">trámite</span>.</h1>
+    <p class="lead">Cualificamos tu caso, te mostramos las ciudades y agendamos tu videollamada con Silvana — con la misma alegría de una romaría.</p>
+    <a href="#" class="btn-primary">Agenda tu videollamada</a>
+    <a href="#ciudades" class="btn-secondary">Ver ciudades ↓</a>
+  </div>
+</section>
+<div class="confetti-strip"></div>
+
+<section class="section" id="ciudades">
+  <div class="section-head"><div class="eyebrow">05 ciudades activas</div><h2>Elegí tu punto de partida.</h2></div>
+  <div class="cards">
+    <article class="city-card reveal"><div class="city-photo"></div><div class="city-body"><div class="city-eyebrow">Litoral · Atlántico</div><div class="city-title">A Coruña</div><div class="city-meta">+38 familias reubicadas · alquiler medio 2 hab. 720€</div></div></article>
+    <article class="city-card reveal"><div class="city-photo"></div><div class="city-body"><div class="city-eyebrow">Industrial · Ría</div><div class="city-title">Vigo</div><div class="city-meta">+52 familias reubicadas · alquiler medio 2 hab. 690€</div></div></article>
+    <article class="city-card reveal"><div class="city-photo"></div><div class="city-body"><div class="city-eyebrow">Interior · Histórica</div><div class="city-title">Santiago</div><div class="city-meta">+29 familias reubicadas · alquiler medio 2 hab. 650€</div></div></article>
+  </div>
+</section>
+
+<section class="section" id="gina" style="padding-top:0;">
+  <div class="section-head"><div class="eyebrow">Asistente de diagnóstico</div><h2>Gina festeja abajo a la derecha.</h2><p style="margin-top:.8rem; max-width:52ch; color:#5A5354;">Mockup de forma/color/animación — el contenido del chat es de relleno.</p></div>
+</section>
+
+<div class="gina-bubble" id="gina-bubble"><span class="star">🎉</span></div>
+<div class="gina-panel" id="gina-panel">
+  <div class="gina-panel-head"><span>Gina · Diagnóstico</span><span id="gina-close" style="cursor:pointer;">✕</span></div>
+  <div class="gina-panel-body">
+    <div class="gina-msg">¡Hola! Soy Gina 🎈 ¡Vamos a conocer tu caso!</div>
+    <div class="gina-msg">¿Cuántos adultos viajan con vos?</div>
+  </div>
+</div>
+
+<section class="specimen" id="specimen">
+  <div class="eyebrow" style="color:var(--fr-sol);">Sistema — Festa da Romaría</div>
+  <h2 class="font-display" style="font-size:1.8rem; margin:.6rem 0 0;">Paleta &amp; tipografía</h2>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:var(--fr-crema);"></div><small>#FFF8EC crema</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--fr-frambuesa);"></div><small>#E63462 frambuesa</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--fr-cielo);"></div><small>#3AAED8 cielo</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--fr-sol);"></div><small>#F4B740 sol</small></div>
+  </div>
+  <p class="font-display" style="font-size:2.4rem; font-weight:700;">Baloo 2 — display</p>
+  <p style="font-size:1.2rem;">Outfit — cuerpo y UI, 400/500/600/700</p>
+</section>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el, i) => {
+    gsap.to(el, { opacity:1, y:0, rotate:0, duration:.75, ease:'back.out(1.8)', delay:i*0.1, scrollTrigger:{ trigger:el, start:'top 88%' } });
+  });
+  const bubble = document.getElementById('gina-bubble');
+  const panel = document.getElementById('gina-panel');
+  bubble.addEventListener('click', () => panel.classList.toggle('open'));
+  document.getElementById('gina-close').addEventListener('click', () => panel.classList.remove('open'));
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.reveal').forEach(el => { el.style.opacity=1; el.style.transform='none'; });
+    bubble.style.animation='none';
+  }
+</script>

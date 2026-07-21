@@ -13,11 +13,11 @@ const inputBase =
   'w-full rounded border px-3 py-2 [font-size:var(--text-xs)] placeholder:opacity-50 focus:outline-none focus:ring-1 transition-colors'
 
 const inputStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-lato)',
-  borderRadius: '4px',
-  borderColor: 'var(--po-borde)',
-  backgroundColor: 'var(--po-luz)',
-  color: 'var(--po-pedra)',
+  fontFamily: 'var(--font-dz-ui)',
+  borderRadius: '8px',
+  borderColor: 'var(--dz-borde)',
+  backgroundColor: 'var(--dz-luz)',
+  color: 'var(--dz-ink)',
 }
 
 function esEmailValido(email: string): boolean {
@@ -82,7 +82,7 @@ export function FormMensajePrivado({ destinatarioId }: FormMensajePrivadoProps) 
       <p
         role="status"
         className="[font-size:var(--text-xs)]"
-        style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+        style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
       >
         Mensaje enviado. Si responde, lo hará directo a tu email.
       </p>
@@ -95,7 +95,7 @@ export function FormMensajePrivado({ destinatarioId }: FormMensajePrivadoProps) 
         <label
           htmlFor="mp-nombre"
           className="[font-size:var(--text-xs)] font-medium"
-          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
         >
           Tu nombre
         </label>
@@ -116,7 +116,7 @@ export function FormMensajePrivado({ destinatarioId }: FormMensajePrivadoProps) 
         <label
           htmlFor="mp-email"
           className="[font-size:var(--text-xs)] font-medium"
-          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
         >
           Tu email
         </label>
@@ -137,7 +137,7 @@ export function FormMensajePrivado({ destinatarioId }: FormMensajePrivadoProps) 
         <label
           htmlFor="mp-mensaje"
           className="[font-size:var(--text-xs)] font-medium"
-          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
         >
           Mensaje
         </label>
@@ -154,7 +154,7 @@ export function FormMensajePrivado({ destinatarioId }: FormMensajePrivadoProps) 
       </div>
 
       {estado === 'error' && errorMsg && (
-        <p role="alert" className="[font-size:var(--text-xs)]" style={{ fontFamily: 'var(--font-lato)', color: 'var(--color-coral)' }}>
+        <p role="alert" className="[font-size:var(--text-xs)]" style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--color-coral)' }}>
           {errorMsg}
         </p>
       )}
@@ -164,11 +164,11 @@ export function FormMensajePrivado({ destinatarioId }: FormMensajePrivadoProps) 
         disabled={estado === 'enviando'}
         className="self-start inline-flex items-center justify-center px-3 py-2 font-bold [font-size:var(--text-xs)] uppercase tracking-[0.08em] disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{
-          fontFamily: 'var(--font-lato)',
-          borderRadius: '4px',
-          backgroundColor: 'var(--po-ouro)',
+          fontFamily: 'var(--font-dz-ui)',
+          borderRadius: '8px',
+          backgroundColor: 'var(--dz-accent)',
           color: '#1A1410',
-          outlineColor: 'var(--po-ouro)',
+          outlineColor: 'var(--dz-accent)',
         }}
       >
         {estado === 'enviando' ? 'Enviando…' : 'Enviar mensaje'}

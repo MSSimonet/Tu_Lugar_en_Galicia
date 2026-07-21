@@ -13,11 +13,11 @@ const inputBase =
   'w-full rounded border px-4 py-3 [font-size:var(--text-sm)] placeholder:opacity-50 focus:outline-none focus:ring-1 transition-colors'
 
 const inputStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-lato)',
-  borderRadius: '4px',
-  borderColor: 'var(--po-borde)',
-  backgroundColor: 'var(--po-luz)',
-  color: 'var(--po-pedra)',
+  fontFamily: 'var(--font-dz-ui)',
+  borderRadius: 'var(--dz-radius-input)',
+  borderColor: 'var(--dz-borde)',
+  backgroundColor: 'var(--dz-luz)',
+  color: 'var(--dz-ink)',
 }
 
 const inputErrorStyle: React.CSSProperties = {
@@ -26,14 +26,14 @@ const inputErrorStyle: React.CSSProperties = {
 }
 
 const labelClass = '[font-size:var(--text-sm)] font-medium'
-const labelStyle: React.CSSProperties = { fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }
+const labelStyle: React.CSSProperties = { fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }
 const helperStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-lato)',
+  fontFamily: 'var(--font-dz-ui)',
   fontSize: 'var(--text-xs)',
-  color: 'var(--po-muted)',
+  color: 'var(--dz-muted)',
 }
 const errorClass = 'mt-1 [font-size:var(--text-xs)]'
-const errorStyle: React.CSSProperties = { fontFamily: 'var(--font-lato)', color: 'var(--color-coral)' }
+const errorStyle: React.CSSProperties = { fontFamily: 'var(--font-dz-ui)', color: 'var(--color-coral)' }
 const requiredMark = (
   <span aria-hidden="true" style={{ color: 'var(--color-coral)' }}>
     {' '}*
@@ -158,7 +158,7 @@ export function FormularioComunidad() {
       {status === 'error' && errorMsg && (
         <div
           className="p-4 [font-size:var(--text-sm)]"
-          style={{ borderRadius: '4px', border: '1px solid var(--color-coral)', backgroundColor: 'var(--po-luz)', color: 'var(--color-coral)' }}
+          style={{ borderRadius: '8px', border: '1px solid var(--color-coral)', backgroundColor: 'var(--dz-luz)', color: 'var(--color-coral)' }}
           role="alert"
         >
           {errorMsg}
@@ -190,11 +190,11 @@ export function FormularioComunidad() {
       {/* Bloque 2: Ubicación con privacidad */}
       <div
         className="flex flex-col gap-4 p-6"
-        style={{ borderRadius: '4px', backgroundColor: 'var(--po-areia)', border: '1px solid var(--po-borde)' }}
+        style={{ borderRadius: 'var(--dz-radius-card)', backgroundColor: 'var(--dz-papel)', border: '1px solid var(--dz-borde)', boxShadow: 'var(--dz-shadow-sm)' }}
       >
         <div className="flex flex-col gap-1">
           <h2
-            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, fontSize: 'var(--text-lg)', color: 'var(--po-pedra)' }}
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, fontSize: 'var(--text-lg)', color: 'var(--dz-ink)' }}
           >
             Tu ubicación, con privacidad
           </h2>
@@ -335,9 +335,9 @@ export function FormularioComunidad() {
                   checked={disponibilidad.includes(actividad.id)}
                   onChange={() => toggleActividad(actividad.id)}
                   className="h-4 w-4 shrink-0 cursor-pointer"
-                  style={{ accentColor: 'var(--po-ouro)' }}
+                  style={{ accentColor: 'var(--dz-accent)' }}
                 />
-                <span style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-sm)', color: 'var(--po-pedra)' }}>
+                <span style={{ fontFamily: 'var(--font-dz-ui)', fontSize: 'var(--text-sm)', color: 'var(--dz-ink)' }}>
                   {actividad.label}
                 </span>
               </label>
@@ -379,26 +379,26 @@ export function FormularioComunidad() {
           checked={rgpd}
           onChange={e => setRgpd(e.target.checked)}
           className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer"
-          style={{ accentColor: 'var(--po-ouro)' }}
+          style={{ accentColor: 'var(--dz-accent)' }}
           aria-describedby={errors.rgpd ? 'rgpd-error' : undefined}
         />
         <div className="flex flex-col gap-1">
           <label
             htmlFor="rgpd"
             className="[font-size:var(--text-xs)] leading-[var(--leading-cuerpo)] cursor-pointer"
-            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
+            style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)' }}
           >
             He leído y acepto la{' '}
             <Link
               href="/politica-de-privacidad"
               className="underline underline-offset-2 transition-colors"
-              style={{ color: 'var(--po-ouro-text)' }}
+              style={{ color: 'var(--dz-accent-text)' }}
               target="_blank"
             >
               política de privacidad
             </Link>
             . Mis datos, incluida mi ubicación aproximada, serán tratados únicamente para
-            conectarme con la comunidad de acogida.
+            conectarme con la comunidad.
           </label>
           {errors.rgpd && (
             <p id="rgpd-error" className={errorClass} style={errorStyle} role="alert">{errors.rgpd}</p>
@@ -411,11 +411,12 @@ export function FormularioComunidad() {
         disabled={isBusy}
         className="self-start inline-flex items-center justify-center px-8 py-4 font-bold [font-size:var(--text-sm)] tracking-[0.10em] uppercase disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{
-          fontFamily: 'var(--font-lato)',
-          borderRadius: '4px',
-          backgroundColor: 'var(--po-ouro)',
+          fontFamily: 'var(--font-dz-ui)',
+          borderRadius: '999px',
+          backgroundColor: 'var(--dz-accent)',
           color: '#1A1410',
-          outlineColor: 'var(--po-ouro)',
+          outlineColor: 'var(--dz-accent)',
+          boxShadow: 'var(--dz-shadow-md)',
         }}
       >
         {status === 'loading' ? 'Enviando…' : status === 'success' ? 'Redirigiendo…' : 'Unirme al mapa de la comunidad'}

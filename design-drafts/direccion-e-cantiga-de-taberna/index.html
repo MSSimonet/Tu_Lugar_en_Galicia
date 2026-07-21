@@ -1,0 +1,202 @@
+<title>Cantiga de Taberna — Dirección E</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --ct-noite:#241512;
+    --ct-noite-2:#2E1C18;
+    --ct-mostaza:#D9A62E;
+    --ct-mostaza-claro:#F0C458;
+    --ct-vino:#6B1E23;
+    --ct-azulejo:#2C6E8E;
+    --ct-crema:#F3E7D0;
+    --ct-brasa:#C1461F;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--ct-noite); color:var(--ct-crema); font-family:'Figtree',sans-serif; margin:0;}
+  .font-display{font-family:'Spectral',serif;}
+  .eyebrow{font-family:'Figtree',sans-serif; font-weight:700; font-size:.76rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ct-mostaza);}
+
+  header{
+    position:sticky; top:0; z-index:50; background:rgba(36,21,18,.92); backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(217,166,46,.25); padding:20px 6vw; display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo-mark{font-family:'Spectral',serif; font-weight:700; font-size:1.15rem; color:var(--ct-crema);}
+  .logo-mark span{color:var(--ct-mostaza);}
+  nav a{font-weight:600; font-size:.85rem; letter-spacing:.04em; color:var(--ct-crema); text-decoration:none; margin-left:2rem; position:relative; padding-bottom:6px; opacity:.85;}
+  nav a::after{content:''; position:absolute; left:0; bottom:0; width:0; height:2px; background:var(--ct-mostaza); transition:width .35s ease; box-shadow:0 0 8px var(--ct-mostaza);}
+  nav a:hover{opacity:1;}
+  nav a:hover::after{width:100%;}
+
+  .hero{position:relative; padding:7rem 6vw 6rem; overflow:hidden;
+    background:radial-gradient(700px 500px at 78% 20%, rgba(217,166,46,.16), transparent 60%), var(--ct-noite);
+  }
+  .glow-dot{position:absolute; width:6px; height:6px; border-radius:999px; background:var(--ct-mostaza); box-shadow:0 0 12px 3px rgba(217,166,46,.7); animation:flicker 2.4s ease-in-out infinite;}
+  @keyframes flicker{0%,100%{opacity:1;} 45%{opacity:.4;} 55%{opacity:1;}}
+  .hero-content{position:relative; z-index:2; max-width:780px;}
+  .hero h1{font-family:'Spectral',serif; font-weight:700; font-size:clamp(2.4rem,5.6vw,4.8rem); line-height:1.08; margin:.7rem 0 1.5rem; color:var(--ct-crema);}
+  .hero h1 .hl{color:var(--ct-mostaza);}
+  .hero p.lead{font-size:1.14rem; max-width:54ch; line-height:1.6; color:#D9CBB8; margin-bottom:2.2rem;}
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:.6rem; background:var(--ct-mostaza); color:var(--ct-noite);
+    font-weight:700; font-size:.95rem; padding:.95rem 1.8rem; border-radius:999px; text-decoration:none;
+    box-shadow:0 0 0 0 rgba(217,166,46,.5); transition:box-shadow .4s ease, transform .25s ease, background-color .25s ease;
+  }
+  .btn-primary:hover{background:var(--ct-mostaza-claro); box-shadow:0 0 34px 6px rgba(217,166,46,.45); transform:translateY(-2px);}
+  .btn-secondary{display:inline-flex; align-items:center; gap:.5rem; color:var(--ct-crema); font-weight:600; text-decoration:none; margin-left:1.6rem; border-bottom:1px solid rgba(243,231,208,.35); padding-bottom:3px;}
+
+  .section{padding:6.5rem 6vw;}
+  .section-head{max-width:640px; margin-bottom:3rem;}
+  .section-head h2{font-family:'Spectral',serif; font-weight:700; font-size:clamp(1.8rem,3.2vw,2.5rem); color:var(--ct-crema); margin:.5rem 0 0;}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.8rem;}
+  .city-card{
+    background:var(--ct-noite-2); border:1px solid rgba(217,166,46,.22); border-radius:16px; overflow:hidden;
+    transition:border-color .35s ease, box-shadow .35s ease, transform .35s ease;
+  }
+  .city-card:hover{border-color:var(--ct-mostaza); box-shadow:0 20px 44px -18px rgba(217,166,46,.35); transform:translateY(-4px);}
+  .city-photo{height:200px; position:relative; background:linear-gradient(150deg, var(--ct-vino), var(--ct-noite));}
+  .city-photo::after{content:''; position:absolute; inset:0; background:radial-gradient(circle at 75% 25%, rgba(217,166,46,.22), transparent 55%);}
+  .city-body{padding:1.45rem 1.5rem 1.8rem;}
+  .city-eyebrow{font-weight:700; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ct-azulejo);}
+  .city-title{font-family:'Spectral',serif; font-weight:700; font-size:1.55rem; color:var(--ct-crema); margin:.35rem 0 .5rem;}
+  .city-meta{font-size:.87rem; color:#B7A991; line-height:1.5;}
+
+  .gina-bubble{
+    position:fixed; bottom:28px; right:28px; z-index:60; width:62px; height:62px; border-radius:999px;
+    background:var(--ct-noite-2); border:2px solid var(--ct-mostaza); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; animation:lanternGlow 2.8s ease-in-out infinite;
+  }
+  @keyframes lanternGlow{0%,100%{box-shadow:0 0 12px 2px rgba(217,166,46,.35);} 50%{box-shadow:0 0 26px 8px rgba(217,166,46,.55);}}
+  .gina-bubble .flame{width:11px; height:14px; border-radius:60% 60% 50% 50% / 70% 70% 40% 40%; background:linear-gradient(180deg, var(--ct-mostaza-claro), var(--ct-brasa));}
+  .gina-panel{
+    position:fixed; bottom:102px; right:28px; z-index:60; width:320px; max-width:88vw; background:var(--ct-noite-2);
+    border:1px solid rgba(217,166,46,.3); border-radius:18px; overflow:hidden; box-shadow:0 30px 60px -18px rgba(0,0,0,.6);
+    transform:translateY(14px); opacity:0; pointer-events:none;
+  }
+  .gina-panel.open{transform:translateY(0); opacity:1; pointer-events:auto; transition:transform .5s cubic-bezier(.16,1,.3,1), opacity .35s ease;}
+  .gina-panel-head{background:linear-gradient(90deg, var(--ct-vino), var(--ct-mostaza)); color:var(--ct-noite); padding:.9rem 1.1rem; font-family:'Spectral',serif; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
+  .gina-panel-body{padding:1rem 1.1rem 1.2rem; font-size:.86rem;}
+  .gina-msg{background:rgba(217,166,46,.08); border:1px solid rgba(217,166,46,.18); border-radius:12px; padding:.7rem .9rem; margin-bottom:.6rem; color:var(--ct-crema);}
+
+  .specimen{background:#160C0A; color:var(--ct-crema); padding:4rem 6vw; border-top:1px solid rgba(217,166,46,.2);}
+  .swatches{display:flex; gap:1rem; flex-wrap:wrap; margin:1.4rem 0 2.2rem;}
+  .swatch{width:120px;}
+  .swatch-color{height:64px; border-radius:10px;}
+  .swatch small{font-size:.72rem; opacity:.75; display:block; margin-top:.4rem;}
+
+  .reveal{opacity:0; transform:translateY(24px);}
+</style>
+
+<header>
+  <div class="logo-mark">Tu Lugar en <span>Galicia</span></div>
+  <nav>
+    <a href="#ciudades">Ciudades</a>
+    <a href="#gina">Gina</a>
+    <a href="#specimen">Sistema</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="glow-dot" style="top:18%; left:72%;"></div>
+  <div class="glow-dot" style="top:32%; left:85%; animation-delay:.8s;"></div>
+  <div class="glow-dot" style="top:48%; left:65%; animation-delay:1.5s;"></div>
+  <div class="hero-content">
+    <div class="eyebrow">Relocation con calor de taberna</div>
+    <h1>Tu lugar en Galicia se <span class="hl">celebra</span>, no se tramita.</h1>
+    <p class="lead">Cualificamos tu caso con la misma calidez con la que se sirve una cantiga en la taberna: cerca, sin apuro, con Silvana del otro lado.</p>
+    <a href="#" class="btn-primary">Agenda tu videollamada</a>
+    <a href="#ciudades" class="btn-secondary">Ver ciudades ↓</a>
+  </div>
+</section>
+
+<section class="section" id="ciudades">
+  <div class="section-head">
+    <div class="eyebrow">05 ciudades activas</div>
+    <h2>Elegí tu punto de partida.</h2>
+  </div>
+  <div class="cards">
+    <article class="city-card reveal">
+      <div class="city-photo"></div>
+      <div class="city-body">
+        <div class="city-eyebrow">Litoral · Atlántico</div>
+        <div class="city-title">A Coruña</div>
+        <div class="city-meta">+38 familias reubicadas · alquiler medio 2 hab. 720€</div>
+      </div>
+    </article>
+    <article class="city-card reveal">
+      <div class="city-photo"></div>
+      <div class="city-body">
+        <div class="city-eyebrow">Industrial · Ría</div>
+        <div class="city-title">Vigo</div>
+        <div class="city-meta">+52 familias reubicadas · alquiler medio 2 hab. 690€</div>
+      </div>
+    </article>
+    <article class="city-card reveal">
+      <div class="city-photo"></div>
+      <div class="city-body">
+        <div class="city-eyebrow">Interior · Histórica</div>
+        <div class="city-title">Santiago</div>
+        <div class="city-meta">+29 familias reubicadas · alquiler medio 2 hab. 650€</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="gina" style="padding-top:0;">
+  <div class="section-head">
+    <div class="eyebrow">Asistente de diagnóstico</div>
+    <h2>Gina, siempre encendida, abajo a la derecha.</h2>
+    <p style="margin-top:.8rem; max-width:52ch; color:#B7A991;">Mockup de forma/color/animación — el contenido del chat es de relleno.</p>
+  </div>
+</section>
+
+<div class="gina-bubble" id="gina-bubble"><div class="flame"></div></div>
+<div class="gina-panel" id="gina-panel">
+  <div class="gina-panel-head"><span>Gina · Diagnóstico</span><span id="gina-close" style="cursor:pointer;">✕</span></div>
+  <div class="gina-panel-body">
+    <div class="gina-msg">¡Hola! Soy Gina 🕯️ Sentate, esto no lleva más de cinco minutos.</div>
+    <div class="gina-msg">¿Cuántos adultos viajan con vos?</div>
+  </div>
+</div>
+
+<section class="specimen" id="specimen">
+  <div class="eyebrow">Sistema — Cantiga de Taberna</div>
+  <h2 class="font-display" style="font-size:1.8rem; margin:.6rem 0 0;">Paleta &amp; tipografía</h2>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:var(--ct-noite);"></div><small>#241512 noite</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--ct-mostaza);"></div><small>#D9A62E mostaza</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--ct-vino);"></div><small>#6B1E23 viño</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--ct-azulejo);"></div><small>#2C6E8E azulejo</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--ct-brasa);"></div><small>#C1461F brasa</small></div>
+  </div>
+  <p class="font-display" style="font-size:2.4rem; font-weight:700;">Spectral — display</p>
+  <p style="font-size:1.2rem;">Figtree — cuerpo y UI, 400/500/600/700</p>
+</section>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el, i) => {
+    gsap.to(el, {
+      opacity:1, y:0, duration:.9, ease:'power2.out', delay:i*0.1,
+      scrollTrigger:{ trigger:el, start:'top 88%' }
+    });
+  });
+
+  const bubble = document.getElementById('gina-bubble');
+  const panel = document.getElementById('gina-panel');
+  bubble.addEventListener('click', () => panel.classList.toggle('open'));
+  document.getElementById('gina-close').addEventListener('click', () => panel.classList.remove('open'));
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.reveal').forEach(el => { el.style.opacity=1; el.style.transform='none'; });
+    document.querySelectorAll('.glow-dot').forEach(el => el.style.animation='none');
+    bubble.style.animation='none';
+  }
+</script>

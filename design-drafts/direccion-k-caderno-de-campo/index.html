@@ -1,0 +1,239 @@
+<title>Un piso de verdad en Os Mallos, no una promesa</title>
+<meta name="description" content="Silvana cualifica tu caso desde Vigo y te muestra pisos reales de A Coruña, Vigo y Santiago antes de que compres el pasaje. Sin formularios eternos." />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Domine:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  /* Domine + IBM Plex Sans: par elegido porque ninguna de las 10 direcciones
+     anteriores usó una serif "de libro de campo" — la intención es que se lea
+     como una ficha técnica impresa, no como una landing de SaaS. */
+  :root{
+    --k-papel:#F6F1E7;
+    --k-papel-2:#EFE8D8;
+    --k-tinta:#1C2B22;
+    --k-ferro:#8B4A3C;
+    --k-ferro-hover:#733D31;
+    --k-linea:#C9BFA6;
+    --k-muted:#5C5A48;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--k-papel); color:var(--k-tinta); font-family:'IBM Plex Sans',sans-serif; margin:0;}
+  .serif{font-family:'Domine',serif;}
+  .rule{border:none; border-top:1px solid var(--k-linea); margin:0;}
+
+  /* Masthead: dos columnas asimétricas, no hero centrado.
+     60/40 en vez de 50/50 — la ficha técnica no necesita tanto ancho como el titular. */
+  .masthead{
+    display:grid; grid-template-columns:1.4fr 1fr; gap:3rem;
+    padding:3.4rem 6vw 3rem; border-bottom:1px solid var(--k-linea);
+    align-items:end;
+  }
+  @media (max-width: 860px){ .masthead{ grid-template-columns:1fr; } }
+  .kicker{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--k-ferro); font-weight:600; margin-bottom:.9rem;}
+  .masthead h1{
+    font-family:'Domine',serif; font-weight:600; font-size:clamp(1.9rem,3.6vw,3rem);
+    line-height:1.22; margin:0 0 1.1rem; max-width:19ch;
+  }
+  .masthead p{font-size:1.02rem; line-height:1.65; color:var(--k-muted); max-width:46ch; margin:0 0 1.6rem;}
+  .ficha{border:1px solid var(--k-tinta); padding:1.4rem 1.5rem;}
+  .ficha-row{display:flex; justify-content:space-between; gap:1rem; font-size:.86rem; padding:.55rem 0; border-bottom:1px dashed var(--k-linea);}
+  .ficha-row:last-child{border-bottom:none;}
+  .ficha-row span:first-child{color:var(--k-muted);}
+  .ficha-row span:last-child{font-weight:600; text-align:right;}
+  .btn{
+    display:inline-flex; align-items:center; gap:.5rem; background:var(--k-ferro); color:var(--k-papel);
+    font-weight:600; font-size:.92rem; padding:.85rem 1.5rem; text-decoration:none;
+    /* Sin sombra por defecto — solo aparece al hover, para no repetir shadow-md en todo el sitio. */
+    transition:background-color .25s ease;
+  }
+  .btn:hover{background:var(--k-ferro-hover); box-shadow:3px 3px 0 var(--k-tinta);}
+
+  /* Sección ciudades: UNA destacada (2/3) + lista compacta de texto para las otras dos (1/3).
+     No son 3 tarjetas iguales — A Coruña tiene más inventario real, así que ocupa más espacio. */
+  .ciudades{padding:5rem 6vw 5.5rem; display:grid; grid-template-columns:2fr 1fr; gap:3.5rem;}
+  @media (max-width: 900px){ .ciudades{ grid-template-columns:1fr; gap:2.5rem; } }
+  .ciudad-destacada{border-left:3px solid var(--k-ferro); padding-left:1.6rem;}
+  .ciudad-destacada .tag{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--k-ferro); font-weight:600;}
+  .ciudad-destacada h2{font-family:'Domine',serif; font-size:2rem; margin:.5rem 0 .8rem;}
+  .ciudad-destacada p{color:var(--k-muted); line-height:1.65; max-width:52ch; margin:0 0 1.2rem;}
+  .ciudad-destacada .dato{font-size:.88rem; color:var(--k-tinta); font-weight:500;}
+  .otras-ciudades h3{font-family:'Domine',serif; font-size:1.05rem; margin:0 0 1.1rem; color:var(--k-muted); font-weight:600;}
+  .otra-ciudad{padding:1rem 0; border-top:1px solid var(--k-linea);}
+  .otra-ciudad:last-child{border-bottom:1px solid var(--k-linea);}
+  .otra-ciudad .nombre{font-weight:600; font-size:1.05rem;}
+  .otra-ciudad .meta{font-size:.84rem; color:var(--k-muted); margin-top:.2rem;}
+
+  /* Cómo funciona: ritmo vertical irregular a propósito — el paso 1 (contar tu caso)
+     es el que más fricción genera, así que lleva más aire y más peso visual. */
+  .pasos{padding:4.5rem 6vw 6rem; background:var(--k-papel-2); border-top:1px solid var(--k-linea); border-bottom:1px solid var(--k-linea);}
+  .pasos-head{max-width:520px; margin-bottom:2.6rem;}
+  .pasos-head h2{font-family:'Domine',serif; font-size:1.7rem; margin:.4rem 0 0;}
+  .paso{display:grid; grid-template-columns:44px 1fr; gap:1.2rem; max-width:640px;}
+  .paso .n{font-family:'Domine',serif; font-weight:700; color:var(--k-ferro);}
+  .paso h4{margin:0 0 .3rem; font-size:1.08rem;}
+  .paso p{margin:0; color:var(--k-muted); font-size:.92rem; line-height:1.55;}
+  .paso-1{padding-bottom:2.6rem; border-bottom:1px dashed var(--k-linea); margin-bottom:1.6rem;}
+  .paso-1 .n{font-size:2.2rem;}
+  .paso-1 h4{font-size:1.3rem;}
+  .paso-2, .paso-3{padding-bottom:1.1rem;}
+  .paso-2 .n, .paso-3 .n{font-size:1.3rem;}
+
+  /* Captura de correo con mensaje de validación con voz propia */
+  .captura{padding:4rem 6vw; max-width:560px;}
+  .captura h3{font-family:'Domine',serif; font-size:1.3rem; margin:0 0 .5rem;}
+  .captura p{color:var(--k-muted); font-size:.9rem; margin:0 0 1.2rem;}
+  .captura form{display:flex; gap:.6rem; flex-wrap:wrap;}
+  .captura input{flex:1; min-width:200px; border:1px solid var(--k-tinta); background:var(--k-papel); padding:.7rem .9rem; font-family:'IBM Plex Sans',sans-serif; font-size:.92rem; color:var(--k-tinta);}
+  .captura input:focus{outline:2px solid var(--k-ferro); outline-offset:1px;}
+  .captura .error{display:none; color:var(--k-ferro); font-size:.82rem; margin-top:.5rem;}
+  .captura .error.show{display:block;}
+
+  footer{padding:2.6rem 6vw 3rem; border-top:1px solid var(--k-linea); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;}
+  footer .firma{font-family:'Domine',serif; font-style:italic; color:var(--k-muted); font-size:.94rem;}
+
+  .gina-tab{
+    position:fixed; bottom:24px; right:0; z-index:60; background:var(--k-tinta); color:var(--k-papel);
+    padding:.8rem .5rem .8rem 1rem; writing-mode:vertical-rl; cursor:pointer; font-weight:600; font-size:.86rem;
+    letter-spacing:.04em; display:flex; align-items:center; gap:.4rem;
+  }
+  .gina-tab .mono{font-family:'Domine',serif; font-style:italic; transform:rotate(180deg);}
+  .gina-panel{
+    position:fixed; bottom:0; right:0; z-index:65; width:340px; max-width:92vw; height:100%;
+    background:var(--k-papel); border-left:1px solid var(--k-tinta); box-shadow:-16px 0 40px -20px rgba(28,43,34,.35);
+    transform:translateX(100%); transition:transform .4s cubic-bezier(.4,0,.2,1); padding:1.6rem 1.4rem;
+  }
+  .gina-panel.open{transform:translateX(0);}
+  .gina-panel h5{font-family:'Domine',serif; margin:0 0 1rem; display:flex; justify-content:space-between; align-items:center;}
+  .gina-msg{border-left:2px solid var(--k-ferro); padding:.5rem 0 .5rem .8rem; margin-bottom:1rem; font-size:.9rem;}
+
+  .specimen{background:var(--k-tinta); color:var(--k-papel); padding:3.5rem 6vw;}
+  .specimen .meta-example{font-family:'IBM Plex Sans',monospace; font-size:.82rem; background:rgba(246,241,231,.08); padding:1rem 1.2rem; border-left:2px solid var(--k-ferro); margin:1rem 0 2rem;}
+  .swatches{display:flex; gap:1rem; flex-wrap:wrap; margin:1.2rem 0 2rem;}
+  .swatch{width:110px;}
+  .swatch-color{height:54px;}
+  .swatch small{font-size:.68rem; opacity:.7; display:block; margin-top:.35rem;}
+
+  .reveal{opacity:0; transform:translateY(14px);}
+</style>
+
+<section class="masthead">
+  <div>
+    <div class="kicker">Expediente 0847 · A Coruña</div>
+    <h1>Un piso de verdad en Os Mallos, no una promesa.</h1>
+    <p>Silvana revisó tres pisos esta semana en A Coruña. Uno lo descartó por humedad en la pared del fondo. Te contamos exactamente eso — no "las mejores oportunidades del mercado".</p>
+    <a href="#ciudades" class="btn">Contame tu caso</a>
+  </div>
+  <div class="ficha">
+    <div class="ficha-row"><span>Última actualización</span><span>hace 3 días</span></div>
+    <div class="ficha-row"><span>Pisos evaluados esta semana</span><span>14</span></div>
+    <div class="ficha-row"><span>Descartados por humedad/ruido</span><span>2</span></div>
+    <div class="ficha-row"><span>Familias en seguimiento activo</span><span>23</span></div>
+    <div class="ficha-row"><span>Tiempo medio hasta videollamada</span><span>2 días</span></div>
+  </div>
+</section>
+
+<section class="ciudades" id="ciudades">
+  <div class="ciudad-destacada reveal">
+    <div class="tag">Ciudad con más inventario activo</div>
+    <h2>A Coruña</h2>
+    <p>Zonas que más se preguntan: Os Mallos por precio, Elviña por cercanía a la universidad, la zona de Riazor si el presupuesto da para más. 38 familias reubicadas, la última hace 9 días.</p>
+    <div class="dato">Alquiler medio 2 hab. — 720€ (rango real: 640€–830€)</div>
+  </div>
+  <div class="otras-ciudades reveal">
+    <h3>También activas ahora</h3>
+    <div class="otra-ciudad">
+      <div class="nombre">Vigo</div>
+      <div class="meta">52 familias reubicadas · zona Ría / Coia con más movimiento</div>
+    </div>
+    <div class="otra-ciudad">
+      <div class="nombre">Santiago</div>
+      <div class="meta">29 familias reubicadas · rotación más lenta, más consultas por trabajo universitario</div>
+    </div>
+  </div>
+</section>
+
+<section class="pasos">
+  <div class="pasos-head">
+    <div class="kicker">Cómo sigue esto</div>
+    <h2>Tres pasos, en ese orden — no al revés.</h2>
+  </div>
+  <div class="paso paso-1">
+    <div class="n">1</div>
+    <div><h4>Nos contás tu caso, sin formulario eterno</h4><p>Seis preguntas con Gina. Cinco minutos si ya sabés las respuestas, quince si tenés que consultar con quien viaja con vos.</p></div>
+  </div>
+  <div class="paso paso-2">
+    <div class="n">2</div>
+    <div><h4>Silvana revisa lo que hay de verdad</h4><p>No manda un catálogo genérico — te dice qué zona conviene según lo que contaste, y qué no te conviene aunque esté publicado.</p></div>
+  </div>
+  <div class="paso paso-3">
+    <div class="n">3</div>
+    <div><h4>Videollamada de 25 minutos</h4><p>Se agenda desde el calendario real de Silvana, no un bot de reservas.</p></div>
+  </div>
+</section>
+
+<section class="captura">
+  <h3>Si todavía no es el momento</h3>
+  <p>Dejanos tu correo y te escribimos cuando haya novedades reales de tu ciudad — no un newsletter semanal de relleno.</p>
+  <form id="captura-form">
+    <input type="email" id="captura-email" placeholder="tu correo" required />
+    <button type="submit" class="btn">Avisame</button>
+  </form>
+  <div class="error" id="captura-error">Poné un correo donde realmente te llegue el aviso — no el que usás una sola vez.</div>
+</section>
+
+<div class="gina-tab" id="gina-tab"><span class="mono">G.</span> Preguntale a Gina</div>
+<div class="gina-panel" id="gina-panel">
+  <h5>Gina · Diagnóstico <span id="gina-close" style="cursor:pointer; font-family:'IBM Plex Sans',sans-serif; font-weight:400;">✕</span></h5>
+  <div class="gina-msg">Hola, soy Gina. Che cuento en dos minutos si tu caso encaja antes de pedirte nada.</div>
+  <div class="gina-msg">¿Cuántos adultos viajan con vos?</div>
+</div>
+
+<footer>
+  <div class="firma">— Silvana, desde Vigo</div>
+  <div style="font-size:.82rem; color:var(--k-muted);">Tu Lugar en Galicia</div>
+</footer>
+
+<section class="specimen">
+  <div class="kicker" style="color:var(--k-ferro);">Sistema — Caderno de Campo (K)</div>
+  <p style="font-family:'Domine',serif; font-size:1.5rem; margin:.6rem 0 0;">Domine — display · IBM Plex Sans — UI</p>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:var(--k-papel);"></div><small>#F6F1E7 papel</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--k-tinta);"></div><small>#1C2B22 tinta</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--k-ferro);"></div><small>#8B4A3C ferro</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--k-linea);"></div><small>#C9BFA6 liña</small></div>
+  </div>
+  <div class="kicker" style="color:var(--k-ferro);">Ejemplo de &lt;title&gt; / meta description real (no plantilla)</div>
+  <div class="meta-example">
+    &lt;title&gt;Un piso de verdad en Os Mallos, no una promesa&lt;/title&gt;<br/>
+    &lt;meta name="description" content="Silvana cualifica tu caso desde Vigo y te muestra pisos reales de A Coruña, Vigo y Santiago antes de que compres el pasaje. Sin formularios eternos."&gt;
+  </div>
+</section>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el) => {
+    gsap.to(el, { opacity:1, y:0, duration:.7, ease:'power2.out', scrollTrigger:{ trigger:el, start:'top 88%' } });
+  });
+
+  const tab = document.getElementById('gina-tab');
+  const panel = document.getElementById('gina-panel');
+  tab.addEventListener('click', () => panel.classList.toggle('open'));
+  document.getElementById('gina-close').addEventListener('click', () => panel.classList.remove('open'));
+
+  document.getElementById('captura-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = document.getElementById('captura-email').value;
+    const err = document.getElementById('captura-error');
+    // Chequeo deliberadamente simple: esto es un mockup, no valida de verdad.
+    const looksDisposable = /(tempmail|mailinator|10minutemail)/i.test(val);
+    err.classList.toggle('show', looksDisposable || !val.includes('@'));
+  });
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.reveal').forEach(el => { el.style.opacity=1; el.style.transform='none'; });
+  }
+</script>

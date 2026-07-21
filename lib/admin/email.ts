@@ -27,14 +27,21 @@ export function escapeHtml(input: string): string {
     .replace(/'/g, '&#39;')
 }
 
+interface EmailAttachment {
+  filename: string
+  /** Contenido en base64 — la API de Resend no acepta Buffer crudo en JSON. */
+  content: string
+}
+
 interface EmailParams {
   to: string
   subject: string
   html: string
   replyTo?: string
+  attachments?: EmailAttachment[]
 }
 
-export async function sendEmail({ to, subject, html, replyTo }: EmailParams): Promise<void> {
+export async function sendEmail({ to, subject, html, replyTo, attachments }: EmailParams): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) throw new Error('RESEND_API_KEY no configurado')
 
@@ -50,6 +57,7 @@ export async function sendEmail({ to, subject, html, replyTo }: EmailParams): Pr
       subject,
       html,
       ...(replyTo ? { reply_to: replyTo } : {}),
+      ...(attachments && attachments.length > 0 ? { attachments } : {}),
     }),
     signal: AbortSignal.timeout(8000),
   })
@@ -254,6 +262,108 @@ export function buildAgendaEmail(nombre: string, codigo: string): string {
     title: 'Tu cita con Tu Lugar en Galicia está lista',
     tableWidth: 600,
     tableStyle: 'background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;',
+    rows,
+  })
+}
+
+/**
+ * Template del mail que entrega el Plan Estratégico (PDF adjunto) al cliente,
+ * a la dirección que declaró en el cuestionario de Gina. Voz del equipo, tú
+ * neutro (brand voice — voz-tu-lugar-en-galicia skill).
+ */
+export function buildPlanEmail(nombre: string): string {
+  const primerNombre = escapeHtml(nombre.split(' ')[0] || nombre)
+
+  const rows = `
+          <tr>
+            <td style="background:#141210;padding:28px 40px;text-align:center;">
+              <span style="font-family:Georgia,serif;font-size:22px;font-weight:400;font-style:italic;color:#D4AF6A;letter-spacing:0.06em;">
+                Tu Lugar en Galicia
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:40px 40px 32px;color:#2D2926;font-size:16px;line-height:1.7;">
+              <p style="margin:0 0 20px;">Hola ${primerNombre},</p>
+              <p style="margin:0 0 20px;">
+                Con todo lo que nos contaste armamos tu Plan Estratégico personalizado:
+                los trámites que te tocan, en el orden en que conviene hacerlos, según tu
+                situación concreta. Lo llevamos adjunto a este mail en PDF.
+              </p>
+              <p style="margin:0 0 28px;">
+                Cualquier duda que te surja al leerlo, puedes escribirnos directamente
+                respondiendo este mail.
+              </p>
+              <p style="margin:0;">Un saludo,</p>
+              <p style="margin:8px 0 0;font-style:italic;color:#2D2926;">
+                El equipo<br />
+                <span style="font-size:13px;color:#696560;">Tu Lugar en Galicia</span>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#f5f0e8;padding:20px 40px;text-align:center;
+                        font-size:11px;color:#696560;font-family:Georgia,serif;">
+              Recibiste este mail porque completaste el cuestionario de Tu Lugar en Galicia.
+            </td>
+          </tr>`
+
+  return buildEmailShell({
+    title: 'Tu Plan Estratégico — Tu Lugar en Galicia',
+    tableWidth: 600,
+    tableStyle: 'background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;',
+    rows,
+  })
+}
+
+/**
+ * Alerta interna a Silvana cuando el envío automático del Plan Estratégico al
+ * cliente falla — sin esto, el único rastro era un console.error (auditoría
+ * de sesión 2026-07-19: "no depender de revisar logs manualmente").
+ */
+export function buildPlanEmailFallidoAlerta(params: { nombre: string; email: string; leadId: string }): string {
+  const nombre = escapeHtml(params.nombre)
+  const email = escapeHtml(params.email)
+  const leadId = escapeHtml(params.leadId)
+
+  const rows = `
+          <tr>
+            <td style="background:#141210;padding:24px 40px;text-align:center;">
+              <span style="font-family:Georgia,serif;font-size:18px;font-weight:400;font-style:italic;color:#D4AF6A;letter-spacing:0.06em;">
+                Tu Lugar en Galicia — alerta interna
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 40px;color:#2D2926;font-size:15px;line-height:1.7;">
+              <p style="margin:0 0 16px;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#B8492F;">
+                No se pudo enviar el Plan Estratégico al cliente
+              </p>
+              <table cellpadding="0" cellspacing="0" style="width:100%;margin:0 0 20px;border:1px solid #E8E0D2;border-radius:6px;overflow:hidden;">
+                <tr style="background:#F5F0E8;">
+                  <td style="padding:10px 16px;font-size:12px;color:#696560;width:120px;">Lead</td>
+                  <td style="padding:10px 16px;font-size:14px;font-weight:500;color:#1E1C19;">${nombre}</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;font-size:12px;color:#696560;border-top:1px solid #E8E0D2;">Email</td>
+                  <td style="padding:10px 16px;font-size:14px;font-weight:500;color:#1E1C19;border-top:1px solid #E8E0D2;">${email}</td>
+                </tr>
+                <tr style="background:#F5F0E8;">
+                  <td style="padding:10px 16px;font-size:12px;color:#696560;border-top:1px solid #E8E0D2;">ID de lead</td>
+                  <td style="padding:10px 16px;font-size:14px;font-weight:500;color:#1E1C19;border-top:1px solid #E8E0D2;">${leadId}</td>
+                </tr>
+              </table>
+              <p style="margin:0;font-size:13px;color:#696560;">
+                El cuestionario se guardó correctamente — solo falló el envío del PDF por mail.
+                Descárgalo desde la ficha del lead y envíaselo manualmente.
+              </p>
+            </td>
+          </tr>`
+
+  return buildEmailShell({
+    title: 'Fallo al enviar el Plan Estratégico',
+    tableWidth: 560,
+    tableStyle: 'background:#ffffff;border-radius:8px;overflow:hidden;max-width:560px;width:100%;',
     rows,
   })
 }

@@ -1,0 +1,222 @@
+<title>Hórreo Brutalista — Dirección C</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --hb-granito:#1A1A18;
+    --hb-hormigon:#C9C6BE;
+    --hb-hormigon-claro:#E8E5DD;
+    --hb-oxido:#D6461F;
+    --hb-oxido-hover:#B5380F;
+    --hb-musgo:#4A5240;
+    --hb-blanco:#FAFAF7;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--hb-hormigon); color:var(--hb-granito); font-family:'Archivo',sans-serif; margin:0;}
+  .font-display{font-family:'Anton',sans-serif; text-transform:uppercase;}
+  .eyebrow{font-family:'Archivo',sans-serif; font-weight:700; font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--hb-oxido);}
+
+  header{
+    position:sticky; top:0; z-index:50; background:var(--hb-hormigon-claro);
+    border-bottom:3px solid var(--hb-granito);
+    padding:18px 6vw; display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo-mark{font-family:'Anton',sans-serif; font-size:1.3rem; letter-spacing:.01em; text-transform:uppercase;}
+  .logo-mark span{color:var(--hb-oxido);}
+  nav{display:flex; align-items:center; gap:1.8rem;}
+  nav a{font-weight:700; font-size:.82rem; letter-spacing:.08em; text-transform:uppercase; color:var(--hb-granito); text-decoration:none; border-bottom:2px solid transparent;}
+  nav a:hover{border-color:var(--hb-oxido);}
+  .tick{width:2px; height:14px; background:var(--hb-granito); opacity:.4;}
+
+  .hero{
+    position:relative; padding:6rem 6vw 5rem; overflow:hidden; border-bottom:3px solid var(--hb-granito);
+    background:
+      repeating-linear-gradient(90deg, transparent 0 79px, rgba(26,26,24,.06) 79px 80px),
+      var(--hb-hormigon);
+  }
+  .hero-coord{
+    position:absolute; top:1.5rem; right:6vw; font-family:'Archivo',sans-serif; font-size:.75rem;
+    letter-spacing:.08em; color:var(--hb-granito); opacity:.55; text-align:right; line-height:1.6;
+  }
+  .hero-content{max-width:900px; position:relative; z-index:2;}
+  .hero h1{
+    font-family:'Anton',sans-serif; text-transform:uppercase; font-weight:400;
+    font-size:clamp(2.6rem,7.4vw,6.4rem); line-height:.92; margin:.8rem 0 1.6rem; letter-spacing:-.01em;
+  }
+  .hero h1 .box{
+    display:inline-block; background:var(--hb-oxido); color:var(--hb-blanco); padding:0 .18em;
+    box-shadow:6px 6px 0 var(--hb-granito); margin-right:16px;
+  }
+  .hero p.lead{font-size:1.14rem; max-width:56ch; line-height:1.55; margin-bottom:2.2rem; font-weight:400;}
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:.6rem; background:var(--hb-granito); color:var(--hb-blanco);
+    font-weight:700; font-size:.95rem; text-transform:uppercase; letter-spacing:.05em;
+    padding:1rem 1.8rem; text-decoration:none; border:3px solid var(--hb-granito); border-radius:0;
+    box-shadow:6px 6px 0 var(--hb-oxido); transition:none;
+  }
+  .btn-primary:hover{background:var(--hb-oxido); color:var(--hb-granito); box-shadow:6px 6px 0 var(--hb-granito);}
+  .btn-secondary{
+    display:inline-flex; align-items:center; gap:.5rem; color:var(--hb-granito); font-weight:700;
+    text-transform:uppercase; letter-spacing:.05em; font-size:.85rem; text-decoration:none;
+    margin-left:1.6rem; border-bottom:3px solid var(--hb-granito); padding-bottom:2px;
+  }
+
+  .section{padding:6rem 6vw;}
+  .section-head{max-width:680px; margin-bottom:3rem; display:flex; align-items:baseline; gap:1rem;}
+  .section-head .num{font-family:'Anton',sans-serif; font-size:1.4rem; color:var(--hb-oxido);}
+  .section-head h2{font-family:'Anton',sans-serif; text-transform:uppercase; font-weight:400; font-size:clamp(1.8rem,3.4vw,2.6rem); margin:0;}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem;}
+  .city-card{
+    background:var(--hb-hormigon-claro); border:3px solid var(--hb-granito);
+    position:relative; overflow:hidden;
+  }
+  .city-card .idx{
+    position:absolute; top:.9rem; right:1rem; font-family:'Anton',sans-serif; font-size:2.4rem;
+    color:var(--hb-granito); opacity:.14; z-index:1;
+  }
+  .city-photo{
+    height:200px; position:relative; border-bottom:3px solid var(--hb-granito);
+    background:linear-gradient(135deg, #7A776D, #47443E);
+    filter:grayscale(1); transition:filter .4s ease;
+  }
+  .city-card:hover .city-photo{filter:grayscale(0);}
+  .city-body{padding:1.4rem 1.5rem 1.8rem; position:relative; z-index:2;}
+  .city-eyebrow{font-weight:700; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--hb-musgo);}
+  .city-title{font-family:'Anton',sans-serif; text-transform:uppercase; font-size:1.7rem; margin:.35rem 0 .5rem;}
+  .city-meta{font-size:.86rem; color:#4A473F; line-height:1.5;}
+
+  /* Gina */
+  .gina-bubble{
+    position:fixed; bottom:26px; right:26px; z-index:60; width:62px; height:62px;
+    background:var(--hb-granito); border:3px solid var(--hb-granito); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:5px 5px 0 var(--hb-oxido);
+  }
+  .gina-bubble .mark{color:var(--hb-oxido); font-family:'Anton',sans-serif; font-size:1.3rem;}
+  .gina-panel{
+    position:fixed; bottom:98px; right:26px; z-index:60; width:320px; max-width:88vw;
+    background:var(--hb-hormigon-claro); border:3px solid var(--hb-granito); overflow:hidden;
+    box-shadow:8px 8px 0 var(--hb-oxido);
+    transform:translateY(16px); opacity:0; pointer-events:none;
+  }
+  .gina-panel.open{transform:translateY(0); opacity:1; pointer-events:auto; transition:transform .28s cubic-bezier(.5,0,.2,1), opacity .18s linear;}
+  .gina-panel-head{background:var(--hb-granito); color:var(--hb-blanco); padding:.85rem 1rem; font-family:'Anton',sans-serif; text-transform:uppercase; display:flex; justify-content:space-between; align-items:center;}
+  .gina-panel-body{padding:1rem 1.1rem 1.2rem; font-size:.86rem;}
+  .gina-msg{background:var(--hb-hormigon); border:2px solid var(--hb-granito); padding:.6rem .8rem; margin-bottom:.6rem;}
+
+  .specimen{background:var(--hb-granito); color:var(--hb-blanco); padding:4rem 6vw;}
+  .swatches{display:flex; gap:1rem; flex-wrap:wrap; margin:1.4rem 0 2.2rem;}
+  .swatch{width:120px;}
+  .swatch-color{height:64px; border:2px solid var(--hb-blanco);}
+  .swatch small{font-size:.72rem; opacity:.75; display:block; margin-top:.4rem;}
+
+  .slide-in{opacity:0;}
+</style>
+
+<header>
+  <div class="logo-mark">TU LUGAR EN <span>GALICIA</span></div>
+  <nav>
+    <a href="#ciudades">Ciudades</a>
+    <div class="tick"></div>
+    <a href="#gina">Gina</a>
+    <div class="tick"></div>
+    <a href="#specimen">Sistema</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-coord">42.8782° N, -8.5448° W<br/>GALICIA / ESP</div>
+  <div class="hero-content">
+    <div class="eyebrow">Estructura, no promesas</div>
+    <h1>Tu casa en<br/>Galicia es un <span class="box">hecho</span>,<br/>no una idea.</h1>
+    <p class="lead">Cualificamos tu caso, te mostramos lo que hay de verdad y agendamos la videollamada. Sin relleno, sin maquillaje.</p>
+    <a href="#" class="btn-primary">Agendar videollamada</a>
+    <a href="#ciudades" class="btn-secondary">Ver ciudades ↓</a>
+  </div>
+</section>
+
+<section class="section" id="ciudades">
+  <div class="section-head"><span class="num">01</span><h2>Ciudades activas</h2></div>
+  <div class="cards">
+    <article class="city-card slide-in">
+      <div class="idx">01</div>
+      <div class="city-photo"></div>
+      <div class="city-body">
+        <div class="city-eyebrow">Litoral / Atlántico</div>
+        <div class="city-title">A Coruña</div>
+        <div class="city-meta">+38 familias reubicadas — alquiler medio 2 hab. 720€</div>
+      </div>
+    </article>
+    <article class="city-card slide-in">
+      <div class="idx">02</div>
+      <div class="city-photo"></div>
+      <div class="city-body">
+        <div class="city-eyebrow">Industrial / Ría</div>
+        <div class="city-title">Vigo</div>
+        <div class="city-meta">+52 familias reubicadas — alquiler medio 2 hab. 690€</div>
+      </div>
+    </article>
+    <article class="city-card slide-in">
+      <div class="idx">03</div>
+      <div class="city-photo"></div>
+      <div class="city-body">
+        <div class="city-eyebrow">Interior / Histórica</div>
+        <div class="city-title">Santiago</div>
+        <div class="city-meta">+29 familias reubicadas — alquiler medio 2 hab. 650€</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="gina" style="padding-top:0;">
+  <div class="section-head"><span class="num">02</span><h2>Gina</h2></div>
+  <p style="max-width:52ch;">Widget abajo a la derecha — mockup de forma/color/animación, contenido del chat de relleno.</p>
+</section>
+
+<div class="gina-bubble" id="gina-bubble"><span class="mark">G</span></div>
+<div class="gina-panel" id="gina-panel">
+  <div class="gina-panel-head"><span>Gina · Diagnóstico</span><span id="gina-close" style="cursor:pointer;">✕</span></div>
+  <div class="gina-panel-body">
+    <div class="gina-msg">Hola. Soy Gina. Seis preguntas, cinco minutos.</div>
+    <div class="gina-msg">¿Cuántos adultos viajan?</div>
+  </div>
+</div>
+
+<section class="specimen" id="specimen">
+  <div class="eyebrow">Sistema — Hórreo Brutalista</div>
+  <h2 class="font-display" style="font-size:1.8rem; margin:.6rem 0 0;">Paleta &amp; tipografía</h2>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:var(--hb-granito);"></div><small>#1A1A18 granito</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--hb-hormigon);"></div><small>#C9C6BE hormigón</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--hb-oxido);"></div><small>#D6461F óxido</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--hb-musgo);"></div><small>#4A5240 musgo</small></div>
+  </div>
+  <p class="font-display" style="font-size:2.6rem;">Anton — display</p>
+  <p style="font-size:1.2rem;">Archivo — cuerpo y UI, 400/600/700</p>
+</section>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.slide-in').forEach((el, i) => {
+    const fromLeft = i % 2 === 0;
+    gsap.fromTo(el, { opacity:0, x: fromLeft ? -40 : 40 }, {
+      opacity:1, x:0, duration:.55, ease:'power4.out', delay:i*0.06,
+      scrollTrigger:{ trigger:el, start:'top 90%' }
+    });
+  });
+
+  const bubble = document.getElementById('gina-bubble');
+  const panel = document.getElementById('gina-panel');
+  bubble.addEventListener('click', () => panel.classList.toggle('open'));
+  document.getElementById('gina-close').addEventListener('click', () => panel.classList.remove('open'));
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.slide-in').forEach(el => { el.style.opacity=1; el.style.transform='none'; });
+  }
+</script>

@@ -1,4 +1,6 @@
 import { getNextMetadata } from '@/lib/seo/metadata'
+import { LegalHero } from '@/components/legal/LegalHero'
+import { LegalSection } from '@/components/legal/LegalSection'
 
 export const metadata = getNextMetadata('politicaPrivacidad')
 
@@ -7,7 +9,7 @@ function TodoBlock({ children }: { children: React.ReactNode }) {
   return (
     <span
       className="inline-block px-4 py-2 [font-size:var(--text-sm)]"
-      style={{ fontFamily: 'var(--font-lato)', backgroundColor: 'var(--po-borde)', borderLeft: '4px solid var(--color-coral)', color: 'var(--po-pedra)' }}
+      style={{ fontFamily: 'var(--font-dz-ui)', backgroundColor: 'var(--dz-borde)', borderLeft: '4px solid var(--color-coral)', color: 'var(--dz-ink)' }}
     >
       {children}
     </span>
@@ -17,37 +19,21 @@ function TodoBlock({ children }: { children: React.ReactNode }) {
 export default function PoliticaDePrivacidadPage() {
   return (
     <>
-      {/* Hero pequeño — bookend fijo oscuro (Pedra e Ouro) */}
-      <section className="pb-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--po-hero-bg)', paddingTop: 'calc(64px + 60px)' }}>
-        <div className="mx-auto max-w-3xl">
-          <h1
-            className="[font-size:var(--text-2xl)] leading-[var(--leading-titulo)] md:[font-size:var(--text-3xl)]"
-            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 900, color: 'var(--po-hero-text)' }}
-          >
-            Política de Privacidad
-          </h1>
-          <p
-            className="mt-[var(--space-4)] leading-[var(--leading-cuerpo)]"
-            style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-sm)', color: 'var(--po-hero-muted)' }}
-          >
-            Última actualización: mayo 2026
-          </p>
-        </div>
-      </section>
+      <LegalHero titulo="Política de Privacidad" subtitulo="Última actualización: mayo 2026" />
 
       {/* Contenido */}
-      <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]" style={{ backgroundColor: 'var(--po-luz)' }}>
+      <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
         <div
           className="flex flex-col gap-[var(--space-12)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)]"
-          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
         >
 
           {/* 1. Responsable del tratamiento */}
-          <section aria-labelledby="responsable">
+          <LegalSection ariaLabelledby="responsable">
             <h2
               id="responsable"
               className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               1. Responsable del tratamiento
             </h2>
@@ -69,16 +55,16 @@ export default function PoliticaDePrivacidadPage() {
                 Galicia, España, orientado a familias emigrantes latinoamericanas.
               </p>
             </div>
-          </section>
+          </LegalSection>
 
-          <hr style={{ borderColor: 'var(--po-borde)' }} />
+          <hr style={{ borderColor: 'var(--dz-borde)' }} />
 
           {/* 2. Finalidad del tratamiento */}
-          <section aria-labelledby="finalidad">
+          <LegalSection ariaLabelledby="finalidad">
             <h2
               id="finalidad"
               className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               2. Finalidad del tratamiento
             </h2>
@@ -101,16 +87,16 @@ export default function PoliticaDePrivacidadPage() {
                 Coordinación y seguimiento del proceso de búsqueda de vivienda en Galicia.
               </li>
             </ul>
-          </section>
+          </LegalSection>
 
-          <hr style={{ borderColor: 'var(--po-borde)' }} />
+          <hr style={{ borderColor: 'var(--dz-borde)' }} />
 
           {/* 3. Base legal */}
-          <section aria-labelledby="base-legal">
+          <LegalSection ariaLabelledby="base-legal">
             <h2
               id="base-legal"
               className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               3. Base legal del tratamiento
             </h2>
@@ -125,16 +111,16 @@ export default function PoliticaDePrivacidadPage() {
                 solicitud de servicio.
               </li>
             </ul>
-          </section>
+          </LegalSection>
 
-          <hr style={{ borderColor: 'var(--po-borde)' }} />
+          <hr style={{ borderColor: 'var(--dz-borde)' }} />
 
           {/* 4. Conservación de los datos */}
-          <section aria-labelledby="conservacion">
+          <LegalSection ariaLabelledby="conservacion">
             <h2
               id="conservacion"
               className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               4. Conservación de los datos
             </h2>
@@ -147,16 +133,16 @@ export default function PoliticaDePrivacidadPage() {
               período de prescripción de acciones legales aplicable (con un máximo de 5 años), salvo
               que una obligación legal exija su conservación por un período mayor.
             </p>
-          </section>
+          </LegalSection>
 
-          <hr style={{ borderColor: 'var(--po-borde)' }} />
+          <hr style={{ borderColor: 'var(--dz-borde)' }} />
 
           {/* 5. Destinatarios */}
-          <section aria-labelledby="destinatarios">
+          <LegalSection ariaLabelledby="destinatarios">
             <h2
               id="destinatarios"
               className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               5. Destinatarios de los datos
             </h2>
@@ -173,16 +159,16 @@ export default function PoliticaDePrivacidadPage() {
               (región eu-central-1, Frankfurt), dentro de la Unión Europea, por lo que el
               tratamiento se realiza íntegramente dentro del Espacio Económico Europeo.
             </p>
-          </section>
+          </LegalSection>
 
-          <hr style={{ borderColor: 'var(--po-borde)' }} />
+          <hr style={{ borderColor: 'var(--dz-borde)' }} />
 
           {/* 6. Derechos */}
-          <section aria-labelledby="derechos">
+          <LegalSection ariaLabelledby="derechos">
             <h2
               id="derechos"
               className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               6. Tus derechos
             </h2>
@@ -213,22 +199,22 @@ export default function PoliticaDePrivacidadPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline-offset-4 hover:no-underline underline"
-                style={{ color: 'var(--po-ouro-text)' }}
+                style={{ color: 'var(--dz-accent-text)' }}
               >
                 aepd.es<span className="sr-only">(abre en nueva pestaña)</span>
               </a>
               .
             </p>
-          </section>
+          </LegalSection>
 
-          <hr style={{ borderColor: 'var(--po-borde)' }} />
+          <hr style={{ borderColor: 'var(--dz-borde)' }} />
 
           {/* 7. Cambios en la política */}
-          <section aria-labelledby="cambios">
+          <LegalSection ariaLabelledby="cambios">
             <h2
               id="cambios"
               className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
             >
               7. Cambios en esta política
             </h2>
@@ -237,7 +223,7 @@ export default function PoliticaDePrivacidadPage() {
               nuestras prácticas de tratamiento de datos. La versión vigente siempre está disponible
               en esta página, con la fecha de última actualización indicada al inicio.
             </p>
-          </section>
+          </LegalSection>
 
         </div>
       </article>

@@ -3,23 +3,23 @@
 // ─── Shared field styles ───────────────────────────────────────────────────────
 
 export const inputBase =
-  'w-full border border-[var(--color-arena)] bg-[var(--color-blanco)] ' +
-  'rounded-[var(--radius-card)] px-[var(--space-4)] py-[var(--space-3)] ' +
-  'font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-granito)] ' +
+  'w-full border border-[var(--dz-borde)] bg-[var(--color-blanco)] ' +
+  'rounded-[var(--dz-radius-input)] px-[var(--space-4)] py-[var(--space-3)] ' +
+  'font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--dz-ink)] ' +
   'outline-none focus:ring-2 focus:ring-[var(--color-laton)] focus:border-transparent ' +
-  'transition-all duration-150 placeholder:[color:var(--color-pizarra)]'
+  'transition-all duration-150 placeholder:[color:var(--dz-muted)]'
 
 export const inputError = 'border-[var(--color-coral)] focus:ring-[var(--color-coral)]'
 
 export const labelClass =
-  'block font-[family-name:var(--font-ui)] font-medium [font-size:var(--text-sm)] ' +
-  '[color:var(--color-granito)] mb-1.5'
+  'block font-[family-name:var(--font-dz-ui)] font-medium [font-size:var(--text-sm)] ' +
+  '[color:var(--dz-ink)] mb-1.5'
 
 export const errorClass = 'mt-[var(--space-1)] [font-size:var(--text-xs)] [color:var(--color-coral)]'
 
 export const sectionTitleClass =
-  'font-[family-name:var(--font-titular)] [font-size:var(--text-lg)] ' +
-  '[color:var(--color-granito)] font-semibold mb-[var(--space-6)]'
+  'font-[family-name:var(--font-dz-display)] [font-size:var(--text-lg)] ' +
+  '[color:var(--dz-ink)] font-semibold mb-[var(--space-6)]'
 
 export const sectionClass = 'flex flex-col gap-[var(--space-6)]'
 
@@ -77,7 +77,7 @@ export function RadioGroup({
         {options.map((opt) => (
           <label
             key={opt.value}
-            className="flex items-center gap-[var(--space-3)] cursor-pointer font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)]"
+            className="flex items-center gap-[var(--space-3)] cursor-pointer font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--dz-muted)]"
           >
             <input
               type="radio"
@@ -126,7 +126,7 @@ export function CheckboxGroup<T extends string>({
           return (
             <label
               key={opt.value}
-              className={`flex items-center gap-[var(--space-3)] font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] ${bloqueado ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+              className={`flex items-center gap-[var(--space-3)] font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--dz-muted)] ${bloqueado ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <input
                 type="checkbox"

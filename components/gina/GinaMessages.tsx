@@ -12,7 +12,9 @@
  */
 
 import React, { useEffect, useRef, useMemo } from 'react'
+import { motion } from 'motion/react'
 import { GinaButtons } from './GinaButtons'
+import { fadeUp } from '@/lib/motion/variants'
 import type { Opcion } from '@/lib/gina/flowEngine'
 
 export type Mensaje = {
@@ -103,13 +105,16 @@ export function GinaMessages({
       role="log"
       aria-live="polite"
       aria-label="Conversación con Gina"
-      style={{ backgroundColor: 'var(--color-niebla)' }}
+      style={{ backgroundColor: 'var(--dz-papel)' }}
     >
       {mensajes.map((msg, i) => (
-        <div
+        <motion.div
           key={msg.id}
           ref={i === lastGinaIdx ? lastGinaMsgRef : undefined}
-          className={`flex items-end gap-2 ${msg.de === 'usuario' ? 'flex-row-reverse' : 'flex-row'}`}
+          className={`flex items-end gap-2 min-w-0 ${msg.de === 'usuario' ? 'flex-row-reverse' : 'flex-row'}`}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
         >
           {/* Avatar de Gina — cuadrado redondeado con sparkles */}
           {msg.de === 'gina' && (
@@ -124,10 +129,10 @@ export function GinaMessages({
 
           {/* Burbuja (+ pill Editar para mensajes de usuario) */}
           {msg.de === 'usuario' ? (
-            <div className="flex flex-col items-end gap-1">
+            <div className="flex flex-col items-end gap-1 min-w-0">
               <div
-                className="max-w-[75%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap rounded-2xl rounded-br-none"
-                style={{ backgroundColor: 'var(--color-granito)', color: 'var(--color-arena)' }}
+                className="max-w-[75%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words rounded-2xl rounded-br-none"
+                style={{ backgroundColor: 'var(--dz-ink)', color: 'var(--dz-borde)' }}
               >
                 {msg.texto}
               </div>
@@ -145,17 +150,17 @@ export function GinaMessages({
             </div>
           ) : (
             <div
-              className="max-w-[75%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap rounded-2xl rounded-tl-none"
+              className="max-w-[75%] min-w-0 px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words rounded-2xl rounded-tl-none"
               style={{
                 backgroundColor: 'var(--color-blanco)',
-                color: 'var(--color-granito)',
-                boxShadow: '0 1px 2px rgba(42,43,46,0.08)',
+                color: 'var(--dz-ink)',
+                boxShadow: 'var(--dz-shadow-sm)',
               }}
             >
               {msg.texto}
             </div>
           )}
-        </div>
+        </motion.div>
       ))}
 
       {/* Indicador de carga (typing indicator) */}
@@ -172,7 +177,7 @@ export function GinaMessages({
             className="px-4 py-3 rounded-2xl rounded-tl-none"
             style={{
               backgroundColor: 'var(--color-blanco)',
-              boxShadow: '0 1px 2px rgba(42,43,46,0.08)',
+              boxShadow: 'var(--dz-shadow-sm)',
             }}
             aria-label="Gina está escribiendo"
           >

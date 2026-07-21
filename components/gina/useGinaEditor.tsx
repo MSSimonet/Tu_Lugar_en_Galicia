@@ -156,13 +156,13 @@ export function useGinaEditor({
       className="shrink-0 px-4 py-3 border-t"
       style={{
         borderColor: 'var(--color-laton)',
-        backgroundColor: 'var(--color-niebla)',
+        backgroundColor: 'var(--dz-papel)',
       }}
     >
       <p
         id="gina-confirm-titulo"
         className="text-xs leading-snug mb-3"
-        style={{ color: 'var(--color-granito)' }}
+        style={{ color: 'var(--dz-ink)' }}
       >
         Si cambias esto, tendrás que responder de nuevo{' '}
         {confirmEdicion.posterioresCount === 1
@@ -177,7 +177,7 @@ export function useGinaEditor({
           className="flex-1 py-2 rounded-xl text-xs font-medium border transition-brand cursor-pointer"
           style={{
             borderColor: 'var(--color-laton)',
-            color: 'var(--color-granito)',
+            color: 'var(--dz-ink)',
             backgroundColor: 'var(--color-sobre-laton)',
           }}
         >

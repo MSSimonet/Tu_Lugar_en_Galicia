@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tu Lugar en Galicia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<style>
+  /* Unbounded (display geométrica, kinética) + Inter (UI). Modo claro/oscuro real
+     con custom properties + atributo data-theme, no un simple filtro invertido.
+     Video y fotos reales del proyecto (public/videos, public/images) — nada de
+     gradientes simulando fotografía. */
+  :root{
+    --bg:#F7F5F0; --bg-2:#EFEBE1; --ink:#16140F; --muted:#6B6558; --line:rgba(22,20,15,.12);
+    --surface:#FFFFFF; --accent:#E0932E; --accent-h:#C27A1F; --on-accent:#16140F;
+    --shadow: 0 16px 40px -18px rgba(22,20,15,.35);
+    --scrim: rgba(10,9,6,.5);
+  }
+  [data-theme="dark"]{
+    --bg:#0E0D0B; --bg-2:#17150F; --ink:#F3EFE4; --muted:#9C9484; --line:rgba(243,239,228,.12);
+    --surface:#1B1913; --accent:#F0A94A; --accent-h:#F5BE72; --on-accent:#0E0D0B;
+    --shadow: 0 16px 40px -18px rgba(0,0,0,.6);
+    --scrim: rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:auto;}
+  body{background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; margin:0; overflow-x:hidden; transition:background-color .4s ease, color .4s ease;}
+  h1,h2,h3{font-family:'Unbounded',sans-serif; margin:0;}
+  a{color:inherit;}
+  img,video{max-width:100%; display:block;}
+  .wrap{max-width:1360px; margin:0 auto; padding-left:5vw; padding-right:5vw;}
+
+  /* ── Header + toggle de tema ─────────────────────────────────────────── */
+  header{position:fixed; top:0; left:0; right:0; z-index:80; padding:1.3rem 0; transition:background-color .4s ease, border-color .4s ease;}
+  header.scrolled{background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(12px); border-bottom:1px solid var(--line);}
+  .header-row{display:flex; align-items:center; justify-content:space-between;}
+  .logo{font-family:'Unbounded',sans-serif; font-weight:700; font-size:1rem; letter-spacing:-.01em;}
+  .logo span{color:var(--accent);}
+  nav{display:flex; align-items:center; gap:2rem;}
+  nav a{font-size:.86rem; font-weight:500; text-decoration:none; opacity:.75; transition:opacity .2s ease;}
+  nav a:hover{opacity:1;}
+  .theme-toggle{
+    width:38px; height:38px; border-radius:999px; border:1px solid var(--line); background:var(--surface);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1rem; transition:border-color .2s ease, transform .3s ease;
+  }
+  .theme-toggle:hover{transform:rotate(20deg);}
+  .nav-cta{background:var(--accent); color:var(--on-accent); padding:.6rem 1.2rem; border-radius:999px; font-size:.85rem; font-weight:700; text-decoration:none; transition:background-color .2s ease, transform .15s ease;}
+  .nav-cta:hover{background:var(--accent-h); transform:translateY(-1px);}
+
+  /* ── Hero con video real + texto kinético ────────────────────────────── */
+  .hero{position:relative; height:100svh; display:flex; align-items:flex-end; overflow:hidden;}
+  .hero video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+  .hero-scrim{position:absolute; inset:0; background:linear-gradient(180deg, var(--scrim) 0%, rgba(10,9,6,.2) 40%, rgba(10,9,6,.75) 100%);}
+  .hero-inner{position:relative; z-index:2; width:100%; padding-bottom:4.5rem; color:#F3EFE4;}
+  .hero-eyebrow{display:inline-flex; align-items:center; gap:.5rem; font-size:.78rem; font-weight:600; letter-spacing:.06em; background:rgba(255,255,255,.12); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.2); padding:.45rem .9rem; border-radius:999px; margin-bottom:1.4rem; overflow:hidden;}
+  .hero h1{font-size:clamp(2.4rem,6.4vw,5.4rem); line-height:1.02; font-weight:700; max-width:14ch; letter-spacing:-.01em;}
+  .hero h1 .word{display:inline-block; overflow:hidden; vertical-align:top;}
+  .hero h1 .word span{display:inline-block; transform:translateY(110%);}
+  .hero h1 .accent{color:var(--accent);}
+  .hero p.lead{font-size:1.08rem; color:rgba(243,239,228,.82); max-width:46ch; margin:1.5rem 0 2.1rem; line-height:1.6; opacity:0;}
+  .hero-actions{display:flex; align-items:center; gap:1.4rem; flex-wrap:wrap; opacity:0;}
+  .btn-primary{background:var(--accent); color:var(--on-accent); font-weight:700; font-size:.95rem; padding:1rem 1.9rem; border-radius:999px; text-decoration:none; box-shadow:var(--shadow); transition:background-color .2s ease, transform .2s ease;}
+  .btn-primary:hover{background:var(--accent-h); transform:translateY(-2px);}
+  .hero-alt{font-size:.88rem; color:rgba(243,239,228,.7);}
+  .hero-alt a{text-decoration:underline; text-underline-offset:3px;}
+  .scroll-cue{position:absolute; bottom:1.6rem; right:5vw; z-index:2; display:flex; flex-direction:column; align-items:center; gap:.5rem; color:rgba(243,239,228,.75); font-size:.72rem; letter-spacing:.08em;}
+  .scroll-cue .line{width:1px; height:34px; background:rgba(243,239,228,.5); overflow:hidden; position:relative;}
+  .scroll-cue .line::after{content:''; position:absolute; top:-100%; left:0; width:100%; height:100%; background:var(--accent); animation:cue 1.8s ease-in-out infinite;}
+  @keyframes cue{0%{top:-100%;} 60%{top:100%;} 100%{top:100%;}}
+
+  /* ── Marcador con contador animado ────────────────────────────────────── */
+  .marcador{padding:3.4rem 0; border-bottom:1px solid var(--line);}
+  .marcador-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem;}
+  .marcador .n{font-family:'Unbounded',sans-serif; font-weight:700; font-size:clamp(1.6rem,3vw,2.4rem); color:var(--accent); font-variant-numeric:tabular-nums;}
+  .marcador .l{font-size:.8rem; color:var(--muted); margin-top:.3rem;}
+
+  section{padding:6.5rem 0;}
+  .section-head{max-width:640px; margin-bottom:2.8rem;}
+  .eyebrow{font-size:.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:.9rem;}
+  .section-head h2{font-size:clamp(1.7rem,3vw,2.4rem); font-weight:600; line-height:1.2;}
+
+  /* ── Ciudades: pin + scroll horizontal con video real al hover ──────── */
+  .ciudades-pin{overflow:hidden;}
+  .ciudades-track{display:flex; gap:1.6rem; width:max-content; padding-right:5vw;}
+  .ciudad-card{
+    position:relative; width:min(74vw,420px); aspect-ratio:3/4; border-radius:20px; overflow:hidden;
+    background:var(--bg-2); box-shadow:var(--shadow); flex:0 0 auto;
+  }
+  .ciudad-card img, .ciudad-card video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+  .ciudad-card video{opacity:0; transition:opacity .5s ease;}
+  .ciudad-card:hover video{opacity:1;}
+  .ciudad-card:hover img{opacity:0;}
+  .ciudad-scrim{position:absolute; inset:0; background:linear-gradient(0deg, rgba(10,9,6,.82) 0%, transparent 55%); z-index:2;}
+  .ciudad-info{position:absolute; left:0; right:0; bottom:0; z-index:3; padding:1.6rem; color:#F3EFE4;}
+  .ciudad-info .tag{font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-h); font-weight:600;}
+  .ciudad-info h3{font-family:'Unbounded',sans-serif; font-size:1.5rem; margin:.4rem 0 .3rem;}
+  .ciudad-info p{font-size:.84rem; color:rgba(243,239,228,.8); margin:0;}
+  .ciudad-play{position:absolute; top:1.2rem; right:1.2rem; z-index:3; width:34px; height:34px; border-radius:999px; background:rgba(255,255,255,.15); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; color:#fff; font-size:.75rem;}
+
+  /* ── Muro de llaves: marquee real con fotos reales ───────────────────── */
+  .muro{overflow:hidden; -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);}
+  .muro-track{display:flex; gap:1rem; width:max-content;}
+  .muro-track img{width:180px; height:180px; object-fit:cover; border-radius:14px; flex:0 0 auto;}
+
+  /* ── Testimonio ───────────────────────────────────────────────────────── */
+  .testi{background:var(--bg-2); border-radius:24px; padding:3.5rem 4vw; text-align:center;}
+  .testi p{font-family:'Unbounded',sans-serif; font-weight:500; font-size:clamp(1.2rem,2.2vw,1.7rem); line-height:1.5; max-width:34ch; margin:0 auto 1.3rem;}
+  .testi cite{font-size:.84rem; color:var(--muted); font-style:normal;}
+
+  /* ── Cómo funciona: línea que se dibuja ──────────────────────────────── */
+  .pasos{position:relative; display:grid; grid-template-columns:repeat(3,1fr); gap:2.5rem;}
+  .pasos-linea{position:absolute; top:14px; left:0; right:0; height:2px; background:var(--line); z-index:0;}
+  .pasos-linea-fill{position:absolute; top:0; left:0; height:100%; width:0%; background:var(--accent);}
+  .paso{position:relative; z-index:1;}
+  .paso .dot{width:30px; height:30px; border-radius:999px; background:var(--surface); border:2px solid var(--accent); color:var(--accent); font-family:'Unbounded',sans-serif; font-size:.78rem; font-weight:700; display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem;}
+  .paso h3{font-size:1.15rem; font-weight:600; margin-bottom:.5rem;}
+  .paso p{font-size:.9rem; color:var(--muted); margin:0; line-height:1.55;}
+
+  .cta-final{text-align:center; background:var(--ink); color:var(--bg); border-radius:28px; margin:0 5vw; padding:5.5rem 4vw;}
+  [data-theme="dark"] .cta-final{background:var(--surface);}
+  .cta-final h2{max-width:18ch; margin:0 auto 1.8rem; font-size:clamp(1.8rem,3.2vw,2.6rem);}
+  .cta-final .btn-primary{box-shadow:none;}
+
+  footer{padding:2.4rem 0; display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; font-size:.82rem; color:var(--muted); border-top:1px solid var(--line); margin-top:2rem;}
+
+  .gina-bubble{
+    position:fixed; bottom:24px; right:24px; z-index:70; width:56px; height:56px; border-radius:999px;
+    background:var(--accent); color:var(--on-accent); display:flex; align-items:center; justify-content:center;
+    font-family:'Unbounded',sans-serif; font-weight:700; cursor:pointer; box-shadow:var(--shadow); border:none;
+    transition:transform .25s ease;
+  }
+  .gina-bubble:hover{transform:scale(1.08);}
+
+  @media (max-width:860px){
+    .marcador-grid{grid-template-columns:repeat(2,1fr); row-gap:1.8rem;}
+    .pasos{grid-template-columns:1fr; gap:2rem;}
+    .pasos-linea{display:none;}
+    nav a:not(.nav-cta):not(.theme-toggle){display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header id="site-header">
+  <div class="wrap header-row">
+    <div class="logo">Tu Lugar en <span>Galicia</span></div>
+    <nav>
+      <a href="#ciudades">Ciudades</a>
+      <a href="#funciona">Cómo funciona</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Cambiar a modo oscuro">🌙</button>
+      <a href="#" class="nav-cta">Cuéntale tu caso a Gina</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <video autoplay muted loop playsinline poster="../../public/images/home/hero-lanzada-poster.jpg">
+    <source src="../../public/videos/hero-lanzada.mp4" type="video/mp4" />
+  </video>
+  <div class="hero-scrim"></div>
+  <div class="wrap hero-inner">
+    <span class="hero-eyebrow">Relocation especializado en Galicia</span>
+    <h1 id="hero-h1">Tu nueva vida en Galicia empieza con una <span class="accent">puerta abierta</span>.</h1>
+    <p class="lead" id="hero-lead">Gestionamos todo el proceso a distancia, con honestidad y criterio profesional, para que tu única tarea al llegar sea abrir tu puerta.</p>
+    <div class="hero-actions" id="hero-actions">
+      <a href="#" class="btn-primary">Cuéntale tu caso a Gina</a>
+      <span class="hero-alt">¿Preferís escribirlo? <a href="#">Completá el formulario</a></span>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>SCROLL</span><div class="line"></div></div>
+</section>
+
+<div class="marcador">
+  <div class="wrap marcador-grid">
+    <div><div class="n" data-count="200" data-suffix="+">0</div><div class="l">familias reubicadas</div></div>
+    <div><div class="n" data-count="5">0</div><div class="l">ciudades activas</div></div>
+    <div><div class="n" data-count="72" data-suffix="h">0</div><div class="l">tiempo medio de respuesta</div></div>
+    <div><div class="n" data-count="98" data-suffix="%">0</div><div class="l">recomienda el servicio</div></div>
+  </div>
+</div>
+
+<section id="ciudades">
+  <div class="wrap section-head">
+    <p class="eyebrow">Cinco ciudades activas</p>
+    <h2>Pasá el cursor sobre cada ciudad — cobra vida.</h2>
+  </div>
+  <div class="ciudades-pin">
+    <div class="ciudades-track wrap" id="ciudades-track">
+      <article class="ciudad-card">
+        <img src="../../public/images/ciudades/card_coruna.jpg" alt="A Coruña" loading="lazy" />
+        <video src="../../public/videos/coruna.mp4" muted loop playsinline preload="none"></video>
+        <div class="ciudad-scrim"></div>
+        <div class="ciudad-play">▶</div>
+        <div class="ciudad-info"><span class="tag">Litoral · Atlántico</span><h3>A Coruña</h3><p>38 familias reubicadas · alquiler medio 720€</p></div>
+      </article>
+      <article class="ciudad-card">
+        <img src="../../public/images/ciudades/card_vigo.jpg" alt="Vigo" loading="lazy" />
+        <video src="../../public/videos/Vigo.mp4" muted loop playsinline preload="none"></video>
+        <div class="ciudad-scrim"></div>
+        <div class="ciudad-play">▶</div>
+        <div class="ciudad-info"><span class="tag">Industrial · Ría</span><h3>Vigo</h3><p>52 familias reubicadas · alquiler medio 690€</p></div>
+      </article>
+      <article class="ciudad-card">
+        <img src="../../public/images/ciudades/card_santiago.jpg" alt="Santiago de Compostela" loading="lazy" />
+        <video src="../../public/videos/Santiago.mp4" muted loop playsinline preload="none"></video>
+        <div class="ciudad-scrim"></div>
+        <div class="ciudad-play">▶</div>
+        <div class="ciudad-info"><span class="tag">Histórica · Interior</span><h3>Santiago</h3><p>29 familias reubicadas · alquiler medio 650€</p></div>
+      </article>
+      <article class="ciudad-card">
+        <img src="../../public/images/ciudades/card_lugo.jpg" alt="Lugo" loading="lazy" />
+        <video src="../../public/videos/Lugo.mp4" muted loop playsinline preload="none"></video>
+        <div class="ciudad-scrim"></div>
+        <div class="ciudad-play">▶</div>
+        <div class="ciudad-info"><span class="tag">Interior · Amurallada</span><h3>Lugo</h3><p>11 familias reubicadas · alquiler medio 590€</p></div>
+      </article>
+      <article class="ciudad-card">
+        <img src="../../public/images/ciudades/card_pontevedra.jpg" alt="Pontevedra" loading="lazy" />
+        <video src="../../public/videos/Pontevedra.mp4" muted loop playsinline preload="none"></video>
+        <div class="ciudad-scrim"></div>
+        <div class="ciudad-play">▶</div>
+        <div class="ciudad-info"><span class="tag">Litoral · Ría</span><h3>Pontevedra</h3><p>14 familias reubicadas · alquiler medio 610€</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section aria-label="Muro de llaves">
+  <div class="wrap section-head">
+    <p class="eyebrow">Muro de llaves</p>
+    <h2>Cada llave es una familia que ya llegó.</h2>
+  </div>
+  <div class="muro">
+    <div class="muro-track" id="muro-track">
+      <img src="../../public/images/llaves/llaves1.jpg" alt="" loading="lazy" />
+      <img src="../../public/images/llaves/llaves2.jpg" alt="" loading="lazy" />
+      <img src="../../public/images/llaves/llaves3.jpg" alt="" loading="lazy" />
+      <img src="../../public/images/llaves/llaves4.jpg" alt="" loading="lazy" />
+      <img src="../../public/images/llaves/llaves5.jpg" alt="" loading="lazy" />
+      <img src="../../public/images/llaves/llaves6.jpg" alt="" loading="lazy" />
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="testi">
+      <p>"Nos dijo qué zona no nos convenía antes de que gastáramos en el pasaje. Eso no lo hace cualquiera."</p>
+      <cite>— familia reubicada en A Coruña, 2026</cite>
+    </div>
+  </div>
+</section>
+
+<section id="funciona">
+  <div class="wrap">
+    <div class="section-head"><p class="eyebrow">Cómo funciona</p><h2>Tres pasos, en ese orden.</h2></div>
+    <div class="pasos">
+      <div class="pasos-linea"><div class="pasos-linea-fill" id="pasos-fill"></div></div>
+      <div class="paso"><div class="dot">01</div><h3>Contás tu caso</h3><p>Seis preguntas con Gina, sin formulario eterno.</p></div>
+      <div class="paso"><div class="dot">02</div><h3>Silvana revisa lo real</h3><p>Descarta lo que no te conviene antes de mostrártelo.</p></div>
+      <div class="paso"><div class="dot">03</div><h3>Videollamada</h3><p>25 minutos, agenda real de Silvana, no un bot.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="cta-final">
+      <p class="eyebrow" style="justify-content:center; display:flex;">Empezá hoy</p>
+      <h2>Tu hogar en Galicia está a una conversación.</h2>
+      <a href="#" class="btn-primary">Cuéntale tu caso a Gina</a>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <span>Tu Lugar en Galicia</span>
+  <span>Política de privacidad · Contacto</span>
+</footer>
+
+<button class="gina-bubble" type="button" aria-label="Abrir chat con Gina">G</button>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* Scroll suave real (Lenis) sincronizado con GSAP ScrollTrigger */
+  const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+
+  /* Modo claro/oscuro real, persistido, respeta preferencia del sistema al inicio */
+  const root = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+  const saved = localStorage.getItem('tlg-theme-demo');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (saved === 'dark' || (!saved && prefersDark)) { root.setAttribute('data-theme','dark'); toggle.textContent='🌙'; }
+  toggle.addEventListener('click', () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    toggle.textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('tlg-theme-demo', isDark ? 'light' : 'dark');
+  });
+
+  /* Header: fondo al hacer scroll */
+  const header = document.getElementById('site-header');
+  ScrollTrigger.create({ start: 40, onUpdate: (self) => header.classList.toggle('scrolled', self.scroll() > 40) });
+
+  /* Hero: texto kinético palabra por palabra */
+  const h1 = document.getElementById('hero-h1');
+  h1.innerHTML = h1.innerHTML.split(/(<span class="accent">.*?<\/span>|\s+)/).filter(Boolean).map(part => {
+    if (part.trim() === '' || part.startsWith('<span')) return part;
+    return `<span class="word"><span>${part}</span></span>`;
+  }).join(' ');
+  gsap.timeline({ delay: .3 })
+    .to('#hero-h1 .word span', { y: '0%', duration: 1, ease: 'power4.out', stagger: .045 })
+    .to('#hero-lead', { opacity: 1, duration: .8, ease: 'power2.out' }, '-=.5')
+    .to('#hero-actions', { opacity: 1, duration: .8, ease: 'power2.out' }, '-=.6');
+
+  /* Marcador: contador animado al entrar en viewport */
+  document.querySelectorAll('.marcador .n').forEach(el => {
+    const target = +el.dataset.count;
+    const suffix = el.dataset.suffix || '';
+    ScrollTrigger.create({
+      trigger: el, start: 'top 88%', once: true,
+      onEnter: () => gsap.to(el, {
+        innerText: target, duration: 1.4, ease: 'power2.out', snap: { innerText: 1 },
+        onUpdate: function(){ el.textContent = Math.round(this.targets()[0].innerText) + suffix; }
+      })
+    });
+  });
+
+  /* Ciudades: pin + scroll horizontal (desktop) */
+  const track = document.getElementById('ciudades-track');
+  function setupHorizontal(){
+    ScrollTrigger.getAll().forEach(st => { if (st.vars.id === 'ciudades-pin') st.kill(); });
+    if (window.innerWidth < 860) return;
+    const scrollDist = track.scrollWidth - window.innerWidth + window.innerWidth * .1;
+    gsap.to(track, {
+      x: -scrollDist, ease: 'none',
+      scrollTrigger: { id:'ciudades-pin', trigger:'.ciudades-pin', start:'top top', end:() => '+=' + scrollDist, scrub:1, pin:true, invalidateOnRefresh:true }
+    });
+  }
+  setupHorizontal();
+  window.addEventListener('resize', () => { ScrollTrigger.refresh(); });
+
+  /* Ciudades: reproducir/pausar video real al hover */
+  document.querySelectorAll('.ciudad-card').forEach(card => {
+    const v = card.querySelector('video');
+    card.addEventListener('mouseenter', () => { v.play().catch(()=>{}); });
+    card.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
+  });
+
+  /* Muro de llaves: marquee continuo con fotos reales, se pausa al pasar el mouse */
+  const muroTrack = document.getElementById('muro-track');
+  muroTrack.innerHTML += muroTrack.innerHTML;
+  const muroTween = gsap.to(muroTrack, { x: () => -(muroTrack.scrollWidth / 2), duration: 22, ease: 'none', repeat: -1 });
+  muroTrack.parentElement.addEventListener('mouseenter', () => muroTween.pause());
+  muroTrack.parentElement.addEventListener('mouseleave', () => muroTween.play());
+
+  /* Pasos: línea que se dibuja al hacer scroll */
+  ScrollTrigger.create({
+    trigger: '.pasos', start: 'top 70%', end: 'bottom 80%', scrub: 1,
+    onUpdate: (self) => { document.getElementById('pasos-fill').style.width = (self.progress * 100) + '%'; }
+  });
+
+  /* Reveal genérico para testimonio y CTA */
+  gsap.utils.toArray('.testi, .cta-final').forEach(el => {
+    gsap.fromTo(el, { opacity:0, y:24 }, { opacity:1, y:0, duration:.9, ease:'power2.out', scrollTrigger:{ trigger:el, start:'top 85%' } });
+  });
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gsap.set('#hero-h1 .word span, #hero-lead, #hero-actions, .testi, .cta-final', { opacity:1, y:0 });
+    document.querySelectorAll('.hero video, .ciudad-card video').forEach(v => v.pause());
+  }
+</script>
+</body>
+</html>

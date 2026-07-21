@@ -13,18 +13,16 @@ interface ButtonProps extends Omit<ComponentProps<typeof motion.button>, "ref"> 
   className?: string;
 }
 
-// Pedra e Ouro — mismos tokens que ya usa el resto del sitio en el CTA dorado
-// (antes esta variante usaba --color-laton, un sistema distinto que nadie más
-// usa; por eso ningún CTA real llamaba a este componente).
+// Deslumbrante — mismos tokens que ya usa el resto del sitio en el CTA dorado.
 const variantClasses: Record<Variant, string> = {
   primario:
-    "bg-[var(--po-ouro)] [color:var(--po-ouro-ink)] hover:bg-[var(--po-ouro-hover)] " +
+    "bg-[var(--dz-accent)] [color:var(--dz-accent-ink)] hover:bg-[var(--dz-accent-hover)] " +
     "tracking-[var(--tracking-ui)] uppercase",
   secundario:
-    "bg-[var(--po-pedra)] [color:var(--po-luz)] hover:bg-[color-mix(in_srgb,var(--po-pedra)_85%,black)]",
+    "bg-[var(--dz-ink)] [color:var(--dz-luz)] hover:bg-[color-mix(in_srgb,var(--dz-ink)_85%,black)]",
   fantasma:
-    "border border-[var(--po-ouro)] [color:var(--po-ouro-text)] " +
-    "hover:bg-[var(--po-ouro-text)] hover:[color:var(--po-luz)]",
+    "border border-[var(--dz-accent)] [color:var(--dz-accent-text)] " +
+    "hover:bg-[var(--dz-accent-text)] hover:[color:var(--dz-luz)]",
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -46,9 +44,9 @@ export function Button({
       whileTap={{ scale: 0.98, y: 0, transition: { duration: 0.1, ease: BRAND_EASE } }}
       {...props}
       className={[
-        "inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium",
+        "inline-flex items-center justify-center font-[family-name:var(--font-dz-ui)] font-medium",
         "rounded-[var(--radius-pill)] transition-colors duration-200 ease-in-out",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--po-ouro)]",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]",
         "disabled:opacity-60 disabled:cursor-not-allowed disabled:pointer-events-none",
         variantClasses[variant],
         sizeClasses[size],

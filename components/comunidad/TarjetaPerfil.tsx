@@ -36,22 +36,22 @@ export function TarjetaPerfil({ perfil }: TarjetaPerfilProps) {
             width={48}
             height={48}
             className="h-12 w-12 shrink-0 rounded-full object-cover"
-            style={{ border: '1px solid var(--po-borde)' }}
+            style={{ border: '1px solid var(--dz-borde)' }}
           />
         ) : (
           <div
             aria-hidden="true"
             className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
-            style={{ backgroundColor: 'var(--po-areia)', border: '1px solid var(--po-borde)' }}
+            style={{ backgroundColor: 'var(--dz-papel)', border: '1px solid var(--dz-borde)' }}
           >
-            <span style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-ouro-text)' }}>
+            <span style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}>
               {iniciales(perfil.nombre)}
             </span>
           </div>
         )}
         <p
           className="[font-size:var(--text-sm)] leading-tight"
-          style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, color: 'var(--po-pedra)' }}
+          style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-ink)' }}
         >
           {perfil.nombre}
         </p>
@@ -64,11 +64,11 @@ export function TarjetaPerfil({ perfil }: TarjetaPerfilProps) {
               key={actividad}
               className="[font-size:var(--text-xs)] px-2 py-0.5"
               style={{
-                fontFamily: 'var(--font-lato)',
-                color: 'var(--po-muted)',
-                backgroundColor: 'var(--po-areia)',
-                border: '1px solid var(--po-borde)',
-                borderRadius: '4px',
+                fontFamily: 'var(--font-dz-ui)',
+                color: 'var(--dz-muted)',
+                backgroundColor: 'var(--dz-papel)',
+                border: '1px solid var(--dz-borde)',
+                borderRadius: '8px',
               }}
             >
               {ACTIVIDADES.find((a) => a.id === actividad)?.label ?? actividad}
@@ -84,11 +84,11 @@ export function TarjetaPerfil({ perfil }: TarjetaPerfilProps) {
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center px-3 py-2 font-bold [font-size:var(--text-xs)] uppercase tracking-[0.08em] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
           style={{
-            fontFamily: 'var(--font-lato)',
-            borderRadius: '4px',
-            backgroundColor: 'var(--po-ouro)',
+            fontFamily: 'var(--font-dz-ui)',
+            borderRadius: '8px',
+            backgroundColor: 'var(--dz-accent)',
             color: '#1A1410',
-            outlineColor: 'var(--po-ouro)',
+            outlineColor: 'var(--dz-accent)',
           }}
         >
           Escribir por WhatsApp
@@ -102,12 +102,12 @@ export function TarjetaPerfil({ perfil }: TarjetaPerfilProps) {
           aria-expanded={mostrarForm}
           className="inline-flex items-center justify-center px-3 py-2 font-bold [font-size:var(--text-xs)] uppercase tracking-[0.08em] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
           style={{
-            fontFamily: 'var(--font-lato)',
-            borderRadius: '4px',
+            fontFamily: 'var(--font-dz-ui)',
+            borderRadius: '8px',
             backgroundColor: 'transparent',
-            border: '1px solid var(--po-borde)',
-            color: 'var(--po-pedra)',
-            outlineColor: 'var(--po-ouro)',
+            border: '1px solid var(--dz-borde)',
+            color: 'var(--dz-ink)',
+            outlineColor: 'var(--dz-accent)',
           }}
         >
           Enviar mensaje privado

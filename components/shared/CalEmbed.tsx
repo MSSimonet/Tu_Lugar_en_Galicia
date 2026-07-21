@@ -111,20 +111,20 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
           !
         </span>
         <p
-          className="font-[family-name:var(--font-titular)]"
-          style={{ fontSize: 'var(--text-lg)', color: 'var(--color-granito)' }}
+          className="font-[family-name:var(--font-dz-display)]"
+          style={{ fontSize: 'var(--text-lg)', color: 'var(--dz-ink)' }}
         >
           El calendario no cargó
         </p>
         <p
-          className="font-[family-name:var(--font-ui)] max-w-sm"
-          style={{ fontSize: 'var(--text-sm)', color: 'var(--color-pizarra)', lineHeight: 1.5 }}
+          className="font-[family-name:var(--font-dz-ui)] max-w-sm"
+          style={{ fontSize: 'var(--text-sm)', color: 'var(--dz-muted)', lineHeight: 1.5 }}
         >
           A veces pasa. Escríbenos por el formulario de contacto y coordinamos tu llamada a mano.
         </p>
         <a
           href="/contacto"
-          className="mt-[var(--space-2)] inline-flex items-center gap-2 rounded-[var(--radius-pill)] font-[family-name:var(--font-ui)] font-bold uppercase tracking-[var(--tracking-ui)] transition-colors duration-150"
+          className="mt-[var(--space-2)] inline-flex items-center gap-2 rounded-[var(--radius-pill)] font-[family-name:var(--font-dz-ui)] font-bold uppercase tracking-[var(--tracking-ui)] transition-colors duration-150"
           style={{
             background: 'var(--color-laton)',
             color: 'var(--color-blanco)',

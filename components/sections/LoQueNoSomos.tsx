@@ -1,5 +1,8 @@
 'use client'
 
+import { motion } from 'motion/react'
+import { staggerContainer, fadeUp } from '@/lib/motion/variants'
+
 export default function LoQueNoSomos() {
   const cards = [
     {
@@ -21,42 +24,46 @@ export default function LoQueNoSomos() {
       <style>{`
         .lqns-section {
           padding: 48px 80px 52px;
-          --lqns-bg:            var(--po-areia);
-          --lqns-card-bg:       var(--po-luz);
-          --lqns-card-border:   var(--po-borde);
-          --lqns-card-hover-bg: var(--po-areia);
-          --lqns-accent:        var(--po-ouro);
-          --lqns-accent-hover:  var(--po-ouro-hover);
-          --lqns-num:           var(--po-ouro-text);
-          --lqns-title:         var(--po-pedra);
-          --lqns-body:          var(--po-muted);
-          --lqns-em:            var(--po-ouro-text);
-          --lqns-badge-text:    var(--po-muted);
-          --lqns-badge-border:  var(--po-borde);
-          --lqns-dot:           var(--po-ouro);
+          --lqns-bg:            var(--dz-papel);
+          --lqns-card-bg:       var(--dz-luz);
+          --lqns-card-border:   var(--dz-borde);
+          --lqns-card-hover-bg: var(--dz-papel);
+          --lqns-accent:        var(--dz-accent);
+          --lqns-accent-hover:  var(--dz-accent-hover);
+          --lqns-num:           var(--dz-accent-text);
+          --lqns-title:         var(--dz-ink);
+          --lqns-body:          var(--dz-muted);
+          --lqns-em:            var(--dz-accent-text);
+          --lqns-badge-text:    var(--dz-muted);
+          --lqns-badge-border:  var(--dz-borde);
+          --lqns-dot:           var(--dz-accent);
         }
 
         .lqns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 
         @media (max-width: 640px) {
-          .lqns-section { padding: 32px 24px 36px; }
+          .lqns-section { padding: var(--space-8) var(--space-6) 36px; }
           .lqns-grid   { grid-template-columns: 1fr; }
         }
       `}</style>
 
       <section
         className="lqns-section"
-        style={{ background: 'var(--lqns-bg)', fontFamily: 'var(--font-lato)' }}
+        style={{ background: 'var(--lqns-bg)', fontFamily: 'var(--font-dz-ui)' }}
       >
         {/* ── Cabecera ── */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '26px' }}>
+          {/* 34px — con 44px superaba al H1 de /como-funciona (38px) e invertía la
+              jerarquía de la página (auditoría 2026-07-19, A2.3) */}
           <h2 style={{
-            fontFamily: 'var(--font-playfair)',
-            fontSize: '44px', fontWeight: 900, color: 'var(--lqns-title)',
+            fontFamily: 'var(--font-dz-display)',
+            fontSize: '34px', fontWeight: 900, color: 'var(--lqns-title)',
             lineHeight: 1.1, margin: 0, letterSpacing: '-0.01em',
           }}>
             Lo que{' '}
-            <em style={{ fontStyle: 'italic', color: 'var(--lqns-em)' }}>no</em>
+            {/* font-dz-display no tiene itálica cargada (ver DESIGN.md §3) — itálica real
+                explícita en Playfair para este acento, no una oblicua sintetizada */}
+            <em style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic', color: 'var(--lqns-em)' }}>no</em>
             {' '}somos
           </h2>
 
@@ -78,11 +85,19 @@ export default function LoQueNoSomos() {
         </div>
 
         {/* ── Grid de cards ── */}
-        <div className="lqns-grid">
+        <motion.div
+          className="lqns-grid"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {cards.map((card, i) => (
-            <Card key={i} {...card} />
+            <motion.div key={i} variants={fadeUp}>
+              <Card {...card} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
     </>
   )
@@ -95,6 +110,9 @@ function Card({ title, body }: { title: string; body: string }) {
         background: 'var(--lqns-card-bg)',
         border: '0.5px solid var(--lqns-card-border)',
         borderLeft: '3px solid var(--lqns-accent)',
+        // Radio solo en las esquinas derechas — el borde izquierdo de acento queda a
+        // escuadra a propósito, redondearlo completo chocaría con esa barra.
+        borderRadius: '0 var(--dz-radius-card) var(--dz-radius-card) 0',
         padding: '22px 24px 26px',
         transition: 'border-left-color 220ms ease, background 220ms ease',
       }}
@@ -114,7 +132,7 @@ function Card({ title, body }: { title: string; body: string }) {
       }}
     >
       <span style={{
-        fontFamily: 'var(--font-lato)',
+        fontFamily: 'var(--font-dz-ui)',
         fontSize: '10px', fontWeight: 700, color: 'var(--lqns-num)',
         letterSpacing: '0.16em', display: 'block', marginBottom: '10px',
       }}>
@@ -122,7 +140,7 @@ function Card({ title, body }: { title: string; body: string }) {
       </span>
 
       <h3 style={{
-        fontFamily: 'var(--font-playfair)',
+        fontFamily: 'var(--font-dz-display)',
         fontSize: '24px', fontWeight: 700, color: 'var(--lqns-title)',
         lineHeight: 1.2, margin: '0 0 14px 0', letterSpacing: '0.01em',
       }}>
@@ -138,7 +156,7 @@ function Card({ title, body }: { title: string; body: string }) {
       />
 
       <p style={{
-        fontFamily: 'var(--font-lato)',
+        fontFamily: 'var(--font-dz-ui)',
         fontSize: '14px', fontWeight: 400, color: 'var(--lqns-body)',
         lineHeight: 1.85, margin: 0,
       }}>

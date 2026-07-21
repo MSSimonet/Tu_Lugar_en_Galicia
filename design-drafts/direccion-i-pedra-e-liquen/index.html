@@ -1,0 +1,134 @@
+<title>Pedra e Liquen — Dirección I</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,wght@0,500;0,600;1,500&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --pl-pedra:#8C877D;
+    --pl-pedra-clara:#D8D4C8;
+    --pl-liquen:#8FA662;
+    --pl-liquen-hover:#728A49;
+    --pl-tinta:#2B2A26;
+    --pl-branco:#FAF9F6;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--pl-branco); color:var(--pl-tinta); font-family:'Public Sans',sans-serif; margin:0;}
+  .font-display{font-family:'Literata',serif;}
+  .eyebrow{font-family:'Public Sans',sans-serif; font-weight:600; font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--pl-liquen-hover);}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(250,249,246,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--pl-pedra-clara); padding:24px 6vw; display:flex; align-items:center; justify-content:space-between;}
+  .logo-mark{font-family:'Literata',serif; font-weight:600; font-size:1.15rem; color:var(--pl-tinta); letter-spacing:.01em;}
+  .logo-mark span{color:var(--pl-liquen-hover);}
+  nav a{font-size:.8rem; letter-spacing:.04em; font-weight:500; color:var(--pl-pedra); text-decoration:none; margin-left:2.2rem; transition:color .3s ease;}
+  nav a:hover{color:var(--pl-tinta);}
+
+  .hero{position:relative; padding:8rem 6vw 6.5rem; background:var(--pl-branco);}
+  .hero-content{max-width:700px;}
+  .hero h1{font-family:'Literata',serif; font-weight:500; font-size:clamp(2.2rem,4.8vw,4rem); line-height:1.22; margin:.9rem 0 1.6rem; color:var(--pl-tinta); letter-spacing:-.01em;}
+  .hero h1 em{font-style:italic; color:var(--pl-liquen-hover);}
+  .hero p.lead{font-size:1.08rem; max-width:50ch; line-height:1.7; color:var(--pl-pedra); margin-bottom:2.3rem;}
+  .btn-primary{display:inline-flex; align-items:center; gap:.6rem; background:var(--pl-tinta); color:var(--pl-branco); font-weight:500; font-size:.92rem; padding:.9rem 1.7rem; border-radius:2px; text-decoration:none; transition:background-color .35s ease;}
+  .btn-primary:hover{background:var(--pl-liquen-hover);}
+  .btn-secondary{display:inline-flex; align-items:center; gap:.5rem; color:var(--pl-pedra); font-weight:500; font-size:.86rem; text-decoration:none; margin-left:1.6rem; border-bottom:1px solid var(--pl-pedra-clara); padding-bottom:3px;}
+  .hero-rule{width:48px; height:2px; background:var(--pl-liquen); margin-bottom:1.4rem;}
+
+  .section{padding:6.5rem 6vw;}
+  .section-head{max-width:600px; margin-bottom:3.2rem;}
+  .section-head h2{font-family:'Literata',serif; font-weight:500; font-size:clamp(1.7rem,3vw,2.3rem); color:var(--pl-tinta); margin:.6rem 0 0;}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1px; background:var(--pl-pedra-clara); border:1px solid var(--pl-pedra-clara);}
+  .city-card{background:var(--pl-branco); overflow:hidden; transition:background-color .4s ease;}
+  .city-card:hover{background:#F3F1EA;}
+  .city-photo{height:190px; position:relative; background:linear-gradient(160deg, var(--pl-pedra-clara), var(--pl-pedra));}
+  .city-photo::after{content:''; position:absolute; inset:0; background:linear-gradient(0deg, rgba(143,166,98,.18), transparent 60%);}
+  .city-body{padding:1.5rem 1.6rem 1.9rem;}
+  .city-eyebrow{font-weight:600; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--pl-liquen-hover);}
+  .city-title{font-family:'Literata',serif; font-weight:500; font-size:1.4rem; color:var(--pl-tinta); margin:.4rem 0 .6rem;}
+  .city-meta{font-size:.85rem; color:var(--pl-pedra); line-height:1.55;}
+
+  .gina-bubble{position:fixed; bottom:26px; right:26px; z-index:60; width:56px; height:56px; border-radius:999px; background:var(--pl-branco); border:1px solid var(--pl-pedra-clara); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 10px 26px -10px rgba(43,42,38,.3);}
+  .gina-bubble .moss{width:9px; height:9px; border-radius:999px; background:var(--pl-liquen);}
+  .gina-panel{position:fixed; bottom:94px; right:26px; z-index:60; width:310px; max-width:88vw; background:var(--pl-branco); border:1px solid var(--pl-pedra-clara); overflow:hidden; box-shadow:0 30px 60px -20px rgba(43,42,38,.25); transform:translateY(10px); opacity:0; pointer-events:none;}
+  .gina-panel.open{transform:translateY(0); opacity:1; pointer-events:auto; transition:transform .5s cubic-bezier(.16,1,.3,1), opacity .35s ease;}
+  .gina-panel-head{background:var(--pl-tinta); color:var(--pl-branco); padding:.85rem 1.05rem; font-family:'Literata',serif; font-weight:500; display:flex; justify-content:space-between; align-items:center;}
+  .gina-panel-body{padding:1rem 1.1rem 1.2rem; font-size:.85rem;}
+  .gina-msg{background:#F3F1EA; border-radius:4px; padding:.7rem .85rem; margin-bottom:.55rem; color:var(--pl-tinta);}
+
+  .specimen{background:var(--pl-tinta); color:var(--pl-pedra-clara); padding:4rem 6vw;}
+  .swatches{display:flex; gap:1rem; flex-wrap:wrap; margin:1.4rem 0 2.2rem;}
+  .swatch{width:120px;}
+  .swatch-color{height:60px;}
+  .swatch small{font-size:.7rem; opacity:.7; display:block; margin-top:.4rem;}
+
+  .reveal{opacity:0; transform:translateY(14px);}
+</style>
+
+<header>
+  <div class="logo-mark">Tu Lugar en <span>Galicia</span></div>
+  <nav><a href="#ciudades">Ciudades</a><a href="#gina">Gina</a><a href="#specimen">Sistema</a></nav>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-rule"></div>
+    <div class="eyebrow">Relocation en silencio, sin ruido</div>
+    <h1>Tu hogar en Galicia, con la <em>calma</em> de la piedra.</h1>
+    <p class="lead">Sin promesas grandilocuentes. Cualificamos tu caso, te mostramos lo esencial y agendamos tu videollamada — nada más, nada menos.</p>
+    <a href="#" class="btn-primary">Agenda tu videollamada</a>
+    <a href="#ciudades" class="btn-secondary">Ver ciudades ↓</a>
+  </div>
+</section>
+
+<section class="section" id="ciudades">
+  <div class="section-head"><div class="eyebrow">05 ciudades activas</div><h2>Tu punto de partida.</h2></div>
+  <div class="cards">
+    <article class="city-card reveal"><div class="city-photo"></div><div class="city-body"><div class="city-eyebrow">Litoral · Atlántico</div><div class="city-title">A Coruña</div><div class="city-meta">+38 familias reubicadas · alquiler medio 2 hab. 720€</div></div></article>
+    <article class="city-card reveal"><div class="city-photo"></div><div class="city-body"><div class="city-eyebrow">Industrial · Ría</div><div class="city-title">Vigo</div><div class="city-meta">+52 familias reubicadas · alquiler medio 2 hab. 690€</div></div></article>
+    <article class="city-card reveal"><div class="city-photo"></div><div class="city-body"><div class="city-eyebrow">Interior · Histórica</div><div class="city-title">Santiago</div><div class="city-meta">+29 familias reubicadas · alquiler medio 2 hab. 650€</div></div></article>
+  </div>
+</section>
+
+<section class="section" id="gina" style="padding-top:0;">
+  <div class="section-head"><div class="eyebrow">Asistente de diagnóstico</div><h2>Gina, discreta, abajo a la derecha.</h2><p style="margin-top:.8rem; max-width:52ch; color:var(--pl-pedra);">Mockup de forma/color/animación — el contenido del chat es de relleno.</p></div>
+</section>
+
+<div class="gina-bubble" id="gina-bubble"><div class="moss"></div></div>
+<div class="gina-panel" id="gina-panel">
+  <div class="gina-panel-head"><span>Gina · Diagnóstico</span><span id="gina-close" style="cursor:pointer;">✕</span></div>
+  <div class="gina-panel-body">
+    <div class="gina-msg">Hola, soy Gina. Unas preguntas breves, sin vueltas.</div>
+    <div class="gina-msg">¿Cuántos adultos viajan con vos?</div>
+  </div>
+</div>
+
+<section class="specimen" id="specimen">
+  <div class="eyebrow" style="color:var(--pl-liquen);">Sistema — Pedra e Liquen</div>
+  <h2 class="font-display" style="font-size:1.7rem; margin:.6rem 0 0;">Paleta &amp; tipografía</h2>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:var(--pl-pedra);"></div><small>#8C877D pedra</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--pl-pedra-clara);"></div><small>#D8D4C8 pedra clara</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--pl-liquen);"></div><small>#8FA662 liquen</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--pl-branco);"></div><small>#FAF9F6 branco</small></div>
+  </div>
+  <p class="font-display" style="font-size:2.2rem; font-weight:500;">Literata — display</p>
+  <p style="font-size:1.15rem;">Public Sans — cuerpo y UI, 400/500/600/700</p>
+</section>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el, i) => {
+    gsap.to(el, { opacity:1, y:0, duration:.8, ease:'power1.out', delay:i*0.08, scrollTrigger:{ trigger:el, start:'top 90%' } });
+  });
+  const bubble = document.getElementById('gina-bubble');
+  const panel = document.getElementById('gina-panel');
+  bubble.addEventListener('click', () => panel.classList.toggle('open'));
+  document.getElementById('gina-close').addEventListener('click', () => panel.classList.remove('open'));
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.reveal').forEach(el => { el.style.opacity=1; el.style.transform='none'; });
+  }
+</script>

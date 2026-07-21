@@ -44,20 +44,20 @@ export function FormularioDiagnostico() {
   if (status === 'success') {
     return (
       <div
-        className="rounded-[var(--radius-card)] bg-[var(--color-niebla)] border border-[var(--color-arena)] p-[var(--space-12)] text-center flex flex-col items-center gap-[var(--space-6)]"
+        className="rounded-[var(--dz-radius-card)] bg-[var(--dz-papel)] border border-[var(--dz-borde)] p-[var(--space-12)] text-center flex flex-col items-center gap-[var(--space-6)]"
         role="status"
         aria-live="polite"
       >
         <div className="text-4xl" aria-hidden="true">🏡</div>
-        <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] font-semibold">
+        <h2 className="font-[family-name:var(--font-dz-display)] [font-size:var(--text-xl)] [color:var(--dz-ink)] font-semibold">
           ¡Recibimos tu consulta!
         </h2>
-        <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
+        <p className="font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--dz-muted)] max-w-md leading-[var(--leading-cuerpo)]">
           Te respondemos en <strong>48 horas hábiles</strong>. Pronto tendrás noticias nuestras.
         </p>
         <Link
           href="/"
-          className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] [font-size:var(--text-sm)]"
+          className="inline-flex items-center justify-center font-[family-name:var(--font-dz-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] [font-size:var(--text-sm)]"
         >
           Volver al inicio
         </Link>
@@ -70,28 +70,28 @@ export function FormularioDiagnostico() {
   if (status === 'partial') {
     return (
       <div
-        className="rounded-[var(--radius-card)] bg-[var(--color-niebla)] border border-[var(--color-arena)] p-[var(--space-12)] text-center flex flex-col items-center gap-[var(--space-6)]"
+        className="rounded-[var(--dz-radius-card)] bg-[var(--dz-papel)] border border-[var(--dz-borde)] p-[var(--space-12)] text-center flex flex-col items-center gap-[var(--space-6)]"
         role="status"
         aria-live="polite"
       >
         <div className="text-4xl" aria-hidden="true">🙏</div>
-        <h2 className="font-[family-name:var(--font-titular)] [font-size:var(--text-xl)] [color:var(--color-granito)] font-semibold">
+        <h2 className="font-[family-name:var(--font-dz-display)] [font-size:var(--text-xl)] [color:var(--dz-ink)] font-semibold">
           Recibimos tu consulta
         </h2>
-        <p className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] max-w-md leading-[var(--leading-cuerpo)]">
+        <p className="font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--dz-muted)] max-w-md leading-[var(--leading-cuerpo)]">
           Anotamos tus datos y nuestro equipo se va a comunicar contigo a la brevedad.
           Si no recibes noticias en <strong>48 horas hábiles</strong>, escríbenos
           a través del formulario de contacto.
         </p>
         <Link
           href="/contacto"
-          className="inline-flex items-center justify-center font-[family-name:var(--font-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] [font-size:var(--text-sm)]"
+          className="inline-flex items-center justify-center font-[family-name:var(--font-dz-ui)] font-medium rounded-[var(--radius-pill)] transition-all duration-150 bg-[var(--color-laton)] text-white hover:bg-[var(--color-laton-oscuro)] tracking-[var(--tracking-ui)] uppercase px-[var(--space-6)] py-[var(--space-3)] [font-size:var(--text-sm)]"
         >
           Contáctanos
         </Link>
         <Link
           href="/"
-          className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-mar)] underline-offset-4 hover:underline"
+          className="font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--color-mar)] underline-offset-4 hover:underline"
         >
           Volver al inicio
         </Link>
@@ -117,7 +117,7 @@ export function FormularioDiagnostico() {
 
       {status === 'error' && (
         <div
-          className="rounded-[var(--radius-card)] border border-[var(--color-coral)] bg-[var(--color-blanco)] p-[var(--space-4)] [font-size:var(--text-sm)] [color:var(--color-coral)]"
+          className="rounded-[var(--dz-radius-card)] border border-[var(--color-coral)] bg-[var(--color-blanco)] p-[var(--space-4)] [font-size:var(--text-sm)] [color:var(--color-coral)]"
           role="alert"
           aria-live="assertive"
         >
@@ -215,7 +215,7 @@ export function FormularioDiagnostico() {
         </div>
       </section>
 
-      <hr className="border-[var(--color-arena)]" />
+      <hr className="border-[var(--dz-borde)]" />
 
       {/* ── Sección 2: Tu familia ─────────────────────────────────────────── */}
       <SeccionFamilia
@@ -227,7 +227,7 @@ export function FormularioDiagnostico() {
         toggleMascotaTipo={toggleMascotaTipo}
       />
 
-      <hr className="border-[var(--color-arena)]" />
+      <hr className="border-[var(--dz-borde)]" />
 
       {/* ── Sección 3: Situación legal y económica ────────────────────────── */}
       <section aria-labelledby="seccion-legal">
@@ -381,7 +381,7 @@ export function FormularioDiagnostico() {
         </div>
       </section>
 
-      <hr className="border-[var(--color-arena)]" />
+      <hr className="border-[var(--dz-borde)]" />
 
       {/* ── Sección 4: La vivienda que buscas ────────────────────────────── */}
       <SeccionVivienda
@@ -394,7 +394,7 @@ export function FormularioDiagnostico() {
         ocultarBusquedaVivienda={omiteBusquedaVivienda(form)}
       />
 
-      <hr className="border-[var(--color-arena)]" />
+      <hr className="border-[var(--dz-borde)]" />
 
       {/* ── Sección 5: Tu perfil y plazos ─────────────────────────────────── */}
       <section aria-labelledby="seccion-perfil">
@@ -569,7 +569,7 @@ export function FormularioDiagnostico() {
         </div>
       </section>
 
-      <hr className="border-[var(--color-arena)]" />
+      <hr className="border-[var(--dz-borde)]" />
 
       {/* ── Sección 6: Para terminar ──────────────────────────────────────── */}
       <section aria-labelledby="seccion-final">
@@ -610,7 +610,7 @@ export function FormularioDiagnostico() {
                 className="accent-[var(--color-laton)] w-4 h-4 mt-[2px] cursor-pointer flex-shrink-0"
                 aria-describedby={errors.comprendeServicio ? 'comprendeServicio-error' : undefined}
               />
-              <span className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
+              <span className="font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--dz-muted)] leading-[var(--leading-cuerpo)]">
                 Entiendo que Tu Lugar en Galicia es un servicio de consultoría y búsqueda personalizada, con honorarios propios aparte del alquiler y la fianza. Tu Lugar en Galicia actúa en nombre de mi familia, no del propietario.
                 <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </span>
@@ -635,7 +635,7 @@ export function FormularioDiagnostico() {
                 className="accent-[var(--color-laton)] w-4 h-4 mt-[2px] cursor-pointer flex-shrink-0"
                 aria-describedby={errors.consentimientoRGPD ? 'consentimientoRGPD-error' : undefined}
               />
-              <span className="font-[family-name:var(--font-ui)] [font-size:var(--text-sm)] [color:var(--color-pizarra)] leading-[var(--leading-cuerpo)]">
+              <span className="font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--dz-muted)] leading-[var(--leading-cuerpo)]">
                 Acepto el tratamiento de mis datos personales según la{' '}
                 <Link
                   href="/politica-de-privacidad"
@@ -679,7 +679,7 @@ export function FormularioDiagnostico() {
             'Enviar mi consulta'
           )}
         </Button>
-        <p className="mt-[var(--space-3)] [font-size:var(--text-xs)] [color:var(--color-pizarra)] font-[family-name:var(--font-ui)]">
+        <p className="mt-[var(--space-3)] [font-size:var(--text-xs)] [color:var(--dz-muted)] font-[family-name:var(--font-dz-ui)]">
           Los campos marcados con <span className="[color:var(--color-coral)]">*</span> son obligatorios.
         </p>
       </div>

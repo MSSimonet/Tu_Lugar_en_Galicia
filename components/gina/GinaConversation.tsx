@@ -286,8 +286,8 @@ export function GinaConversation({
       <div
         className="shrink-0 border-t px-0 pb-0"
         style={{
-          borderColor: 'var(--color-arena)',
-          backgroundColor: 'var(--color-arena)',
+          borderColor: 'var(--dz-borde)',
+          backgroundColor: 'var(--dz-borde)',
         }}
       >
         <GinaInput

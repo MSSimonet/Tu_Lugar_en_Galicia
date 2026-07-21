@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Cormorant_Garamond, Syne, Nunito_Sans, Fraunces, DM_Sans, Jost, Playfair_Display, Lato, Lora, Work_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Cormorant_Garamond, Syne, Nunito_Sans, Fraunces, DM_Sans, Jost, Playfair_Display, Lato, Lora, Work_Sans, Unbounded, Inter } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { GinaWidget } from "@/components/gina/GinaWidget";
 import { MotionProvider } from "@/components/shared/MotionProvider";
+import { ScrollToTop } from "@/components/shared/ScrollToTop";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin", "latin-ext"],
@@ -26,6 +27,27 @@ const jost = Jost({
   subsets: ["latin", "latin-ext"],
   weight: ["600", "700", "800", "900"],
   variable: "--font-jost",
+  display: "swap",
+});
+
+/* Deslumbrante — display geométrica del mockup aprobado (design-drafts/deslumbrante),
+   reemplaza a Jost como --font-dz-display (ver app/globals.css). Jost queda cargada como
+   fallback del propio token, no se descarga para nadie. */
+const unbounded = Unbounded({
+  subsets: ["latin", "latin-ext"],
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-unbounded",
+  display: "swap",
+});
+
+/* Deslumbrante — UI/cuerpo del mockup aprobado, reemplaza a Lato como --font-dz-ui en toda
+   la web (extensión de sesión 2 a Header/Footer/Gina/páginas interiores). Lato queda cargada
+   como fallback del propio token — sigue siendo la fuente real de --font-lato para quien lo
+   use directo (dormido: Pedra e Ouro). */
+const inter = Inter({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -113,7 +135,7 @@ export default async function RootLayout({
   return (
     <html
       lang="es"
-      className={`${plusJakarta.variable} ${cormorant.variable} ${syne.variable} ${nunitoSans.variable} ${fraunces.variable} ${dmSans.variable} ${jost.variable} ${playfair.variable} ${lato.variable} ${lora.variable} ${workSans.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${cormorant.variable} ${syne.variable} ${nunitoSans.variable} ${fraunces.variable} ${dmSans.variable} ${jost.variable} ${playfair.variable} ${lato.variable} ${lora.variable} ${workSans.variable} ${unbounded.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-[family-name:var(--font-ui)]">
@@ -122,6 +144,7 @@ export default async function RootLayout({
             lo que causaría un falso mismatch de hidratación. */}
         <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `(function(){const s=localStorage.getItem('tlg-theme');const p=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',s?s==='dark':p);})();` }} />
         <MotionProvider>
+          <ScrollToTop />
           {!isAdminRoute && <Header />}
           <main id="main-content" className="flex-1">{children}</main>
           {!isAdminRoute && <Footer />}

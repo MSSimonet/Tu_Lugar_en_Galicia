@@ -1,0 +1,251 @@
+<title>Diagnóstico en vivo — la página de inicio es la conversación</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  /* Cardo (serif de libro viejo) + Space Mono (anotación de instrumento náutico):
+     par elegido porque esta página no es una landing, es una carta de navegación
+     con una conversación encima — necesita sentirse escrita a mano y medida a la vez. */
+  :root{
+    --ch-carta:#EFE6D0;
+    --ch-carta-2:#E6DBC0;
+    --ch-tinta:#1F2E2B;
+    --ch-cobre:#B5652E;
+    --ch-cobre-h:#95511F;
+    --ch-verdigris:#4C7A6E;
+    --ch-linea:#C9BCA0;
+    --ch-blanco:#FBF7EC;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    background:var(--ch-carta); color:var(--ch-tinta); font-family:'Space Mono',monospace;
+    margin:0; min-height:100vh; display:flex; flex-direction:column;
+  }
+  .serif{font-family:'Cardo',serif;}
+
+  header{
+    display:flex; justify-content:space-between; align-items:center; padding:1.1rem 4vw;
+    border-bottom:1px solid var(--ch-linea);
+  }
+  .logo{font-family:'Cardo',serif; font-style:italic; font-size:1.15rem;}
+  .logo b{font-style:normal; color:var(--ch-cobre);}
+  .status{font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ch-verdigris);}
+
+  /* Escenario principal: mapa + hilo de conversación en paralelo — esto reemplaza
+     al hero tradicional. No hay headline gigante centrada: la primera pregunta
+     de Gina cumple esa función. */
+  .stage{
+    flex:1; display:grid; grid-template-columns:1fr 1.05fr;
+    min-height:0;
+  }
+  @media (max-width: 880px){ .stage{ grid-template-columns:1fr; } }
+
+  .mapa-panel{
+    position:relative; border-right:1px solid var(--ch-linea);
+    background:
+      repeating-linear-gradient(0deg, transparent 0 38px, rgba(31,46,43,.05) 38px 39px),
+      repeating-linear-gradient(90deg, transparent 0 38px, rgba(31,46,43,.05) 38px 39px),
+      var(--ch-carta-2);
+    display:flex; align-items:center; justify-content:center; padding:2rem;
+  }
+  @media (max-width: 880px){ .mapa-panel{ border-right:none; border-bottom:1px solid var(--ch-linea); min-height:340px; } }
+  .mapa-caption{position:absolute; bottom:1.2rem; left:1.4rem; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ch-verdigris); max-width:20ch;}
+  .mapa-panel svg{width:100%; max-width:340px; height:auto;}
+  .costa{fill:var(--ch-blanco); stroke:var(--ch-tinta); stroke-width:1.5;}
+  .ciudad-dot{fill:var(--ch-linea); stroke:var(--ch-tinta); stroke-width:1; cursor:default; transition:fill .4s ease, r .4s ease;}
+  .ciudad-dot.activa{fill:var(--ch-cobre); r:8;}
+  .ciudad-label{font-family:'Space Mono',monospace; font-size:9px; fill:var(--ch-tinta); opacity:.55;}
+  .ciudad-label.activa{opacity:1; fill:var(--ch-cobre-h); font-weight:700;}
+  .pulso{fill:none; stroke:var(--ch-cobre); stroke-width:1.5; opacity:0;}
+  .pulso.activo{animation:pulso 1.6s ease-out;}
+  @keyframes pulso{ from{ r:8; opacity:.8; } to{ r:26; opacity:0; } }
+
+  .chat-panel{display:flex; flex-direction:column; min-height:0;}
+  .hilo{flex:1; overflow-y:auto; padding:2rem 4vw 1rem; display:flex; flex-direction:column; gap:1.1rem;}
+  .msg{max-width:85%; animation:in .4s ease both;}
+  @keyframes in{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  .msg.gina{align-self:flex-start;}
+  .msg.user{align-self:flex-end; text-align:right;}
+  .msg .quien{font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ch-verdigris); margin-bottom:.3rem;}
+  .msg.user .quien{color:var(--ch-cobre);}
+  .msg .bocadillo{font-family:'Cardo',serif; font-size:1.15rem; line-height:1.5; background:var(--ch-blanco); border:1px solid var(--ch-linea); padding:.9rem 1.1rem; border-radius:2px;}
+  .msg.user .bocadillo{background:var(--ch-tinta); color:var(--ch-carta); border-color:var(--ch-tinta);}
+  .msg .dato{font-family:'Space Mono',monospace; font-size:.78rem; color:var(--ch-verdigris); margin-top:.5rem;}
+
+  .opciones{padding:1.2rem 4vw 1.8rem; border-top:1px solid var(--ch-linea); display:flex; flex-wrap:wrap; gap:.6rem;}
+  .chip{
+    font-family:'Space Mono',monospace; font-size:.84rem; background:var(--ch-blanco); border:1px solid var(--ch-tinta);
+    padding:.6rem 1.1rem; cursor:pointer; transition:background-color .2s ease, color .2s ease, transform .15s ease;
+  }
+  .chip:hover{background:var(--ch-tinta); color:var(--ch-carta);}
+  .chip:active{transform:scale(.96);}
+
+  .resultado{padding:1.4rem 4vw 2rem; border-top:1px solid var(--ch-linea); display:none;}
+  .resultado.show{display:block;}
+  .resultado h3{font-family:'Cardo',serif; font-style:italic; font-size:1.3rem; margin:0 0 .8rem;}
+  .resultado .resumen{font-size:.82rem; color:var(--ch-verdigris); margin-bottom:1.1rem; line-height:1.6;}
+  .resultado .acciones{display:flex; gap:.8rem; flex-wrap:wrap;}
+  .btn{
+    font-family:'Space Mono',monospace; font-weight:700; font-size:.84rem; text-decoration:none;
+    padding:.8rem 1.4rem; border:1px solid var(--ch-tinta); cursor:pointer;
+  }
+  .btn-primary{background:var(--ch-cobre); color:var(--ch-blanco); border-color:var(--ch-cobre);}
+  .btn-primary:hover{background:var(--ch-cobre-h); border-color:var(--ch-cobre-h);}
+  .btn-ghost{background:transparent; color:var(--ch-tinta);}
+  .btn-ghost:hover{background:var(--ch-tinta); color:var(--ch-carta);}
+  .reiniciar{display:inline-block; margin-top:1rem; font-size:.74rem; color:var(--ch-verdigris); text-decoration:underline; cursor:pointer;}
+
+  footer{padding:1rem 4vw; border-top:1px solid var(--ch-linea); font-size:.72rem; color:var(--ch-verdigris); display:flex; justify-content:space-between; flex-wrap:wrap; gap:.5rem;}
+</style>
+
+<header>
+  <div class="logo">Tu Lugar en <b>Galicia</b></div>
+  <div class="status">Diagnóstico en vivo · sin formularios</div>
+</header>
+
+<main class="stage">
+  <div class="mapa-panel">
+    <svg viewBox="0 0 340 400" aria-hidden="true">
+      <path class="costa" d="M60 40 C 40 70, 30 120, 45 160 C 20 190, 15 230, 40 260 C 30 300, 50 340, 90 360 C 140 385, 210 380, 250 345 C 290 320, 300 270, 280 230 C 300 200, 295 150, 265 120 C 250 80, 200 45, 150 40 C 120 30, 85 25, 60 40 Z"/>
+      <g id="dot-coruna">
+        <circle class="pulso" cx="95" cy="70" r="8"/>
+        <circle class="ciudad-dot" data-ciudad="coruna" cx="95" cy="70" r="5"/>
+        <text class="ciudad-label" data-ciudad="coruna" x="106" y="74">A CORUÑA</text>
+      </g>
+      <g id="dot-lugo">
+        <circle class="pulso" cx="190" cy="110" r="8"/>
+        <circle class="ciudad-dot" data-ciudad="lugo" cx="190" cy="110" r="5"/>
+        <text class="ciudad-label" data-ciudad="lugo" x="201" y="114">LUGO</text>
+      </g>
+      <g id="dot-santiago">
+        <circle class="pulso" cx="110" cy="180" r="8"/>
+        <circle class="ciudad-dot" data-ciudad="santiago" cx="110" cy="180" r="5"/>
+        <text class="ciudad-label" data-ciudad="santiago" x="121" y="184">SANTIAGO</text>
+      </g>
+      <g id="dot-pontevedra">
+        <circle class="pulso" cx="105" cy="290" r="8"/>
+        <circle class="ciudad-dot" data-ciudad="pontevedra" cx="105" cy="290" r="5"/>
+        <text class="ciudad-label" data-ciudad="pontevedra" x="116" y="294">PONTEVEDRA</text>
+      </g>
+      <g id="dot-vigo">
+        <circle class="pulso" cx="130" cy="335" r="8"/>
+        <circle class="ciudad-dot" data-ciudad="vigo" cx="130" cy="335" r="5"/>
+        <text class="ciudad-label" data-ciudad="vigo" x="141" y="339">VIGO</text>
+      </g>
+    </svg>
+    <div class="mapa-caption">El mapa se ilumina con lo que le contás a Gina — no es decoración.</div>
+  </div>
+
+  <div class="chat-panel">
+    <div class="hilo" id="hilo"></div>
+    <div class="opciones" id="opciones"></div>
+    <div class="resultado" id="resultado">
+      <h3>Esto armamos con lo que me contaste</h3>
+      <div class="resumen" id="resumen"></div>
+      <div class="acciones">
+        <a href="#" class="btn btn-primary">Agendar videollamada con Silvana</a>
+        <a href="#" class="btn btn-ghost">Prefiero escribir por WhatsApp</a>
+      </div>
+      <div class="reiniciar" id="reiniciar">↺ Empezar de nuevo</div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>Tu Lugar en Galicia</span>
+  <span>Política de privacidad · Contacto</span>
+</footer>
+
+<script>
+  const CIUDADES = {
+    coruna:     { nombre: 'A Coruña', dato: '38 familias reubicadas · alquiler medio 720€ (640–830)' },
+    vigo:       { nombre: 'Vigo', dato: '52 familias reubicadas · alquiler medio 690€ (640–780)' },
+    santiago:   { nombre: 'Santiago', dato: '29 familias reubicadas · alquiler medio 650€ (580–740)' },
+    lugo:       { nombre: 'Lugo', dato: '11 familias reubicadas · alquiler medio 590€ (520–650)' },
+    pontevedra: { nombre: 'Pontevedra', dato: '14 familias reubicadas · alquiler medio 610€ (550–690)' },
+  };
+
+  const hilo = document.getElementById('hilo');
+  const opciones = document.getElementById('opciones');
+  const resultado = document.getElementById('resultado');
+  const resumenEl = document.getElementById('resumen');
+
+  const respuestas = {};
+
+  function addMsg(quien, texto, dato){
+    const div = document.createElement('div');
+    div.className = 'msg ' + quien;
+    div.innerHTML = `<div class="quien">${quien === 'gina' ? 'Gina' : 'Vos'}</div><div class="bocadillo">${texto}</div>${dato ? `<div class="dato">${dato}</div>` : ''}`;
+    hilo.appendChild(div);
+    hilo.scrollTop = hilo.scrollHeight;
+  }
+
+  function activarCiudad(id){
+    document.querySelectorAll('.ciudad-dot').forEach(d => d.classList.toggle('activa', d.dataset.ciudad === id));
+    document.querySelectorAll('.ciudad-label').forEach(l => l.classList.toggle('activa', l.dataset.ciudad === id));
+    const pulso = document.querySelector(`#dot-${id} .pulso`);
+    pulso.classList.remove('activo'); void pulso.offsetWidth; pulso.classList.add('activo');
+  }
+
+  function setChips(lista, onPick){
+    opciones.innerHTML = '';
+    lista.forEach(opt => {
+      const b = document.createElement('button');
+      b.className = 'chip'; b.textContent = opt.label;
+      b.addEventListener('click', () => onPick(opt.value, opt.label));
+      opciones.appendChild(b);
+    });
+  }
+
+  function pasoCiudad(){
+    addMsg('gina', 'Hola, soy Gina. Antes de mostrarte nada: ¿a qué ciudad de Galicia pensás mudarte?');
+    setChips(Object.entries(CIUDADES).map(([id,c]) => ({value:id, label:c.nombre})), (id, label) => {
+      addMsg('user', label);
+      respuestas.ciudad = id;
+      activarCiudad(id);
+      addMsg('gina', `${CIUDADES[id].nombre} — buena elección.`, CIUDADES[id].dato);
+      pasoAdultos();
+    });
+  }
+
+  function pasoAdultos(){
+    addMsg('gina', '¿Cuántos adultos viajan con vos?');
+    setChips([{value:'1',label:'1'},{value:'2',label:'2'},{value:'3+',label:'3 o más'}], (val,label) => {
+      addMsg('user', label);
+      respuestas.adultos = val;
+      pasoPresupuesto();
+    });
+  }
+
+  function pasoPresupuesto(){
+    addMsg('gina', '¿Con qué presupuesto mensual estás pensando el alquiler?');
+    setChips([{value:'<600',label:'Menos de 600€'},{value:'600-800',label:'600€–800€'},{value:'800+',label:'Más de 800€'}], (val,label) => {
+      addMsg('user', label);
+      respuestas.presupuesto = val;
+      mostrarResultado();
+    });
+  }
+
+  function mostrarResultado(){
+    const c = CIUDADES[respuestas.ciudad];
+    addMsg('gina', `Con esto ya tengo suficiente para armar algo concreto. Silvana lo revisa antes de tu videollamada.`);
+    opciones.innerHTML = '';
+    resumenEl.textContent = `${c.nombre} · ${respuestas.adultos} adulto(s) · presupuesto ${respuestas.presupuesto}€ — con esto, ${c.nombre} tiene unidades reales dentro de tu rango ahora mismo.`;
+    resultado.classList.add('show');
+  }
+
+  document.getElementById('reiniciar').addEventListener('click', () => {
+    hilo.innerHTML = '';
+    opciones.innerHTML = '';
+    resultado.classList.remove('show');
+    document.querySelectorAll('.ciudad-dot').forEach(d => d.classList.remove('activa'));
+    document.querySelectorAll('.ciudad-label').forEach(l => l.classList.remove('activa'));
+    for (const k in respuestas) delete respuestas[k];
+    pasoCiudad();
+  });
+
+  pasoCiudad();
+</script>

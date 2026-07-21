@@ -59,7 +59,7 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
       <div className={inline ? 'space-y-2' : 'px-4 pb-4 space-y-2'}>
         <p
           className="text-xs mb-1"
-          style={{ color: 'var(--color-granito)', opacity: 0.6 }}
+          style={{ color: 'var(--dz-ink)', opacity: 0.6 }}
         >
           Puedes elegir varias opciones
         </p>
@@ -92,19 +92,19 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
                     : {
                         borderColor: 'var(--color-laton)',
                         backgroundColor: 'var(--color-blanco)',
-                        color: 'var(--color-granito)',
+                        color: 'var(--dz-ink)',
                       }
                 }
                 onMouseEnter={(e) => {
                   if (!activo && !bloqueado) {
-                    e.currentTarget.style.backgroundColor = 'var(--color-arena)'
+                    e.currentTarget.style.backgroundColor = 'var(--dz-borde)'
                     e.currentTarget.style.color = 'var(--color-laton-text)'
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!activo && !bloqueado) {
                     e.currentTarget.style.backgroundColor = 'var(--color-blanco)'
-                    e.currentTarget.style.color = 'var(--color-granito)'
+                    e.currentTarget.style.color = 'var(--dz-ink)'
                   }
                 }}
               >
@@ -177,11 +177,11 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
           style={{
             borderColor: 'var(--color-laton)',
             backgroundColor: 'var(--color-blanco)',
-            color: 'var(--color-granito)',
+            color: 'var(--dz-ink)',
           }}
           onMouseEnter={(e) => {
             if (!deshabilitado) {
-              e.currentTarget.style.backgroundColor = 'var(--color-arena)'
+              e.currentTarget.style.backgroundColor = 'var(--dz-borde)'
               e.currentTarget.style.color = 'var(--color-laton-text)'
               e.currentTarget.style.borderColor = 'var(--color-laton-oscuro)'
             }
@@ -189,7 +189,7 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
           onMouseLeave={(e) => {
             if (!deshabilitado) {
               e.currentTarget.style.backgroundColor = 'var(--color-blanco)'
-              e.currentTarget.style.color = 'var(--color-granito)'
+              e.currentTarget.style.color = 'var(--dz-ink)'
               e.currentTarget.style.borderColor = 'var(--color-laton)'
             }
           }}

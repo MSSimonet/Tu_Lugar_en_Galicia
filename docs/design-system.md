@@ -1,5 +1,12 @@
 # design-system.md — Identidad visual "Tu Lugar en Galicia"
 
+> ⚠️ **Superseded por `DESIGN.md` (raíz del proyecto) — 2026-07-18.** Este archivo describe un
+> sistema (latón/atlántico, Fraunces/Plus Jakarta) que **no corre en el código real** desde antes
+> de esta nota, y el bloque `@theme` de §7 más abajo **no coincide con `app/globals.css`** — no
+> copiarlo. El sistema vigente hoy es **Deslumbrante** (`--dz-*`), documentado completo en
+> `DESIGN.md`. Este archivo queda sin reescribir por ahora (fuera de alcance de la migración a
+> Deslumbrante); usar `DESIGN.md` como referencia operativa real.
+
 Esqueleto del sistema de diseño. Lo afina `Brand Guardian` (identidad) y `UI Designer`
 (tokens y componentes). El `Frontend Developer` usa SOLO estos tokens vía Tailwind.
 

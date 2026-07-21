@@ -1,0 +1,163 @@
+<title>Cantiga de Taberna — Página de inicio completa</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --ct-noite:#241512; --ct-noite2:#2E1C18; --ct-mostaza:#D9A62E; --ct-mostaza-c:#F0C458;
+    --ct-vino:#6B1E23; --ct-azulejo:#2C6E8E; --ct-crema:#F3E7D0; --ct-brasa:#C1461F;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--ct-noite); color:var(--ct-crema); font-family:'Figtree',sans-serif; margin:0;}
+  .disp{font-family:'Spectral',serif;}
+  .eyebrow{font-weight:700; font-size:.74rem; letter-spacing:.18em; text-transform:uppercase; color:var(--ct-mostaza);}
+  header{position:sticky; top:0; z-index:50; background:rgba(36,21,18,.92); backdrop-filter:blur(8px); border-bottom:1px solid rgba(217,166,46,.22); padding:20px 6vw; display:flex; justify-content:space-between; align-items:center;}
+  .logo{font-family:'Spectral',serif; font-weight:700;}
+  .logo span{color:var(--ct-mostaza);}
+  nav a{font-weight:600; font-size:.84rem; color:var(--ct-crema); text-decoration:none; margin-left:1.8rem; opacity:.85;}
+
+  .hero{position:relative; padding:5.5rem 6vw 4.5rem; overflow:hidden; background:radial-gradient(650px 450px at 78% 15%, rgba(217,166,46,.15), transparent 60%);}
+  .hero h1{font-family:'Spectral',serif; font-weight:700; font-size:clamp(2.2rem,5vw,4.2rem); line-height:1.1; margin:.6rem 0 1.2rem; max-width:17ch;}
+  .hero h1 .hl{color:var(--ct-mostaza);}
+  .hero p{font-size:1.03rem; color:#D9CBB8; max-width:48ch; line-height:1.6; margin-bottom:1.9rem;}
+  .btn{display:inline-flex; align-items:center; gap:.5rem; background:var(--ct-mostaza); color:var(--ct-noite); font-weight:700; font-size:.9rem; padding:.9rem 1.7rem; border-radius:999px; text-decoration:none; transition:box-shadow .4s ease,background-color .25s ease,transform .25s ease;}
+  .btn:hover{background:var(--ct-mostaza-c); box-shadow:0 0 30px 6px rgba(217,166,46,.4); transform:translateY(-2px);}
+
+  .marcador{display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid rgba(217,166,46,.2); border-bottom:1px solid rgba(217,166,46,.2);}
+  .marcador div{padding:1.7rem 1.4rem; border-right:1px solid rgba(217,166,46,.2);}
+  .marcador div:last-child{border-right:none;}
+  .marcador .n{font-family:'Spectral',serif; font-weight:700; font-size:1.9rem; color:var(--ct-mostaza);}
+  .marcador .l{font-size:.78rem; color:#B7A991; margin-top:.3rem;}
+
+  .section{padding:5rem 6vw;}
+  .section h2{font-family:'Spectral',serif; font-weight:700; font-size:clamp(1.6rem,3vw,2.2rem); margin:.5rem 0 2.2rem;}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.5rem;}
+  .card{background:var(--ct-noite2); border:1px solid rgba(217,166,46,.2); border-radius:14px; overflow:hidden; transition:border-color .35s ease,box-shadow .35s ease,transform .35s ease;}
+  .card:hover{border-color:var(--ct-mostaza); box-shadow:0 20px 42px -18px rgba(217,166,46,.32); transform:translateY(-3px);}
+  .card-photo{height:170px; background:linear-gradient(150deg,var(--ct-vino),var(--ct-noite));}
+  .card-body{padding:1.1rem 1.2rem 1.4rem;}
+  .card-eyebrow{font-weight:700; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ct-azulejo);}
+  .card-title{font-family:'Spectral',serif; font-weight:700; font-size:1.3rem; margin:.3rem 0 .4rem;}
+  .card-meta{font-size:.84rem; color:#B7A991;}
+
+  .muro{display:grid; grid-template-columns:repeat(6,1fr); gap:6px;}
+  .muro div{aspect-ratio:1; border-radius:6px; background:linear-gradient(150deg,var(--ct-vino),var(--ct-noite2)); border:1px solid rgba(217,166,46,.15);}
+
+  .testi{background:var(--ct-noite2); border:1px solid rgba(217,166,46,.2); border-radius:14px; padding:2.1rem 2.2rem; max-width:640px;}
+  .testi p{font-family:'Spectral',serif; font-size:1.2rem; line-height:1.5; margin:0 0 1rem;}
+  .testi cite{font-size:.8rem; color:#B7A991; font-style:normal;}
+
+  .pasos{display:grid; grid-template-columns:repeat(3,1fr); gap:1.6rem;}
+  .paso{border-top:2px solid var(--ct-mostaza); padding-top:1.1rem;}
+  .paso .n{font-family:'Spectral',serif; color:var(--ct-azulejo); font-weight:700;}
+  .paso h4{font-family:'Spectral',serif; margin:.4rem 0 .5rem;}
+  .paso p{color:#B7A991; font-size:.88rem; line-height:1.55; margin:0;}
+
+  .faq details{border-bottom:1px solid rgba(217,166,46,.2); padding:1.1rem 0;}
+  .faq summary{font-family:'Spectral',serif; font-weight:700; cursor:pointer; list-style:none;}
+  .faq p{color:#B7A991; margin:.7rem 0 0; font-size:.9rem; line-height:1.55;}
+
+  .cta-final{text-align:center; background:var(--ct-noite2); border-top:1px solid rgba(217,166,46,.2); padding:4.5rem 6vw;}
+  .cta-final h2{max-width:20ch; margin:.5rem auto 1.6rem;}
+
+  footer{padding:2.4rem 6vw; display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; font-size:.82rem; color:#B7A991;}
+
+  .gina-bubble{position:fixed; bottom:24px; right:24px; z-index:60; width:58px; height:58px; border-radius:999px; background:var(--ct-noite2); border:2px solid var(--ct-mostaza); display:flex; align-items:center; justify-content:center; cursor:pointer; animation:glow 2.8s ease-in-out infinite;}
+  @keyframes glow{0%,100%{box-shadow:0 0 12px 2px rgba(217,166,46,.32);} 50%{box-shadow:0 0 24px 7px rgba(217,166,46,.5);}}
+  .gina-bubble .flame{width:10px; height:13px; border-radius:60% 60% 50% 50%/70% 70% 40% 40%; background:linear-gradient(180deg,var(--ct-mostaza-c),var(--ct-brasa));}
+
+  .reveal{opacity:0; transform:translateY(18px);}
+</style>
+
+<header>
+  <div class="logo">Tu Lugar en <span>Galicia</span></div>
+  <nav><a href="#ciudades">Ciudades</a><a href="#muro">Muro de llaves</a><a href="#funciona">Cómo funciona</a><a href="#faq">FAQ</a></nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Relocation con calor de taberna</div>
+  <h1>Tu lugar en Galicia se <span class="hl">celebra</span>, no se tramita.</h1>
+  <p>Cualificamos tu caso con la misma calidez con la que se sirve una cantiga: cerca, sin apuro, con Silvana del otro lado.</p>
+  <a href="#" class="btn">Contale tu caso a Gina</a>
+</section>
+
+<div class="marcador">
+  <div><div class="n">+200</div><div class="l">familias reubicadas</div></div>
+  <div><div class="n">5</div><div class="l">ciudades activas</div></div>
+  <div><div class="n">72h</div><div class="l">tiempo medio de respuesta</div></div>
+  <div><div class="n">98%</div><div class="l">recomienda el servicio</div></div>
+</div>
+
+<section class="section" id="ciudades">
+  <div class="eyebrow">05 ciudades</div>
+  <h2>Elegí tu punto de partida.</h2>
+  <div class="cards">
+    <article class="card reveal"><div class="card-photo"></div><div class="card-body"><div class="card-eyebrow">Litoral · Atlántico</div><div class="card-title">A Coruña</div><div class="card-meta">+38 familias · alquiler medio 720€</div></div></article>
+    <article class="card reveal"><div class="card-photo"></div><div class="card-body"><div class="card-eyebrow">Industrial · Ría</div><div class="card-title">Vigo</div><div class="card-meta">+52 familias · alquiler medio 690€</div></div></article>
+    <article class="card reveal"><div class="card-photo"></div><div class="card-body"><div class="card-eyebrow">Interior · Histórica</div><div class="card-title">Santiago</div><div class="card-meta">+29 familias · alquiler medio 650€</div></div></article>
+  </div>
+</section>
+
+<section class="section" id="muro">
+  <div class="eyebrow">Muro de llaves</div>
+  <h2>42 llaves entregadas este año.</h2>
+  <div class="muro reveal">
+    <div></div><div></div><div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div><div></div><div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="eyebrow">Testimonio</div>
+  <div class="testi reveal">
+    <p>"Nos dijo qué zona no nos convenía antes de que gastáramos en el pasaje. Eso no lo hace cualquiera."</p>
+    <cite>— familia reubicada en A Coruña, 2026</cite>
+  </div>
+</section>
+
+<section class="section" id="funciona">
+  <div class="eyebrow">Cómo funciona</div>
+  <h2>Tres pasos.</h2>
+  <div class="pasos">
+    <div class="paso reveal"><div class="n">01</div><h4>Contás tu caso</h4><p>Seis preguntas con Gina, sin formulario eterno.</p></div>
+    <div class="paso reveal"><div class="n">02</div><h4>Revisamos lo real</h4><p>Silvana descarta lo que no te conviene.</p></div>
+    <div class="paso reveal"><div class="n">03</div><h4>Videollamada</h4><p>25 minutos, agenda real, no un bot.</p></div>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="eyebrow">Preguntas frecuentes</div>
+  <h2>Antes de escribirnos.</h2>
+  <div class="faq">
+    <details><summary>¿Cuánto tarda el proceso?</summary><p>La primera videollamada se agenda en 2-3 días desde el diagnóstico.</p></details>
+    <details><summary>¿Trabajan con toda Galicia?</summary><p>Por ahora A Coruña, Vigo, Santiago, Lugo y Pontevedra.</p></details>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="eyebrow">Empezá hoy</div>
+  <h2>Tu hogar en Galicia está a una conversación.</h2>
+  <a href="#" class="btn">Contale tu caso a Gina</a>
+</section>
+
+<footer>
+  <span>Tu Lugar en Galicia</span>
+  <span>Política de privacidad · Contacto</span>
+</footer>
+
+<div class="gina-bubble"><div class="flame"></div></div>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el,i)=>{
+    gsap.to(el,{opacity:1,y:0,duration:.85,ease:'power2.out',delay:i*0.06,scrollTrigger:{trigger:el,start:'top 90%'}});
+  });
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity=1;el.style.transform='none';});
+  }
+</script>

@@ -9,11 +9,11 @@ const inputBase =
   'w-full rounded border px-4 py-3 [font-size:var(--text-sm)] placeholder:opacity-50 focus:outline-none focus:ring-1 transition-colors'
 
 const inputStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-lato)',
-  borderRadius: '4px',
-  borderColor: 'var(--po-borde)',
-  backgroundColor: 'var(--po-luz)',
-  color: 'var(--po-pedra)',
+  fontFamily: 'var(--font-dz-ui)',
+  borderRadius: 'var(--dz-radius-input)',
+  borderColor: 'var(--dz-borde)',
+  backgroundColor: 'var(--dz-luz)',
+  color: 'var(--dz-ink)',
 }
 
 export function FormularioContacto() {
@@ -57,23 +57,23 @@ export function FormularioContacto() {
     return (
       <div
         className="p-12 text-center flex flex-col items-center gap-6"
-        style={{ borderRadius: '4px', backgroundColor: 'var(--po-areia)', border: '1px solid var(--po-borde)' }}
+        style={{ borderRadius: 'var(--dz-radius-card)', backgroundColor: 'var(--dz-papel)', border: '1px solid var(--dz-borde)', boxShadow: 'var(--dz-shadow-sm)' }}
         role="status"
       >
         <div className="text-4xl" aria-hidden="true">✉️</div>
-        <h2 style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, fontSize: 'var(--text-xl)', color: 'var(--po-pedra)' }}>
+        <h2 style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, fontSize: 'var(--text-xl)', color: 'var(--dz-ink)' }}>
           Mensaje recibido
         </h2>
         <p
           className="max-w-sm leading-[var(--leading-cuerpo)]"
-          style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-sm)', color: 'var(--po-muted)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', fontSize: 'var(--text-sm)', color: 'var(--dz-muted)' }}
         >
           Te respondemos en las próximas 24 horas hábiles.
         </p>
         <Link
           href="/"
           className="underline-offset-4 hover:underline"
-          style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-sm)', color: 'var(--po-ouro-text)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', fontSize: 'var(--text-sm)', color: 'var(--dz-accent-text)' }}
         >
           Volver al inicio
         </Link>
@@ -87,7 +87,7 @@ export function FormularioContacto() {
       {status === 'error' && errorMsg && (
         <div
           className="p-4 [font-size:var(--text-sm)]"
-          style={{ borderRadius: '4px', border: '1px solid var(--color-coral)', backgroundColor: 'var(--po-luz)', color: 'var(--color-coral)' }}
+          style={{ borderRadius: '8px', border: '1px solid var(--color-coral)', backgroundColor: 'var(--dz-luz)', color: 'var(--color-coral)' }}
           role="alert"
         >
           {errorMsg}
@@ -99,7 +99,7 @@ export function FormularioContacto() {
           <label
             htmlFor="nombre"
             className="[font-size:var(--text-sm)] font-medium"
-            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+            style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
           >
             Nombre y apellido <span aria-hidden="true" style={{ color: 'var(--color-coral)' }}>*</span>
           </label>
@@ -120,7 +120,7 @@ export function FormularioContacto() {
           <label
             htmlFor="email"
             className="[font-size:var(--text-sm)] font-medium"
-            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+            style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
           >
             Email <span aria-hidden="true" style={{ color: 'var(--color-coral)' }}>*</span>
           </label>
@@ -142,7 +142,7 @@ export function FormularioContacto() {
         <label
           htmlFor="telefono"
           className="[font-size:var(--text-sm)] font-medium"
-          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
         >
           Teléfono{' '}
           <span className="font-normal opacity-60">(opcional)</span>
@@ -163,7 +163,7 @@ export function FormularioContacto() {
         <label
           htmlFor="mensaje"
           className="[font-size:var(--text-sm)] font-medium"
-          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-pedra)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
         >
           Mensaje <span aria-hidden="true" style={{ color: 'var(--color-coral)' }}>*</span>
         </label>
@@ -187,18 +187,18 @@ export function FormularioContacto() {
           checked={rgpd}
           onChange={e => setRgpd(e.target.checked)}
           className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer"
-          style={{ accentColor: 'var(--po-ouro)' }}
+          style={{ accentColor: 'var(--dz-accent)' }}
         />
         <label
           htmlFor="rgpd"
           className="[font-size:var(--text-xs)] leading-[var(--leading-cuerpo)] cursor-pointer"
-          style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)' }}
+          style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)' }}
         >
           He leído y acepto la{' '}
           <Link
             href="/politica-de-privacidad"
             className="underline underline-offset-2 transition-colors"
-            style={{ color: 'var(--po-ouro-text)' }}
+            style={{ color: 'var(--dz-accent-text)' }}
             target="_blank"
           >
             política de privacidad
@@ -212,11 +212,12 @@ export function FormularioContacto() {
         disabled={status === 'loading'}
         className="self-start inline-flex items-center justify-center px-8 py-4 font-bold [font-size:var(--text-sm)] tracking-[0.10em] uppercase disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{
-          fontFamily: 'var(--font-lato)',
-          borderRadius: '4px',
-          backgroundColor: 'var(--po-ouro)',
+          fontFamily: 'var(--font-dz-ui)',
+          borderRadius: '999px',
+          backgroundColor: 'var(--dz-accent)',
           color: '#1A1410',
-          outlineColor: 'var(--po-ouro)',
+          outlineColor: 'var(--dz-accent)',
+          boxShadow: 'var(--dz-shadow-md)',
         }}
       >
         {status === 'loading' ? 'Enviando…' : 'Enviar mensaje'}

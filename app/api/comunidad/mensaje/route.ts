@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
   try {
     await sendEmail({
       to: destinatario.email,
-      subject: `${remitenteNombreLimpio} te escribió desde Comunidad de Acogida`,
+      subject: `${remitenteNombreLimpio} te escribió desde Formando comunidad`,
       html: buildComunidadMensajeEmail({
         destinatarioNombre: destinatario.nombre,
         remitenteNombre: remitenteNombreLimpio,

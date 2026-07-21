@@ -103,12 +103,12 @@ export function GinaInput({ validacion, placeholder, deshabilitado, onEnvio }: P
             className="
               w-full px-4 py-2 rounded-xl text-sm
               border border-[color:var(--color-laton)]
-              text-[color:var(--color-granito)]
-              placeholder:text-[color:var(--color-pizarra)]
+              text-[color:var(--dz-ink)]
+              placeholder:text-[color:var(--dz-muted)]
               focus:outline-none focus:ring-2 focus:ring-[color:var(--color-laton-claro)]
               disabled:opacity-50 disabled:cursor-not-allowed
             "
-            style={{ backgroundColor: deshabilitado ? 'var(--color-niebla)' : 'var(--color-blanco)' }}
+            style={{ backgroundColor: deshabilitado ? 'var(--dz-papel)' : 'var(--color-blanco)' }}
           />
         </div>
 

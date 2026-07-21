@@ -1,0 +1,173 @@
+<title>Festa da Romaría — Página de inicio completa</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --fr-crema:#FFF8EC; --fr-frambuesa:#E63462; --fr-frambuesa-h:#C71F4D; --fr-cielo:#3AAED8;
+    --fr-sol:#F4B740; --fr-tinta:#231F20; --fr-blanco:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--fr-crema); color:var(--fr-tinta); font-family:'Outfit',sans-serif; margin:0;}
+  .disp{font-family:'Baloo 2',sans-serif;}
+  .eyebrow{font-weight:700; font-size:.76rem; letter-spacing:.14em; text-transform:uppercase; color:var(--fr-frambuesa);}
+  .confetti{height:14px; background:repeating-linear-gradient(90deg,var(--fr-frambuesa) 0 22px,var(--fr-sol) 22px 44px,var(--fr-cielo) 44px 66px);}
+  header{position:sticky; top:0; z-index:50; background:var(--fr-crema); padding:18px 6vw; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid var(--fr-tinta);}
+  .logo{font-family:'Baloo 2',sans-serif; font-weight:800;}
+  .logo span{color:var(--fr-frambuesa);}
+  nav a{font-weight:600; font-size:.85rem; color:var(--fr-tinta); text-decoration:none; margin-left:1.8rem;}
+
+  .hero{padding:5rem 6vw 4rem;}
+  .hero h1{font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(2.2rem,5vw,4.2rem); line-height:1.05; margin:.7rem 0 1.2rem; max-width:16ch;}
+  .hero h1 .hl{color:var(--fr-frambuesa);} .hero h1 .hl2{color:var(--fr-cielo);}
+  .hero p{font-size:1.05rem; color:#4A4344; max-width:50ch; line-height:1.6; margin-bottom:1.9rem;}
+  .btn{display:inline-flex; align-items:center; gap:.5rem; background:var(--fr-frambuesa); color:var(--fr-blanco); font-weight:700; font-size:.92rem; padding:.9rem 1.7rem; border-radius:999px; text-decoration:none; border:3px solid var(--fr-tinta); box-shadow:4px 4px 0 var(--fr-tinta); transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease;}
+  .btn:hover{background:var(--fr-frambuesa-h); transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--fr-tinta);}
+
+  .marcador{display:grid; grid-template-columns:repeat(4,1fr); border-top:3px solid var(--fr-tinta); border-bottom:3px solid var(--fr-tinta);}
+  .marcador div{padding:1.6rem 1.3rem; border-right:3px solid var(--fr-tinta);}
+  .marcador div:last-child{border-right:none;}
+  .marcador .n{font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1.9rem;}
+  .marcador div:nth-child(1) .n{color:var(--fr-frambuesa);} .marcador div:nth-child(2) .n{color:var(--fr-cielo);}
+  .marcador div:nth-child(3) .n{color:var(--fr-sol);} .marcador div:nth-child(4) .n{color:var(--fr-frambuesa);}
+  .marcador .l{font-size:.78rem; color:#5A5354; margin-top:.3rem;}
+
+  .section{padding:4.5rem 6vw;}
+  .section h2{font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(1.6rem,3vw,2.2rem); margin:.5rem 0 2.2rem;}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.6rem;}
+  .card{background:var(--fr-blanco); border:3px solid var(--fr-tinta); border-radius:20px; overflow:hidden; transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
+  .card:nth-child(1){box-shadow:5px 5px 0 var(--fr-frambuesa);} .card:nth-child(2){box-shadow:5px 5px 0 var(--fr-cielo);} .card:nth-child(3){box-shadow:5px 5px 0 var(--fr-sol);}
+  .card:hover{transform:translateY(-5px) rotate(-1deg);}
+  .card-photo{height:170px; background:linear-gradient(135deg,var(--fr-cielo),var(--fr-frambuesa));}
+  .card-body{padding:1.1rem 1.2rem 1.4rem;}
+  .card-eyebrow{font-weight:700; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--fr-cielo);}
+  .card-title{font-family:'Baloo 2',sans-serif; font-weight:700; font-size:1.4rem; margin:.3rem 0 .4rem;}
+  .card-meta{font-size:.84rem; color:#5A5354;}
+
+  .muro{display:grid; grid-template-columns:repeat(6,1fr); gap:8px;}
+  .muro div{aspect-ratio:1; border-radius:12px; border:2px solid var(--fr-tinta);}
+  .muro div:nth-child(6n+1){background:var(--fr-frambuesa);} .muro div:nth-child(6n+2){background:var(--fr-cielo);}
+  .muro div:nth-child(6n+3){background:var(--fr-sol);} .muro div:nth-child(6n+4){background:var(--fr-frambuesa);}
+  .muro div:nth-child(6n+5){background:var(--fr-cielo);} .muro div:nth-child(6n){background:var(--fr-sol);}
+
+  .testi{background:var(--fr-blanco); border:3px solid var(--fr-tinta); border-radius:20px; padding:2rem 2.2rem; max-width:640px; box-shadow:6px 6px 0 var(--fr-sol);}
+  .testi p{font-family:'Baloo 2',sans-serif; font-size:1.15rem; line-height:1.5; margin:0 0 1rem;}
+  .testi cite{font-size:.8rem; color:#5A5354; font-style:normal;}
+
+  .pasos{display:grid; grid-template-columns:repeat(3,1fr); gap:1.6rem;}
+  .paso{background:var(--fr-blanco); border:3px solid var(--fr-tinta); border-radius:18px; padding:1.4rem 1.3rem;}
+  .paso:nth-child(1){box-shadow:4px 4px 0 var(--fr-frambuesa);} .paso:nth-child(2){box-shadow:4px 4px 0 var(--fr-cielo);} .paso:nth-child(3){box-shadow:4px 4px 0 var(--fr-sol);}
+  .paso .n{font-family:'Baloo 2',sans-serif; font-size:1.3rem; color:var(--fr-frambuesa);}
+  .paso h4{font-family:'Baloo 2',sans-serif; margin:.4rem 0 .5rem;}
+  .paso p{color:#5A5354; font-size:.88rem; line-height:1.5; margin:0;}
+
+  .faq details{border-bottom:2px solid var(--fr-tinta); padding:1.1rem 0;}
+  .faq summary{font-family:'Baloo 2',sans-serif; font-weight:700; cursor:pointer; list-style:none;}
+  .faq p{color:#5A5354; margin:.7rem 0 0; font-size:.9rem; line-height:1.55;}
+
+  .cta-final{text-align:center; background:var(--fr-tinta); color:var(--fr-crema); padding:4.5rem 6vw;}
+  .cta-final h2{max-width:20ch; margin:.5rem auto 1.6rem; font-family:'Baloo 2',sans-serif;}
+  .cta-final .eyebrow{color:var(--fr-sol);}
+
+  footer{padding:2.4rem 6vw; display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; font-size:.82rem; color:#5A5354; border-top:3px solid var(--fr-tinta);}
+
+  .gina-bubble{position:fixed; bottom:24px; right:24px; z-index:60; width:62px; height:62px; border-radius:999px; background:var(--fr-sol); border:3px solid var(--fr-tinta); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:4px 4px 0 var(--fr-tinta); animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);}}
+
+  .reveal{opacity:0; transform:translateY(16px) rotate(-2deg);}
+</style>
+
+<header>
+  <div class="logo">Tu Lugar en <span>Galicia</span></div>
+  <nav><a href="#ciudades">Ciudades</a><a href="#muro">Muro de llaves</a><a href="#funciona">Cómo funciona</a><a href="#faq">FAQ</a></nav>
+</header>
+<div class="confetti"></div>
+
+<section class="hero">
+  <div class="eyebrow">Relocation que se celebra</div>
+  <h1>Tu hogar en Galicia es <span class="hl">fiesta</span>, no <span class="hl2">trámite</span>.</h1>
+  <p>Cualificamos tu caso, te mostramos las ciudades y agendamos tu videollamada con Silvana — con la misma alegría de una romaría.</p>
+  <a href="#" class="btn">Contale tu caso a Gina</a>
+</section>
+<div class="confetti"></div>
+
+<div class="marcador">
+  <div><div class="n">+200</div><div class="l">familias reubicadas</div></div>
+  <div><div class="n">5</div><div class="l">ciudades activas</div></div>
+  <div><div class="n">72h</div><div class="l">tiempo medio de respuesta</div></div>
+  <div><div class="n">98%</div><div class="l">recomienda el servicio</div></div>
+</div>
+
+<section class="section" id="ciudades">
+  <div class="eyebrow">05 ciudades</div>
+  <h2>Elegí tu punto de partida.</h2>
+  <div class="cards">
+    <article class="card reveal"><div class="card-photo"></div><div class="card-body"><div class="card-eyebrow">Litoral · Atlántico</div><div class="card-title">A Coruña</div><div class="card-meta">+38 familias · alquiler medio 720€</div></div></article>
+    <article class="card reveal"><div class="card-photo"></div><div class="card-body"><div class="card-eyebrow">Industrial · Ría</div><div class="card-title">Vigo</div><div class="card-meta">+52 familias · alquiler medio 690€</div></div></article>
+    <article class="card reveal"><div class="card-photo"></div><div class="card-body"><div class="card-eyebrow">Interior · Histórica</div><div class="card-title">Santiago</div><div class="card-meta">+29 familias · alquiler medio 650€</div></div></article>
+  </div>
+</section>
+
+<section class="section" id="muro">
+  <div class="eyebrow">Muro de llaves</div>
+  <h2>42 llaves entregadas este año.</h2>
+  <div class="muro reveal">
+    <div></div><div></div><div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div><div></div><div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="eyebrow">Testimonio</div>
+  <div class="testi reveal">
+    <p>"Nos dijo qué zona no nos convenía antes de que gastáramos en el pasaje. Eso no lo hace cualquiera."</p>
+    <cite>— familia reubicada en A Coruña, 2026</cite>
+  </div>
+</section>
+
+<section class="section" id="funciona">
+  <div class="eyebrow">Cómo funciona</div>
+  <h2>Tres pasos.</h2>
+  <div class="pasos">
+    <div class="paso reveal"><div class="n">01</div><h4>Contás tu caso</h4><p>Seis preguntas con Gina, sin formulario eterno.</p></div>
+    <div class="paso reveal"><div class="n">02</div><h4>Revisamos lo real</h4><p>Silvana descarta lo que no te conviene.</p></div>
+    <div class="paso reveal"><div class="n">03</div><h4>Videollamada</h4><p>25 minutos, agenda real, no un bot.</p></div>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="eyebrow">Preguntas frecuentes</div>
+  <h2>Antes de escribirnos.</h2>
+  <div class="faq">
+    <details><summary>¿Cuánto tarda el proceso?</summary><p>La primera videollamada se agenda en 2-3 días desde el diagnóstico.</p></details>
+    <details><summary>¿Trabajan con toda Galicia?</summary><p>Por ahora A Coruña, Vigo, Santiago, Lugo y Pontevedra.</p></details>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="eyebrow">Empezá hoy</div>
+  <h2>Tu hogar en Galicia está a una conversación.</h2>
+  <a href="#" class="btn">Contale tu caso a Gina</a>
+</section>
+
+<footer>
+  <span>Tu Lugar en Galicia</span>
+  <span>Política de privacidad · Contacto</span>
+</footer>
+
+<div class="gina-bubble">🎉</div>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el,i)=>{
+    gsap.to(el,{opacity:1,y:0,rotate:0,duration:.7,ease:'back.out(1.7)',delay:i*0.06,scrollTrigger:{trigger:el,start:'top 90%'}});
+  });
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity=1;el.style.transform='none';});
+  }
+</script>

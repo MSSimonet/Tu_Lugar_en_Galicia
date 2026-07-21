@@ -29,19 +29,19 @@ export function Accordion({ items, className = "" }: AccordionProps) {
           value={String(index)}
           className="overflow-hidden transition-brand"
           style={{
-            border: "1px solid var(--po-borde)",
-            borderRadius: "4px",
-            backgroundColor: "var(--po-luz)",
+            border: "1px solid var(--dz-borde)",
+            borderRadius: "8px",
+            backgroundColor: "var(--dz-luz)",
           }}
         >
           <RadixAccordion.Header>
             <RadixAccordion.Trigger
               className="group flex w-full cursor-pointer items-center justify-between gap-[var(--space-4)] px-[var(--space-6)] py-[var(--space-4)] font-medium transition-colors duration-150 focus-visible:outline-2"
               style={{
-                fontFamily: "var(--font-lato)",
+                fontFamily: "var(--font-dz-ui)",
                 fontSize: "var(--text-sm)",
-                color: "var(--po-pedra)",
-                outlineColor: "var(--po-ouro)",
+                color: "var(--dz-ink)",
+                outlineColor: "var(--dz-accent)",
               }}
             >
               <span className="text-left">{item.question}</span>
@@ -49,17 +49,17 @@ export function Accordion({ items, className = "" }: AccordionProps) {
                 aria-hidden="true"
                 size={18}
                 className="shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180"
-                style={{ color: "var(--po-ouro-text)" }}
+                style={{ color: "var(--dz-accent-text)" }}
               />
             </RadixAccordion.Trigger>
           </RadixAccordion.Header>
           <RadixAccordion.Content
             className="overflow-hidden data-[state=open]:animate-[accordion-down_200ms_ease-out] data-[state=closed]:animate-[accordion-up_200ms_ease-out]"
             style={{
-              fontFamily: "var(--font-lato)",
+              fontFamily: "var(--font-dz-ui)",
               fontSize: "var(--text-sm)",
-              color: "var(--po-muted)",
-              borderTop: "1px solid var(--po-borde)",
+              color: "var(--dz-muted)",
+              borderTop: "1px solid var(--dz-borde)",
             }}
           >
             <div className="px-[var(--space-6)] pb-[var(--space-4)] pt-[var(--space-4)] leading-[var(--leading-cuerpo)]">

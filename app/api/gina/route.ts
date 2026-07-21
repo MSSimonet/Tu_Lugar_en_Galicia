@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { procesarRespuesta, obtenerPaso } from '@/lib/gina/flowEngine'
 import type { Paso } from '@/lib/gina/flowEngine'
 import type { GinaSession } from '@/lib/gina/session'
-import { saveLead } from '@/lib/leads'
+import { saveLead, getLead } from '@/lib/leads'
 import type { LeadData } from '@/lib/leads'
 import { calcularCalificacion } from '@/lib/gina/scoring'
 import { guardarTranscripcion } from '@/lib/gina/transcripcion'
@@ -22,6 +22,9 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { getRealIp } from '@/lib/utils/ip'
 import { generateAdminToken, verifyAdminToken } from '@/lib/admin/tokens'
+import { armarPlan } from '@/lib/plan/armador'
+import { generarPlanPdf } from '@/lib/plan/generarPdf'
+import { sendEmail, buildPlanEmail, buildPlanEmailFallidoAlerta } from '@/lib/admin/email'
 
 const ratelimit =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
@@ -190,6 +193,10 @@ export async function POST(req: NextRequest) {
     if (!leadId) {
       guardado = false
       console.error('[gina] guardado completo falló tras 3 intentos — lead perdido, revisar logs')
+    } else {
+      // Best-effort: nunca bloquea ni hace fallar la respuesta al usuario si el
+      // email no puede enviarse (mismo criterio que guardarTranscripcion abajo).
+      await enviarPlanPorEmail(leadId)
     }
   } else if (paso.accion === 'guardar_lead_parcial') {
     // Salida temprana (lead-en-preparacion): etiqueta ya en sesion.etiqueta, no es guardado completo
@@ -422,6 +429,74 @@ async function guardarEnSupabase(
   }
 
   return saveLead(lead as LeadData, sesion.leadId)
+}
+
+/**
+ * Arma el Plan Estratégico del lead recién completado y lo envía por email a la
+ * dirección que declaró en el cuestionario (lead.email), adjunto en PDF.
+ * Nunca lanza — un fallo acá no debe impedir que la conversación termine
+ * normalmente para el usuario; solo se registra en logs.
+ */
+async function enviarPlanPorEmail(leadId: string): Promise<void> {
+  let lead: Awaited<ReturnType<typeof getLead>> | undefined
+  try {
+    lead = await getLead(leadId)
+    const planArmado = armarPlan({
+      paisResidencia:        lead.paisResidencia,
+      modalidad:             lead.modalidad,
+      documentacion:         lead.documentacion,
+      situacionLaboral:      lead.situacionLaboral,
+      mascotas:              lead.mascotas,
+      ninos:                 lead.ninos,
+      adolescentes:          lead.adolescentes,
+      cuentaBancaria:        lead.cuentaBancaria,
+      tipoLicencia:          lead.tipoLicencia,
+      nivelEstudios:         lead.nivelEstudios,
+      presupuestoMensual:    lead.presupuestoMensual,
+      garantias:             lead.garantias,
+      fechaLlegada:          lead.fechaLlegada,
+      necesidadesEspeciales: lead.necesidadesEspeciales,
+      adultos:               lead.adultos,
+    })
+    const buffer = await generarPlanPdf(lead, planArmado)
+    const slug = lead.nombreCompleto.trim().replace(/\s+/g, '-').toLowerCase()
+
+    await sendEmail({
+      to: lead.email,
+      subject: 'Tu Plan Estratégico — Tu Lugar en Galicia',
+      html: buildPlanEmail(lead.nombreCompleto),
+      attachments: [{ filename: `plan-${slug}.pdf`, content: buffer.toString('base64') }],
+    })
+  } catch (err) {
+    console.error(
+      `[gina] Error enviando el Plan Estratégico por email — leadId: ${leadId}, ts: ${new Date().toISOString()}`,
+      err instanceof Error ? err.name : 'unknown',
+    )
+    // Alerta visible a Silvana — sin esto, un fallo de envío solo quedaba en logs
+    // (auditoría de sesión 2026-07-19). Best-effort: si esta también falla, no hay
+    // más fallback que el log de arriba.
+    const adminEmail = process.env.SILVANA_EMAIL
+    if (adminEmail) {
+      try {
+        await sendEmail({
+          to: adminEmail,
+          subject: `⚠️ Falló el envío del Plan Estratégico — ${lead?.nombreCompleto ?? leadId}`,
+          html: buildPlanEmailFallidoAlerta({
+            nombre: lead?.nombreCompleto ?? '(no disponible)',
+            email: lead?.email ?? '(no disponible)',
+            leadId,
+          }),
+        })
+      } catch (alertErr) {
+        console.error(
+          `[gina] Además falló el envío de la alerta a Silvana — leadId: ${leadId}`,
+          alertErr instanceof Error ? alertErr.name : 'unknown',
+        )
+      }
+    } else {
+      console.error('[gina] SILVANA_EMAIL no configurado — alerta de fallo omitida')
+    }
+  }
 }
 
 /**

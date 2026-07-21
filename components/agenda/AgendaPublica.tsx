@@ -1,6 +1,9 @@
 'use client'
 
 import Image from 'next/image'
+import { motion } from 'motion/react'
+import { Eyebrow } from '@/components/ui/Eyebrow'
+import { staggerContainer, fadeUp } from '@/lib/motion/variants'
 
 const pasos = [
   {
@@ -28,15 +31,21 @@ export function AgendaPublica() {
   return (
     <section
       className="px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
-      style={{ backgroundColor: 'var(--po-areia)' }}
+      style={{ backgroundColor: 'var(--dz-papel)' }}
       aria-labelledby="agenda-publica-heading"
     >
-      <div className="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[1fr_1.15fr]">
+      <motion.div
+        className="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[1fr_1.15fr]"
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+      >
 
         {/* Imagen editorial */}
-        <div
+        <motion.div
+          variants={fadeUp}
           className="relative min-h-[280px] md:min-h-[560px] overflow-hidden"
-          style={{ borderRadius: '4px 4px 0 0', backgroundColor: 'var(--po-borde)' }}
+          style={{ borderRadius: 'var(--dz-radius-card) var(--dz-radius-card) 0 0', backgroundColor: 'var(--dz-borde)' }}
           aria-hidden="true"
         >
           <Image
@@ -47,39 +56,37 @@ export function AgendaPublica() {
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 45vw"
           />
-        </div>
+        </motion.div>
 
         {/* Contenido */}
-        <div
+        <motion.div
+          variants={fadeUp}
           className="px-[var(--space-6)] py-[var(--space-12)] md:px-[var(--space-12)] md:py-[var(--space-16)] flex flex-col justify-center gap-[var(--space-6)]"
-          style={{ backgroundColor: 'var(--po-luz)', borderRadius: '0 0 4px 4px' }}
+          style={{ backgroundColor: 'var(--dz-luz)', borderRadius: '0 0 var(--dz-radius-card) var(--dz-radius-card)' }}
         >
 
-          <span
-            className="inline-flex self-start items-center rounded-full border px-[var(--space-4)] py-[var(--space-1)] [font-size:var(--text-xs)] uppercase tracking-[var(--tracking-ui)]"
-            style={{ fontFamily: 'var(--font-lato)', fontWeight: 700, color: 'var(--po-ouro-text)', borderColor: 'var(--po-ouro-text)' }}
-          >
+          <Eyebrow tone="claro" className="self-start">
             Antes de agendar
-          </span>
+          </Eyebrow>
 
           <h1
             id="agenda-publica-heading"
             className="leading-[var(--leading-titulo)]"
-            style={{ fontFamily: 'var(--font-playfair)', fontWeight: 900, color: 'var(--po-pedra)', fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 900, color: 'var(--dz-ink)', fontSize: 'clamp(1.5rem, 3.4vw, 2.35rem)' }}
           >
             Primero, cuéntanos tu historia
           </h1>
 
           <p
             className="leading-[var(--leading-cuerpo)] max-w-xl"
-            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)', fontSize: 'var(--text-md)' }}
+            style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)', fontSize: 'var(--text-md)' }}
           >
             La videollamada con nuestro equipo es el inicio de todo — y para que valga de verdad, queremos conocerte antes.
           </p>
 
           <p
             className="leading-[var(--leading-cuerpo)] max-w-xl"
-            style={{ fontFamily: 'var(--font-lato)', color: 'var(--po-muted)', fontSize: 'var(--text-sm)' }}
+            style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)', fontSize: 'var(--text-sm)' }}
           >
             Cada familia que viene a Galicia llega con una situación propia: ciudad de destino, plazos,
             documentación, expectativas. Antes de reservar un espacio en nuestro calendario,
@@ -87,46 +94,53 @@ export function AgendaPublica() {
           </p>
 
           {/* Pasos — número + texto en línea */}
-          <ol className="flex flex-col gap-[var(--space-4)] mt-[var(--space-2)]" aria-label="Pasos para agendar">
+          <motion.ol
+            className="flex flex-col gap-[var(--space-4)] mt-[var(--space-2)]"
+            aria-label="Pasos para agendar"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.4 }}
+          >
             {pasos.map((paso) => (
-              <li key={paso.n} className="flex gap-[var(--space-4)] items-baseline">
+              <motion.li key={paso.n} variants={fadeUp} className="flex gap-[var(--space-4)] items-baseline">
                 <span
                   aria-hidden="true"
                   className="shrink-0"
-                  style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, fontSize: 'var(--text-lg)', color: 'var(--po-ouro-text)', lineHeight: 1, minWidth: '2.25rem' }}
+                  style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, fontSize: 'var(--text-lg)', color: 'var(--dz-accent-text)', lineHeight: 1, minWidth: '2.25rem' }}
                 >
                   {paso.n}
                 </span>
                 <p
                   className="leading-[var(--leading-cuerpo)]"
-                  style={{ fontFamily: 'var(--font-lato)', fontSize: 'var(--text-xs)' }}
+                  style={{ fontFamily: 'var(--font-dz-ui)', fontSize: 'var(--text-xs)' }}
                 >
-                  <span className="font-semibold" style={{ color: 'var(--po-pedra)' }}>{paso.title}</span>
+                  <span className="font-semibold" style={{ color: 'var(--dz-ink)' }}>{paso.title}</span>
                   {' — '}
-                  <span style={{ color: 'var(--po-muted)' }}>{paso.desc}</span>
+                  <span style={{ color: 'var(--dz-muted)' }}>{paso.desc}</span>
                 </p>
-              </li>
+              </motion.li>
             ))}
-          </ol>
+          </motion.ol>
 
           {/* CTA */}
           <button
             onClick={openGina}
             className="mt-[var(--space-2)] inline-flex w-fit items-center gap-[var(--space-2)] px-[var(--space-8)] py-[var(--space-4)] [font-size:var(--text-sm)] font-bold uppercase tracking-[var(--tracking-ui)] transition-brand hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{
-              fontFamily: 'var(--font-lato)',
-              borderRadius: '4px',
-              backgroundColor: 'var(--po-ouro)',
+              fontFamily: 'var(--font-dz-ui)',
+              borderRadius: '999px',
+              backgroundColor: 'var(--dz-accent)',
               color: '#1A1410',
-              outlineColor: 'var(--po-ouro)',
-              boxShadow: '0 4px 14px rgba(200, 155, 60, 0.35)',
+              outlineColor: 'var(--dz-accent)',
+              boxShadow: 'var(--dz-shadow-md)',
             }}
           >
             Cuéntale tu caso a Gina
             <span aria-hidden="true">→</span>
           </button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   )
 }

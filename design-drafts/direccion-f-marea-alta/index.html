@@ -1,0 +1,156 @@
+<title>Marea Alta — Dirección F</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Petrona:wght@500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --mt-perla:#DCE1E0;
+    --mt-petroleo:#1F3A3D;
+    --mt-petroleo-2:#2A4C4F;
+    --mt-nacar:#F4F6F5;
+    --mt-coral:#E8836B;
+    --mt-coral-hover:#D96B50;
+    --mt-gris:#6E7C7A;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--mt-nacar); color:var(--mt-petroleo); font-family:'Sora',sans-serif; margin:0;}
+  .font-display{font-family:'Petrona',serif;}
+  .eyebrow{font-family:'Sora',sans-serif; font-weight:600; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--mt-coral);}
+
+  header{
+    position:sticky; top:0; z-index:50; background:rgba(244,246,245,.9); backdrop-filter:blur(8px);
+    border-bottom:1px solid #C9D1CF; padding:22px 6vw; display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo-mark{font-family:'Petrona',serif; font-weight:700; font-size:1.2rem; color:var(--mt-petroleo);}
+  .logo-mark span{color:var(--mt-coral);}
+  nav a{font-size:.82rem; letter-spacing:.05em; font-weight:600; color:var(--mt-petroleo); text-decoration:none; margin-left:2.1rem; opacity:.75; transition:opacity .3s ease;}
+  nav a:hover{opacity:1;}
+
+  .hero{position:relative; padding:7rem 6vw 6rem; overflow:hidden; background:linear-gradient(180deg, var(--mt-perla) 0%, var(--mt-nacar) 100%);}
+  .ripple{position:absolute; border:1px solid rgba(31,58,61,.14); border-radius:999px;}
+  .r1{width:340px; height:340px; top:-100px; right:6%;}
+  .r2{width:520px; height:520px; top:-190px; right:-2%;}
+  .r3{width:700px; height:700px; top:-280px; right:-10%;}
+  .hero-content{position:relative; z-index:2; max-width:740px;}
+  .hero h1{font-family:'Petrona',serif; font-weight:600; font-size:clamp(2.3rem,5.2vw,4.4rem); line-height:1.14; margin:.7rem 0 1.5rem; color:var(--mt-petroleo);}
+  .hero h1 em{font-style:italic; color:var(--mt-coral);}
+  .hero p.lead{font-size:1.1rem; max-width:52ch; line-height:1.6; color:var(--mt-gris); margin-bottom:2.1rem;}
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:.6rem; background:var(--mt-petroleo); color:var(--mt-nacar);
+    font-weight:600; font-size:.94rem; padding:.95rem 1.8rem; border-radius:4px; text-decoration:none;
+    transition:background-color .3s ease, transform .3s ease;
+  }
+  .btn-primary:hover{background:var(--mt-coral); transform:translateY(-2px);}
+  .btn-secondary{display:inline-flex; align-items:center; gap:.5rem; color:var(--mt-petroleo); font-weight:600; font-size:.88rem; text-decoration:none; margin-left:1.6rem; border-bottom:1px solid var(--mt-gris); padding-bottom:3px;}
+
+  .section{padding:6.5rem 6vw;}
+  .section-head{max-width:640px; margin-bottom:3rem;}
+  .section-head h2{font-family:'Petrona',serif; font-weight:600; font-size:clamp(1.8rem,3.2vw,2.5rem); color:var(--mt-petroleo); margin:.5rem 0 0;}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.6rem;}
+  .city-card{background:var(--mt-nacar); border:1px solid #D3D9D7; border-radius:6px; overflow:hidden; transition:box-shadow .4s ease, transform .4s ease;}
+  .city-card:hover{transform:translateY(-5px); box-shadow:0 22px 44px -22px rgba(31,58,61,.4);}
+  .city-photo{height:210px; position:relative; background:linear-gradient(150deg, var(--mt-petroleo-2), var(--mt-petroleo));}
+  .city-photo::after{content:''; position:absolute; inset:0; background:radial-gradient(circle at 75% 20%, rgba(232,131,107,.28), transparent 55%);}
+  .city-body{padding:1.4rem 1.5rem 1.7rem;}
+  .city-eyebrow{font-weight:600; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--mt-gris);}
+  .city-title{font-family:'Petrona',serif; font-weight:600; font-size:1.5rem; color:var(--mt-petroleo); margin:.35rem 0 .5rem;}
+  .city-meta{font-size:.87rem; color:var(--mt-gris); line-height:1.5;}
+
+  .gina-bubble{
+    position:fixed; bottom:28px; right:28px; z-index:60; width:60px; height:60px; border-radius:999px;
+    background:var(--mt-petroleo); display:flex; align-items:center; justify-content:center; cursor:pointer;
+    box-shadow:0 14px 30px -10px rgba(31,58,61,.5);
+  }
+  .gina-bubble .wave{width:22px; height:22px; border:2px solid var(--mt-coral); border-radius:60% 40% 55% 45%/45% 55% 40% 60%; animation:waveTurn 6s linear infinite;}
+  @keyframes waveTurn{to{transform:rotate(360deg);}}
+  .gina-panel{
+    position:fixed; bottom:100px; right:28px; z-index:60; width:320px; max-width:88vw; background:var(--mt-nacar);
+    border:1px solid #D3D9D7; border-radius:10px; overflow:hidden; box-shadow:0 30px 60px -18px rgba(31,58,61,.35);
+    transform:translateY(18px); opacity:0; pointer-events:none;
+  }
+  .gina-panel.open{transform:translateY(0); opacity:1; pointer-events:auto; transition:transform .5s cubic-bezier(.16,1,.3,1), opacity .3s ease;}
+  .gina-panel-head{background:var(--mt-petroleo); color:var(--mt-nacar); padding:.9rem 1.1rem; font-family:'Petrona',serif; font-weight:600; display:flex; justify-content:space-between; align-items:center;}
+  .gina-panel-body{padding:1rem 1.1rem 1.2rem; font-size:.86rem;}
+  .gina-msg{background:var(--mt-perla); border-radius:8px; padding:.7rem .9rem; margin-bottom:.6rem; color:var(--mt-petroleo);}
+
+  .specimen{background:var(--mt-petroleo); color:var(--mt-nacar); padding:4rem 6vw;}
+  .swatches{display:flex; gap:1rem; flex-wrap:wrap; margin:1.4rem 0 2.2rem;}
+  .swatch{width:120px;}
+  .swatch-color{height:64px; border-radius:6px;}
+  .swatch small{font-size:.72rem; opacity:.75; display:block; margin-top:.4rem;}
+
+  .reveal{opacity:0; transform:translateY(22px);}
+</style>
+
+<header>
+  <div class="logo-mark">Tu Lugar en <span>Galicia</span></div>
+  <nav><a href="#ciudades">Ciudades</a><a href="#gina">Gina</a><a href="#specimen">Sistema</a></nav>
+</header>
+
+<section class="hero">
+  <div class="ripple r1"></div><div class="ripple r2"></div><div class="ripple r3"></div>
+  <div class="hero-content">
+    <div class="eyebrow">Relocation con calma de ría</div>
+    <h1>Tu hogar sube con la <em>marea</em>, no con la prisa.</h1>
+    <p class="lead">Cualificamos tu caso con la misma precisión con la que se lee la marea en la ría: sin sorpresas, sin apuro.</p>
+    <a href="#" class="btn-primary">Agenda tu videollamada</a>
+    <a href="#ciudades" class="btn-secondary">Ver ciudades ↓</a>
+  </div>
+</section>
+
+<section class="section" id="ciudades">
+  <div class="section-head"><div class="eyebrow">05 ciudades activas</div><h2>Tu punto de partida.</h2></div>
+  <div class="cards">
+    <article class="city-card reveal"><div class="city-photo"></div><div class="city-body"><div class="city-eyebrow">Litoral · Atlántico</div><div class="city-title">A Coruña</div><div class="city-meta">+38 familias reubicadas · alquiler medio 2 hab. 720€</div></div></article>
+    <article class="city-card reveal"><div class="city-photo"></div><div class="city-body"><div class="city-eyebrow">Industrial · Ría</div><div class="city-title">Vigo</div><div class="city-meta">+52 familias reubicadas · alquiler medio 2 hab. 690€</div></div></article>
+    <article class="city-card reveal"><div class="city-photo"></div><div class="city-body"><div class="city-eyebrow">Interior · Histórica</div><div class="city-title">Santiago</div><div class="city-meta">+29 familias reubicadas · alquiler medio 2 hab. 650€</div></div></article>
+  </div>
+</section>
+
+<section class="section" id="gina" style="padding-top:0;">
+  <div class="section-head"><div class="eyebrow">Asistente de diagnóstico</div><h2>Gina, abajo a la derecha.</h2><p style="margin-top:.8rem; max-width:52ch; color:var(--mt-gris);">Mockup de forma/color/animación — el contenido del chat es de relleno.</p></div>
+</section>
+
+<div class="gina-bubble" id="gina-bubble"><div class="wave"></div></div>
+<div class="gina-panel" id="gina-panel">
+  <div class="gina-panel-head"><span>Gina · Diagnóstico</span><span id="gina-close" style="cursor:pointer;">✕</span></div>
+  <div class="gina-panel-body">
+    <div class="gina-msg">Hola, soy Gina 🌊 Unas preguntas breves para entender tu caso.</div>
+    <div class="gina-msg">¿Cuántos adultos viajan con vos?</div>
+  </div>
+</div>
+
+<section class="specimen" id="specimen">
+  <div class="eyebrow" style="color:var(--mt-coral);">Sistema — Marea Alta</div>
+  <h2 class="font-display" style="font-size:1.8rem; margin:.6rem 0 0;">Paleta &amp; tipografía</h2>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:var(--mt-perla);"></div><small>#DCE1E0 perla</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--mt-petroleo);"></div><small>#1F3A3D petróleo</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--mt-coral);"></div><small>#E8836B coral</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--mt-nacar);"></div><small>#F4F6F5 nácar</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--mt-gris);"></div><small>#6E7C7A gris</small></div>
+  </div>
+  <p class="font-display" style="font-size:2.4rem; font-weight:600;">Petrona — display</p>
+  <p style="font-size:1.2rem;">Sora — cuerpo y UI, 400/500/600/700</p>
+</section>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el, i) => {
+    gsap.to(el, { opacity:1, y:0, duration:.9, ease:'power2.out', delay:i*0.1, scrollTrigger:{ trigger:el, start:'top 88%' } });
+  });
+  const bubble = document.getElementById('gina-bubble');
+  const panel = document.getElementById('gina-panel');
+  bubble.addEventListener('click', () => panel.classList.toggle('open'));
+  document.getElementById('gina-close').addEventListener('click', () => panel.classList.remove('open'));
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.reveal').forEach(el => { el.style.opacity=1; el.style.transform='none'; });
+    document.querySelector('.wave').style.animation='none';
+  }
+</script>

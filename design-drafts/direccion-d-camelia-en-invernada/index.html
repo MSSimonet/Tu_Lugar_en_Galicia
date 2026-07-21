@@ -1,0 +1,202 @@
+<title>Camelia en Invernada — Dirección D</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --ci-niebla:#E8EDE6;
+    --ci-musgo:#2F3D30;
+    --ci-camelia:#7A1F3D;
+    --ci-camelia-claro:#B14A63;
+    --ci-marfil:#FBF7F0;
+    --ci-piedra:#8B9384;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--ci-marfil); color:var(--ci-musgo); font-family:'Manrope',sans-serif; margin:0;}
+  .font-display{font-family:'Newsreader',serif;}
+  .eyebrow{font-family:'Manrope',sans-serif; font-weight:700; font-size:.74rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ci-camelia);}
+
+  header{
+    position:sticky; top:0; z-index:50; background:rgba(251,247,240,.9); backdrop-filter:blur(8px);
+    border-bottom:1px solid #DCD9CC; padding:22px 6vw; display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo-mark{font-family:'Newsreader',serif; font-style:italic; font-weight:600; font-size:1.25rem; color:var(--ci-musgo);}
+  .logo-mark span{color:var(--ci-camelia);}
+  nav a{font-size:.82rem; letter-spacing:.06em; text-transform:uppercase; font-weight:600; color:var(--ci-musgo); text-decoration:none; margin-left:2.2rem; position:relative; padding-bottom:6px;}
+  nav a::after{content:''; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--ci-camelia); transition:width .45s cubic-bezier(.65,0,.35,1);}
+  nav a:hover::after{width:100%;}
+
+  .hero{position:relative; padding:7rem 6vw 6rem; overflow:hidden; background:linear-gradient(180deg, var(--ci-niebla) 0%, var(--ci-marfil) 100%);}
+  .bloom{
+    position:absolute; z-index:0; border-radius:999px; filter:blur(60px); opacity:.55;
+  }
+  .bloom-1{width:420px; height:420px; background:var(--ci-camelia-claro); top:-140px; right:-80px; opacity:.35;}
+  .bloom-2{width:320px; height:320px; background:#C9D3C2; bottom:-100px; left:10%; opacity:.6;}
+  .hero-content{position:relative; z-index:2; max-width:760px;}
+  .hero h1{
+    font-family:'Newsreader',serif; font-weight:500; font-size:clamp(2.4rem,5.4vw,4.6rem);
+    line-height:1.12; margin:.7rem 0 1.5rem; color:var(--ci-musgo);
+  }
+  .hero h1 em{font-style:italic; color:var(--ci-camelia); font-weight:500;}
+  .hero p.lead{font-size:1.14rem; max-width:52ch; line-height:1.65; color:#5B6355; margin-bottom:2.2rem;}
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:.7rem; background:var(--ci-camelia); color:var(--ci-marfil);
+    font-weight:600; font-size:.95rem; padding:.95rem 1.8rem; border-radius:999px; text-decoration:none;
+    transition:background-color .4s ease, transform .3s ease, box-shadow .4s ease;
+  }
+  .btn-primary:hover{background:var(--ci-camelia-claro); transform:translateY(-2px); box-shadow:0 14px 30px -10px rgba(122,31,61,.4);}
+  .btn-secondary{
+    display:inline-flex; align-items:center; gap:.5rem; color:var(--ci-musgo); font-weight:600; font-size:.88rem;
+    text-decoration:none; margin-left:1.6rem; border-bottom:1px solid var(--ci-piedra); padding-bottom:3px;
+  }
+
+  .section{padding:6.5rem 6vw;}
+  .section-head{max-width:640px; margin-bottom:3rem;}
+  .section-head h2{font-family:'Newsreader',serif; font-weight:500; font-size:clamp(1.8rem,3.2vw,2.5rem); color:var(--ci-musgo); margin:.5rem 0 0;}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.8rem;}
+  .city-card{
+    background:var(--ci-marfil); border:1px solid #E3DFD1; border-radius:28px; overflow:hidden;
+    transition:transform .5s cubic-bezier(.22,1,.36,1), border-color .4s ease, box-shadow .4s ease;
+  }
+  .city-card:hover{transform:translateY(-6px) scale(1.01); border-color:var(--ci-camelia-claro); box-shadow:0 24px 48px -20px rgba(122,31,61,.28);}
+  .city-photo{height:210px; position:relative; background:linear-gradient(160deg, #C9D3C2, #7F8F76);}
+  .city-photo::after{content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 70% 20%, rgba(122,31,61,.18), transparent 60%);}
+  .city-body{padding:1.5rem 1.6rem 1.8rem;}
+  .city-eyebrow{font-weight:700; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ci-piedra);}
+  .city-title{font-family:'Newsreader',serif; font-weight:600; font-style:italic; font-size:1.6rem; color:var(--ci-musgo); margin:.35rem 0 .5rem;}
+  .city-meta{font-size:.88rem; color:#6E7566; line-height:1.55;}
+
+  .gina-bubble{
+    position:fixed; bottom:28px; right:28px; z-index:60; width:62px; height:62px; border-radius:999px;
+    background:var(--ci-marfil); border:1px solid var(--ci-camelia-claro); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:0 14px 30px -10px rgba(122,31,61,.35);
+  }
+  .gina-bubble .bud{width:12px; height:16px; border-radius:60% 60% 60% 60% / 70% 70% 30% 30%; background:var(--ci-camelia);}
+  .gina-panel{
+    position:fixed; bottom:102px; right:28px; z-index:60; width:320px; max-width:88vw; background:var(--ci-marfil);
+    border:1px solid #E3DFD1; border-radius:26px; overflow:hidden; box-shadow:0 30px 60px -20px rgba(47,61,48,.35);
+    transform:scale(.8) rotate(-2deg); opacity:0; pointer-events:none; transform-origin:bottom right;
+  }
+  .gina-panel.open{transform:scale(1) rotate(0); opacity:1; pointer-events:auto; transition:transform .6s cubic-bezier(.34,1.2,.4,1), opacity .35s ease;}
+  .gina-panel-head{background:linear-gradient(120deg, var(--ci-camelia), var(--ci-camelia-claro)); color:var(--ci-marfil); padding:.9rem 1.1rem; font-family:'Newsreader',serif; font-style:italic; font-weight:600; display:flex; justify-content:space-between; align-items:center;}
+  .gina-panel-body{padding:1rem 1.1rem 1.2rem; font-size:.86rem;}
+  .gina-msg{background:var(--ci-niebla); border-radius:14px; padding:.7rem .9rem; margin-bottom:.6rem; color:var(--ci-musgo);}
+
+  .specimen{background:var(--ci-musgo); color:var(--ci-niebla); padding:4rem 6vw;}
+  .swatches{display:flex; gap:1rem; flex-wrap:wrap; margin:1.4rem 0 2.2rem;}
+  .swatch{width:120px;}
+  .swatch-color{height:64px; border-radius:14px;}
+  .swatch small{font-size:.72rem; opacity:.75; display:block; margin-top:.4rem;}
+
+  .reveal{opacity:0; transform:translateY(20px) scale(.98);}
+</style>
+
+<header>
+  <div class="logo-mark">Tu Lugar en <span>Galicia</span></div>
+  <nav>
+    <a href="#ciudades">Ciudades</a>
+    <a href="#gina">Gina</a>
+    <a href="#specimen">Sistema</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="bloom bloom-1"></div>
+  <div class="bloom bloom-2"></div>
+  <div class="hero-content">
+    <div class="eyebrow">Relocation con delicadeza</div>
+    <h1>Tu hogar en Galicia florece <em>en invierno</em>, como la camelia.</h1>
+    <p class="lead">Silvana te acompaña con calma y cuidado, aunque afuera llueva. No hay apuro: solo el momento justo para florecer.</p>
+    <a href="#" class="btn-primary">Agenda tu videollamada</a>
+    <a href="#ciudades" class="btn-secondary">Ver ciudades ↓</a>
+  </div>
+</section>
+
+<section class="section" id="ciudades">
+  <div class="section-head">
+    <div class="eyebrow">05 ciudades activas</div>
+    <h2>Tu punto de partida.</h2>
+  </div>
+  <div class="cards">
+    <article class="city-card reveal">
+      <div class="city-photo"></div>
+      <div class="city-body">
+        <div class="city-eyebrow">Litoral · Atlántico</div>
+        <div class="city-title">A Coruña</div>
+        <div class="city-meta">+38 familias reubicadas · alquiler medio 2 hab. 720€</div>
+      </div>
+    </article>
+    <article class="city-card reveal">
+      <div class="city-photo"></div>
+      <div class="city-body">
+        <div class="city-eyebrow">Industrial · Ría</div>
+        <div class="city-title">Vigo</div>
+        <div class="city-meta">+52 familias reubicadas · alquiler medio 2 hab. 690€</div>
+      </div>
+    </article>
+    <article class="city-card reveal">
+      <div class="city-photo"></div>
+      <div class="city-body">
+        <div class="city-eyebrow">Interior · Histórica</div>
+        <div class="city-title">Santiago</div>
+        <div class="city-meta">+29 familias reubicadas · alquiler medio 2 hab. 650€</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="gina" style="padding-top:0;">
+  <div class="section-head">
+    <div class="eyebrow">Asistente de diagnóstico</div>
+    <h2>Gina espera, abajo a la derecha.</h2>
+    <p style="margin-top:.8rem; max-width:52ch; color:#6E7566;">Mockup de forma/color/animación — el contenido del chat es de relleno.</p>
+  </div>
+</section>
+
+<div class="gina-bubble" id="gina-bubble"><div class="bud"></div></div>
+<div class="gina-panel" id="gina-panel">
+  <div class="gina-panel-head"><span>Gina · Diagnóstico</span><span id="gina-close" style="cursor:pointer;">✕</span></div>
+  <div class="gina-panel-body">
+    <div class="gina-msg">Hola, soy Gina 🌸 Te hago unas preguntas con calma.</div>
+    <div class="gina-msg">¿Cuántos adultos viajan con vos?</div>
+  </div>
+</div>
+
+<section class="specimen" id="specimen">
+  <div class="eyebrow" style="color:var(--ci-camelia-claro);">Sistema — Camelia en Invernada</div>
+  <h2 class="font-display" style="font-size:1.8rem; margin:.6rem 0 0; font-style:italic;">Paleta &amp; tipografía</h2>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:var(--ci-niebla);"></div><small>#E8EDE6 niebla</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--ci-musgo);"></div><small>#2F3D30 musgo</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--ci-camelia);"></div><small>#7A1F3D camelia</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--ci-marfil);"></div><small>#FBF7F0 marfil</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--ci-piedra);"></div><small>#8B9384 piedra</small></div>
+  </div>
+  <p class="font-display" style="font-size:2.4rem; font-style:italic; font-weight:500;">Newsreader — display</p>
+  <p style="font-size:1.2rem;">Manrope — cuerpo y UI, 400/500/600/700</p>
+</section>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el, i) => {
+    gsap.to(el, {
+      opacity:1, y:0, scale:1, duration:1.1, ease:'sine.out', delay:i*0.12,
+      scrollTrigger:{ trigger:el, start:'top 88%' }
+    });
+  });
+
+  const bubble = document.getElementById('gina-bubble');
+  const panel = document.getElementById('gina-panel');
+  bubble.addEventListener('click', () => panel.classList.toggle('open'));
+  document.getElementById('gina-close').addEventListener('click', () => panel.classList.remove('open'));
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.reveal').forEach(el => { el.style.opacity=1; el.style.transform='none'; });
+  }
+</script>

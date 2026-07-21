@@ -1,0 +1,224 @@
+<title>Lo que no te vamos a prometer sobre tu piso en Vigo</title>
+<meta name="description" content="23 casos activos esta semana. Ningún link de Idealista al voleo: Silvana revisa cada piso antes de mandártelo. Así trabajamos en Vigo, A Coruña y Santiago." />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  /* Bricolage Grotesque + Hanken Grotesk: ninguna de las 11 direcciones previas
+     usó un grotesk variable con detalles de tinta — acá se elige porque el
+     tono es "expediente técnico", no "producto SaaS friendly". */
+  :root{
+    --l-carbon:#121212;
+    --l-carbon-2:#1A1A1A;
+    --l-hueso:#EDEAE3;
+    --l-acero:#4C6B7A;
+    --l-acero-claro:#7597A8;
+    --l-linea:rgba(237,234,227,.14);
+    --l-muted:#9A9690;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--l-carbon); color:var(--l-hueso); font-family:'Hanken Grotesk',sans-serif; margin:0;}
+  .grotesk{font-family:'Bricolage Grotesque',sans-serif;}
+
+  /* Tira de estado en vez de header con logo+nav tradicional — el contenido
+     es un expediente, no un sitio de marketing con navegación de 4 links. */
+  .estado{
+    display:flex; justify-content:space-between; padding:.9rem 6vw; font-size:.76rem;
+    letter-spacing:.06em; text-transform:uppercase; color:var(--l-muted); border-bottom:1px solid var(--l-linea);
+  }
+  .estado b{color:var(--l-acero-claro);}
+
+  /* Intro: columna angosta de cifra + columna ancha de titular — 1:2.2, invertido
+     respecto a la dirección K (que iba 1.4:1) para que no se sienta la misma plantilla. */
+  .intro{display:grid; grid-template-columns:.85fr 2fr; gap:2.5rem; padding:4rem 6vw 4.5rem; align-items:start;}
+  @media (max-width: 780px){ .intro{ grid-template-columns:1fr; } }
+  .intro .cifra{font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:3.2rem; color:var(--l-acero-claro); line-height:1;}
+  .intro .cifra-label{font-size:.8rem; color:var(--l-muted); margin-top:.5rem; max-width:16ch; line-height:1.4;}
+  .intro h1{font-family:'Bricolage Grotesque',sans-serif; font-weight:600; font-size:clamp(1.9rem,3.6vw,3.1rem); line-height:1.18; margin:0 0 1.2rem; max-width:20ch;}
+  .intro p{font-size:1.02rem; color:var(--l-muted); max-width:52ch; line-height:1.6; margin:0 0 1.6rem;}
+  .btn{display:inline-flex; align-items:center; gap:.5rem; background:var(--l-acero); color:var(--l-carbon); font-weight:600; font-size:.92rem; padding:.85rem 1.6rem; text-decoration:none; border-radius:2px; transition:background-color .25s ease;}
+  .btn:hover{background:var(--l-acero-claro);}
+
+  /* Ledger: tabla real en vez de tarjetas con foto+icono. Los datos son la protagonista. */
+  .ledger{padding:0 6vw 4.5rem;}
+  .ledger table{width:100%; border-collapse:collapse; font-size:.88rem;}
+  .ledger th{text-align:left; font-weight:500; color:var(--l-muted); font-size:.74rem; letter-spacing:.06em; text-transform:uppercase; padding:.7rem .8rem; border-bottom:1px solid var(--l-linea);}
+  .ledger td{padding:.85rem .8rem; border-bottom:1px solid var(--l-linea);}
+  .ledger tr:hover td{background:rgba(76,107,122,.08);}
+  .ledger .ciudad{font-weight:600;}
+  .ledger .estado-badge{font-size:.74rem; padding:.2rem .55rem; border:1px solid var(--l-acero); color:var(--l-acero-claro); border-radius:999px;}
+
+  /* Perfil de una sola ciudad con cita real, no genérica — rompe el patrón
+     de "3 tarjetas iguales" usado en las 10 direcciones anteriores. */
+  .perfil{padding:4.5rem 6vw 5rem; background:var(--l-carbon-2); border-top:1px solid var(--l-linea); border-bottom:1px solid var(--l-linea);}
+  .perfil-grid{display:grid; grid-template-columns:1fr 1fr; gap:3rem;}
+  @media (max-width: 820px){ .perfil-grid{ grid-template-columns:1fr; } }
+  .perfil .tag{font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--l-acero-claro); font-weight:600;}
+  .perfil h2{font-family:'Bricolage Grotesque',sans-serif; font-size:2rem; margin:.5rem 0 1rem;}
+  .perfil p{color:var(--l-muted); line-height:1.65; margin:0 0 1rem;}
+  blockquote{border-left:2px solid var(--l-acero); padding-left:1.2rem; margin:1.4rem 0; font-family:'Bricolage Grotesque',sans-serif; font-size:1.15rem; font-style:normal; color:var(--l-hueso);}
+  blockquote cite{display:block; font-family:'Hanken Grotesk',sans-serif; font-size:.8rem; color:var(--l-muted); margin-top:.6rem; font-style:normal;}
+
+  /* Anti-promesas: contenido diferenciador, no una lista de "features" con iconos. */
+  .no-hacemos{padding:4rem 6vw 4.5rem; max-width:640px;}
+  .no-hacemos h3{font-family:'Bricolage Grotesque',sans-serif; font-size:1.4rem; margin:0 0 1.5rem;}
+  .no-item{display:flex; gap:.9rem; padding:.9rem 0; border-top:1px solid var(--l-linea);}
+  .no-item:last-child{border-bottom:1px solid var(--l-linea);}
+  .no-item .x{font-family:'Bricolage Grotesque',sans-serif; color:var(--l-muted); font-weight:600;}
+  .no-item p{margin:0; font-size:.92rem; color:var(--l-hueso); line-height:1.5;}
+
+  .contacto{padding:4rem 6vw 5rem; max-width:520px;}
+  .contacto h3{font-family:'Bricolage Grotesque',sans-serif; font-size:1.4rem; margin:0 0 .6rem;}
+  .contacto p{color:var(--l-muted); font-size:.9rem; margin:0 0 1.2rem;}
+  .contacto form{display:flex; gap:.6rem; flex-wrap:wrap;}
+  .contacto input{flex:1; min-width:200px; border:1px solid var(--l-linea); background:var(--l-carbon-2); color:var(--l-hueso); padding:.75rem .9rem; font-family:'Hanken Grotesk',sans-serif; font-size:.92rem; border-radius:2px;}
+  .contacto input:focus{outline:1px solid var(--l-acero); border-color:var(--l-acero);}
+  .contacto .error{display:none; color:var(--l-acero-claro); font-size:.82rem; margin-top:.5rem;}
+  .contacto .error.show{display:block;}
+
+  footer{padding:2.2rem 6vw; border-top:1px solid var(--l-linea); font-size:.8rem; color:var(--l-muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:.6rem;}
+
+  .gina-note{
+    position:fixed; bottom:22px; right:22px; z-index:60; width:52px; height:52px; border-radius:6px;
+    background:var(--l-acero); color:var(--l-carbon); display:flex; align-items:center; justify-content:center;
+    font-family:'Bricolage Grotesque',sans-serif; font-weight:700; cursor:pointer; transform:rotate(-4deg);
+    box-shadow:0 12px 24px -10px rgba(0,0,0,.5);
+  }
+  .gina-panel{
+    position:fixed; bottom:88px; right:22px; z-index:60; width:300px; max-width:88vw; background:var(--l-carbon-2);
+    border:1px solid var(--l-linea); border-radius:6px; overflow:hidden; box-shadow:0 30px 60px -20px rgba(0,0,0,.6);
+    transform:translateY(10px) scale(.97); opacity:0; pointer-events:none;
+  }
+  .gina-panel.open{transform:translateY(0) scale(1); opacity:1; pointer-events:auto; transition:transform .4s cubic-bezier(.16,1,.3,1), opacity .3s ease;}
+  .gina-panel-head{background:var(--l-acero); color:var(--l-carbon); padding:.8rem 1rem; font-family:'Bricolage Grotesque',sans-serif; font-weight:700; display:flex; justify-content:space-between; align-items:center;}
+  .gina-panel-body{padding:1rem; font-size:.86rem;}
+  .gina-msg{background:rgba(76,107,122,.1); border-radius:4px; padding:.65rem .8rem; margin-bottom:.55rem;}
+
+  .specimen{padding:3.5rem 6vw; border-top:1px solid var(--l-linea);}
+  .specimen .meta-example{font-family:'Hanken Grotesk',monospace; font-size:.8rem; background:rgba(76,107,122,.08); padding:1rem 1.1rem; border-left:2px solid var(--l-acero); margin:1rem 0 2rem;}
+  .swatches{display:flex; gap:1rem; flex-wrap:wrap; margin:1.2rem 0 2rem;}
+  .swatch{width:110px;}
+  .swatch-color{height:54px; border-radius:3px;}
+  .swatch small{font-size:.68rem; opacity:.7; display:block; margin-top:.35rem;}
+
+  .reveal{opacity:0; transform:translateY(12px);}
+</style>
+
+<div class="estado">
+  <span>Expediente <b>#0847-VIGO</b> · abierto hace 6 días</span>
+  <span><b>23</b> casos activos esta semana</span>
+</div>
+
+<section class="intro">
+  <div>
+    <div class="cifra">52</div>
+    <div class="cifra-label">familias ya reubicadas en Vigo, la última hace 4 días</div>
+  </div>
+  <div>
+    <h1>Lo que no te vamos a prometer sobre tu piso en Vigo.</h1>
+    <p>No te mandamos veinte links de Idealista para que elijas vos. Silvana revisa cada piso antes de mostrártelo — a veces eso significa esperar unos días más para tener algo que valga la pena.</p>
+    <a href="#ledger" class="btn">Ver el estado real →</a>
+  </div>
+</section>
+
+<section class="ledger" id="ledger">
+  <table class="reveal">
+    <thead><tr><th>Ciudad</th><th>Familias reubicadas</th><th>Alquiler medio 2 hab.</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td class="ciudad">Vigo</td><td>52</td><td>690€ (640–780)</td><td><span class="estado-badge">Alta demanda</span></td></tr>
+      <tr><td class="ciudad">A Coruña</td><td>38</td><td>720€ (640–830)</td><td><span class="estado-badge">Activo</span></td></tr>
+      <tr><td class="ciudad">Santiago</td><td>29</td><td>650€ (580–740)</td><td><span class="estado-badge">Rotación lenta</span></td></tr>
+      <tr><td class="ciudad">Lugo</td><td>11</td><td>590€ (520–650)</td><td><span class="estado-badge">Pocas unidades</span></td></tr>
+      <tr><td class="ciudad">Pontevedra</td><td>14</td><td>610€ (550–690)</td><td><span class="estado-badge">Activo</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="perfil">
+  <div class="perfil-grid">
+    <div>
+      <div class="tag">Ciudad con más consultas esta semana</div>
+      <h2>Vigo</h2>
+      <p>Zona de Coia si el trabajo queda cerca del puerto, Travesía de Vigo si buscás algo más tranquilo. La ría condiciona más el precio que el barrio en sí.</p>
+    </div>
+    <div>
+      <blockquote>
+        "Nos dijo que ese piso de Coia no nos convenía por la humedad, aunque las fotos estaban bien. Eso nos hizo confiar."
+        <cite>— familia reubicada en Vigo, marzo 2026</cite>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<section class="no-hacemos">
+  <h3>Lo que no hacemos</h3>
+  <div class="no-item"><span class="x">✕</span><p>No te mandamos links al voleo sin revisar el piso primero.</p></div>
+  <div class="no-item"><span class="x">✕</span><p>No prometemos piso antes de conocer tu caso real.</p></div>
+  <div class="no-item"><span class="x">✕</span><p>No cobramos nada por mostrarte información — cobramos por el acompañamiento, no por el diagnóstico.</p></div>
+</section>
+
+<section class="contacto">
+  <h3>Contame tu caso</h3>
+  <p>Silvana responde en persona, no un bot genérico de agenda.</p>
+  <form id="contacto-form">
+    <input type="tel" id="contacto-tel" placeholder="tu WhatsApp o teléfono" required />
+    <button type="submit" class="btn">Enviar</button>
+  </form>
+  <div class="error" id="contacto-error">Necesitamos un número con el que realmente podamos ubicarte — con código de país si estás fuera de España.</div>
+</section>
+
+<div class="gina-note" id="gina-note">G</div>
+<div class="gina-panel" id="gina-panel">
+  <div class="gina-panel-head"><span>Gina · Diagnóstico</span><span id="gina-close" style="cursor:pointer;">✕</span></div>
+  <div class="gina-panel-body">
+    <div class="gina-msg">Hola, soy Gina. Antes de nada: ¿cuántos adultos viajan con vos?</div>
+  </div>
+</div>
+
+<footer>
+  <span>Tu Lugar en Galicia</span>
+  <span>Expediente actualizado por Silvana — Vigo</span>
+</footer>
+
+<section class="specimen">
+  <div class="tag" style="color:var(--l-acero-claro);">Sistema — Expediente Vigo (L)</div>
+  <p class="grotesk" style="font-size:1.5rem; margin:.6rem 0 0;">Bricolage Grotesque — display · Hanken Grotesk — UI</p>
+  <div class="swatches">
+    <div class="swatch"><div class="swatch-color" style="background:var(--l-carbon);"></div><small>#121212 carbón</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--l-hueso);"></div><small>#EDEAE3 hueso</small></div>
+    <div class="swatch"><div class="swatch-color" style="background:var(--l-acero);"></div><small>#4C6B7A acero</small></div>
+  </div>
+  <div class="tag" style="color:var(--l-acero-claro);">Ejemplo de &lt;title&gt; / meta description real</div>
+  <div class="meta-example">
+    &lt;title&gt;Lo que no te vamos a prometer sobre tu piso en Vigo&lt;/title&gt;<br/>
+    &lt;meta name="description" content="23 casos activos esta semana. Ningún link de Idealista al voleo: Silvana revisa cada piso antes de mandártelo."&gt;
+  </div>
+</section>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach((el) => {
+    gsap.to(el, { opacity:1, y:0, duration:.7, ease:'power2.out', scrollTrigger:{ trigger:el, start:'top 90%' } });
+  });
+
+  const note = document.getElementById('gina-note');
+  const panel = document.getElementById('gina-panel');
+  note.addEventListener('click', () => panel.classList.toggle('open'));
+  document.getElementById('gina-close').addEventListener('click', () => panel.classList.remove('open'));
+
+  document.getElementById('contacto-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = document.getElementById('contacto-tel').value.trim();
+    const err = document.getElementById('contacto-error');
+    // Validación deliberadamente laxa: es un mockup, no un endpoint real.
+    err.classList.toggle('show', val.length < 6);
+  });
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.reveal').forEach(el => { el.style.opacity=1; el.style.transform='none'; });
+  }
+</script>

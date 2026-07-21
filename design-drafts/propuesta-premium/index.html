@@ -1,0 +1,208 @@
+<title>Tu Lugar en Galicia — propuesta premium</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* Fraunces (ya validada por Brand Guardian en docs/design-system.md) + Inter:
+     un solo acento de marca, una sola sombra en todo el sitio, ritmo de sección
+     dado por alternancia clara/oscura — no por cajas con distinto borde cada una.
+     Referencias: Airbnb (fotografía > tipografía), Apple (una sombra, restricción),
+     Uber (una sola forma geométrica consistente). */
+  :root{
+    --bg:#F7F4EE;
+    --ink:#1C1A17;
+    --accent:#B5502E;
+    --accent-h:#964025;
+    --dark:#14120F;
+    --dark-2:#1D1A15;
+    --muted:#6B6459;
+    --line:#E4DFD3;
+    --white:#FFFFFF;
+    --radius:14px;
+    --shadow: 0 8px 28px -12px rgba(20,18,15,.28);
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; margin:0; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:500; margin:0;}
+  p{margin:0;}
+  a{color:inherit;}
+
+  /* ── Header ─────────────────────────────────────────────────────────── */
+  header{
+    position:sticky; top:0; z-index:50; background:var(--dark); color:var(--white);
+    padding:1.1rem 4vw; display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{font-family:'Fraunces',serif; font-style:italic; font-size:1.15rem; letter-spacing:.01em;}
+  nav{display:flex; align-items:center; gap:2.2rem;}
+  nav a{font-size:.88rem; color:rgba(255,255,255,.82); text-decoration:none;}
+  nav a:hover{color:var(--white);}
+  .nav-cta{
+    background:var(--accent); color:var(--white); padding:.6rem 1.2rem; border-radius:999px;
+    font-size:.86rem; font-weight:500; text-decoration:none; transition:background-color .2s ease;
+  }
+  .nav-cta:hover{background:var(--accent-h);}
+
+  /* ── Hero: fondo fotográfico simulado (capas de gradiente, no plano) ──── */
+  .hero{
+    position:relative; min-height:88vh; display:flex; align-items:flex-end;
+    background:
+      linear-gradient(180deg, rgba(20,18,15,.15) 0%, rgba(20,18,15,.55) 68%, rgba(20,18,15,.86) 100%),
+      radial-gradient(1100px 700px at 82% 8%, rgba(181,80,46,.22), transparent 60%),
+      linear-gradient(200deg, #4A5A63 0%, #2E3B41 32%, #1E2A2E 58%, #171713 100%);
+    color:var(--white); padding:4rem 4vw 4.5rem; overflow:hidden;
+  }
+  .hero::after{
+    /* textura de grano sutil — evita que el degradado se lea como "CSS plano" */
+    content:''; position:absolute; inset:0; opacity:.05; mix-blend-mode:overlay; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .hero-inner{position:relative; z-index:2; max-width:640px;}
+  .eyebrow-pill{
+    display:inline-flex; align-items:center; gap:.4rem; background:rgba(255,255,255,.12);
+    backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.18); color:var(--white);
+    font-size:.78rem; font-weight:500; padding:.45rem .9rem; border-radius:999px; margin-bottom:1.3rem;
+  }
+  .hero h1{font-size:clamp(2.1rem,4.4vw,3.4rem); line-height:1.16; font-weight:500; margin-bottom:1.1rem;}
+  .hero h1 em{font-style:italic; color:#E8C9B8;}
+  .hero p.lead{font-size:1.05rem; line-height:1.6; color:rgba(255,255,255,.82); max-width:46ch; margin-bottom:2rem;}
+  .hero-actions{display:flex; align-items:center; gap:1.4rem; flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--accent); color:var(--white); font-weight:500; font-size:.96rem;
+    padding:.95rem 1.7rem; border-radius:999px; text-decoration:none; box-shadow:var(--shadow);
+    transition:background-color .2s ease, transform .2s ease;
+  }
+  .btn-primary:hover{background:var(--accent-h); transform:translateY(-1px);}
+  .hero-actions .alt{font-size:.88rem; color:rgba(255,255,255,.72);}
+  .hero-actions .alt a{text-decoration:underline; color:var(--white);}
+
+  /* ── Bandas alternadas: el cambio de fondo ES el divisor, no hay tarjetas
+       con borde apiladas una tras otra ────────────────────────────────── */
+  .banda{padding:5.5rem 4vw;}
+  .banda-clara{background:var(--bg);}
+  .banda-oscura{background:var(--dark); color:var(--white);}
+  .banda-eyebrow{font-size:.78rem; font-weight:600; letter-spacing:.06em; color:var(--accent); margin-bottom:.8rem;}
+  .banda-oscura .banda-eyebrow{color:#D98A6A;}
+  .banda h2{font-size:clamp(1.6rem,2.6vw,2.1rem); font-weight:500; max-width:22ch; margin-bottom:2.6rem;}
+
+  /* Ciudades — fotografía primero, meta modesta, una sola sombra al hover */
+  .ciudades-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.8rem;}
+  .ciudad{text-decoration:none; color:inherit; display:block;}
+  .ciudad-foto{
+    aspect-ratio:4/3; border-radius:var(--radius); margin-bottom:1rem; position:relative; overflow:hidden;
+    transition:box-shadow .3s ease;
+  }
+  .ciudad-foto::after{content:''; position:absolute; inset:0; background:linear-gradient(0deg, rgba(20,18,15,.32), transparent 55%);}
+  .ciudad:hover .ciudad-foto{box-shadow:var(--shadow);}
+  .foto-coruna{background:linear-gradient(150deg,#8FA3AC,#3E5058);}
+  .foto-vigo{background:linear-gradient(150deg,#9C8A72,#4A3D2E);}
+  .foto-santiago{background:linear-gradient(150deg,#A69684,#5C4C3B);}
+  .ciudad-nombre{font-family:'Fraunces',serif; font-size:1.25rem; font-weight:500; margin-bottom:.25rem;}
+  .ciudad-meta{font-size:.86rem; color:var(--muted);}
+
+  /* Testimonio — banda oscura, cita centrada, sin caja */
+  .testi{max-width:680px; margin:0 auto; text-align:center;}
+  .testi p{font-family:'Fraunces',serif; font-style:italic; font-weight:400; font-size:clamp(1.3rem,2.4vw,1.7rem); line-height:1.5; margin-bottom:1.4rem;}
+  .testi cite{font-size:.85rem; color:rgba(255,255,255,.6); font-style:normal;}
+
+  /* Cómo funciona — lista tipográfica limpia, sin círculos-con-ícono */
+  .pasos{display:grid; grid-template-columns:repeat(3,1fr); gap:2.5rem; max-width:920px;}
+  .paso{border-top:1px solid var(--line); padding-top:1.2rem;}
+  .paso .num{font-size:.82rem; color:var(--muted); margin-bottom:.6rem; display:block;}
+  .paso h3{font-size:1.15rem; font-weight:500; margin-bottom:.5rem;}
+  .paso p{font-size:.92rem; color:var(--muted); line-height:1.55;}
+
+  /* CTA final */
+  .cta-final{text-align:center; background:var(--dark-2); color:var(--white); padding:6rem 4vw;}
+  .cta-final h2{max-width:18ch; margin:0 auto 1.8rem; font-size:clamp(1.8rem,3.2vw,2.6rem);}
+
+  footer{background:var(--dark); color:rgba(255,255,255,.6); padding:2.2rem 4vw; display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; font-size:.82rem;}
+  footer a{color:rgba(255,255,255,.6); text-decoration:none;}
+  footer a:hover{color:var(--white);}
+
+  /* Widget de Gina — pequeño, esquina, NO protagonista */
+  .gina-bubble{
+    position:fixed; bottom:22px; left:22px; z-index:60; width:52px; height:52px; border-radius:999px;
+    background:var(--ink); color:var(--white); display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-style:italic; font-size:1.1rem; cursor:pointer; box-shadow:var(--shadow);
+  }
+
+  @media (max-width: 860px){
+    .pasos{grid-template-columns:1fr;}
+    nav a:not(.nav-cta){display:none;}
+  }
+</style>
+
+<header>
+  <div class="logo">Tu Lugar en Galicia</div>
+  <nav>
+    <a href="#ciudades">Ciudades</a>
+    <a href="#funciona">Cómo funciona</a>
+    <a href="#" class="nav-cta">Cuéntale tu caso a Gina</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow-pill">Relocation especializado en Galicia</span>
+    <h1>Tu nueva vida en Galicia empieza con una <em>puerta abierta</em>.</h1>
+    <p class="lead">Gestionamos todo el proceso a distancia, con honestidad y criterio profesional, para que tu única tarea al llegar sea abrir tu puerta.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">Cuéntale tu caso a Gina</a>
+      <span class="alt">¿Prefieres escribirlo? <a href="#">Completa el formulario</a></span>
+    </div>
+  </div>
+</section>
+
+<section class="banda banda-clara" id="ciudades">
+  <div class="banda-eyebrow">Cinco ciudades activas</div>
+  <h2>Elegí tu punto de partida real, no una promesa de catálogo.</h2>
+  <div class="ciudades-grid">
+    <a href="#" class="ciudad">
+      <div class="ciudad-foto foto-coruna"></div>
+      <div class="ciudad-nombre">A Coruña</div>
+      <div class="ciudad-meta">38 familias reubicadas · alquiler medio 720€</div>
+    </a>
+    <a href="#" class="ciudad">
+      <div class="ciudad-foto foto-vigo"></div>
+      <div class="ciudad-nombre">Vigo</div>
+      <div class="ciudad-meta">52 familias reubicadas · alquiler medio 690€</div>
+    </a>
+    <a href="#" class="ciudad">
+      <div class="ciudad-foto foto-santiago"></div>
+      <div class="ciudad-nombre">Santiago</div>
+      <div class="ciudad-meta">29 familias reubicadas · alquiler medio 650€</div>
+    </a>
+  </div>
+</section>
+
+<section class="banda banda-oscura">
+  <div class="testi">
+    <p>"Nos dijo qué zona no nos convenía antes de que gastáramos en el pasaje. Eso no lo hace cualquiera."</p>
+    <cite>— familia reubicada en A Coruña, 2026</cite>
+  </div>
+</section>
+
+<section class="banda banda-clara" id="funciona">
+  <div class="banda-eyebrow">Cómo funciona</div>
+  <h2>Tres pasos, en ese orden.</h2>
+  <div class="pasos">
+    <div class="paso"><span class="num">01</span><h3>Contás tu caso</h3><p>Seis preguntas con Gina, sin formulario eterno.</p></div>
+    <div class="paso"><span class="num">02</span><h3>Silvana revisa lo real</h3><p>Descarta lo que no te conviene antes de mostrártelo.</p></div>
+    <div class="paso"><span class="num">03</span><h3>Videollamada</h3><p>25 minutos, agenda real de Silvana, no un bot.</p></div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="banda-eyebrow" style="justify-content:center; display:flex;">Empezá hoy</div>
+  <h2>Tu hogar en Galicia está a una conversación.</h2>
+  <a href="#" class="btn-primary">Cuéntale tu caso a Gina</a>
+</section>
+
+<footer>
+  <span>Tu Lugar en Galicia</span>
+  <span><a href="#">Política de privacidad</a> · <a href="#">Contacto</a></span>
+</footer>
+
+<div class="gina-bubble">G</div>

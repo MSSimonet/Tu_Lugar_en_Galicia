@@ -1,0 +1,140 @@
+<title>Tu Lugar en Galicia — Bento 2026</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* Patrón: "Bento 2.0" (tendencia 2026, popularizada por Apple/Linear.app) —
+     esquinas squircle 12-24px, un tile más grande/con color señala jerarquía,
+     micro-interacción real al hover (el tile revela una capa extra), no solo
+     un grid de tarjetas idénticas. +23% scroll depth medido en la tendencia. */
+  :root{
+    --bg:#F2EFE9; --ink:#181614; --accent:#1F5C4E; --accent-h:#173F35;
+    --card:#FFFFFF; --dark:#12100D; --muted:#6E675C; --line:#E1DCCF;
+    --shadow: 0 12px 30px -14px rgba(18,16,13,.28);
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; margin:0;}
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:500; margin:0;}
+  a{color:inherit; text-decoration:none;}
+
+  header{padding:1.2rem 4vw; display:flex; justify-content:space-between; align-items:center;}
+  .logo{font-family:'Fraunces',serif; font-style:italic; font-size:1.15rem;}
+  nav a{font-size:.86rem; color:var(--muted); margin-left:2rem;}
+  .nav-cta{background:var(--ink); color:var(--bg); padding:.55rem 1.1rem; border-radius:999px; font-size:.85rem; font-weight:500;}
+
+  .wrap{padding:1rem 4vw 5rem;}
+  .eyebrow{font-size:.78rem; font-weight:600; color:var(--accent); margin-bottom:.6rem;}
+
+  .bento{
+    display:grid; grid-template-columns:repeat(6, 1fr); grid-auto-rows:120px; gap:1rem;
+  }
+  @media (max-width:900px){ .bento{grid-template-columns:repeat(2,1fr); grid-auto-rows:140px;} }
+
+  .tile{
+    background:var(--card); border-radius:22px; padding:1.8rem; position:relative; overflow:hidden;
+    transition:transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s ease;
+  }
+  .tile:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
+
+  /* Hero tile — la pieza grande, domina el bento */
+  .t-hero{grid-column:span 4; grid-row:span 3; background:linear-gradient(155deg,#2A4A42,#12201C); color:#EFEAE0; display:flex; flex-direction:column; justify-content:flex-end;}
+  .t-hero h1{font-size:clamp(1.8rem,3vw,2.6rem); font-weight:500; line-height:1.18; max-width:16ch; margin-bottom:1rem;}
+  .t-hero h1 em{font-style:italic; color:#B7D8C9;}
+  .t-hero p{font-size:.92rem; color:rgba(239,234,224,.78); max-width:36ch; margin-bottom:1.4rem; line-height:1.55;}
+  .t-hero .btn{background:var(--accent); color:#fff; padding:.8rem 1.4rem; border-radius:999px; font-size:.88rem; font-weight:500; display:inline-block; width:fit-content;}
+
+  /* Tile color-bloqueado — el único acento vivo del grid, señala el CTA */
+  .t-cta{grid-column:span 2; grid-row:span 3; background:var(--accent); color:#fff; display:flex; flex-direction:column; justify-content:space-between;}
+  .t-cta .big{font-family:'Fraunces',serif; font-size:1.5rem; line-height:1.3;}
+  .t-cta .small{font-size:.82rem; color:rgba(255,255,255,.75);}
+  .t-cta .arrow{font-size:1.6rem;}
+
+  /* Tiles de ciudad — tamaño mediano, revelan meta al hover */
+  .t-ciudad{grid-column:span 2; grid-row:span 2; display:flex; flex-direction:column; justify-content:flex-end;}
+  .t-ciudad .foto{position:absolute; inset:0; z-index:0;}
+  .foto-coruna{background:linear-gradient(150deg,#7E9AA0,#33484C);}
+  .foto-vigo{background:linear-gradient(150deg,#A08B6F,#413628);}
+  .foto-santiago{background:linear-gradient(150deg,#AC9B84,#4E4232);}
+  .t-ciudad::after{content:''; position:absolute; inset:0; background:linear-gradient(0deg, rgba(18,16,13,.72) 0%, transparent 60%); z-index:1;}
+  .t-ciudad .info{position:relative; z-index:2; color:#fff;}
+  .t-ciudad .info h3{font-size:1.15rem; margin-bottom:.2rem;}
+  .t-ciudad .info .meta{font-size:.76rem; color:rgba(255,255,255,.75); max-height:0; overflow:hidden; transition:max-height .35s ease;}
+  .t-ciudad:hover .info .meta{max-height:40px;}
+
+  /* Tiles de cifra — pequeños, densos */
+  .t-cifra{grid-column:span 2; grid-row:span 1; display:flex; flex-direction:column; justify-content:center;}
+  .t-cifra .num{font-family:'Fraunces',serif; font-size:1.9rem; color:var(--accent);}
+  .t-cifra .label{font-size:.78rem; color:var(--muted);}
+
+  /* Testimonio — tile ancho, cita centrada */
+  .t-testi{grid-column:span 4; grid-row:span 2; display:flex; align-items:center; background:var(--ink); color:#EFEAE0;}
+  .t-testi p{font-family:'Fraunces',serif; font-style:italic; font-size:1.2rem; line-height:1.5; margin-bottom:.8rem;}
+  .t-testi cite{font-size:.8rem; color:rgba(239,234,224,.6); font-style:normal;}
+
+  /* Pasos — tile ancho con lista */
+  .t-pasos{grid-column:span 6; grid-row:span 2; display:flex; flex-direction:column; justify-content:center;}
+  .pasos-row{display:grid; grid-template-columns:repeat(3,1fr); gap:2rem;}
+  .pasos-row .n{font-size:.78rem; color:var(--accent); display:block; margin-bottom:.4rem;}
+  .pasos-row h3{font-size:1.05rem; margin-bottom:.3rem;}
+  .pasos-row p{font-size:.86rem; color:var(--muted); margin:0;}
+
+  @media (max-width:900px){
+    .t-hero,.t-cta,.t-ciudad,.t-cifra,.t-testi,.t-pasos{grid-column:span 2;}
+  }
+
+  footer{padding:2rem 4vw; display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8rem; font-size:.82rem; color:var(--muted); border-top:1px solid var(--line);}
+  .gina-bubble{position:fixed; bottom:22px; left:22px; z-index:60; width:50px; height:50px; border-radius:999px; background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-style:italic; cursor:pointer; box-shadow:var(--shadow);}
+</style>
+
+<header>
+  <div class="logo">Tu Lugar en Galicia</div>
+  <nav style="display:flex; align-items:center;"><a href="#">Ciudades</a><a href="#">Cómo funciona</a><a href="#" class="nav-cta">Cuéntale tu caso a Gina</a></nav>
+</header>
+
+<div class="wrap">
+  <div class="bento">
+    <div class="tile t-hero">
+      <h1>Tu nueva vida en Galicia empieza con una <em>puerta abierta</em>.</h1>
+      <p>Gestionamos todo el proceso a distancia, con honestidad y criterio profesional.</p>
+      <a href="#" class="btn">Cuéntale tu caso a Gina</a>
+    </div>
+
+    <div class="tile t-cta">
+      <div class="big">¿Prefieres escribirlo?</div>
+      <div><div class="small">Completá el formulario de diagnóstico, sin presión de tiempo.</div><div class="arrow">↗</div></div>
+    </div>
+
+    <div class="tile t-ciudad">
+      <div class="foto foto-coruna"></div>
+      <div class="info"><h3>A Coruña</h3><div class="meta">38 familias · 720€ medio</div></div>
+    </div>
+    <div class="tile t-ciudad">
+      <div class="foto foto-vigo"></div>
+      <div class="info"><h3>Vigo</h3><div class="meta">52 familias · 690€ medio</div></div>
+    </div>
+
+    <div class="tile t-cifra"><div class="num">200+</div><div class="label">familias reubicadas</div></div>
+    <div class="tile t-cifra"><div class="num">72h</div><div class="label">tiempo medio de respuesta</div></div>
+
+    <div class="tile t-testi">
+      <div>
+        <p>"Nos dijo qué zona no nos convenía antes de que gastáramos en el pasaje."</p>
+        <cite>— familia reubicada en A Coruña, 2026</cite>
+      </div>
+    </div>
+
+    <div class="tile t-pasos">
+      <div class="eyebrow">Cómo funciona</div>
+      <div class="pasos-row">
+        <div><span class="n">01</span><h3>Contás tu caso</h3><p>Seis preguntas con Gina.</p></div>
+        <div><span class="n">02</span><h3>Revisamos lo real</h3><p>Silvana descarta lo que no sirve.</p></div>
+        <div><span class="n">03</span><h3>Videollamada</h3><p>25 min, agenda real.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer><span>Tu Lugar en Galicia</span><span>Política de privacidad · Contacto</span></footer>
+<div class="gina-bubble">G</div>
