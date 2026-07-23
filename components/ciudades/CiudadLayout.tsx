@@ -1,9 +1,10 @@
 'use client'
 
+import { useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Pause, Play } from 'lucide-react'
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { FAQAccordionPedraEOuro } from '@/components/ciudades/FAQAccordionPedraEOuro'
 import { ClimaActual } from '@/components/ciudad/ClimaActual'
 import { VistaEnVivo } from '@/components/ciudad/VistaEnVivo'
@@ -14,6 +15,7 @@ import { faqSchema } from '@/lib/seo/schemas'
 import { prefetchCiudadVideo } from '@/lib/ciudades/videoPrefetch'
 import { useVideoPauseToggle } from '@/lib/hooks/useVideoPauseToggle'
 import { fadeUp, staggerContainer } from '@/lib/motion/variants'
+import { useSlideInCards } from '@/lib/gsap/useSlideInCards'
 
 export interface CiudadLayoutProps {
   nombre: string
@@ -57,6 +59,10 @@ export function CiudadLayout({
   const faqsMapped = faqs.map(f => ({ question: f.pregunta, answer: f.respuesta }))
   const schema = faqSchema(faqsMapped)
   const { videoRef, isPlaying, toggle } = useVideoPauseToggle()
+  const otrasCiudadesRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
+
+  useSlideInCards(otrasCiudadesRef, '.otra-ciudad-card', !!prefersReducedMotion)
 
   function abrirGina() {
     if (typeof window !== 'undefined') {
@@ -324,20 +330,14 @@ export function CiudadLayout({
               >
                 Otras ciudades
               </h2>
-              <motion.div
-                className="grid grid-cols-2 md:grid-cols-4 gap-4"
-                variants={staggerContainer}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
-              >
+              <div ref={otrasCiudadesRef} className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {otras.map(ciudad => (
-                  <motion.div key={ciudad.slug} variants={fadeUp} whileHover={{ y: -4, boxShadow: 'var(--dz-shadow-lg)' }}>
+                  <div key={ciudad.slug} className="otra-ciudad-card">
                   <Link
                     href={`/ciudades/${ciudad.slug}`}
                     onMouseEnter={() => prefetchCiudadVideo(ciudad.slug)}
                     onTouchStart={() => prefetchCiudadVideo(ciudad.slug)}
-                    className="group block overflow-hidden relative"
+                    className="group block overflow-hidden relative transition-brand hover:-translate-y-1"
                     style={{ aspectRatio: '4/3', borderRadius: 'var(--dz-radius-card)' }}
                   >
                     <Image
@@ -362,9 +362,9 @@ export function CiudadLayout({
                       </p>
                     </div>
                   </Link>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </section>
         )

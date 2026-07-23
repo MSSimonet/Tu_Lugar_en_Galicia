@@ -72,7 +72,7 @@ function NavLink({
         target="_blank"
         rel="noopener noreferrer"
         style={style}
-        className={`hover:[color:var(--color-laton-claro)] ${focusClass}`}
+        className={`link-underline hover:[color:var(--color-laton-claro)] ${focusClass}`}
       >
         {children}
         <span className="sr-only">(abre en nueva pestaña)</span>
@@ -81,7 +81,7 @@ function NavLink({
   }
 
   return (
-    <Link href={href} style={style} className={`hover:[color:var(--color-laton-claro)] ${focusClass}`}>
+    <Link href={href} style={style} className={`link-underline hover:[color:var(--color-laton-claro)] ${focusClass}`}>
       {children}
     </Link>
   )

@@ -21,9 +21,3 @@ export const staggerContainer: Variants = {
     transition: { staggerChildren: 0.07 },
   },
 }
-
-// Micro-interacción de hover en tarjetas: solo transform/opacity, nunca layout shift.
-export const cardHover = {
-  whileHover: { y: -4, transition: { duration: 0.2, ease: BRAND_EASE } },
-  whileTap: { y: 0, transition: { duration: 0.1, ease: BRAND_EASE } },
-}

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, animate, useReducedMotion } from "motion/react";
-import { staggerContainer, fadeUp, BRAND_EASE } from "@/lib/motion/variants";
+import { motion, useReducedMotion } from "motion/react";
+import { staggerContainer, fadeUp } from "@/lib/motion/variants";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 interface MarcadorData {
   anunciosContactados: number;
@@ -25,10 +26,12 @@ const cifrasEstaticas: { valor: number; prefijo?: string; etiqueta: string }[] =
   { valor: 4, etiqueta: "Años" },
 ];
 
-// Conteo animado: arranca cuando el marcador entra en viewport (entrada de contenido,
-// tope de 400ms — motion-tu-lugar-en-galicia). Sin re-render por frame: escribe
-// directo en el DOM vía onUpdate, como recomienda motion para evitar miles de
-// setState durante la animación.
+// Conteo animado: arranca una sola vez cuando El Marcador entra en viewport (ver
+// ScrollTrigger en ElMarcador más abajo, start "top 80%"). Cifra que cuenta desde 0
+// hasta su valor real vía gsap.to + snap (2s, power2.out) — excepción documentada al
+// tope de 400ms de la skill motion-tu-lugar-en-galicia: un contador que sube comunica
+// progreso real, mismo criterio que la excepción de "cargas con progreso real". Sin
+// re-render por frame: gsap escribe directo en el DOM vía onUpdate.
 function CifraAnimada({
   valor,
   prefijo = "",
@@ -43,22 +46,29 @@ function CifraAnimada({
   const spanRef = useRef<HTMLSpanElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
-  useEffect(() => {
-    const spanEl = spanRef.current;
-    if (!activa || !spanEl) return;
-    if (prefersReducedMotion) {
-      spanEl.textContent = `${prefijo}${valor}${sufijo}`;
-      return;
-    }
-    const controls = animate(0, valor, {
-      duration: 0.4,
-      ease: BRAND_EASE,
-      onUpdate: (v) => {
-        if (spanRef.current) spanRef.current.textContent = `${prefijo}${Math.round(v)}${sufijo}`;
-      },
-    });
-    return () => controls.stop();
-  }, [activa, valor, prefijo, sufijo, prefersReducedMotion]);
+  useGSAP(
+    () => {
+      const spanEl = spanRef.current;
+      if (!activa || !spanEl) return;
+      if (prefersReducedMotion) {
+        spanEl.textContent = `${prefijo}${valor}${sufijo}`;
+        return;
+      }
+      const contador = { valor: 0 };
+      gsap.to(contador, {
+        valor,
+        duration: 2,
+        ease: "power2.out",
+        snap: { valor: 1 },
+        onUpdate: () => {
+          if (spanRef.current) {
+            spanRef.current.textContent = `${prefijo}${Math.round(contador.valor)}${sufijo}`;
+          }
+        },
+      });
+    },
+    { dependencies: [activa, valor, prefijo, sufijo, prefersReducedMotion] }
+  );
 
   return <span ref={spanRef}>{prefijo}0{sufijo}</span>;
 }
@@ -104,6 +114,7 @@ export function ElMarcador() {
   const [data, setData] = useState<MarcadorData | null>(null);
   const [loading, setLoading] = useState(true);
   const [enViewport, setEnViewport] = useState(false);
+  const gridRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     fetch("/api/marcador")
@@ -112,6 +123,22 @@ export function ElMarcador() {
       .catch(() => setData(FALLBACK))
       .finally(() => setLoading(false));
   }, []);
+
+  // Dispara el conteo una sola vez cuando el grid entra en viewport — reemplaza el
+  // onViewportEnter de motion por un ScrollTrigger real (start "top 80%", once: true).
+  useGSAP(
+    () => {
+      if (!gridRef.current) return;
+      const trigger = ScrollTrigger.create({
+        trigger: gridRef.current,
+        start: "top 80%",
+        once: true,
+        onEnter: () => setEnViewport(true),
+      });
+      return () => trigger.kill();
+    },
+    { scope: gridRef }
+  );
 
   const display = data ?? FALLBACK;
   const todasLasCifras = [
@@ -181,6 +208,7 @@ export function ElMarcador() {
           </h2>
 
           <motion.ul
+            ref={gridRef}
             className="marcador-grid"
             style={{ listStyle: 'none', margin: 0, padding: 0 }}
             tabIndex={0}
@@ -189,7 +217,6 @@ export function ElMarcador() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
-            onViewportEnter={() => setEnViewport(true)}
           >
             {todasLasCifras.map((cifra) => (
               <motion.li

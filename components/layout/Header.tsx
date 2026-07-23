@@ -204,7 +204,7 @@ export function Header() {
                   key={href}
                   href={href}
                   aria-current={active ? 'page' : undefined}
-                  className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton-borde)]"
+                  className="link-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton-borde)]"
                   style={{
                     position: 'relative',
                     fontFamily: 'var(--font-cormorant)',
@@ -351,6 +351,7 @@ export function Header() {
                   href={href}
                   onClick={() => setMenuOpen(false)}
                   aria-current={active ? 'page' : undefined}
+                  className="link-underline"
                   style={{
                     fontFamily: 'var(--font-dz-ui)',
                     fontSize: '13px',

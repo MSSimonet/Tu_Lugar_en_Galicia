@@ -4,9 +4,9 @@ import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Play } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import { useReducedMotion } from "motion/react";
 import { CIUDADES, type Ciudad } from "@/lib/ciudades/data";
-import { staggerContainer, fadeUp } from "@/lib/motion/variants";
+import { useSlideInCards } from "@/lib/gsap/useSlideInCards";
 
 // Carrusel de ciudades compartido — antes existían dos implementaciones distintas
 // (CiudadesDestacadas.tsx en Home con scroll pineado + tarjetas con video en hover,
@@ -119,6 +119,11 @@ export interface CarruselCiudadesProps {
 }
 
 export function CarruselCiudades({ variant }: CarruselCiudadesProps) {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+
+  useSlideInCards(gridRef, ".ciudad-card", !!prefersReducedMotion);
+
   return (
     <section
       style={{ backgroundColor: "var(--dz-papel)" }}
@@ -142,20 +147,17 @@ export function CarruselCiudades({ variant }: CarruselCiudadesProps) {
         </div>
       )}
 
-      <motion.div
+      <div
+        ref={gridRef}
         className="mx-auto grid max-w-6xl grid-cols-2 gap-[var(--space-4)] px-[var(--space-6)] pb-[var(--space-16)] sm:grid-cols-3 lg:grid-cols-5"
         style={variant === "listado" ? { paddingTop: "var(--space-16)" } : undefined}
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
       >
         {CIUDADES.map((ciudad) => (
-          <motion.div key={ciudad.slug} variants={fadeUp}>
+          <div key={ciudad.slug} className="ciudad-card">
             <CiudadCard ciudad={ciudad} />
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
     </section>
   );
 }

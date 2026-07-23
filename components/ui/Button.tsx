@@ -40,8 +40,17 @@ export function Button({
 }: ButtonProps) {
   return (
     <motion.button
-      whileHover={{ y: -1, transition: { duration: 0.2, ease: BRAND_EASE } }}
-      whileTap={{ scale: 0.98, y: 0, transition: { duration: 0.1, ease: BRAND_EASE } }}
+      whileHover={{
+        y: -2,
+        boxShadow: "var(--dz-shadow-md)",
+        transition: { duration: 0.2, ease: BRAND_EASE },
+      }}
+      whileTap={{
+        y: 0,
+        scale: 0.98,
+        boxShadow: "var(--dz-shadow-sm)",
+        transition: { duration: 0.1, ease: BRAND_EASE },
+      }}
       {...props}
       className={[
         "inline-flex items-center justify-center font-[family-name:var(--font-dz-ui)] font-medium",
