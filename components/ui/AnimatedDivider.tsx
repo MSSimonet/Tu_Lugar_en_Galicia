@@ -5,8 +5,11 @@ import Image from "next/image";
 import { useReducedMotion } from "motion/react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-// Tamaño de despliegue del PNG (public/images/avion-divider.png, 1024x703) — se
-// preserva la proporción nativa exacta, nunca se estira/deforma.
+// Tamaño de despliegue del PNG (public/images/avion-divider-v2.png, 1024x703) — se
+// preserva la proporción nativa exacta, nunca se estira/deforma. Nombre "-v2": el
+// archivo original (avion-divider.png) quedó pisado por caché del optimizador de
+// Next.js/navegador tras corregirle la transparencia — renombrar fue la forma
+// confiable de invalidar cualquier URL cacheada de la versión sin alpha real.
 const ICON_WIDTH = 64;
 const ICON_HEIGHT = Math.round((ICON_WIDTH * 703) / 1024);
 
@@ -64,7 +67,7 @@ export function AnimatedDivider({ direction = "ltr" }: AnimatedDividerProps) {
   );
 
   return (
-    <div aria-hidden="true" style={{ backgroundColor: "var(--dz-papel)", padding: "var(--space-8) 0" }}>
+    <div aria-hidden="true" style={{ padding: "var(--space-8) 0" }}>
       <div
         ref={containerRef}
         className="relative mx-auto max-w-6xl px-[var(--space-6)]"
@@ -79,11 +82,11 @@ export function AnimatedDivider({ direction = "ltr" }: AnimatedDividerProps) {
             className="absolute top-1/2 left-1/2"
             style={{ transform: `translate(-50%, -50%) ${empiezaDerecha ? "scaleX(-1)" : ""}` }}
           >
-            <Image src="/images/avion-divider.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
+            <Image src="/images/avion-divider-v2.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
           </div>
         ) : (
           <div ref={iconRef} className="absolute" style={{ left: 0, top: `calc(50% - ${ICON_HEIGHT / 2}px)` }}>
-            <Image src="/images/avion-divider.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
+            <Image src="/images/avion-divider-v2.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
           </div>
         )}
       </div>
