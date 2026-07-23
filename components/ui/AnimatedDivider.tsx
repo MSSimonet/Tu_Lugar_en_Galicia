@@ -1,40 +1,66 @@
 "use client";
 
 import { useRef } from "react";
-import { Plane } from "lucide-react";
+import Image from "next/image";
 import { useReducedMotion } from "motion/react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-// Separador decorativo entre secciones — línea fina con un ícono que la recorre de
-// izquierda a derecha atado al scroll (scrub, no timer). Sutil a propósito: un solo
-// acento (dz-accent), sin texto, coherente con el tono editorial de la marca (ver
-// DESIGN.md §1 — "menos ornamento, más contraste y confianza tipográfica").
-export function AnimatedDivider() {
+// Tamaño de despliegue del PNG (public/images/avion-divider.png, 1024x703) — se
+// preserva la proporción nativa exacta, nunca se estira/deforma.
+const ICON_WIDTH = 64;
+const ICON_HEIGHT = Math.round((ICON_WIDTH * 703) / 1024);
+
+export interface AnimatedDividerProps {
+  /** "ltr" (default): arranca en el borde izquierdo, primer tramo vuela a la derecha.
+   *  "rtl": arranca en el borde derecho, primer tramo vuela a la izquierda. Misma
+   *  lógica de ida-vuelta con giro en ambos casos, solo cambia el punto de partida. */
+  direction?: "ltr" | "rtl";
+}
+
+const RECORRIDO_DURATION = 15; // segundos por tramo — vuelo tranquilo, no apurado
+const GIRO_DURATION = 0.5; // segundos — giro de 180° visible y gradual, no instantáneo
+const WOBBLE_DURATION = 2; // segundos — turbulencia suave
+const WOBBLE_AMPLITUDE = 2; // px hacia cada lado (~4px de rango total)
+
+// Separador decorativo entre secciones — un avión (PNG real, fondo transparente) que
+// recorre una línea fina en loop infinito: vuela de un borde al otro, gira 180° en
+// el borde, vuela de vuelta, gira de nuevo. Movimiento propio, no atado al scroll.
+export function AnimatedDivider({ direction = "ltr" }: AnimatedDividerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const empiezaDerecha = direction === "rtl";
 
   useGSAP(
     () => {
       if (prefersReducedMotion || !containerRef.current || !iconRef.current) return;
       const container = containerRef.current;
       const icon = iconRef.current;
+      const distancia = container.offsetWidth - icon.offsetWidth;
+
+      const xInicial = empiezaDerecha ? distancia : 0;
+      const xFinal = empiezaDerecha ? 0 : distancia;
+      const rotInicial = empiezaDerecha ? 180 : 0;
+      const rotFinal = empiezaDerecha ? 0 : 180;
+
+      gsap.set(icon, { x: xInicial, rotateY: rotInicial, transformPerspective: 800 });
+
+      // Ciclo: vuela → gira 180° → vuela (dirección opuesta) → gira 180° → repite.
+      const ciclo = gsap.timeline({ repeat: -1 });
+      ciclo
+        .to(icon, { x: xFinal, duration: RECORRIDO_DURATION, ease: "sine.inOut" })
+        .to(icon, { rotateY: rotFinal, duration: GIRO_DURATION, ease: "power1.inOut" })
+        .to(icon, { x: xInicial, duration: RECORRIDO_DURATION, ease: "sine.inOut" })
+        .to(icon, { rotateY: rotInicial, duration: GIRO_DURATION, ease: "power1.inOut" });
+
+      // Oscilación vertical leve — turbulencia suave, independiente del recorrido horizontal.
       gsap.fromTo(
         icon,
-        { x: 0 },
-        {
-          x: () => container.offsetWidth - icon.offsetWidth,
-          ease: "none",
-          scrollTrigger: {
-            trigger: container,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        }
+        { y: -WOBBLE_AMPLITUDE },
+        { y: WOBBLE_AMPLITUDE, duration: WOBBLE_DURATION, ease: "sine.inOut", repeat: -1, yoyo: true }
       );
     },
-    { scope: containerRef, dependencies: [prefersReducedMotion] }
+    { scope: containerRef, dependencies: [prefersReducedMotion, empiezaDerecha] }
   );
 
   return (
@@ -42,7 +68,7 @@ export function AnimatedDivider() {
       <div
         ref={containerRef}
         className="relative mx-auto max-w-6xl px-[var(--space-6)]"
-        style={{ height: "32px" }}
+        style={{ height: "56px" }}
       >
         <div
           className="absolute left-[var(--space-6)] right-[var(--space-6)] top-1/2"
@@ -51,17 +77,13 @@ export function AnimatedDivider() {
         {prefersReducedMotion ? (
           <div
             className="absolute top-1/2 left-1/2"
-            style={{ transform: "translate(-50%, -50%) rotate(45deg)", color: "var(--dz-accent)" }}
+            style={{ transform: `translate(-50%, -50%) ${empiezaDerecha ? "scaleX(-1)" : ""}` }}
           >
-            <Plane size={16} strokeWidth={1.75} />
+            <Image src="/images/avion-divider.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
           </div>
         ) : (
-          <div
-            ref={iconRef}
-            className="absolute"
-            style={{ left: 0, top: "calc(50% - 8px)", color: "var(--dz-accent)" }}
-          >
-            <Plane size={16} strokeWidth={1.75} style={{ transform: "rotate(45deg)" }} />
+          <div ref={iconRef} className="absolute" style={{ left: 0, top: `calc(50% - ${ICON_HEIGHT / 2}px)` }}>
+            <Image src="/images/avion-divider.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
           </div>
         )}
       </div>
