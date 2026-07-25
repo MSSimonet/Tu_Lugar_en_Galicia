@@ -86,8 +86,8 @@ function CiudadCard({ ciudad }: { ciudad: Ciudad }) {
         <h3
           style={{
             fontFamily: "var(--font-dz-display)",
-            fontWeight: 700,
-            fontSize: "clamp(1.1rem, 1.4vw, 1.5rem)",
+            fontWeight: "var(--dz-weight-h3)",
+            fontSize: "var(--dz-text-h3)",
             color: "#F3EFE4",
             margin: 0,
           }}
@@ -139,8 +139,8 @@ export function CarruselCiudades({ variant }: CarruselCiudadesProps) {
           </p>
           <h2
             id="ciudades-carrusel-heading"
-            className="text-center [font-size:var(--text-xl)] md:[font-size:var(--text-2xl)]"
-            style={{ fontFamily: "var(--font-dz-display)", fontWeight: 700, color: "var(--dz-ink)" }}
+            className="text-center"
+            style={{ fontFamily: "var(--font-dz-display)", fontWeight: "var(--dz-weight-h2)", color: "var(--dz-ink)", fontSize: "var(--dz-text-h2)", lineHeight: "var(--dz-leading-h2)" }}
           >
             Pasa el cursor sobre cada ciudad — cobra vida.
           </h2>

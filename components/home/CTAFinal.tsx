@@ -11,7 +11,7 @@ function abrirGina() {
 export function CTAFinal() {
   return (
     <section
-      className="px-[var(--space-6)] py-[var(--space-24)]"
+      className="px-[var(--space-6)] py-[var(--dz-section-y)]"
       style={{ backgroundColor: 'var(--dz-hero-bg)' }}
       aria-labelledby="cta-final-heading"
     >
@@ -26,8 +26,7 @@ export function CTAFinal() {
             e invertía la jerarquía de la página (auditoría 2026-07-19, A2.3) */}
         <h2
           id="cta-final-heading"
-          className="[font-size:var(--text-2xl)] leading-[var(--leading-titulo)]"
-          style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 900, color: 'var(--dz-hero-text)' }}
+          style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-hero-text)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
         >
           ¿Listo para encontrar tu lugar en{" "}
           <span style={{ color: 'var(--dz-accent)' }}>Galicia</span>?

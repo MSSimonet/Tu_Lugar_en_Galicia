@@ -71,6 +71,17 @@ export function HeroPedraEOuro() {
         {/* Sombreado esfumado lateral (desktop) / desde abajo (móvil) */}
         <div className="absolute inset-0 hero-lateral-gradient" style={{ pointerEvents: "none" }} />
 
+        {/* Transición al fondo de ElMarcador (--dz-hero-bg) — evita el corte duro
+            entre el video y la siguiente sección. */}
+        <div
+          className="absolute bottom-0 left-0 right-0"
+          style={{
+            height: "96px",
+            background: "linear-gradient(to bottom, transparent, var(--dz-hero-bg))",
+            pointerEvents: "none",
+          }}
+        />
+
         {/* Pausa/reproduce el video de fondo — WCAG 2.2.2 */}
         <button
           type="button"
@@ -115,9 +126,9 @@ export function HeroPedraEOuro() {
             animate="visible"
             style={{
               fontFamily: "var(--font-dz-display)",
-              fontWeight: 800,
-              fontSize: "clamp(2.4rem, 4.25vw, 3.8rem)",
-              lineHeight: 1.15,
+              fontWeight: "var(--dz-weight-h1)",
+              fontSize: "var(--dz-text-h1)",
+              lineHeight: "var(--dz-leading-h1)",
               color: "#F7F4ED",
               marginBottom: "1.25rem",
               textShadow: "0 2px 12px rgba(0,0,0,0.7)",

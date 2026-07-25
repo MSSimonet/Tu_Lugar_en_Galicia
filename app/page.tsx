@@ -20,11 +20,21 @@ export default function Home() {
       />
       <HeroPedraEOuro />
       <ElMarcador />
-      <AnimatedDivider />
+      <div style={{ background: "linear-gradient(to bottom, var(--dz-hero-bg), var(--dz-papel))" }}>
+        <AnimatedDivider direction="rtl" />
+      </div>
       <FeedInstagram />
+      <div style={{ background: "linear-gradient(to bottom, var(--dz-papel), var(--dz-luz))" }}>
+        <AnimatedDivider direction="ltr" />
+      </div>
       <MuroLlavesPreview />
+      <div style={{ background: "linear-gradient(to bottom, var(--dz-luz), var(--dz-papel))" }}>
+        <AnimatedDivider direction="rtl" />
+      </div>
       <Testimonios />
-      <AnimatedDivider />
+      <div style={{ background: "linear-gradient(to bottom, var(--dz-papel), var(--dz-hero-bg))" }}>
+        <AnimatedDivider direction="ltr" />
+      </div>
       <CTAFinal />
     </>
   );

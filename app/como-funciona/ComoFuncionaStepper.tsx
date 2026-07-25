@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { Eyebrow } from '@/components/ui/Eyebrow'
 
 const INTERVAL_MS = 4200
 
@@ -85,8 +86,16 @@ export default function ComoFuncionaStepper() {
       className="stepper-wrapper"
       style={{
         display: 'flex',
-        height: 'calc(100vh - 68px)',
-        overflow: 'hidden',
+        /* ⚠️ CAMBIO DE LAYOUT — requiere tu visto bueno (ver reporte).
+           Antes: `height: calc(100vh - 68px)` + `overflow: hidden`. Con el H1 en
+           --dz-text-h1 (82px a 1280px, vs 38px antes) el titular pasa a ocupar 3
+           líneas y los pasos 04 y 05 quedaban recortados e inaccesibles dentro del
+           alto fijo. Se libera el alto para que la columna crezca con su contenido:
+           es el mismo criterio que el media query de mobile ya aplicaba (`height:
+           auto !important`) justamente para corregir este mismo recorte.
+           Si prefieres conservar el split-screen anclado al viewport, hay que bajar
+           el H1 de esta página por debajo del token — son mutuamente excluyentes. */
+        minHeight: 'calc(100vh - 68px)',
       }}
       onMouseEnter={() => { pausedRef.current = true }}
       onMouseLeave={() => { pausedRef.current = false; setHovered(null) }}
@@ -131,29 +140,31 @@ export default function ComoFuncionaStepper() {
         background: 'var(--dz-luz)',
         display: 'flex',
         flexDirection: 'column',
-        padding: '32px 44px 0',
+        /* NO usa --dz-section-y (104px) a propósito: este bloque vive dentro de un
+           contenedor con `height: calc(100vh - 68px)` + `overflow:hidden` (abajo), y
+           104px arriba + 104px abajo recortaban los pasos 04 y 05 dejándolos
+           inaccesibles — el mismo defecto que ya se había corregido en mobile.
+           PENDIENTE DE DECISIÓN: para poder aplicar el token hay que soltar antes el
+           lock de altura de viewport de esta página (cambio de layout, no de escala). */
+        paddingTop: '32px',
         paddingBottom: '24px',
+        paddingLeft: '44px',
+        paddingRight: '44px',
       }}>
 
         {/* Encabezado */}
         <div style={{ flexShrink: 0, marginBottom: '12px' }}>
-          <p style={{
-            fontFamily: 'var(--font-dz-ui)',
-            fontWeight: 700,
-            fontSize: '10px',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: 'var(--dz-accent-text)',
-            margin: '0 0 6px',
-          }}>
-            Cómo funciona
-          </p>
+          {/* Eyebrow compartido (antes: <p> inline a 10px/0.15em sin píldora) — esta
+              era la única página de contenido que no usaba el componente. */}
+          <div style={{ marginBottom: '6px' }}>
+            <Eyebrow tone="claro">Cómo funciona</Eyebrow>
+          </div>
 
           <h1 style={{
             fontFamily: 'var(--font-dz-display)',
-            fontWeight: 900,
-            fontSize: 'clamp(24px, 3vw, 40px)',
-            lineHeight: 1.15,
+            fontWeight: 'var(--dz-weight-h1)',
+            fontSize: 'var(--dz-text-h1)',
+            lineHeight: 'var(--dz-leading-h1)',
             letterSpacing: '-0.01em',
             color: 'var(--dz-ink)',
             margin: '0 0 6px',
@@ -243,16 +254,20 @@ export default function ComoFuncionaStepper() {
 
                 {/* Nombre + descripción */}
                 <div style={{ flex: 1, minWidth: 0, padding: '6px 0' }}>
-                  <div style={{
+                  {/* <h3> real, no <div>: los 5 pasos son contenido de la página y antes
+                      no existían en el árbol de headings (auditoría, §5). El peso sigue
+                      alternando activo/inactivo — es señal de estado, no de jerarquía. */}
+                  <h3 style={{
                     fontFamily: 'var(--font-dz-display)',
-                    fontSize: '18px',
-                    fontWeight: isAct ? 700 : 500,
+                    fontSize: 'var(--dz-text-h3)',
+                    fontWeight: isAct ? 'var(--dz-weight-h3)' : 500,
                     lineHeight: 1.2,
                     color: isAct ? 'var(--dz-ink)' : 'var(--dz-muted)',
                     transition: 'color .3s ease',
+                    margin: 0,
                   }}>
                     {d.title}
-                  </div>
+                  </h3>
                   <div style={{
                     fontFamily: 'var(--font-dz-ui)',
                     fontSize: '14px',

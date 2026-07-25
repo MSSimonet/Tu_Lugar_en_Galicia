@@ -6,7 +6,7 @@ import { staggerContainer, fadeUp } from '@/lib/motion/variants'
 
 export function ComunidadMapaHero() {
   return (
-    <section style={{ backgroundColor: 'var(--dz-hero-bg)', paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-8)', paddingLeft: 'var(--space-16)', paddingRight: 'var(--space-16)' }}>
+    <section style={{ backgroundColor: 'var(--dz-hero-bg)', paddingTop: 'var(--dz-section-y)', paddingBottom: 'var(--dz-section-y)', paddingLeft: 'var(--space-16)', paddingRight: 'var(--space-16)' }}>
       <motion.div
         className="mx-auto max-w-3xl"
         variants={staggerContainer}
@@ -20,10 +20,10 @@ export function ComunidadMapaHero() {
           variants={fadeUp}
           style={{
             fontFamily: 'var(--font-dz-display)',
-            fontSize: 'clamp(28px, 3.8vw, 48px)',
-            fontWeight: 900,
+            fontSize: 'var(--dz-text-h1)',
+            fontWeight: 'var(--dz-weight-h1)',
             color: 'var(--dz-hero-text)',
-            lineHeight: 1.15,
+            lineHeight: 'var(--dz-leading-h1)',
             letterSpacing: '-0.01em',
             margin: 0,
           }}

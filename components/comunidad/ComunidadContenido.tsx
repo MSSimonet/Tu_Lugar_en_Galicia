@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react'
 import { FormularioComunidad } from '@/components/comunidad/FormularioComunidad'
+import { GenteDivider } from '@/components/comunidad/GenteDivider'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { staggerContainer, fadeUp } from '@/lib/motion/variants'
 
@@ -26,8 +27,7 @@ export function ComunidadContenido() {
           </motion.div>
           <motion.h1
             variants={fadeUp}
-            className="leading-[var(--leading-titulo)]"
-            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 900, color: 'var(--dz-hero-text)', fontSize: 'clamp(1.7rem, 4.25vw, 2.55rem)' }}
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h1)', color: 'var(--dz-hero-text)', fontSize: 'var(--dz-text-h1)', lineHeight: 'var(--dz-leading-h1)' }}
           >
             Sé un anfitrión en Galicia
           </motion.h1>
@@ -43,8 +43,12 @@ export function ComunidadContenido() {
         </motion.div>
       </section>
 
+      <div style={{ background: 'linear-gradient(to bottom, var(--dz-hero-bg), var(--dz-luz))' }}>
+        <GenteDivider direction="rtl" />
+      </div>
+
       {/* Formulario */}
-      <section className="py-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
+      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
         <motion.div
           className="mx-auto max-w-2xl"
           variants={fadeUp}

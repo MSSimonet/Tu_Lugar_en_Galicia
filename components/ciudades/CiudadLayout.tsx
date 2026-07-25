@@ -156,8 +156,8 @@ export function CiudadLayout({
           {/* H1 */}
           <motion.h1
             variants={fadeUp}
-            className="text-white font-normal leading-tight mb-3"
-            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 900, fontSize: 'clamp(1.9rem, 4.25vw, 3.25rem)' }}
+            className="text-white mb-3"
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h1)', fontSize: 'var(--dz-text-h1)', lineHeight: 'var(--dz-leading-h1)' }}
           >
             {nombre}
           </motion.h1>
@@ -308,8 +308,8 @@ export function CiudadLayout({
           style={{ backgroundColor: 'var(--dz-papel)', borderRadius: 'var(--dz-radius-card)', border: '1px solid var(--dz-borde)' }}
         >
           <h2
-            className="text-2xl font-normal mb-5"
-            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-ink)' }}
+            className="mb-5"
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
           >
             Preguntas frecuentes sobre {nombre}
           </h2>
@@ -322,7 +322,7 @@ export function CiudadLayout({
       {(() => {
         const otras = TODAS_LAS_CIUDADES.filter(c => c.slug !== slug)
         return (
-          <section className="px-6 md:px-8 py-7" style={{ backgroundColor: 'var(--dz-papel)' }}>
+          <section className="px-6 md:px-8 py-[var(--dz-section-y)]" style={{ backgroundColor: 'var(--dz-papel)' }}>
             <div className="max-w-7xl mx-auto">
               <h2
                 className="text-[10px] tracking-widest uppercase mb-5"

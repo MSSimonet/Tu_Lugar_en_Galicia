@@ -32,8 +32,8 @@ export default function PoliticaDePrivacidadPage() {
           <LegalSection ariaLabelledby="responsable">
             <h2
               id="responsable"
-              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
+              className="mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-accent-text)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
             >
               1. Responsable del tratamiento
             </h2>
@@ -63,8 +63,8 @@ export default function PoliticaDePrivacidadPage() {
           <LegalSection ariaLabelledby="finalidad">
             <h2
               id="finalidad"
-              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
+              className="mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-accent-text)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
             >
               2. Finalidad del tratamiento
             </h2>
@@ -95,8 +95,8 @@ export default function PoliticaDePrivacidadPage() {
           <LegalSection ariaLabelledby="base-legal">
             <h2
               id="base-legal"
-              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
+              className="mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-accent-text)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
             >
               3. Base legal del tratamiento
             </h2>
@@ -119,8 +119,8 @@ export default function PoliticaDePrivacidadPage() {
           <LegalSection ariaLabelledby="conservacion">
             <h2
               id="conservacion"
-              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
+              className="mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-accent-text)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
             >
               4. Conservación de los datos
             </h2>
@@ -141,8 +141,8 @@ export default function PoliticaDePrivacidadPage() {
           <LegalSection ariaLabelledby="destinatarios">
             <h2
               id="destinatarios"
-              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
+              className="mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-accent-text)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
             >
               5. Destinatarios de los datos
             </h2>
@@ -167,8 +167,8 @@ export default function PoliticaDePrivacidadPage() {
           <LegalSection ariaLabelledby="derechos">
             <h2
               id="derechos"
-              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
+              className="mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-accent-text)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
             >
               6. Tus derechos
             </h2>
@@ -213,8 +213,8 @@ export default function PoliticaDePrivacidadPage() {
           <LegalSection ariaLabelledby="cambios">
             <h2
               id="cambios"
-              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
+              className="mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-accent-text)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
             >
               7. Cambios en esta política
             </h2>

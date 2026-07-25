@@ -198,9 +198,9 @@ export function ElMarcador() {
               marginBottom: '24px',
               textAlign: 'center',
               fontFamily: 'var(--font-dz-display)',
-              fontWeight: 700,
-              fontSize: '32px',
-              lineHeight: 1.1,
+              fontWeight: 'var(--dz-weight-h2)',
+              fontSize: 'var(--dz-text-h2)',
+              lineHeight: 'var(--dz-leading-h2)',
               color: 'var(--dz-hero-text)',
             }}
           >

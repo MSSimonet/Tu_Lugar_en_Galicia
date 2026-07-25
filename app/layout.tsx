@@ -138,7 +138,7 @@ export default async function RootLayout({
       className={`${plusJakarta.variable} ${cormorant.variable} ${syne.variable} ${nunitoSans.variable} ${fraunces.variable} ${dmSans.variable} ${jost.variable} ${playfair.variable} ${lato.variable} ${lora.variable} ${workSans.variable} ${unbounded.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-[family-name:var(--font-ui)]">
+      <body className="min-h-full flex flex-col font-[family-name:var(--font-dz-ui)]">
         {/* Anti-flash: ejecuta síncrono antes del primer paint. suppressHydrationWarning porque
             el browser elimina el atributo nonce del DOM después de evaluar el script (seguridad),
             lo que causaría un falso mismatch de hidratación. */}

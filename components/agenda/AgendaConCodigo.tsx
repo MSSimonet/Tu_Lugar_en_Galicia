@@ -11,7 +11,7 @@ import { staggerContainer, fadeUp } from '@/lib/motion/variants'
 export function AgendaConCodigo() {
   return (
     <section
-      className="px-[var(--space-6)] pb-[var(--space-16)] md:pb-[var(--space-24)]"
+      className="px-[var(--space-6)] pb-[var(--dz-section-y)]"
       style={{ backgroundColor: 'var(--dz-papel)', paddingTop: 'calc(64px + 60px)' }}
       aria-labelledby="agenda-heading"
     >
@@ -28,8 +28,7 @@ export function AgendaConCodigo() {
         <motion.h1
           variants={fadeUp}
           id="agenda-heading"
-          className="leading-[var(--leading-titulo)]"
-          style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 900, color: 'var(--dz-ink)', fontSize: 'clamp(1.5rem, 3.4vw, 2.35rem)' }}
+          style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h1)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h1)', lineHeight: 'var(--dz-leading-h1)' }}
         >
           Elige tu horario
         </motion.h1>

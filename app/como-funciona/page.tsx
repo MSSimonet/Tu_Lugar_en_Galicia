@@ -2,7 +2,7 @@ import { getNextMetadata } from '@/lib/seo/metadata'
 import { serviceSchema } from '@/lib/seo/schemas'
 import ComoFuncionaStepper from './ComoFuncionaStepper'
 import LoQueNoSomos from '@/components/sections/LoQueNoSomos'
-import { AnimatedDivider } from '@/components/ui/AnimatedDivider'
+import { MaletasDivider } from '@/components/ui/MaletasDivider'
 
 export const metadata = getNextMetadata('comoFunciona')
 
@@ -19,8 +19,10 @@ export default function ComoFuncionaPage() {
       {/* ── Stepper principal ── */}
       <ComoFuncionaStepper />
 
-      {/* ── Divisor animado — avión de derecha a izquierda ── */}
-      <AnimatedDivider direction="rtl" />
+      {/* ── Divisor animado — maletas de derecha a izquierda ── */}
+      <div style={{ background: "linear-gradient(to bottom, var(--dz-luz), var(--dz-papel))" }}>
+        <MaletasDivider direction="rtl" />
+      </div>
 
       {/* ── Lo que no somos ── */}
       <LoQueNoSomos />

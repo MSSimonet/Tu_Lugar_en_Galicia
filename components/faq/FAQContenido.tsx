@@ -29,10 +29,10 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
             variants={fadeUp}
             style={{
               fontFamily: 'var(--font-dz-display)',
-              fontSize: 'clamp(31px, 4.25vw, 54px)',
-              fontWeight: 900,
+              fontSize: 'var(--dz-text-h1)',
+              fontWeight: 'var(--dz-weight-h1)',
               color: 'var(--dz-hero-text)',
-              lineHeight: 1.15,
+              lineHeight: 'var(--dz-leading-h1)',
               letterSpacing: '-0.01em',
               margin: 0,
             }}
@@ -50,7 +50,7 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
       </section>
 
       {/* Bajada */}
-      <section className="py-[var(--space-8)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
+      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
         <div className="mx-auto max-w-3xl">
           <p
             className="text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
@@ -63,7 +63,7 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
       </section>
 
       {/* Categorías */}
-      <section className="py-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-papel)' }}>
+      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-papel)' }}>
         <motion.div
           className="mx-auto max-w-3xl space-y-[var(--space-12)]"
           variants={staggerContainer}
@@ -77,10 +77,10 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
                 className="mb-[var(--space-6)]"
                 style={{
                   fontFamily: 'var(--font-dz-display)',
-                  fontWeight: 700,
-                  fontSize: 'var(--text-xl)',
+                  fontWeight: 'var(--dz-weight-h2)',
+                  fontSize: 'var(--dz-text-h2)',
                   color: 'var(--dz-accent-text)',
-                  lineHeight: 'var(--leading-titulo)',
+                  lineHeight: 'var(--dz-leading-h2)',
                 }}
               >
                 {cat.titulo}
@@ -92,7 +92,7 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
       </section>
 
       {/* CTA al final — bookend fijo oscuro (Pedra e Ouro) */}
-      <section className="py-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-hero-bg)' }}>
+      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-hero-bg)' }}>
         <motion.div
           className="mx-auto max-w-3xl text-center"
           variants={fadeUp}
@@ -104,10 +104,10 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
             className="mb-[var(--space-4)]"
             style={{
               fontFamily: 'var(--font-dz-display)',
-              fontWeight: 700,
-              fontSize: 'var(--text-xl)',
+              fontWeight: 'var(--dz-weight-h2)',
+              fontSize: 'var(--dz-text-h2)',
               color: 'var(--dz-hero-text)',
-              lineHeight: 'var(--leading-titulo)',
+              lineHeight: 'var(--dz-leading-h2)',
             }}
           >
             ¿No encontraste tu respuesta?

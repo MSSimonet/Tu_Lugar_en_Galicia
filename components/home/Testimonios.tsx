@@ -125,7 +125,7 @@ export function Testimonios() {
     <section
       ref={sectionRef}
       id="testimonios"
-      className="px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
+      className="px-[var(--space-6)] py-[var(--dz-section-y)]"
       style={{ backgroundColor: "var(--dz-papel)" }}
       aria-labelledby="testimonios-heading"
       onMouseEnter={() => setPausado(true)}
@@ -140,8 +140,8 @@ export function Testimonios() {
         </p>
         <h2
           id="testimonios-heading"
-          className="mb-[var(--space-8)] text-center [font-size:var(--text-xl)] md:[font-size:var(--text-2xl)]"
-          style={{ fontFamily: "var(--font-dz-display)", fontWeight: 700, color: "var(--dz-ink)" }}
+          className="mb-[var(--space-8)] text-center"
+          style={{ fontFamily: "var(--font-dz-display)", fontWeight: "var(--dz-weight-h2)", color: "var(--dz-ink)", fontSize: "var(--dz-text-h2)", lineHeight: "var(--dz-leading-h2)" }}
         >
           Testimonios
         </h2>

@@ -30,7 +30,7 @@ export function AgendaPublica() {
 
   return (
     <section
-      className="px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
+      className="px-[var(--space-6)] py-[var(--dz-section-y)]"
       style={{ backgroundColor: 'var(--dz-papel)' }}
       aria-labelledby="agenda-publica-heading"
     >
@@ -71,8 +71,7 @@ export function AgendaPublica() {
 
           <h1
             id="agenda-publica-heading"
-            className="leading-[var(--leading-titulo)]"
-            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 900, color: 'var(--dz-ink)', fontSize: 'clamp(1.5rem, 3.4vw, 2.35rem)' }}
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h1)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h1)', lineHeight: 'var(--dz-leading-h1)' }}
           >
             Primero, cuéntanos tu historia
           </h1>

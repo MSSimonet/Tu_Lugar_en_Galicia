@@ -67,7 +67,13 @@
   /* === TIPOGRAFÍA === */
 
   --font-titular: var(--font-cormorant), Georgia, serif;
-  --font-ui:      var(--font-plus-jakarta), 'Inter', system-ui, sans-serif;
+  /* Inter primero (era Plus Jakarta Sans): DESIGN.md §3 declara --font-dz-ui (Inter)
+     como cuerpo de texto de toda la web, pero el <body> seguía heredando la fuente
+     pre-Deslumbrante — todo elemento sin fontFamily explícito la arrastraba
+     (auditoría de consistencia, C3). Se corrige acá, en la definición, porque es el
+     único punto que cubre a la vez el `body{}` de este archivo y la clase
+     `font-[family-name:var(--font-ui)]` de app/layout.tsx. */
+  --font-ui:      var(--font-inter), var(--font-plus-jakarta), system-ui, sans-serif;
 
   /* Escala tipográfica */
   --text-xs:   0.875rem;
@@ -110,7 +116,10 @@ html {
 }
 
 body {
-  font-family: var(--font-ui);
+  /* --font-dz-ui (Inter), no --font-ui: DESIGN.md §3 declara Inter como cuerpo de
+     texto de toda la web, pero el <body> seguía en la fuente pre-Deslumbrante y todo
+     elemento sin fontFamily explícito la arrastraba (auditoría, C3). */
+  font-family: var(--font-dz-ui);
   background-color: var(--color-blanco);
   color: var(--color-granito);
 }
@@ -349,6 +358,25 @@ details > dd {
      fallback (ver DESIGN.md §3 changelog fechado). */
   --font-dz-display: var(--font-unbounded), var(--font-jost), 'Montserrat', system-ui, sans-serif;
   --font-dz-ui:       var(--font-inter), var(--font-lato), 'Helvetica Neue', system-ui, sans-serif;
+
+  /* ── Escala tipográfica de titulares — valores exactos del mockup aprobado
+     (design-drafts/deslumbrante/index.html:61, :85, :121). Antes NO existían:
+     cada página hardcodeaba su propio tamaño, lo que produjo 13 H1 distintos
+     (37,6px–56px) y H2 de 10px a 40px (auditoría de consistencia, C1).
+     Los pesos van fijos junto al tamaño porque el mockup los define por nivel:
+     h1 700, h2 600, h3 600 — no 900/800 como quedó implementado. */
+  --dz-text-h1: clamp(1.8rem, 4.8vw, 4.05rem); /* -25% sobre el valor del mockup (pedido explícito) */
+  --dz-text-h2: clamp(1.7rem, 3vw, 2.4rem);
+  --dz-text-h3: 1.15rem;
+  --dz-weight-h1: 700;
+  --dz-weight-h2: 600;
+  --dz-weight-h3: 600;
+  --dz-leading-h1: 1.02;
+  --dz-leading-h2: 1.2;
+
+  /* Padding vertical de sección — index.html:82 (`section{padding:6.5rem 0}`).
+     Reemplaza la mezcla de py-16 (64px) / py-24 (96px) / px crudos (C2). */
+  --dz-section-y: 6.5rem;
 
   --dz-radius-card: 20px;
   /* Radio único de campos de formulario — antes cada form tenía el suyo (20px en

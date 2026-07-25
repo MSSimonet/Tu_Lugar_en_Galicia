@@ -36,8 +36,7 @@ export function AppsUtilesPagina() {
         </motion.div>
         <motion.h1
           variants={fadeUp}
-          className="text-[32px] font-bold leading-[1.18] md:text-[38px]"
-          style={{ fontFamily: 'var(--font-au-display)', color: 'var(--au-hero-heading)' }}
+          style={{ fontFamily: 'var(--font-au-display)', color: 'var(--au-hero-heading)', fontSize: 'var(--dz-text-h1)', fontWeight: 'var(--dz-weight-h1)', lineHeight: 'var(--dz-leading-h1)' }}
         >
           Elige tu ciudad y descubre tu kit de apps
         </motion.h1>

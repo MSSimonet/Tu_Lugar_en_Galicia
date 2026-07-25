@@ -20,8 +20,8 @@ export function ConocernosContenido() {
         >
           <motion.h1
             variants={fadeUp}
-            className="[font-size:var(--text-2xl)] md:[font-size:var(--text-3xl)] leading-[var(--leading-titulo)] mb-[var(--space-6)]"
-            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-ink)' }}
+            className="mb-[var(--space-6)]"
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h1)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h1)', lineHeight: 'var(--dz-leading-h1)' }}
           >
             Vamos a conocernos
           </motion.h1>
@@ -44,7 +44,7 @@ export function ConocernosContenido() {
 
       {/* Formulario — lógica de Gina, no se toca su estilo interno */}
       <motion.div
-        className="max-w-2xl mx-auto px-[var(--space-6)] py-[var(--space-16)]"
+        className="max-w-2xl mx-auto px-[var(--space-6)] py-[var(--dz-section-y)]"
         variants={fadeUp}
         initial="hidden"
         whileInView="visible"

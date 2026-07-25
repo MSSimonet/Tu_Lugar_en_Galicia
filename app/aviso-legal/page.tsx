@@ -22,8 +22,8 @@ export default function AvisoLegalPage() {
             <div className="p-[var(--space-8)]" style={{ borderRadius: 'var(--dz-radius-card)', border: '1px solid var(--dz-borde)', backgroundColor: 'var(--dz-papel)' }}>
               <h2
                 id="construccion"
-                className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-                style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
+                className="mb-[var(--space-4)]"
+                style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-accent-text)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
               >
                 Página en construcción
               </h2>
@@ -44,8 +44,8 @@ export default function AvisoLegalPage() {
           <LegalSection ariaLabelledby="titular">
             <h2
               id="titular"
-              className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-4)]"
-              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-accent-text)' }}
+              className="mb-[var(--space-4)]"
+              style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-accent-text)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
             >
               Titular del sitio web
             </h2>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { CarruselCiudades } from '@/components/ciudades/CarruselCiudades'
+import { BrujulaDivider } from '@/components/ciudades/BrujulaDivider'
 
 export const metadata: Metadata = {
   title: 'Ciudades de Galicia',
@@ -13,7 +14,7 @@ export default function CiudadesIndexPage() {
     <>
       {/* Hero */}
       <section
-        className="flex flex-col items-center justify-center text-center px-[var(--space-6)] py-[var(--space-16)] md:px-12"
+        className="flex flex-col items-center justify-center text-center px-[var(--space-6)] py-[var(--dz-section-y)] md:px-12"
         style={{ backgroundColor: 'var(--dz-luz)' }}
       >
         <Eyebrow tone="claro" className="mb-[var(--space-5)]">
@@ -23,9 +24,9 @@ export default function CiudadesIndexPage() {
           className="font-normal mb-[var(--space-4)]"
           style={{
             fontFamily: 'var(--font-dz-display)',
-            fontWeight: 900,
-            fontSize: 'clamp(31px, 4.25vw, 54px)',
-            lineHeight: 1.15,
+            fontWeight: 'var(--dz-weight-h1)',
+            fontSize: 'var(--dz-text-h1)',
+            lineHeight: 'var(--dz-leading-h1)',
             letterSpacing: '-0.01em',
             color: 'var(--dz-ink)',
           }}
@@ -39,6 +40,10 @@ export default function CiudadesIndexPage() {
           Cada ciudad de Galicia tiene su carácter. Encuentra la que mejor se adapta a lo que buscas.
         </p>
       </section>
+
+      <div style={{ background: 'linear-gradient(to bottom, var(--dz-luz), var(--dz-papel))' }}>
+        <BrujulaDivider direction="rtl" />
+      </div>
 
       <CarruselCiudades variant="listado" />
     </>

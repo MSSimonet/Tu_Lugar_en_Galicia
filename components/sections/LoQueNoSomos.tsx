@@ -53,12 +53,13 @@ export default function LoQueNoSomos() {
       >
         {/* ── Cabecera ── */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '26px' }}>
-          {/* 34px — con 44px superaba al H1 de /como-funciona (38px) e invertía la
-              jerarquía de la página (auditoría 2026-07-19, A2.3) */}
+          {/* Token compartido. El 34px hardcodeado anterior se había achicado a mano para
+              no superar al H1 de la página (38px); con el H1 ya en --dz-text-h1 esa
+              compensación dejó de ser necesaria (auditoría, §5). */}
           <h2 style={{
             fontFamily: 'var(--font-dz-display)',
-            fontSize: '34px', fontWeight: 900, color: 'var(--lqns-title)',
-            lineHeight: 1.1, margin: 0, letterSpacing: '-0.01em',
+            fontSize: 'var(--dz-text-h2)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--lqns-title)',
+            lineHeight: 'var(--dz-leading-h2)', margin: 0, letterSpacing: '-0.01em',
           }}>
             Lo que{' '}
             {/* font-dz-display no tiene itálica cargada (ver DESIGN.md §3) — itálica real
@@ -141,7 +142,7 @@ function Card({ title, body }: { title: string; body: string }) {
 
       <h3 style={{
         fontFamily: 'var(--font-dz-display)',
-        fontSize: '24px', fontWeight: 700, color: 'var(--lqns-title)',
+        fontSize: 'var(--dz-text-h3)', fontWeight: 'var(--dz-weight-h3)', color: 'var(--lqns-title)',
         lineHeight: 1.2, margin: '0 0 14px 0', letterSpacing: '0.01em',
       }}>
         {title}

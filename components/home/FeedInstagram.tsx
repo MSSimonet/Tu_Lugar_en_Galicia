@@ -112,7 +112,7 @@ export async function FeedInstagram() {
 
   return (
     <section
-      className="px-[var(--space-6)] py-[var(--space-16)] md:py-[var(--space-24)]"
+      className="px-[var(--space-6)] py-[var(--dz-section-y)]"
       style={{ backgroundColor: 'var(--dz-papel)' }}
       aria-labelledby="instagram-heading"
     >
@@ -148,30 +148,13 @@ export async function FeedInstagram() {
             href="https://instagram.com/tulugarengalicia"
             target="_blank"
             rel="noopener noreferrer"
-            className="[font-size:var(--text-xl)] md:[font-size:var(--text-2xl)]"
-            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-ink)' }}
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
           >
             Síguenos en Instagram
           </a>
         </h2>
 
         {posts.length > 0 ? <Carrusel posts={posts} /> : <PlaceholderGrid />}
-
-        <p
-          className="mt-[var(--space-8)] text-center [font-size:var(--text-xs)]"
-          style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)' }}
-        >
-          Seguimos en Instagram como{' '}
-          <a
-            href="https://instagram.com/tulugarengalicia"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: 'var(--dz-accent-text)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
-          >
-            @tulugarengalicia
-            <span className="sr-only">(abre en nueva pestaña)</span>
-          </a>
-        </p>
       </div>
     </section>
   );

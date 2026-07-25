@@ -13,8 +13,7 @@ export function LegalHero({ titulo, subtitulo }: { titulo: string; subtitulo?: s
     >
       <div className="mx-auto max-w-3xl">
         <motion.h1
-          className="[font-size:var(--text-2xl)] leading-[var(--leading-titulo)] md:[font-size:var(--text-3xl)]"
-          style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 900, color: 'var(--dz-hero-text)' }}
+          style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h1)', color: 'var(--dz-hero-text)', fontSize: 'var(--dz-text-h1)', lineHeight: 'var(--dz-leading-h1)' }}
           variants={fadeUp}
           initial="hidden"
           animate="visible"

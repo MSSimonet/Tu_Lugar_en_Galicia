@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { motion } from 'motion/react'
 import { GinaButton } from '@/components/shared/GinaButton'
 import { Eyebrow } from '@/components/ui/Eyebrow'
+import { QSomosDivider } from '@/components/sobre-silvana/QSomosDivider'
+import { SectionFade } from '@/components/ui/SectionFade'
 import { staggerContainer, fadeUp } from '@/lib/motion/variants'
 
 const confianza = [
@@ -62,10 +64,10 @@ export function SobreSilvanaContenido() {
                 variants={fadeUp}
                 style={{
                   fontFamily: 'var(--font-dz-display)',
-                  fontSize: 'clamp(31px, 4.25vw, 54px)',
-                  fontWeight: 900,
+                  fontSize: 'var(--dz-text-h1)',
+                  fontWeight: 'var(--dz-weight-h1)',
                   color: 'var(--dz-hero-text)',
-                  lineHeight: 1.15,
+                  lineHeight: 'var(--dz-leading-h1)',
                   letterSpacing: '-0.01em',
                   margin: 0,
                 }}
@@ -84,9 +86,13 @@ export function SobreSilvanaContenido() {
         </div>
       </section>
 
+      <div style={{ background: 'linear-gradient(to bottom, var(--dz-hero-bg), var(--dz-luz))' }}>
+        <QSomosDivider direction="rtl" />
+      </div>
+
       {/* Historia en primera persona */}
       <motion.section
-        className="py-[var(--space-16)] px-[var(--space-6)]"
+        className="py-[var(--dz-section-y)] px-[var(--space-6)]"
         style={{ backgroundColor: 'var(--dz-luz)' }}
         variants={fadeUp}
         initial="hidden"
@@ -95,8 +101,8 @@ export function SobreSilvanaContenido() {
       >
         <div className="mx-auto max-w-3xl space-y-[var(--space-6)]">
           <h2
-            className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)]"
-            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-ink)' }}
+            className=""
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
           >
             Mi historia
           </h2>
@@ -139,12 +145,14 @@ export function SobreSilvanaContenido() {
         </div>
       </motion.section>
 
+      <SectionFade from="var(--dz-luz)" to="var(--dz-papel)" />
+
       {/* Por qué confiar en mí */}
-      <section className="py-[var(--space-16)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-papel)' }}>
+      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-papel)' }}>
         <div className="mx-auto max-w-3xl">
           <motion.h2
-            className="[font-size:var(--text-xl)] leading-[var(--leading-titulo)] mb-[var(--space-8)]"
-            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 700, color: 'var(--dz-ink)' }}
+            className="mb-[var(--space-8)]"
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
@@ -171,8 +179,7 @@ export function SobreSilvanaContenido() {
                 </span>
                 <div>
                   <h3
-                    className="font-semibold [font-size:var(--text-sm)]"
-                    style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
+                    style={{ fontFamily: 'var(--font-dz-display)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h3)', fontWeight: 'var(--dz-weight-h3)' }}
                   >
                     {item.titulo}
                   </h3>
@@ -189,9 +196,11 @@ export function SobreSilvanaContenido() {
         </div>
       </section>
 
+      <SectionFade from="var(--dz-papel)" to="var(--dz-luz)" />
+
       {/* Cierre + CTA */}
       <motion.section
-        className="py-[var(--space-16)] px-[var(--space-6)]"
+        className="py-[var(--dz-section-y)] px-[var(--space-6)]"
         style={{ backgroundColor: 'var(--dz-luz)' }}
         variants={fadeUp}
         initial="hidden"
