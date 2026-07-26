@@ -155,7 +155,18 @@ export function CarruselCiudades({ variant }: CarruselCiudadesProps) {
       <div
         ref={gridRef}
         className="mx-auto grid max-w-6xl grid-cols-2 gap-[var(--space-4)] px-[var(--space-6)] pb-[var(--space-16)] sm:grid-cols-3 lg:grid-cols-5"
-        style={variant === "listado" ? { paddingTop: "var(--space-16)" } : undefined}
+        style={{
+          ...(variant === "listado" ? { paddingTop: "var(--space-16)" } : {}),
+          // useSlideInCards arranca cada tarjeta desplazada ±100px (±50 en mobile).
+          // Sin recorte, esas posiciones de partida quedaban fuera del viewport y
+          // la pagina se podia arrastrar de costado: 27px de scroll horizontal en
+          // 375px mientras duraba la animacion (auditoria responsive 2026-07-26).
+          // `clip` en vez de `hidden` a proposito: no crea un contenedor de scroll
+          // y deja el eje vertical en visible, asi el hover que levanta la tarjeta
+          // no se corta.
+          overflowX: "clip",
+          overflowY: "visible",
+        }}
       >
         {CIUDADES.map((ciudad) => (
           <div key={ciudad.slug} className="ciudad-card">
