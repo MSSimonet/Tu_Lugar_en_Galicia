@@ -31,17 +31,26 @@ export function MuroLlavesPreview() {
         >
           El muro de llaves
         </h2>
+      </div>
 
-        <div
-          style={{
-            height: "clamp(546px, 71.5vh, 780px)", // +30% sobre clamp(420px, 55vh, 600px)
-            borderRadius: "var(--dz-radius-card)",
-            overflow: "hidden",
-          }}
-        >
-          <MuroLlavesGrid fotos={llaves} />
-        </div>
+      {/* Contenedor de la grilla — fuera del max-w-4xl del título a propósito:
+          +3cm por lado sobre ese ancho (pedido explícito), acotado con min() al
+          padding de la sección para no desbordar el viewport en móvil/tablet —
+          ahí converge al mismo ancho que el título (mismo comportamiento de
+          antes, sin desborde). Ningún otro comportamiento de la grilla cambia. */}
+      <div
+        className="mx-auto"
+        style={{
+          width: "min(calc(56rem + 6cm), calc(100vw - 2 * var(--space-6)))",
+          height: "clamp(546px, 71.5vh, 780px)", // +30% sobre clamp(420px, 55vh, 600px)
+          borderRadius: "var(--dz-radius-card)",
+          overflow: "hidden",
+        }}
+      >
+        <MuroLlavesGrid fotos={llaves} />
+      </div>
 
+      <div className="mx-auto max-w-4xl">
         <div className="mt-[var(--space-8)] text-center">
           {/* TODO Fase 2: crear página /muro-de-llaves con galería completa */}
           <span

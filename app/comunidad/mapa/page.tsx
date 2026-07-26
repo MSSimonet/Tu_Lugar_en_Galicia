@@ -3,7 +3,11 @@ import { MapaComunidad } from '@/components/comunidad/MapaComunidad'
 import { ComunidadMapaHero } from '@/components/comunidad/ComunidadMapaHero'
 
 export const metadata: Metadata = {
-  title: 'Formando comunidad',
+  // Antes era 'Formando comunidad', idéntico al de /comunidad: dos URLs distintas
+  // con el mismo título confunden en resultados de búsqueda, en el historial y en
+  // las pestañas, y no coincidía con el H1 real de esta página, que es "Encuentra
+  // a tu gente en Galicia" (auditoría 2026-07-25, I8).
+  title: 'Encuentra a tu gente en Galicia',
   description:
     'Encuentra a otras familias y vecinos en Galicia dispuestos a tomar un café, salir a caminar o simplemente escucharte. Mira quién está cerca de ti.',
 }

@@ -116,12 +116,24 @@ export function ElMarcador() {
   const [enViewport, setEnViewport] = useState(false);
   const gridRef = useRef<HTMLUListElement>(null);
 
+  // AbortController: sin él, el doble montaje de StrictMode dejaba una segunda
+  // petición a /api/marcador colgada que terminaba en ERR_ABORTED en consola, y
+  // una respuesta tardía podía escribir estado sobre un componente ya
+  // desmontado (auditoría 2026-07-25, M1).
   useEffect(() => {
-    fetch("/api/marcador")
+    const controlador = new AbortController();
+    fetch("/api/marcador", { signal: controlador.signal })
       .then((res) => res.json())
-      .then((json: MarcadorData) => setData(json))
-      .catch(() => setData(FALLBACK))
-      .finally(() => setLoading(false));
+      .then((json: MarcadorData) => {
+        setData(json);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (err?.name === "AbortError") return; // cancelación esperada, no es un fallo
+        setData(FALLBACK);
+        setLoading(false);
+      });
+    return () => controlador.abort();
   }, []);
 
   // Dispara el conteo una sola vez cuando el grid entra en viewport — reemplaza el
