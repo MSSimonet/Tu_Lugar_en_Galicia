@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { CarruselCiudades } from '@/components/ciudades/CarruselCiudades'
 import { BrujulaDivider } from '@/components/ciudades/BrujulaDivider'
+import { CiudadesHeroTitulo } from '@/components/ciudades/CiudadesHeroTitulo'
 
 export const metadata: Metadata = {
   title: 'Ciudades de Galicia',
@@ -12,27 +13,16 @@ export const metadata: Metadata = {
 export default function CiudadesIndexPage() {
   return (
     <>
-      {/* Hero */}
+      {/* Hero — padding unificado con el resto de los Hero interiores vía
+          --dz-hero-pad-y (auditoría 2026-07-25) */}
       <section
-        className="flex flex-col items-center justify-center text-center px-[var(--space-6)] py-[var(--dz-section-y)] md:px-12"
-        style={{ backgroundColor: 'var(--dz-luz)' }}
+        className="flex flex-col items-center justify-center text-center px-[var(--space-6)] py-[var(--dz-hero-pad-y)]"
+        style={{ backgroundColor: 'var(--dz-luz)', minHeight: 'var(--dz-hero-min-h)' }}
       >
-        <Eyebrow tone="claro" className="mb-[var(--space-5)]">
+        <Eyebrow tone="claro">
           Relocation especializado · Galicia
         </Eyebrow>
-        <h1
-          className="font-normal mb-[var(--space-4)]"
-          style={{
-            fontFamily: 'var(--font-dz-display)',
-            fontWeight: 'var(--dz-weight-h1)',
-            fontSize: 'var(--dz-text-h1)',
-            lineHeight: 'var(--dz-leading-h1)',
-            letterSpacing: '-0.01em',
-            color: 'var(--dz-ink)',
-          }}
-        >
-          Elige tu ciudad
-        </h1>
+        <CiudadesHeroTitulo />
         <p
           className="leading-relaxed max-w-[480px] mx-auto"
           style={{ fontFamily: 'var(--font-dz-ui)', fontSize: '1rem', color: 'var(--dz-muted)' }}
@@ -41,7 +31,10 @@ export default function CiudadesIndexPage() {
         </p>
       </section>
 
-      <div style={{ background: 'linear-gradient(to bottom, var(--dz-luz), var(--dz-papel))' }}>
+      {/* Color plano, no degradado: la base del Hero debe cortar nítida, igual
+          que en el Hero de Inicio (pedido explícito). El resto de las uniones de
+          la página conservan su degradado. */}
+      <div style={{ backgroundColor: 'var(--dz-papel)' }}>
         <BrujulaDivider direction="rtl" />
       </div>
 

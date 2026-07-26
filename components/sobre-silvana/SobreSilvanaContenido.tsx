@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'motion/react'
 import { GinaButton } from '@/components/shared/GinaButton'
@@ -36,7 +35,8 @@ export function SobreSilvanaContenido() {
   return (
     <>
       {/* Hero — bookend fijo oscuro (Pedra e Ouro) */}
-      <section style={{ backgroundColor: 'var(--dz-hero-bg)', paddingTop: 'var(--space-12)', paddingBottom: 'var(--space-12)', paddingLeft: 'var(--space-16)', paddingRight: 'var(--space-16)' }}>
+      {/* Padding unificado con el resto de los Hero interiores (auditoría 2026-07-25) */}
+      <section style={{ backgroundColor: 'var(--dz-hero-bg)', paddingTop: 'var(--dz-hero-pad-y)', paddingBottom: 'var(--dz-hero-pad-y)', paddingLeft: 'var(--space-6)', paddingRight: 'var(--space-6)', minHeight: 'var(--dz-hero-min-h)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div className="mx-auto max-w-4xl">
           <motion.div
             className="flex flex-col gap-[var(--space-8)] md:flex-row-reverse md:items-center md:gap-[var(--space-12)]"
@@ -44,16 +44,32 @@ export function SobreSilvanaContenido() {
             initial="hidden"
             animate="visible"
           >
-            {/* Foto */}
+            {/* Foto — PENDIENTE DE CONTENIDO REAL.
+                Hasta la auditoría 2026-07-25 (C3) esto apuntaba a
+                `placehold.co/400x400?text=Silvana`: un servicio externo que estaba
+                fallando, así que la página de confianza más importante del sitio
+                mostraba una imagen ROTA donde va la cara de la fundadora.
+                El monograma local no depende de red y se lee como decisión de
+                diseño, pero NO reemplaza a una foto real: sustituir en cuanto
+                esté disponible (mínimo 400×400, WebP/JPG). */}
             <motion.div variants={fadeUp} className="flex shrink-0 justify-center md:justify-end">
-              <Image
-                src="https://placehold.co/400x400/C89B3C/2C2420?text=Silvana"
-                alt="Silvana Lorenzo, fundadora de Tu Lugar en Galicia"
-                width={200}
-                height={200}
-                className="rounded-full object-cover"
-                priority
-              />
+              <span
+                role="img"
+                aria-label="Silvana Lorenzo, fundadora de Tu Lugar en Galicia"
+                className="flex items-center justify-center rounded-full"
+                style={{
+                  width: 200,
+                  height: 200,
+                  backgroundColor: 'var(--dz-borde)',
+                  color: 'var(--dz-accent-text)',
+                  fontFamily: 'var(--font-dz-display)',
+                  fontWeight: 'var(--dz-weight-h1)',
+                  fontSize: '3.5rem',
+                  letterSpacing: '0.02em',
+                }}
+              >
+                SL
+              </span>
             </motion.div>
             {/* Título */}
             <div>
@@ -64,12 +80,12 @@ export function SobreSilvanaContenido() {
                 variants={fadeUp}
                 style={{
                   fontFamily: 'var(--font-dz-display)',
-                  fontSize: 'var(--dz-text-h1)',
+                  fontSize: 'var(--dz-text-h1-compact)',
                   fontWeight: 'var(--dz-weight-h1)',
                   color: 'var(--dz-hero-text)',
                   lineHeight: 'var(--dz-leading-h1)',
                   letterSpacing: '-0.01em',
-                  margin: 0,
+                  margin: '1cm 0',
                 }}
               >
                 Hice tu mismo camino,<br />te entiendo muy bien…
@@ -86,7 +102,9 @@ export function SobreSilvanaContenido() {
         </div>
       </section>
 
-      <div style={{ background: 'linear-gradient(to bottom, var(--dz-hero-bg), var(--dz-luz))' }}>
+      {/* Color plano, no degradado: la base del Hero corta nítida (pedido
+          explícito). El resto de las uniones conserva su degradado. */}
+      <div style={{ backgroundColor: 'var(--dz-luz)' }}>
         <QSomosDivider direction="rtl" />
       </div>
 

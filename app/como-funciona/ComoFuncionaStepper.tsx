@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { motion } from 'motion/react'
 import { Eyebrow } from '@/components/ui/Eyebrow'
+import { fadeUp } from '@/lib/motion/variants'
 
 const INTERVAL_MS = 4200
 
@@ -160,22 +162,27 @@ export default function ComoFuncionaStepper() {
             <Eyebrow tone="claro">Cómo funciona</Eyebrow>
           </div>
 
-          <h1 style={{
-            fontFamily: 'var(--font-dz-display)',
-            fontWeight: 'var(--dz-weight-h1)',
-            fontSize: 'var(--dz-text-h1)',
-            lineHeight: 'var(--dz-leading-h1)',
-            letterSpacing: '-0.01em',
-            color: 'var(--dz-ink)',
-            margin: '0 0 6px',
-          }}>
+          <motion.h1
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            style={{
+              fontFamily: 'var(--font-dz-display)',
+              fontWeight: 'var(--dz-weight-h1)',
+              fontSize: 'var(--dz-text-h1-compact)',
+              lineHeight: 'var(--dz-leading-h1)',
+              letterSpacing: '-0.01em',
+              color: 'var(--dz-ink)',
+              margin: '1cm 0',
+            }}
+          >
             Tu hogar en Galicia{' '}
             <em style={{ fontStyle: 'italic', fontWeight: 700, color: 'var(--dz-accent-text)' }}>
               ya existe.
             </em>
             <br />
             Vamos a encontrarlo.
-          </h1>
+          </motion.h1>
 
           <p className="cf-subtitle" style={{
             fontFamily: 'var(--font-dz-ui)',

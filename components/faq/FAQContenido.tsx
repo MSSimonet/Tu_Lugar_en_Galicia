@@ -15,7 +15,9 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
   return (
     <>
       {/* Hero — bookend fijo oscuro (Pedra e Ouro) */}
-      <section style={{ backgroundColor: 'var(--dz-hero-bg)', paddingTop: 'var(--space-12)', paddingBottom: 'var(--space-12)', paddingLeft: 'var(--space-16)', paddingRight: 'var(--space-16)' }}>
+      {/* Padding unificado con el resto de los Hero interiores (auditoría 2026-07-25).
+          La base ya cortaba nítida: debajo va una <section> de color plano. */}
+      <section style={{ backgroundColor: 'var(--dz-hero-bg)', paddingTop: 'var(--dz-hero-pad-y)', paddingBottom: 'var(--dz-hero-pad-y)', paddingLeft: 'var(--space-6)', paddingRight: 'var(--space-6)', minHeight: 'var(--dz-hero-min-h)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <motion.div
           className="mx-auto max-w-3xl"
           variants={staggerContainer}
@@ -29,12 +31,12 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
             variants={fadeUp}
             style={{
               fontFamily: 'var(--font-dz-display)',
-              fontSize: 'var(--dz-text-h1)',
+              fontSize: 'var(--dz-text-h1-compact)',
               fontWeight: 'var(--dz-weight-h1)',
               color: 'var(--dz-hero-text)',
               lineHeight: 'var(--dz-leading-h1)',
               letterSpacing: '-0.01em',
-              margin: 0,
+              margin: '1cm 0',
             }}
           >
             ¿Tienes dudas?

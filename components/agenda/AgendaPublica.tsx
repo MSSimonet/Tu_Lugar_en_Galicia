@@ -71,7 +71,18 @@ export function AgendaPublica() {
 
           <h1
             id="agenda-publica-heading"
-            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h1)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h1)', lineHeight: 'var(--dz-leading-h1)' }}
+            style={{
+              fontFamily: 'var(--font-dz-display)',
+              fontWeight: 'var(--dz-weight-h1)',
+              color: 'var(--dz-ink)',
+              fontSize: 'var(--dz-text-h1-compact)',
+              lineHeight: 'var(--dz-leading-h1)',
+              letterSpacing: '-0.01em',
+              // El contenedor ya aplica gap: var(--space-6) entre hermanos (flex,
+              // no colapsa márgenes) — se descuenta acá para que el espacio total
+              // arriba/abajo del título sea ~1cm, no 1cm + gap.
+              margin: 'calc(1cm - var(--space-6)) 0',
+            }}
           >
             Primero, cuéntanos tu historia
           </h1>

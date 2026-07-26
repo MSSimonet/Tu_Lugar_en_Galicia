@@ -18,9 +18,14 @@ export function AppsUtilesPagina() {
       {/* Franja superior — separador visual, coherente con el header del diseño de referencia */}
       <div className="h-1" style={{ backgroundColor: 'var(--au-header-bg)' }} aria-hidden="true" />
 
-      {/* Hero */}
+      {/* Hero — padding vertical unificado con el resto de los Hero interiores
+          vía --dz-hero-pad-y (auditoría 2026-07-25). A diferencia de las otras 4
+          páginas, acá el Hero NO es un bloque con fondo propio: vive sobre el
+          mismo --au-bg que el resto de la página, así que no hay borde inferior
+          que cortar — no aplica el punto del degradado. */}
       <motion.div
-        className="mx-auto max-w-[900px] px-6 pb-8 pt-12 md:pt-14"
+        className="mx-auto flex max-w-[900px] flex-col justify-center px-[var(--space-6)] py-[var(--dz-hero-pad-y)]"
+        style={{ minHeight: 'var(--dz-hero-min-h)' }}
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -36,7 +41,7 @@ export function AppsUtilesPagina() {
         </motion.div>
         <motion.h1
           variants={fadeUp}
-          style={{ fontFamily: 'var(--font-au-display)', color: 'var(--au-hero-heading)', fontSize: 'var(--dz-text-h1)', fontWeight: 'var(--dz-weight-h1)', lineHeight: 'var(--dz-leading-h1)' }}
+          style={{ fontFamily: 'var(--font-dz-display)', color: 'var(--au-hero-heading)', fontSize: 'var(--dz-text-h1-compact)', fontWeight: 'var(--dz-weight-h1)', lineHeight: 'var(--dz-leading-h1)', letterSpacing: '-0.01em', margin: '1cm 0' }}
         >
           Elige tu ciudad y descubre tu kit de apps
         </motion.h1>

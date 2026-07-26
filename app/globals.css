@@ -269,7 +269,9 @@ details > dd {
   --ae-oro:          #D97706; /* oro editorial — detalles decorativos */
 
   --font-ae-display: var(--font-jost), 'Montserrat', system-ui, sans-serif;
-  --font-ae-ui:      var(--font-dmsans), 'Inter', system-ui, sans-serif;
+  /* DM Sans ya no se descarga (auditoría 2026-07-25, I6): este sistema está
+     dormido y el token tiene cero usos en componentes. */
+  --font-ae-ui:      'Inter', system-ui, sans-serif;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -286,8 +288,10 @@ details > dd {
   --mar-muted:       #5E7A74;
   --mar-border:      #C5D8D4;
 
-  --font-mar-display: var(--font-syne), 'Georgia', serif;
-  --font-mar-ui:      var(--font-nunito), 'Inter', system-ui, sans-serif;
+  /* Syne y Nunito Sans ya no se descargan (auditoría 2026-07-25, I6): este
+     sistema está dormido y ambos tokens tienen cero usos en componentes. */
+  --font-mar-display: 'Georgia', serif;
+  --font-mar-ui:      'Inter', system-ui, sans-serif;
 
   --mar-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -366,7 +370,18 @@ details > dd {
      Los pesos van fijos junto al tamaño porque el mockup los define por nivel:
      h1 700, h2 600, h3 600 — no 900/800 como quedó implementado. */
   --dz-text-h1: clamp(1.8rem, 4.8vw, 4.05rem); /* -25% sobre el valor del mockup (pedido explícito) */
-  --dz-text-h2: clamp(1.7rem, 3vw, 2.4rem);
+  /* Variante reducida de --dz-text-h1 (~15% menos) — exclusiva para los 7 titulares
+     unificados (pedido explícito, sesión 2026-07-25): home/como-funciona, Elige tu
+     ciudad, Sé un anfitrión, Hice tu mismo camino, kit de apps, Tienes dudas,
+     cuéntanos tu historia. NO reemplaza --dz-text-h1 — el resto de H1 del sitio
+     (hero del home, ConocernosContenido, ContactoContenido, LegalHero, etc.) sigue
+     con el tamaño original. */
+  --dz-text-h1-compact: clamp(1.68rem, 4.45vw, 3.75rem); /* punto medio entre --dz-text-h1 y el primer intento (quedó "muy chico", pedido explícito) */
+  /* El mínimo bajó de 1.7rem a 1.35rem: a 375px el H2 daba 27,2px contra 28,8px
+     del H1 — 1,6px de diferencia, visualmente indistinguibles, la jerarquía se
+     caía justo en el viewport más usado (auditoría 2026-07-25, I2). El máximo
+     de desktop no cambia. */
+  --dz-text-h2: clamp(1.35rem, 3vw, 2.4rem);
   --dz-text-h3: 1.15rem;
   --dz-weight-h1: 700;
   --dz-weight-h2: 600;
@@ -377,6 +392,24 @@ details > dd {
   /* Padding vertical de sección — index.html:82 (`section{padding:6.5rem 0}`).
      Reemplaza la mezcla de py-16 (64px) / py-24 (96px) / px crudos (C2). */
   --dz-section-y: 6.5rem;
+
+  /* Padding vertical de los Hero de páginas interiores (/ciudades, /comunidad,
+     /sobre-silvana, /apps-utiles, /faq). Cada una traía el suyo —arriba
+     104/112/48/48/56px, abajo 104/48/48/48/32px— así que ninguna se veía a la
+     misma altura que las otras (auditoría 2026-07-25). Los 112px de /comunidad
+     incluían 64px para compensar un header fijo: hoy el header es `sticky` y
+     `main` ya arranca debajo de él, así que ese hueco era espacio muerto. */
+  --dz-hero-pad-y: var(--space-16);
+
+  /* Alto mínimo común de esos mismos Hero. Con el padding unificado seguían
+     midiendo 322-499px según cuánto texto tuviera cada una; este mínimo las
+     iguala y el contenido se centra en vertical, así el espacio sobrante queda
+     repartido y no como un hueco abajo. 32rem está apenas por encima del alto
+     natural de la más alta (/sobre-silvana), que es la que manda.
+     Nota: en viewports angostos los títulos envuelven a 2-3 líneas y varias
+     superan este mínimo por contenido propio, así que ahí no quedan idénticas
+     — igualarlas del todo exigiría recortar texto. */
+  --dz-hero-min-h: 32rem;
 
   --dz-radius-card: 20px;
   /* Radio único de campos de formulario — antes cada form tenía el suyo (20px en

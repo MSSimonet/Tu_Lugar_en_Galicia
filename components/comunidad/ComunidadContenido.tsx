@@ -12,9 +12,11 @@ export function ComunidadContenido() {
       {/* Hero — bookend fijo oscuro (Pedra e Ouro) */}
       <section
         className="px-[var(--space-6)]"
-        // 64px compensa el header fijo; el espacio visible queda simétrico
-        // (48px arriba y abajo — antes 60/48, auditoría 2026-07-19)
-        style={{ backgroundColor: 'var(--dz-hero-bg)', paddingTop: 'calc(64px + var(--space-12))', paddingBottom: 'var(--space-12)' }}
+        // Padding unificado con el resto de los Hero interiores vía --dz-hero-pad-y.
+        // Antes sumaba 64px "para compensar el header fijo", pero el header es
+        // `sticky` y `main` ya arranca debajo de él: era espacio muerto y hacía
+        // que este Hero se viera más alto que los demás (auditoría 2026-07-25).
+        style={{ backgroundColor: 'var(--dz-hero-bg)', paddingTop: 'var(--dz-hero-pad-y)', paddingBottom: 'var(--dz-hero-pad-y)', minHeight: 'var(--dz-hero-min-h)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
       >
         <motion.div
           className="mx-auto max-w-2xl"
@@ -27,7 +29,7 @@ export function ComunidadContenido() {
           </motion.div>
           <motion.h1
             variants={fadeUp}
-            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h1)', color: 'var(--dz-hero-text)', fontSize: 'var(--dz-text-h1)', lineHeight: 'var(--dz-leading-h1)' }}
+            style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h1)', color: 'var(--dz-hero-text)', fontSize: 'var(--dz-text-h1-compact)', lineHeight: 'var(--dz-leading-h1)', letterSpacing: '-0.01em', margin: '1cm 0' }}
           >
             Sé un anfitrión en Galicia
           </motion.h1>
@@ -43,7 +45,9 @@ export function ComunidadContenido() {
         </motion.div>
       </section>
 
-      <div style={{ background: 'linear-gradient(to bottom, var(--dz-hero-bg), var(--dz-luz))' }}>
+      {/* Color plano, no degradado: la base del Hero corta nítida (pedido
+          explícito). El resto de las uniones conserva su degradado. */}
+      <div style={{ backgroundColor: 'var(--dz-luz)' }}>
         <GenteDivider direction="rtl" />
       </div>
 
