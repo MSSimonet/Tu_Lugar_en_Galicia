@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "motion/react";
-import { useFlightWithWake } from "@/lib/gsap/useFlightWithWake";
+import { useFlightWithWake, DIVIDER_MARGEN_LATERAL, DIVIDER_WOBBLE_AMPLITUDE } from "@/lib/gsap/useFlightWithWake";
 
 // Tamaño de despliegue del PNG (public/images/avion-divider-v3.png) — se
 // preserva la proporción nativa exacta, nunca se estira/deforma. Nombre "-v2": el
@@ -12,6 +12,9 @@ import { useFlightWithWake } from "@/lib/gsap/useFlightWithWake";
 // confiable de invalidar cualquier URL cacheada de la versión sin alpha real.
 const ICON_HEIGHT = 44; // mismo alto ya vigente (64×703/1024 ≈ 44), sin cambios de escala
 const ICON_WIDTH = Math.round((ICON_HEIGHT * 702) / 512); // aspecto nativo de avion-divider-v3.png
+// Alto mínimo del contenedor sin recortar el ícono en los extremos del wobble
+// vertical (pedido explícito: la sección no debe dejar espacio sobrante).
+const CONTAINER_HEIGHT = ICON_HEIGHT + 2 * DIVIDER_WOBBLE_AMPLITUDE;
 
 export interface AnimatedDividerProps {
   /** "ltr" (default): arranca en el borde izquierdo, primer tramo vuela a la derecha.
@@ -39,7 +42,7 @@ export function AnimatedDivider({ direction = "ltr" }: AnimatedDividerProps) {
   });
 
   return (
-    <div aria-hidden="true" style={{ padding: "var(--space-8) 0" }}>
+    <div aria-hidden="true" style={{ paddingLeft: DIVIDER_MARGEN_LATERAL, paddingRight: DIVIDER_MARGEN_LATERAL }}>
       <style>{`
         .ad-estela {
           background-image: repeating-linear-gradient(to right, var(--dz-accent) 0 3px, transparent 3px 8px);
@@ -49,8 +52,8 @@ export function AnimatedDivider({ direction = "ltr" }: AnimatedDividerProps) {
       `}</style>
       <div
         ref={containerRef}
-        className="relative mx-auto max-w-6xl px-[var(--space-6)]"
-        style={{ height: "56px", overflow: "hidden" }}
+        className="relative"
+        style={{ height: `${CONTAINER_HEIGHT}px`, width: "100%", overflow: "hidden" }}
       >
         {prefersReducedMotion ? (
           <div
@@ -65,7 +68,7 @@ export function AnimatedDivider({ direction = "ltr" }: AnimatedDividerProps) {
               ref={estelaRef}
               className="ad-estela absolute"
               data-dir={empiezaDerecha ? "izquierda" : "derecha"}
-              style={{ left: 0, top: "calc(50% - 1.03px)", height: "2.06px", width: 0 }}
+              style={{ left: 0, top: "calc(50% - 1.133px)", height: "2.266px", width: 0 }}
             />
             <div ref={iconRef} className="absolute" style={{ left: 0, top: `calc(50% - ${ICON_HEIGHT / 2}px)` }}>
               <Image src="/images/avion-divider-v3.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />

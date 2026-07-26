@@ -3,20 +3,31 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "motion/react";
-import { useFlightWithWake } from "@/lib/gsap/useFlightWithWake";
+import { useFlightWithWake, DIVIDER_MARGEN_LATERAL, DIVIDER_WOBBLE_AMPLITUDE } from "@/lib/gsap/useFlightWithWake";
 
-// Separador con las 4 maletas (public/images/maletas-divider-v3.png) — mismo
-// motor de animación que components/ui/AnimatedDivider.tsx
-// (lib/gsap/useFlightWithWake.ts). Fuente: foto real del usuario (maletas.png,
-// cobre sobre fondo negro) — recortada (fondo transparente) y recoloreada al
-// naranja/ámbar de marca (--dz-accent) para que quede en la misma familia
-// visual que el avión. Vivía en Comunidad; se reubicó a Cómo Funciona (ese
-// lugar ahora usa gente.png) — mismo comportamiento y estilo, solo cambió la
-// ubicación, por eso pasó a components/ui junto al resto de los separadores
-// compartidos.
+// Separador de equipaje (public/images/maletas-divider-v6.png) — mismo motor
+// de animación que components/ui/AnimatedDivider.tsx (lib/gsap/useFlightWithWake.ts).
+//
+// Origen del asset: equipaje1.png (naranja sobre fondo negro) se keyeó tratándola
+// como premultiplicada contra negro y des-premultiplicando el color, para que los
+// bordes antialiaseados no quedaran con halo oscuro → maletas-divider-v5.png, con
+// los 6 objetos de la fuente. Esa versión medía 168px de ancho contra los 45-60px
+// del resto de los divisores: ocupaba el 51% de la franja en móvil y, con la
+// velocidad ya unificada, giraba casi el doble de seguido que los otros cuatro
+// (auditoría 2026-07-25, I1).
+//
+// La v6 recompone 4 de esos objetos —maleta grande, bolso, maleta alta y mochila,
+// de tamaños deliberadamente distintos— apoyados sobre una misma línea de base.
+// Se eligieron los 4 más estrechos en proporción a su alto, que son los que menos
+// ensanchan el resultado: 513×226 → aspecto 2,27 → 100px de ancho. Cuatro objetos
+// en fila no pueden bajar al 1,24-1,37 del resto, pero la diferencia de recorrido
+// contra los otros divisores cae del 42% al ~18%.
 
 const ICON_HEIGHT = 44;
-const ICON_WIDTH = Math.round((ICON_HEIGHT * 755) / 512); // aspecto nativo de maletas-divider-v3.png
+const ICON_WIDTH = Math.round((ICON_HEIGHT * 513) / 226); // aspecto nativo de maletas-divider-v6.png
+// Alto mínimo del contenedor sin recortar el ícono en los extremos del wobble
+// vertical (pedido explícito: la sección no debe dejar espacio sobrante).
+const CONTAINER_HEIGHT = ICON_HEIGHT + 2 * DIVIDER_WOBBLE_AMPLITUDE;
 
 export interface MaletasDividerProps {
   /** "ltr" (default): arranca en el borde izquierdo, primer tramo vuela a la derecha.
@@ -38,7 +49,7 @@ export function MaletasDivider({ direction = "ltr" }: MaletasDividerProps) {
   });
 
   return (
-    <div aria-hidden="true" style={{ padding: "var(--space-6) 0" }}>
+    <div aria-hidden="true" style={{ paddingLeft: DIVIDER_MARGEN_LATERAL, paddingRight: DIVIDER_MARGEN_LATERAL }}>
       <style>{`
         .mld-estela {
           background-image: repeating-linear-gradient(to right, var(--dz-accent) 0 3px, transparent 3px 8px);
@@ -48,15 +59,15 @@ export function MaletasDivider({ direction = "ltr" }: MaletasDividerProps) {
       `}</style>
       <div
         ref={containerRef}
-        className="relative mx-auto max-w-6xl px-[var(--space-6)]"
-        style={{ height: "64px", overflow: "hidden" }}
+        className="relative"
+        style={{ height: `${CONTAINER_HEIGHT}px`, width: "100%", overflow: "hidden" }}
       >
         {prefersReducedMotion ? (
           <div
             className="absolute top-1/2 left-1/2"
             style={{ transform: `translate(-50%, -50%) ${empiezaDerecha ? "scaleX(-1)" : ""}` }}
           >
-            <Image src="/images/maletas-divider-v3.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
+            <Image src="/images/maletas-divider-v6.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
           </div>
         ) : (
           <>
@@ -64,10 +75,10 @@ export function MaletasDivider({ direction = "ltr" }: MaletasDividerProps) {
               ref={estelaRef}
               className="mld-estela absolute"
               data-dir={empiezaDerecha ? "izquierda" : "derecha"}
-              style={{ left: 0, top: "calc(50% - 1.03px)", height: "2.06px", width: 0 }}
+              style={{ left: 0, top: "calc(50% - 1.133px)", height: "2.266px", width: 0 }}
             />
             <div ref={iconRef} className="absolute" style={{ left: 0, top: `calc(50% - ${ICON_HEIGHT / 2}px)` }}>
-              <Image src="/images/maletas-divider-v3.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
+              <Image src="/images/maletas-divider-v6.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
             </div>
           </>
         )}
