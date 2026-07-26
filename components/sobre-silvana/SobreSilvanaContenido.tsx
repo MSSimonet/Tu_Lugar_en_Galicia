@@ -117,7 +117,11 @@ export function SobreSilvanaContenido() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.1 }}
       >
-        <div className="mx-auto max-w-3xl space-y-[var(--space-6)]">
+        {/* 68ch en vez de max-w-3xl (768px fijos): a ese ancho la linea llegaba a
+            95-100 caracteres, muy por encima del rango comodo de 60-75 (auditoria
+            responsive 2026-07-26). La unidad `ch` se mide sobre la tipografia real,
+            asi que la medida se mantiene aunque cambie el cuerpo de texto. */}
+        <div className="mx-auto max-w-[68ch] space-y-[var(--space-6)]">
           <h2
             className=""
             style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
@@ -167,7 +171,8 @@ export function SobreSilvanaContenido() {
 
       {/* Por qué confiar en mí */}
       <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-papel)' }}>
-        <div className="mx-auto max-w-3xl">
+        {/* Misma medida de linea que "Mi historia" — ver nota alli */}
+        <div className="mx-auto max-w-[68ch]">
           <motion.h2
             className="mb-[var(--space-8)]"
             style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
