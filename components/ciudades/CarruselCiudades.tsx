@@ -21,9 +21,14 @@ import { useSlideInCards } from "@/lib/gsap/useSlideInCards";
 // completas sin scroll, y la animación de entrada es un fadeUp escalonado al hacer
 // scroll hasta la sección (whileInView), no un scroll pineado.
 
-function CiudadCard({ ciudad }: { ciudad: Ciudad }) {
+// El nivel del titular de la tarjeta depende de la variante: en "preview" (Home)
+// hay un <h2> de sección encima, así que la ciudad es <h3>; en "listado"
+// (/ciudades) no existe ese <h2> y el <h3> colgaba directo del <h1> de la
+// página — único salto de jerarquía del sitio (auditoría 2026-07-25, I5).
+function CiudadCard({ ciudad, headingLevel }: { ciudad: Ciudad; headingLevel: "h2" | "h3" }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const Heading = headingLevel;
 
   const reproducir = () => {
     if (prefersReducedMotion) return;
@@ -83,7 +88,7 @@ function CiudadCard({ ciudad }: { ciudad: Ciudad }) {
         {/* clamp: a 1.5rem fijo, "Santiago de Compostela" envolvía a 3 líneas en las
             tarjetas de 208px del grid de 5 columnas y tapaba el 53% de la foto
             (auditoría 2026-07-19) */}
-        <h3
+        <Heading
           style={{
             fontFamily: "var(--font-dz-display)",
             fontWeight: "var(--dz-weight-h3)",
@@ -93,7 +98,7 @@ function CiudadCard({ ciudad }: { ciudad: Ciudad }) {
           }}
         >
           {ciudad.nombre}
-        </h3>
+        </Heading>
         <p
           style={{
             fontFamily: "var(--font-dz-ui)",
@@ -154,7 +159,8 @@ export function CarruselCiudades({ variant }: CarruselCiudadesProps) {
       >
         {CIUDADES.map((ciudad) => (
           <div key={ciudad.slug} className="ciudad-card">
-            <CiudadCard ciudad={ciudad} />
+            {/* headingLevel: ver comentario en CiudadCard */}
+            <CiudadCard ciudad={ciudad} headingLevel={variant === "listado" ? "h2" : "h3"} />
           </div>
         ))}
       </div>

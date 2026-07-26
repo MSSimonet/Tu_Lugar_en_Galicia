@@ -66,7 +66,16 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
   useEffect(() => {
     if (!panelFoto) return;
     const timer = setTimeout(() => setPanelFoto(null), PANEL_AUTO_CLOSE_MS);
-    return () => clearTimeout(timer);
+    // Escape para cerrar: es lo que se espera de cualquier vista superpuesta y
+    // era la única forma de cerrarla sin mouse (auditoría 2026-07-25, M5).
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPanelFoto(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("keydown", onKey);
+    };
   }, [panelFoto]);
 
   useEffect(() => {
@@ -310,6 +319,21 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
           cursor: pointer;
           font-size: 16px;
         }
+        /* Oculto a la vista pero enfocable — al recibir foco por teclado se
+           muestra, para que un usuario sin mouse vea qué acaba de enfocar. */
+        .mlg-lista-accesible { position: absolute; bottom: 0; left: 0; margin: 0; padding: 0; list-style: none; z-index: 20; }
+        .mlg-lista-accesible button {
+          position: absolute; width: 1px; height: 1px; overflow: hidden;
+          clip-path: inset(50%); white-space: nowrap; border: 0; padding: 0;
+        }
+        .mlg-lista-accesible button:focus-visible {
+          position: static; width: auto; height: auto; overflow: visible;
+          clip-path: none; white-space: normal;
+          margin: 6px; padding: 8px 14px; cursor: pointer;
+          background-color: var(--dz-hero-text); color: var(--dz-hero-bg);
+          border-radius: 999px; font-family: var(--font-dz-ui); font-size: 0.8rem;
+          outline: 2px solid var(--dz-accent); outline-offset: 2px;
+        }
         @media (prefers-reduced-motion: reduce) {
           .mlg-tile-img { transition: none; }
           .mlg-polaroid { transition: none; }
@@ -340,10 +364,20 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
         </div>
       )}
 
-      {/* Contenido accesible real — las celdas recicladas del fondo son decorativas (aria-hidden). */}
-      <ul className="sr-only">
+      {/* Contenido accesible real — las celdas recicladas del fondo son decorativas
+          (aria-hidden). Además de nombrar cada foto, ahora cada entrada es un
+          <button> que abre la vista ampliada: la grilla se amplía con doble click,
+          que no tiene equivalente por teclado, así que sin esto la función era
+          inalcanzable sin mouse (auditoría 2026-07-25, M5). Los botones están
+          visualmente ocultos pero son enfocables, y se hacen visibles al recibir
+          foco (mismo patrón que el enlace "Ir al contenido principal"). */}
+      <ul className="mlg-lista-accesible">
         {fotos.map((foto) => (
-          <li key={foto.src}>{foto.alt}</li>
+          <li key={foto.src}>
+            <button type="button" onClick={() => setPanelFoto(foto)}>
+              Ampliar: {foto.alt}
+            </button>
+          </li>
         ))}
       </ul>
     </div>

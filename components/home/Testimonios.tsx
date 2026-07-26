@@ -1,9 +1,14 @@
 "use client";
 
-// TODO: reemplazar avatares placeholder con fotos reales
+// PENDIENTE DE CONTENIDO: los tres testimonios muestran un monograma con las
+// iniciales, no una foto real. Antes apuntaban a `placehold.co`, un servicio
+// externo que en la auditoría 2026-07-25 (C3) devolvía `naturalWidth: 0` — es
+// decir, se veían como imagen ROTA en la home, el peor resultado posible en la
+// sección de prueba social. El monograma local no depende de red, no puede
+// romperse y se lee como una decisión de diseño. Reemplazar por fotos reales
+// cuando estén disponibles.
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { gsap, useGSAP } from "@/lib/gsap";
@@ -15,7 +20,6 @@ const testimonios = [
     ciudadGalicia: "Vigo",
     texto:
       "Yo no creía que fuera posible alquilar sin estar presente. El equipo nos mandó videos de los departamentos, nos explicó el barrio, habló con el propietario y cuando llegamos con las valijas, las llaves ya nos esperaban.",
-    avatar: "https://placehold.co/80x80/8B6E4E/F2EDE4?text=VR",
   },
   {
     nombre: "Martín y Lucía Ferreira",
@@ -23,7 +27,6 @@ const testimonios = [
     ciudadGalicia: "A Coruña",
     texto:
       "Llevábamos meses mirando Idealista sin entender nada. Contratamos a Tu Lugar en Galicia y en tres semanas teníamos piso. Nos ahorró meses de angustia. Vale cada euro.",
-    avatar: "https://placehold.co/80x80/8B6E4E/F2EDE4?text=MF",
   },
   {
     nombre: "Diego Castillo",
@@ -31,9 +34,19 @@ const testimonios = [
     ciudadGalicia: "Santiago de Compostela",
     texto:
       "Lo que más me sorprendió fue que el equipo entendía exactamente lo que estábamos viviendo. No era una agencia fría dando respuestas de manual — era gente que realmente quería que nos instaláramos bien.",
-    avatar: "https://placehold.co/80x80/8B6E4E/F2EDE4?text=DC",
   },
 ];
+
+// Iniciales a partir del nombre ("Martín y Lucía Ferreira" → "MF"): la conjunción
+// se descarta para que un testimonio de pareja no quede como "MYL".
+function iniciales(nombre: string): string {
+  return nombre
+    .split(/\s+/)
+    .filter((p) => p.length > 1 && p.toLowerCase() !== "y")
+    .slice(0, 2)
+    .map((p) => p[0].toUpperCase())
+    .join("");
+}
 
 const AUTOPLAY_MS = 5000;
 
@@ -58,7 +71,22 @@ function TarjetaTestimonio({ t }: { t: (typeof testimonios)[number] }) {
       </blockquote>
 
       <div className="mt-[var(--space-4)] flex items-center gap-[var(--space-3)]">
-        <Image src={t.avatar} alt="" width={36} height={36} className="rounded-full flex-shrink-0" />
+        <span
+          aria-hidden="true"
+          className="flex flex-shrink-0 items-center justify-center rounded-full"
+          style={{
+            width: 36,
+            height: 36,
+            backgroundColor: "var(--dz-borde)",
+            color: "var(--dz-accent-text)",
+            fontFamily: "var(--font-dz-display)",
+            fontWeight: "var(--dz-weight-h3)",
+            fontSize: "0.72rem",
+            letterSpacing: "0.02em",
+          }}
+        >
+          {iniciales(t.nombre)}
+        </span>
         <div className="text-left">
           <p
             className="[font-size:var(--text-xs)] font-bold"
@@ -181,7 +209,12 @@ export function Testimonios() {
           </button>
         </div>
 
-        <div className="mt-[var(--space-5)] flex justify-center gap-[var(--space-2)]">
+        {/* El punto sigue midiendo 7px, pero el área clicleable pasa a 24×24 — el
+            mínimo de WCAG 2.2 (2.5.8 Target Size). Antes el botón entero medía
+            7×7px y era casi imposible de acertar en móvil (auditoría 2026-07-25,
+            I7). El indicador visual va en un <span> interno para no engordar el
+            punto. */}
+        <div className="mt-[var(--space-5)] flex justify-center">
           {testimonios.map((t, i) => (
             <button
               key={t.nombre}
@@ -189,13 +222,20 @@ export function Testimonios() {
               onClick={() => setIndex(i)}
               aria-label={`Ir al testimonio de ${t.nombre}`}
               aria-current={i === index}
-              className="transition-brand rounded-full"
-              style={{
-                width: 7,
-                height: 7,
-                backgroundColor: i === index ? "var(--dz-accent)" : "var(--dz-borde)",
-              }}
-            />
+              className="flex items-center justify-center"
+              style={{ width: 24, height: 24, background: "none", border: 0, padding: 0, cursor: "pointer" }}
+            >
+              <span
+                aria-hidden="true"
+                className="transition-brand rounded-full"
+                style={{
+                  display: "block",
+                  width: 7,
+                  height: 7,
+                  backgroundColor: i === index ? "var(--dz-accent)" : "var(--dz-borde)",
+                }}
+              />
+            </button>
           ))}
         </div>
       </div>

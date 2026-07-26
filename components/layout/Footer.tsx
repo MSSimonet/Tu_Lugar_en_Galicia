@@ -266,8 +266,13 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Tu Lugar en Galicia en Instagram (abre en nueva pestaña)"
-                  className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]"
-                  style={{ color: 'var(--color-nav-muted)', transition: 'color 200ms ease' }}
+                  // El área de toque va a 24×24 (mínimo de WCAG 2.2 AA, criterio
+                  // 2.5.8) sin agrandar el ícono, que sigue midiendo 16px — mismo
+                  // patrón que los puntos del carrusel de Testimonios. Antes el
+                  // enlace medía exactamente lo que el SVG: 16×16 (auditoría
+                  // 2026-07-25, I7).
+                  className="inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]"
+                  style={{ color: 'var(--color-nav-muted)', transition: 'color 200ms ease', width: 24, height: 24 }}
                   onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-laton-claro)')}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-nav-muted)')}
                 >
@@ -278,8 +283,9 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Tu Lugar en Galicia en Facebook (abre en nueva pestaña)"
-                  className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]"
-                  style={{ color: 'var(--color-nav-muted)', transition: 'color 200ms ease' }}
+                  // Ver nota del enlace de Instagram: área de toque 24×24, ícono 16px.
+                  className="inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dz-accent)]"
+                  style={{ color: 'var(--color-nav-muted)', transition: 'color 200ms ease', width: 24, height: 24 }}
                   onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-laton-claro)')}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-nav-muted)')}
                 >
