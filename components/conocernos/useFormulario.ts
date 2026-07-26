@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, type FormEvent } from 'react'
+import { useState, useRef, useEffect, type FormEvent } from 'react'
 
 import type { LeadData } from '@/lib/leads'
 
@@ -201,6 +201,54 @@ function toggleExclusivo<T extends string>(
     : [...sinExclusiva, value]
 }
 
+// ─── Borrador en localStorage ─────────────────────────────────────────────────
+// El formulario tiene ~41 preguntas repartidas en 6 pantallas de scroll y no
+// guardaba nada: una recarga, un corte de conexión o salir a buscar un dato
+// borraba todo lo escrito (auditoría 2026-07-25, I10).
+
+const BORRADOR_KEY = 'tlg-conocernos-borrador'
+/** El borrador caduca a los 7 días para no dejar datos personales indefinidamente. */
+const BORRADOR_TTL_MS = 7 * 24 * 60 * 60 * 1000
+
+/**
+ * Los dos consentimientos NO se persisten ni se restauran: el usuario tiene que
+ * volver a marcarlos de forma activa. Un consentimiento RGPD pre-marcado por un
+ * borrador viejo no es un consentimiento válido.
+ */
+const CAMPOS_SIN_PERSISTIR = ['comprendeServicio', 'consentimientoRGPD'] as const
+
+function leerBorrador(): Partial<FormState> | null {
+  try {
+    const crudo = window.localStorage.getItem(BORRADOR_KEY)
+    if (!crudo) return null
+    const { guardadoEn, datos } = JSON.parse(crudo) as { guardadoEn?: number; datos?: Record<string, unknown> }
+    if (!guardadoEn || !datos || Date.now() - guardadoEn > BORRADOR_TTL_MS) {
+      window.localStorage.removeItem(BORRADOR_KEY)
+      return null
+    }
+    // Solo se aceptan claves que existen hoy en el formulario: si el esquema
+    // cambió o el contenido está corrupto, lo desconocido se descarta en vez de
+    // entrar al estado.
+    const limpio: Record<string, unknown> = {}
+    for (const clave of Object.keys(INITIAL_STATE)) {
+      if (clave in datos && !CAMPOS_SIN_PERSISTIR.includes(clave as (typeof CAMPOS_SIN_PERSISTIR)[number])) {
+        limpio[clave] = datos[clave]
+      }
+    }
+    return limpio as Partial<FormState>
+  } catch {
+    return null // JSON inválido, localStorage bloqueado (modo privado), cuota, etc.
+  }
+}
+
+function borrarBorrador() {
+  try {
+    window.localStorage.removeItem(BORRADOR_KEY)
+  } catch {
+    /* sin localStorage disponible no hay nada que limpiar */
+  }
+}
+
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useFormulario() {
@@ -208,6 +256,40 @@ export function useFormulario() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [status, setStatus] = useState<FormStatus>('idle')
   const formRef = useRef<HTMLFormElement>(null)
+  // Hasta que no se restauró el borrador no se guarda nada, para que el estado
+  // inicial vacío del primer render no pise un borrador existente.
+  const puedeGuardar = useRef(false)
+
+  // La restauración va en un efecto y no en el inicializador de useState a
+  // propósito: el inicializador también corre en el servidor, donde no existe
+  // localStorage, y devolver ahí un valor distinto al del cliente rompería la
+  // hidratación de todos los campos.
+  //
+  // react-hooks/set-state-in-effect se desactiva sólo en esta línea: la regla
+  // apunta a los efectos que encadenan renders a partir de estado que ya vive en
+  // React, y este es el caso contrario — leer una vez, al montar, de un sistema
+  // externo (localStorage) que por definición no se puede consultar durante el
+  // render del servidor. Corre una sola vez y no depende de ningún estado.
+  useEffect(() => {
+    const borrador = leerBorrador()
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- lectura única de localStorage al montar; ver nota de arriba
+    if (borrador) setForm((prev) => ({ ...prev, ...borrador }))
+    puedeGuardar.current = true
+  }, [])
+
+  // Guarda en cada cambio del formulario. No toca validación ni envío: solo
+  // vuelca el estado. Los campos condicionalmente ocultos ya vienen limpiados
+  // por sus propios setters, así que el borrador refleja lo mismo que la UI.
+  useEffect(() => {
+    if (!puedeGuardar.current) return
+    try {
+      const datos: Record<string, unknown> = { ...form }
+      for (const clave of CAMPOS_SIN_PERSISTIR) delete datos[clave]
+      window.localStorage.setItem(BORRADOR_KEY, JSON.stringify({ guardadoEn: Date.now(), datos }))
+    } catch {
+      /* cuota llena o modo privado: el formulario sigue funcionando sin borrador */
+    }
+  }, [form])
 
   function set<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -413,6 +495,9 @@ export function useFormulario() {
       })
 
       if (res.ok) {
+        // Consulta enviada: el borrador ya no tiene sentido y no debe quedar
+        // guardado (además de PII, reaparecería en la próxima visita).
+        borrarBorrador()
         setStatus('success')
       } else if (res.status === 503) {
         setStatus('partial')
