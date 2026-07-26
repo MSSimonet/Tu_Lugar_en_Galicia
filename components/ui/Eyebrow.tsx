@@ -36,11 +36,16 @@ export function Eyebrow({ children, className = "", tone = "oscuro" }: EyebrowPr
         };
   return (
     <span
-      className={["inline-flex items-center uppercase", className].filter(Boolean).join(" ")}
+      // `dz-eyebrow`: gancho estable para el tracking responsive de app/globals.css.
+      // Se usa una clase y no `:root` dentro del media query porque Tailwind v4
+      // descarta esa declaracion al compilar (verificado en el CSS servido).
+      className={["dz-eyebrow inline-flex items-center uppercase", className].filter(Boolean).join(" ")}
       style={{
         fontFamily: "var(--font-dz-ui)",
         fontWeight: 700,
-        fontSize: "11px",
+        // 12px: minimo legible en movil — a 11px quedaba por debajo
+        // (auditoria responsive 2026-07-26)
+        fontSize: "12px",
         letterSpacing: "var(--eyebrow-tracking, 0.18em)",
         borderRadius: "999px",
         padding: "4px 14px",

@@ -81,7 +81,9 @@ function TarjetaTestimonio({ t }: { t: (typeof testimonios)[number] }) {
             color: "var(--dz-accent-text)",
             fontFamily: "var(--font-dz-display)",
             fontWeight: "var(--dz-weight-h3)",
-            fontSize: "0.72rem",
+            // 12px, no 0.72rem (11,5px) — minimo legible. Entra sin problema en
+            // el circulo de 36px (auditoria responsive 2026-07-26).
+            fontSize: "12px",
             letterSpacing: "0.02em",
           }}
         >
@@ -94,8 +96,9 @@ function TarjetaTestimonio({ t }: { t: (typeof testimonios)[number] }) {
           >
             {t.nombre}
           </p>
+          {/* 12px, no 0.7rem (11,2px) — minimo legible (auditoria responsive 2026-07-26) */}
           <p
-            className="[font-size:0.7rem]"
+            className="[font-size:12px]"
             style={{ fontFamily: "var(--font-dz-ui)", color: "var(--dz-muted)" }}
           >
             {t.ciudadOrigen} → {t.ciudadGalicia}

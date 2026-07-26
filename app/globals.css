@@ -232,7 +232,20 @@ details > dd {
 .hero-eyebrow { --eyebrow-tracking: 0.32em; }
 /* Móvil: tracking reducido para que quepa en una sola línea dentro de la píldora */
 @media (max-width: 767px) {
-  .hero-eyebrow { --eyebrow-tracking: 0.14em; }
+  /* El cuerpo del eyebrow subió de 11px a 12px por legibilidad (auditoría
+     responsive 2026-07-26) y ese 9% extra hizo que los textos más largos
+     pasaran a dos líneas dentro de la píldora. Se compensa bajando el tracking
+     solo en móvil, donde el ancho es el recurso escaso — en desktop no cambia.
+
+     Este valor aplica a TODOS los eyebrows (Eyebrow.tsx lee la variable con
+     fallback 0.18em): "Relocation especializado · Galicia" en /ciudades medía
+     308px contra ~299px disponibles; a 0.12em mide 284px. Va sobre la clase
+     `.dz-eyebrow` y no sobre `:root` porque Tailwind v4 descarta un `:root`
+     declarado dentro de un media query. */
+  .dz-eyebrow { --eyebrow-tracking: 0.12em; }
+  /* El del hero es el más largo de todos y arranca de un tracking mayor (0.32em),
+     así que necesita bajar más: 306px → 289px. */
+  .hero-eyebrow { --eyebrow-tracking: 0.10em; }
 }
 
 /* ── Hero content animation ──────────────────────────────────────────────── */

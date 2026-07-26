@@ -93,12 +93,17 @@ const numberStyle: React.CSSProperties = {
   color: 'var(--dz-hero-text)',
 };
 
+// 13px en vez de los 9px que tenia: a ese tamano las etiquetas eran ilegibles en
+// movil (auditoria responsive 2026-07-26). El letter-spacing baja de 0.1em a
+// 0.04em para compensar el ancho extra que gana el texto en mayusculas, y las
+// columnas de la grilla se ensanchan mas abajo para que entren igual.
 const labelStyle: React.CSSProperties = {
   marginTop: '6px',
   display: 'block',
   fontFamily: 'var(--font-dz-ui)',
-  fontSize: '9px',
-  letterSpacing: '0.1em',
+  fontSize: '13px',
+  lineHeight: 1.25,
+  letterSpacing: '0.04em',
   textTransform: 'uppercase',
   color: 'var(--dz-hero-text)',
 };
@@ -171,7 +176,10 @@ export function ElMarcador() {
           .marcador-grid {
             grid-template-columns: none;
             grid-auto-flow: column;
-            grid-auto-columns: minmax(130px, 1fr);
+            /* 158px, no 130: las etiquetas subieron de 9px a 13px por legibilidad
+               y a 130px las mas largas ("Propietarios que dijeron no") pasaban a
+               cuatro lineas (auditoria responsive 2026-07-26). */
+            grid-auto-columns: minmax(158px, 1fr);
             overflow-x: auto;
             padding-bottom: 4px;
             /* Señal de que hay más tarjetas a la derecha — sin esto el scroll lateral
@@ -197,8 +205,10 @@ export function ElMarcador() {
               marginBottom: '6px',
               textAlign: 'center',
               fontFamily: 'var(--font-dz-ui)',
-              fontSize: '10px',
-              letterSpacing: '0.15em',
+              // 13px: a 10px quedaba por debajo del minimo legible en movil
+              // (auditoria responsive 2026-07-26)
+              fontSize: '13px',
+              letterSpacing: '0.12em',
               textTransform: 'uppercase',
               color: 'var(--dz-hero-text)',
             }}

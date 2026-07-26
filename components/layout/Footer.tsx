@@ -27,9 +27,12 @@ function ColTitle({ children }: { children: React.ReactNode }) {
       aria-hidden="true"
       style={{
         fontFamily: 'var(--font-dz-ui)',
-        fontSize: '0.68rem',
+        // 12px, no 0.68rem (10,9px) — minimo legible. El tracking baja de 0.2em a
+        // 0.12em para compensar el ancho extra: en movil estas columnas van de a
+        // dos y "SERVICIOS" no entraba en una linea (auditoria responsive 2026-07-26).
+        fontSize: '12px',
         fontWeight: 300,
-        letterSpacing: '0.2em',
+        letterSpacing: '0.12em',
         textTransform: 'uppercase',
         color: 'var(--color-nav-muted)',
         marginBottom: '0.75rem',
@@ -58,6 +61,13 @@ function NavLink({
     fontFamily: 'var(--font-dz-ui)',
     transition: 'color 200ms ease',
     display: 'block',
+    // 2px arriba y abajo llevan el alto de 20px a 24px, el minimo de WCAG 2.2 AA
+    // (criterio 2.5.8). Ya cumplian por la excepcion de espaciado, pero el objetivo
+    // propio queda ahora sobre el minimo sin depender de ella. El `gap` de las
+    // listas baja de 0.7rem a 0.45rem para que la separacion visual no cambie
+    // (auditoria responsive 2026-07-26).
+    paddingTop: '2px',
+    paddingBottom: '2px',
   }
 
   // Foco visible de marca — sin esto caía el outline default del navegador,
@@ -212,7 +222,7 @@ export function Footer() {
             {/* Columna 2 — Servicios */}
             <nav aria-label="Servicios">
               <ColTitle>Servicios</ColTitle>
-              <ul className="flex flex-col gap-[0.7rem]">
+              <ul className="flex flex-col gap-[0.45rem]">
                 {serviceLinks.map(({ label, href }) => (
                   <li key={href}>
                     <NavLink href={href}>{label}</NavLink>
@@ -224,7 +234,7 @@ export function Footer() {
             {/* Columna 3 — Legal */}
             <nav aria-label="Información legal">
               <ColTitle>Legal</ColTitle>
-              <ul className="flex flex-col gap-[0.7rem]">
+              <ul className="flex flex-col gap-[0.45rem]">
                 {legalLinks.map(({ label, href }) => (
                   <li key={href}>
                     <NavLink href={href}>{label}</NavLink>
@@ -306,7 +316,7 @@ export function Footer() {
         >
           <p
             style={{
-              fontSize: '0.71rem',
+              fontSize: '12px', // 12px, no 0.71rem (11,4px) — minimo legible (auditoria responsive 2026-07-26)
               fontWeight: 300,
               color: 'var(--color-nav-muted)',
               letterSpacing: '0.025em',
@@ -316,7 +326,7 @@ export function Footer() {
           </p>
           <p
             style={{
-              fontSize: '0.71rem',
+              fontSize: '12px', // 12px, no 0.71rem (11,4px) — minimo legible (auditoria responsive 2026-07-26)
               fontWeight: 300,
               color: 'var(--color-nav-muted)',
               letterSpacing: '0.025em',

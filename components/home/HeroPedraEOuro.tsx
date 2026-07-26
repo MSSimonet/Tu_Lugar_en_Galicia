@@ -225,7 +225,8 @@ export function HeroPedraEOuro() {
         className="absolute z-10 hidden flex-col items-center gap-2 md:flex"
         style={{ bottom: '1.6rem', right: '5vw', color: 'rgba(243,239,228,0.75)' }}
       >
-        <span style={{ fontFamily: 'var(--font-dz-ui)', fontSize: '0.7rem', letterSpacing: '0.08em' }}>
+        {/* 12px, no 0.7rem (11,2px): minimo legible (auditoria responsive 2026-07-26) */}
+        <span style={{ fontFamily: 'var(--font-dz-ui)', fontSize: '12px', letterSpacing: '0.08em' }}>
           SCROLL
         </span>
         <span className="scroll-cue-line" style={{ width: '1px', height: '34px', background: 'rgba(243,239,228,0.5)' }} />
