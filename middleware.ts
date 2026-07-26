@@ -7,7 +7,7 @@ import { getToken } from 'next-auth/jwt'
 // Si se edita el texto de alguno de estos scripts, recalcular su hash o el
 // navegador lo bloqueará silenciosamente (violación CSP en consola).
 const INLINE_SCRIPT_HASHES = [
-  "'sha256-PMdR7RFpYsftOnJgaAsT7Oor3sSpSyqJ6X/d1hV6sZg='", // app/layout.tsx — script de tema
+  "'sha256-wha9mgRhIs6XGqBOTvvg6RFVdW/NpoonZ/vgwLvFFSc='", // app/layout.tsx — script de tema
   "'sha256-D6OU0n76o3oia0DoRGnz4iTMPdRK/g6+BrT3Hgt0ckM='", // app/page.tsx — localBusinessSchema
   "'sha256-6h87612lImx4Fr21J9FjdmL2CAW9sx7nW11lyuFOLsg='", // app/como-funciona/page.tsx — serviceSchema
   "'sha256-1ufvVU5bMgI8WxxGfjT0d6fy4F+nOdBtDMvLySZU3nA='", // app/faq/page.tsx — faqSchema
@@ -58,7 +58,9 @@ export async function middleware(req: NextRequest) {
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     // https://*.tile.openstreetmap.org: tiles del mapa de Comunidad de Acogida (Leaflet.js).
-    "img-src 'self' data: blob: https://placehold.co https://*.tile.openstreetmap.org",
+    // placehold.co salió de la lista (auditoría 2026-07-25, C3): ya no queda
+    // ninguna imagen servida por ese host, así que deja de estar permitido.
+    "img-src 'self' data: blob: https://*.tile.openstreetmap.org",
     "media-src 'self'",
     "frame-src https://app.cal.com https://cal.com",
     // https://*.supabase.co: el mapa de Comunidad de Acogida consume Supabase directo desde

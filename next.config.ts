@@ -4,10 +4,9 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['@react-pdf/renderer'],
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "placehold.co",
-      },
+      // placehold.co removido (auditoría 2026-07-25, C3): era el host de la foto
+      // de Silvana y de los 3 avatares de testimonios, que pasaron a monogramas
+      // locales. Ya no se carga ninguna imagen de terceros fuera de Instagram.
       {
         // CDN de las imágenes del feed de Instagram (subdominio variable, ej. scontent-xxx-1)
         protocol: "https",
