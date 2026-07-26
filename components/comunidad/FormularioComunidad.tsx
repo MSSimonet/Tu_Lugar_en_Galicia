@@ -371,17 +371,29 @@ export function FormularioComunidad() {
       </div>
 
       {/* RGPD */}
-      <div className="flex items-start gap-3">
-        <input
-          id="rgpd"
-          type="checkbox"
-          required
-          checked={rgpd}
-          onChange={e => setRgpd(e.target.checked)}
-          className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer"
-          style={{ accentColor: 'var(--dz-accent)' }}
-          aria-describedby={errors.rgpd ? 'rgpd-error' : undefined}
-        />
+      <div className="flex items-start gap-2">
+        {/* El input mide 16x16, por debajo del minimo de 24x24 de WCAG 2.2 AA
+            (criterio 2.5.8), y a diferencia del resto de los checkboxes del sitio
+            no esta envuelto por su label, asi que ese cuadradito era el unico
+            objetivo compacto (auditoria responsive 2026-07-26). Este label
+            envolvente le da 24x24 de area clickeable sin agrandar el visual.
+            Va vacio a proposito: el nombre accesible lo sigue aportando el label
+            de texto de abajo, asociado al mismo id. */}
+        <label
+          htmlFor="rgpd"
+          className="inline-flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center"
+        >
+          <input
+            id="rgpd"
+            type="checkbox"
+            required
+            checked={rgpd}
+            onChange={e => setRgpd(e.target.checked)}
+            className="h-4 w-4 cursor-pointer"
+            style={{ accentColor: 'var(--dz-accent)' }}
+            aria-describedby={errors.rgpd ? 'rgpd-error' : undefined}
+          />
+        </label>
         <div className="flex flex-col gap-1">
           <label
             htmlFor="rgpd"
