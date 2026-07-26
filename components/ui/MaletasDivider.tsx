@@ -10,11 +10,12 @@ import { useFlightWithWake, DIVIDER_MARGEN_LATERAL, DIVIDER_WOBBLE_AMPLITUDE } f
 //
 // Origen del asset: equipaje1.png (naranja sobre fondo negro) se keyeó tratándola
 // como premultiplicada contra negro y des-premultiplicando el color, para que los
-// bordes antialiaseados no quedaran con halo oscuro → maletas-divider-v5.png, con
-// los 6 objetos de la fuente. Esa versión medía 168px de ancho contra los 45-60px
-// del resto de los divisores: ocupaba el 51% de la franja en móvil y, con la
-// velocidad ya unificada, giraba casi el doble de seguido que los otros cuatro
-// (auditoría 2026-07-25, I1).
+// bordes antialiaseados no quedaran con halo oscuro. Ese paso produjo una versión
+// intermedia con los 6 objetos de la fuente que YA NO EXISTE en el repo: medía
+// 168px de ancho contra los 45-60px del resto de los divisores, ocupaba el 51% de
+// la franja en móvil y, con la velocidad ya unificada, giraba casi el doble de
+// seguido que los otros cuatro (auditoría 2026-07-25, I1). Se borró al quedar
+// huérfana; si hiciera falta rehacerla, se regenera desde equipaje1.png.
 //
 // La v6 recompone 4 de esos objetos —maleta grande, bolso, maleta alta y mochila,
 // de tamaños deliberadamente distintos— apoyados sobre una misma línea de base.

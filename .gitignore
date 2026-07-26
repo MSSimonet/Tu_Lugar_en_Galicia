@@ -56,3 +56,12 @@ docs/auditoria-tlg8.md
 
 *storybook.log
 storybook-static
+
+# Tooling local de agentes — coleccion de skills instalada en la maquina, no
+# codigo del proyecto. Entro al repo por el commit 3fb0b7a ("sin revisar") y
+# pesaba 13,3 MB en 735 archivos. Se ignora solo skills/: los 4 archivos de
+# config de .claude/ (launch.json, settings.json, session-start.ps1,
+# pre-compact.ps1) SI son del proyecto — CLAUDE.md documenta el hook
+# SessionStart y sin ellos se rompe al clonar.
+.claude/skills/
+.agents/
