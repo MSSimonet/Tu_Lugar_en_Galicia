@@ -55,19 +55,11 @@ export function VistaEnVivo({ descripcionUbicacion }: VistaEnVivoProps) {
         Próximamente
       </span>
 
-      {/* Badge EN VIVO (inactivo, decorativo — oculto a lectores de pantalla) */}
-      <div aria-hidden="true" style={{
-        position: 'absolute', top: 10, left: 10,
-        display: 'flex', alignItems: 'center', gap: 5,
-        background: 'rgba(0,0,0,0.55)',
-        border: '0.5px solid rgba(255,255,255,0.2)',
-        borderRadius: 20, padding: '3px 10px',
-        opacity: 0.55,
-        pointerEvents: 'none',
-      }}>
-        <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-coral)' }} />
-        <span style={{ fontSize: 10, color: 'white', fontWeight: 500, letterSpacing: '0.06em' }}>EN VIVO</span>
-      </div>
+      {/* El badge "EN VIVO" (punto rojo + texto) se retiró en la auditoría
+          2026-07-25 (I9): estaba sobre un placeholder sin ninguna emisión real,
+          así que le prometía al usuario una cámara en directo que no existe.
+          Cuando se conecte una cámara de verdad, se vuelve a agregar junto al
+          embed — nunca antes. */}
 
       {/* Label ubicación */}
       {descripcionUbicacion && (

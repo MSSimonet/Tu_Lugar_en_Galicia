@@ -40,7 +40,11 @@ export function HeroPedraEOuro() {
     `}</style>
     <section
       className="relative flex flex-col"
-      style={{ minHeight: '100svh', backgroundColor: '#0B1012' }}
+      // --dz-hero-bg en vez del #0B1012 hardcodeado que había: aquel era un negro
+      // frío/azulado y el de la sección siguiente (ElMarcador) es cálido (#16140F).
+      // Al quitar el degradado de la base del hero, ese salto de tono quedó a la
+      // vista en la unión (auditoría 2026-07-25, I4).
+      style={{ minHeight: '100svh', backgroundColor: 'var(--dz-hero-bg)' }}
       aria-labelledby="hero-po-heading"
     >
       {/* ── Capa de fondo: video + degradado esfumado ── */}
@@ -70,17 +74,6 @@ export function HeroPedraEOuro() {
 
         {/* Sombreado esfumado lateral (desktop) / desde abajo (móvil) */}
         <div className="absolute inset-0 hero-lateral-gradient" style={{ pointerEvents: "none" }} />
-
-        {/* Transición al fondo de ElMarcador (--dz-hero-bg) — evita el corte duro
-            entre el video y la siguiente sección. */}
-        <div
-          className="absolute bottom-0 left-0 right-0"
-          style={{
-            height: "96px",
-            background: "linear-gradient(to bottom, transparent, var(--dz-hero-bg))",
-            pointerEvents: "none",
-          }}
-        />
 
         {/* Pausa/reproduce el video de fondo — WCAG 2.2.2 */}
         <button
