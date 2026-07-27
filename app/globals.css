@@ -248,6 +248,40 @@ details > dd {
   .hero-eyebrow { --eyebrow-tracking: 0.10em; }
 }
 
+/* ── Hero de páginas interiores — métrica responsive ─────────────────────── */
+/* Gancho de components/ui/PageHero.tsx: las 5 páginas interiores (/ciudades,
+   /comunidad, /sobre-silvana, /apps-utiles, /faq) leen su alto mínimo y el
+   ritmo vertical del titular desde acá, así que cambian juntas o no cambian.
+   Va sobre una clase y no sobre `:root` dentro del media query por la misma
+   razón que `.dz-eyebrow`: Tailwind v4 descarta esa declaración al compilar. */
+.dz-hero {
+  /* Móvil: 30rem (480px). El valor no es arbitrario ni redondo por gusto — es el
+     alto natural de la más alta de las 5 (/sobre-silvana: 465,3px medidos a
+     375px, con el monograma en 72px y el subtítulo en --text-sm), redondeado
+     hacia arriba al rem siguiente. Manda ELLA porque el requisito es que las 5
+     midan igual: cualquier valor por debajo deja de gobernar y cada Hero pasa a
+     medir lo que mide su propio texto (a 24rem la dispersión era de 171px).
+     Aun así queda 32px por debajo de los 32rem fijos que había antes de la
+     auditoría 2026-07-26, que era el otro problema: 512px en un viewport de
+     812px es el 63% de la pantalla para un titular de una línea. */
+  --dz-hero-min-h: 30rem;
+  --dz-hero-title-gap: var(--space-6);
+  /* Cuerpo del subtítulo. Un único token para las 5 —antes convivían 20px, 16px
+     y 14,5px, dos de ellos hardcodeados fuera de la escala (D1)— pero
+     responsive: a 375px, 20px empujaba /comunidad a 7 líneas (210px de subtítulo
+     solo) y era el segundo motor del desborde después del monograma. */
+  --dz-hero-sub-size: var(--text-sm);
+}
+@media (min-width: 768px) {
+  .dz-hero {
+    --dz-hero-min-h: 32rem;
+    /* 2,25rem = 36px, prácticamente el 1cm (37,8px) que había antes: en desktop
+       el ritmo del titular no cambia, sólo deja de ser una unidad física. */
+    --dz-hero-title-gap: 2.25rem;
+    --dz-hero-sub-size: var(--text-md);
+  }
+}
+
 /* ── Hero content animation ──────────────────────────────────────────────── */
 @keyframes heroContentIn {
   from { opacity: 0; transform: translateY(18px); }
@@ -417,12 +451,17 @@ details > dd {
   /* Alto mínimo común de esos mismos Hero. Con el padding unificado seguían
      midiendo 322-499px según cuánto texto tuviera cada una; este mínimo las
      iguala y el contenido se centra en vertical, así el espacio sobrante queda
-     repartido y no como un hueco abajo. 32rem está apenas por encima del alto
-     natural de la más alta (/sobre-silvana), que es la que manda.
-     Nota: en viewports angostos los títulos envuelven a 2-3 líneas y varias
-     superan este mínimo por contenido propio, así que ahí no quedan idénticas
-     — igualarlas del todo exigiría recortar texto. */
+     repartido y no como un hueco abajo.
+     Valor de respaldo: el efectivo es responsive y vive en `.dz-hero` (más
+     abajo), porque Tailwind v4 descarta un `:root` dentro de un media query. */
   --dz-hero-min-h: 32rem;
+
+  /* Separación entre el H1 del Hero y lo que lo rodea (eyebrow arriba, subtítulo
+     abajo). Reemplaza el `margin: '1cm 0'` que los 5 Hero repetían inline: 1cm
+     es una unidad FÍSICA (37,8px), idéntica a 375px y a 1024px, así que en móvil
+     se comía el alto disponible sin escalar con nada (auditoría 2026-07-26, D3).
+     Valor de respaldo: el efectivo es responsive y vive en `.dz-hero`. */
+  --dz-hero-title-gap: 2.25rem;
 
   --dz-radius-card: 20px;
   /* Radio único de campos de formulario — antes cada form tenía el suyo (20px en
