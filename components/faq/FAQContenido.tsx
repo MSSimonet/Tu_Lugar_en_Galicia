@@ -4,6 +4,7 @@ import { motion } from 'motion/react'
 import { GinaButton } from '@/components/shared/GinaButton'
 import { FAQAccordionPedraEOuro } from '@/components/ciudades/FAQAccordionPedraEOuro'
 import { Eyebrow } from '@/components/ui/Eyebrow'
+import { PageHero } from '@/components/ui/PageHero'
 import { staggerContainer, fadeUp } from '@/lib/motion/variants'
 
 interface Categoria {
@@ -14,42 +15,13 @@ interface Categoria {
 export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
   return (
     <>
-      {/* Hero — bookend fijo oscuro (Pedra e Ouro) */}
-      {/* Padding unificado con el resto de los Hero interiores (auditoría 2026-07-25).
-          La base ya cortaba nítida: debajo va una <section> de color plano. */}
-      <section style={{ backgroundColor: 'var(--dz-hero-bg)', paddingTop: 'var(--dz-hero-pad-y)', paddingBottom: 'var(--dz-hero-pad-y)', paddingLeft: 'var(--space-6)', paddingRight: 'var(--space-6)', minHeight: 'var(--dz-hero-min-h)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <motion.div
-          className="mx-auto max-w-3xl"
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div variants={fadeUp} className="mb-[var(--space-5)]">
-            <Eyebrow tone="hero">Preguntas frecuentes</Eyebrow>
-          </motion.div>
-          <motion.h1
-            variants={fadeUp}
-            style={{
-              fontFamily: 'var(--font-dz-display)',
-              fontSize: 'var(--dz-text-h1-compact)',
-              fontWeight: 'var(--dz-weight-h1)',
-              color: 'var(--dz-hero-text)',
-              lineHeight: 'var(--dz-leading-h1)',
-              letterSpacing: '-0.01em',
-              margin: '1cm 0',
-            }}
-          >
-            ¿Tienes dudas?
-          </motion.h1>
-          <motion.p
-            variants={fadeUp}
-            className="mt-[var(--space-4)] leading-[var(--leading-cuerpo)]"
-            style={{ fontFamily: 'var(--font-dz-ui)', fontSize: 'var(--text-md)', color: 'var(--dz-hero-muted)' }}
-          >
-            Respondemos las preguntas que más nos hacen
-          </motion.p>
-        </motion.div>
-      </section>
+      {/* Hero — bookend fijo oscuro (Pedra e Ouro). La base corta nítida: debajo
+          va una <section> de color plano. */}
+      <PageHero
+        eyebrow={<Eyebrow tone="hero">Preguntas frecuentes</Eyebrow>}
+        title="¿Tienes dudas?"
+        subtitle="Respondemos las preguntas que más nos hacen"
+      />
 
       {/* Bajada */}
       <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-luz)' }}>

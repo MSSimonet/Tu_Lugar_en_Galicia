@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion } from 'motion/react'
 import { GinaButton } from '@/components/shared/GinaButton'
 import { Eyebrow } from '@/components/ui/Eyebrow'
+import { PageHero } from '@/components/ui/PageHero'
 import { QSomosDivider } from '@/components/sobre-silvana/QSomosDivider'
 import { SectionFade } from '@/components/ui/SectionFade'
 import { staggerContainer, fadeUp } from '@/lib/motion/variants'
@@ -35,72 +36,50 @@ export function SobreSilvanaContenido() {
   return (
     <>
       {/* Hero — bookend fijo oscuro (Pedra e Ouro) */}
-      {/* Padding unificado con el resto de los Hero interiores (auditoría 2026-07-25) */}
-      <section style={{ backgroundColor: 'var(--dz-hero-bg)', paddingTop: 'var(--dz-hero-pad-y)', paddingBottom: 'var(--dz-hero-pad-y)', paddingLeft: 'var(--space-6)', paddingRight: 'var(--space-6)', minHeight: 'var(--dz-hero-min-h)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <div className="mx-auto max-w-4xl">
-          <motion.div
-            className="flex flex-col gap-[var(--space-8)] md:flex-row-reverse md:items-center md:gap-[var(--space-12)]"
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
+      <PageHero
+        maxWidth={896}
+        eyebrow={<Eyebrow tone="hero">Fundadora</Eyebrow>}
+        title={
+          <>
+            Hice tu mismo camino,<br />te entiendo muy bien…
+          </>
+        }
+        subtitle="Fundadora de Tu Lugar en Galicia — emigrante argentina con raíces gallegas"
+        media={
+          /* Foto — PENDIENTE DE CONTENIDO REAL.
+             Hasta la auditoría 2026-07-25 (C3) esto apuntaba a
+             `placehold.co/400x400?text=Silvana`: un servicio externo que estaba
+             fallando, así que la página de confianza más importante del sitio
+             mostraba una imagen ROTA donde va la cara de la fundadora.
+             El monograma local no depende de red y se lee como decisión de
+             diseño, pero NO reemplaza a una foto real: sustituir en cuanto
+             esté disponible (mínimo 400×400, WebP/JPG).
+
+             Tamaño responsive: por debajo de `md` el monograma se apila ENCIMA
+             del titular, así que cada píxel suyo es un píxel de alto del Hero
+             (relación 1:1, medida en navegador). A 200px lo empujaba a 620px
+             contra los 512px de las otras cuatro. Se decidió NO ocultarlo en
+             móvil —es la cara de la fundadora en la página de confianza— sino
+             achicarlo a 72px, que es el tamaño con el que /sobre-silvana entra
+             en el mismo techo que las otras 4 (465,3px medidos a 375px, contra
+             los 480px de --dz-hero-min-h). Desde `md` pasa al costado, deja de
+             sumar alto y recupera los 200px. */
+          <span
+            role="img"
+            aria-label="Silvana Lorenzo, fundadora de Tu Lugar en Galicia"
+            className="flex h-[72px] w-[72px] items-center justify-center rounded-full text-[1.25rem] md:h-[200px] md:w-[200px] md:text-[3.5rem]"
+            style={{
+              backgroundColor: 'var(--dz-borde)',
+              color: 'var(--dz-accent-text)',
+              fontFamily: 'var(--font-dz-display)',
+              fontWeight: 'var(--dz-weight-h1)',
+              letterSpacing: '0.02em',
+            }}
           >
-            {/* Foto — PENDIENTE DE CONTENIDO REAL.
-                Hasta la auditoría 2026-07-25 (C3) esto apuntaba a
-                `placehold.co/400x400?text=Silvana`: un servicio externo que estaba
-                fallando, así que la página de confianza más importante del sitio
-                mostraba una imagen ROTA donde va la cara de la fundadora.
-                El monograma local no depende de red y se lee como decisión de
-                diseño, pero NO reemplaza a una foto real: sustituir en cuanto
-                esté disponible (mínimo 400×400, WebP/JPG). */}
-            <motion.div variants={fadeUp} className="flex shrink-0 justify-center md:justify-end">
-              <span
-                role="img"
-                aria-label="Silvana Lorenzo, fundadora de Tu Lugar en Galicia"
-                className="flex items-center justify-center rounded-full"
-                style={{
-                  width: 200,
-                  height: 200,
-                  backgroundColor: 'var(--dz-borde)',
-                  color: 'var(--dz-accent-text)',
-                  fontFamily: 'var(--font-dz-display)',
-                  fontWeight: 'var(--dz-weight-h1)',
-                  fontSize: '3.5rem',
-                  letterSpacing: '0.02em',
-                }}
-              >
-                SL
-              </span>
-            </motion.div>
-            {/* Título */}
-            <div>
-              <motion.div variants={fadeUp} className="mb-[var(--space-4)]">
-                <Eyebrow tone="hero">Fundadora</Eyebrow>
-              </motion.div>
-              <motion.h1
-                variants={fadeUp}
-                style={{
-                  fontFamily: 'var(--font-dz-display)',
-                  fontSize: 'var(--dz-text-h1-compact)',
-                  fontWeight: 'var(--dz-weight-h1)',
-                  color: 'var(--dz-hero-text)',
-                  lineHeight: 'var(--dz-leading-h1)',
-                  letterSpacing: '-0.01em',
-                  margin: '1cm 0',
-                }}
-              >
-                Hice tu mismo camino,<br />te entiendo muy bien…
-              </motion.h1>
-              <motion.p
-                variants={fadeUp}
-                className="mt-[var(--space-4)] leading-[var(--leading-cuerpo)]"
-                style={{ fontFamily: 'var(--font-dz-ui)', fontSize: 'var(--text-sm)', color: 'var(--dz-hero-muted)' }}
-              >
-                Fundadora de Tu Lugar en Galicia — emigrante argentina con raíces gallegas
-              </motion.p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+            SL
+          </span>
+        }
+      />
 
       {/* Color plano, no degradado: la base del Hero corta nítida (pedido
           explícito). El resto de las uniones conserva su degradado. */}

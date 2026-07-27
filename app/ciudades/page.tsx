@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Eyebrow } from '@/components/ui/Eyebrow'
+import { PageHero } from '@/components/ui/PageHero'
 import { CarruselCiudades } from '@/components/ciudades/CarruselCiudades'
 import { BrujulaDivider } from '@/components/ciudades/BrujulaDivider'
-import { CiudadesHeroTitulo } from '@/components/ciudades/CiudadesHeroTitulo'
 
 export const metadata: Metadata = {
   title: 'Ciudades de Galicia',
@@ -13,23 +13,17 @@ export const metadata: Metadata = {
 export default function CiudadesIndexPage() {
   return (
     <>
-      {/* Hero — padding unificado con el resto de los Hero interiores vía
-          --dz-hero-pad-y (auditoría 2026-07-25) */}
-      <section
-        className="flex flex-col items-center justify-center text-center px-[var(--space-6)] py-[var(--dz-hero-pad-y)]"
-        style={{ backgroundColor: 'var(--dz-luz)', minHeight: 'var(--dz-hero-min-h)' }}
-      >
-        <Eyebrow tone="claro">
-          Relocation especializado · Galicia
-        </Eyebrow>
-        <CiudadesHeroTitulo />
-        <p
-          className="leading-relaxed max-w-[480px] mx-auto"
-          style={{ fontFamily: 'var(--font-dz-ui)', fontSize: '1rem', color: 'var(--dz-muted)' }}
-        >
-          Cada ciudad de Galicia tiene su carácter. Encuentra la que mejor se adapta a lo que buscas.
-        </p>
-      </section>
+      {/* Hero — único de los 5 con paleta clara (--dz-luz) y centrado: es la
+          página índice y se lee distinto a propósito (decisión de marca,
+          sesión 2026-07-26). Todo lo demás —caja, alto y ritmo vertical— sale
+          del mismo PageHero que las otras cuatro. */}
+      <PageHero
+        tone="claro"
+        align="center"
+        eyebrow={<Eyebrow tone="claro">Relocation especializado · Galicia</Eyebrow>}
+        title="Elige tu ciudad"
+        subtitle="Cada ciudad de Galicia tiene su carácter. Encuentra la que mejor se adapta a lo que buscas."
+      />
 
       {/* Color plano, no degradado: la base del Hero debe cortar nítida, igual
           que en el Hero de Inicio (pedido explícito). El resto de las uniones de
