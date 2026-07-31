@@ -65,3 +65,6 @@ storybook-static
 # SessionStart y sin ellos se rompe al clonar.
 .claude/skills/
 .agents/
+
+# Artefactos de Playwright MCP (logs y snapshots de sesiones de verificación)
+.playwright-mcp/
