@@ -21,24 +21,11 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
         compact
         eyebrow={<Eyebrow tone="hero">Preguntas frecuentes</Eyebrow>}
         title="¿Tienes dudas?"
-        subtitle="Respondemos las preguntas que más nos hacen"
+        subtitle="Reunimos las preguntas que nos hacen todas las familias antes de arrancar. Si la tuya no está acá, escríbenos"
       />
 
       {/* Cuerpo — fondo de pagina unico. Sin icono animado por ahora. */}
       <div style={{ backgroundColor: 'var(--dz-fondo-pagina)' }}>
-      {/* Bajada */}
-      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]">
-        <div className="mx-auto max-w-3xl">
-          <p
-            className="text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
-            style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)' }}
-          >
-            Reunimos las preguntas que nos hacen todas las familias antes de arrancar. Si la tuya no
-            está acá, escríbenos — respondemos hoy.
-          </p>
-        </div>
-      </section>
-
       {/* Categorías */}
       <section className="py-[var(--dz-section-y)] px-[var(--space-6)]">
         <motion.div
@@ -77,8 +64,11 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
           whileInView="visible"
           viewport={{ once: true, amount: 0.4 }}
         >
+          {/* --space-8 y no --space-4: este margen lo aportaba el párrafo
+              "Cuéntanos tu caso y te respondemos hoy.", que se eliminó. Sin el
+              traslado, el botón quedaba a 16px del titular en vez de a 32px. */}
           <h2
-            className="mb-[var(--space-4)]"
+            className="mb-[var(--space-8)]"
             style={{
               fontFamily: 'var(--font-dz-display)',
               fontWeight: 'var(--dz-weight-h2)',
@@ -89,12 +79,6 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
           >
             ¿No encontraste tu respuesta?
           </h2>
-          <p
-            className="mb-[var(--space-8)] text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
-            style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-hero-muted)' }}
-          >
-            Cuéntanos tu caso y te respondemos hoy.
-          </p>
           <div className="flex justify-center">
             <GinaButton
               className="inline-flex items-center justify-center px-[var(--space-8)] py-[var(--space-4)] text-[var(--text-sm)] font-bold uppercase tracking-[0.10em] transition-brand focus-visible:outline-2 focus-visible:outline-offset-2"
