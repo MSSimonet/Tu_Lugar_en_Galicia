@@ -263,8 +263,17 @@ details > dd {
      medir lo que mide su propio texto (a 24rem la dispersión era de 171px).
      Aun así queda 32px por debajo de los 32rem fijos que había antes de la
      auditoría 2026-07-26, que era el otro problema: 512px en un viewport de
-     812px es el 63% de la pantalla para un titular de una línea. */
-  --dz-hero-min-h: 30rem;
+     812px es el 63% de la pantalla para un titular de una línea.
+
+     ACTUALIZADO: 26rem (416px). Con --dz-hero-pad-y en --space-8 el alto natural
+     de /sobre-silvana —que sigue siendo la más alta de las 5— bajó de 465,3px a
+     401,6px medidos, así que el mínimo puede bajar con ella y seguir gobernando
+     a las cinco. 416px deja 14px de holgura sobre esos 401,6. */
+  --dz-hero-min-h: 26rem;
+  /* Padding vertical. Baja de --space-16 (64px) a --space-8 (32px): el aire por
+     encima y por debajo del texto era el grueso del alto sobrante, y recortarlo
+     es lo que permite bajar también --dz-hero-min-h sin apretar el texto. */
+  --dz-hero-pad-y: var(--space-8);
   --dz-hero-title-gap: var(--space-6);
   /* Cuerpo del subtítulo. Un único token para las 5 —antes convivían 20px, 16px
      y 14,5px, dos de ellos hardcodeados fuera de la escala (D1)— pero
@@ -274,12 +283,90 @@ details > dd {
 }
 @media (min-width: 768px) {
   .dz-hero {
-    --dz-hero-min-h: 32rem;
+    /* 23rem (368px). El alto natural más grande de las 5 en este breakpoint es
+       360,5px (/sobre-silvana a 768px, el peor caso: más ancho que móvil pero
+       todavía con el subtítulo en varias líneas). Medido a 768, 1024 y 1440. */
+    --dz-hero-min-h: 23rem;
+    --dz-hero-pad-y: var(--space-12);
     /* 2,25rem = 36px, prácticamente el 1cm (37,8px) que había antes: en desktop
        el ritmo del titular no cambia, sólo deja de ser una unidad física. */
     --dz-hero-title-gap: 2.25rem;
     --dz-hero-sub-size: var(--text-md);
   }
+}
+/* Tercer escalón, y no es capricho: por encima de ~1024px el alto natural de
+   /sobre-silvana pega un salto de 107px de golpe (252,9 → 359,7 de contenido,
+   medido a 1024 y 1100). El motivo es que --dz-text-h1-compact escala con `vw`
+   pero la columna de texto tiene ancho fijo en px y encima comparte fila con el
+   monograma: al crecer la tipografía sin crecer la columna, el titular envuelve
+   dos líneas MÁS a mayor ancho de pantalla. Como el requisito es que las 5 midan
+   igual, el mínimo de este tramo lo dicta ella: 500,8px de alto natural en el
+   peor caso (≥1348px, donde el clamp de la tipografía llega a su tope y el alto
+   se estabiliza). 32rem = 512px lo cubre con 11px de holgura.
+   El corte va en 1025 y no en 1024 para que 1024 —uno de los anchos de
+   verificación— conserve el alto reducido de 23rem. */
+@media (min-width: 1025px) {
+  .dz-hero {
+    --dz-hero-min-h: 32rem;
+  }
+}
+
+/* ── Divisor dorado entre secciones (components/ui/GoldDivider.tsx) ──────── */
+/* La línea mide 1px pero el brillo necesita alto propio, así que el contenedor
+   no tiene altura: las dos capas se posicionan sobre él y no empujan el ritmo
+   vertical de la página, que ya lo fija --dz-section-y. */
+.dz-divider {
+  position: relative;
+  width: 75%;
+  margin-inline: auto;
+  height: 1px;
+}
+.dz-divider-line,
+.dz-divider-glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: block;
+  pointer-events: none;
+}
+.dz-divider-line {
+  top: 0;
+  height: 1px;
+  /* Dorado pleno en el centro, desvanecido en las puntas. */
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    var(--dz-accent) 18%,
+    var(--dz-accent) 82%,
+    transparent 100%
+  );
+  opacity: 0.72;
+}
+/* Brillo: el mismo degradado, más alto, más tenue y desenfocado. Va detrás de la
+   línea, no encima, para que la línea siga leyéndose nítida. */
+.dz-divider-glow {
+  top: -3px;
+  height: 7px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    color-mix(in srgb, var(--dz-accent) 34%, transparent) 26%,
+    color-mix(in srgb, var(--dz-accent) 34%, transparent) 74%,
+    transparent 100%
+  );
+  filter: blur(3px);
+}
+
+/* ── Ventana del muro de llaves ──────────────────────────────────────────── */
+/* Margen libre a cada lado de la ventana arrastrable. 2cm es el pedido, con la
+   conversión que ya usa el proyecto (1cm = 37,8px ⇒ 75,6px), pero sólo desde
+   768px: en un viewport de 375px, 2cm por lado dejarían 224px de ventana, menos
+   que una sola celda de la grilla (300px). Debajo de ese ancho se cae al padding
+   de sección, que es lo que había. Va sobre una clase, no sobre :root, porque el
+   valor cambia por breakpoint. */
+.muro-ventana { --muro-margen: var(--space-6); }
+@media (min-width: 768px) {
+  .muro-ventana { --muro-margen: 2cm; }
 }
 
 /* ── Hero content animation ──────────────────────────────────────────────── */
@@ -401,9 +488,62 @@ details > dd {
   --dz-accent-ink:   #16140F; /* texto sobre botón --dz-accent — AA 7.35:1 */
 
   /* Bookend fijo — hero, marcador y CTA final comparten este fondo oscuro */
-  --dz-hero-bg:    #16140F;
-  --dz-hero-text:  #F3EFE4;
-  --dz-hero-muted: rgba(243, 239, 228, 0.7);
+  /* ── Sistema de dos capas de fondo (rediseño 2026-07-26) ─────────────────
+     Reemplaza la alternancia --dz-papel / --dz-luz que cada sección elegía por
+     su cuenta. Ahora hay exactamente dos fondos y cada superficie pertenece a
+     uno de los dos:
+
+       --dz-fondo-pagina  todas las secciones intermedias de las 6 páginas
+       --dz-fondo-marco   Hero (+ Nav y Footer, ver nota)
+
+     Nota sobre Nav/Footer: hoy NO consumen estos tokens. Usan la familia
+     --color-header-bg, --color-laton y --color-footer-bg, que DESIGN.md
+     (sección Header) documenta como permanentemente oscura en ambos temas.
+     Migrarlos es un cambio aparte, pendiente de decisión. */
+  /* Fondo de página: NO es --dz-papel reetiquetado. Es el papel teñido con un
+     5% del verde atlántico (--color-atlantico, el acento territorial de uso
+     restringido), lo que lo corre hacia una piedra fría — #ECEDE8. Así las dos
+     capas se separan por MATIZ y no solo por luminosidad: la página queda fría
+     y el marco cálido/neutro, y el dorado --dz-accent de los íconos y la estela
+     resalta más sobre un fondo que tira a verde que sobre uno que tira a beige.
+     Contraste medido: 16.5:1 con --dz-ink y 4.92:1 con --dz-muted. */
+  --dz-fondo-pagina: #F0F0EB; /* = #F7F5F0 + 3% var(--color-atlantico), resuelto a hex.
+     Bajo de 5% a 3%: a 5% (#ECEDE8) el fondo dejaba --dz-accent-text en 4.39:1,
+     por debajo de AA para texto normal (medido en navegador, no estimado). */
+  --dz-fondo-marco:  #FFFFFF;
+
+  /* El Hero deja de ser un "bookend fijo oscuro" y pasa a seguir el tema, así
+     que sus textos ya no pueden ser claros fijos: invierten con el modo.
+     Valores medidos sobre --dz-fondo-marco (#FFFFFF en claro): 18.4:1 el
+     titular, 5.79:1 el secundario. */
+  --dz-hero-bg:    var(--dz-fondo-marco);
+  --dz-hero-text:  #16140F;
+  --dz-hero-muted: #6B6558;
+
+  /* ── Hero de Inicio: SIEMPRE oscuro, en los dos temas ─────────────────────
+     No usa la familia --dz-hero-* de arriba, que invierte con el tema, porque
+     no está en las mismas condiciones que los Hero interiores: acá el fondo no
+     es el color del tema sino un VIDEO a pantalla completa, y encima va un
+     scrim fijo oscuro (.hero-lateral-gradient, rgba(11,16,18,…) en ambos
+     modos). Con los tokens que invierten, el modo claro pintaba el titular en
+     #16140F —casi negro— sobre ese scrim negro y con `text-shadow` negro: el
+     texto desaparecía.
+     Los valores son exactamente los que --dz-hero-* toma bajo .dark, así que
+     el modo claro queda idéntico al oscuro, que es el aspecto correcto. */
+  --dz-hero-inicio-bg:    #1B1913; /* = --dz-fondo-marco de .dark */
+  --dz-hero-inicio-text:  #F3EFE4; /* = --dz-hero-text de .dark  */
+  --dz-hero-inicio-muted: #9C9484; /* = --dz-hero-muted de .dark */
+
+  /* Marco de la Polaroid del muro de llaves. Superficie física: el marco de una
+     Polaroid es siempre claro, así que no invierte de golpe con el tema — sólo
+     baja un escalón. Los dos valores salen de la paleta, no son tonos sueltos:
+     el claro es --color-niebla y el oscuro es --dz-borde, ambos en su valor de
+     modo claro. Se fijan acá porque referenciar esos tokens directamente los
+     haría invertir a casi-negro bajo .dark.
+     Antes esto era --dz-hero-text con el comentario "crema fijo": dejó de ser
+     fijo cuando el Hero pasó a seguir el tema, y desde entonces el marco salía
+     casi negro justo en modo claro. */
+  --dz-polaroid-marco: #F5F0E8; /* = --color-niebla (claro) */
 
   /* Unbounded — fidelidad al mockup aprobado (design-drafts/deslumbrante); Jost queda como
      fallback (ver DESIGN.md §3 changelog fechado). */
@@ -611,6 +751,24 @@ details > dd {
   --dz-muted: #9C9484;
   --dz-borde: #292825;
   --dz-accent-text: var(--dz-accent); /* el acento crudo ya es AA sobre fondo oscuro — 7.75:1 */
+
+  /* Dos capas de fondo — el marco queda un escalón MÁS CLARO que la página, así
+     Hero/Nav/Footer se despegan de un fondo más profundo en vez de fundirse.
+     Medidos: titular 15.29:1 y secundario 5.84:1 sobre --dz-fondo-marco. */
+  /* Mismo criterio que en claro pero con 12% de verde: sobre un casi-negro hace
+     falta más proporción para que el matiz se lea. Da #0F1512 — frío contra el
+     marco #1B1913, que es cálido (r>g>b). Contraste medido con --dz-muted del
+     modo oscuro: 6.07:1. */
+  --dz-fondo-pagina: #0F1512; /* = #0E0D0B + 12% var(--color-atlantico), resuelto a hex */
+  --dz-fondo-marco:  #1B1913;
+  --dz-hero-text:  #F3EFE4;
+  --dz-hero-muted: #9C9484;
+
+  /* El Hero de Inicio NO se redeclara acá: es fijo oscuro en los dos temas y
+     sus valores de @theme ya son los de este bloque. */
+
+  /* Marco de la Polaroid: apenas más oscuro que en claro, no invertido. */
+  --dz-polaroid-marco: #DCDAD5; /* = --dz-borde (claro) */
 
   /* Atlántico Editorial — dark overrides */
   --ae-papel:   #0F172A;
