@@ -109,16 +109,6 @@ export default function ComoFuncionaStepper() {
         .cf-slide-activa { animation: none; }
       }
 
-      /* El tamaño del subtítulo vive acá y no en el style inline del <p> a
-         propósito: un valor inline le gana a cualquier media query, así que desde
-         el atributo no se puede escalar por breakpoint.
-         Sube de clamp(10px, 1.4vw, 13px) a la escala tipográfica del proyecto.
-         Aquel valor daba 10px en móvil y 10,75px a 768px, por debajo del mínimo
-         de 12px que el proyecto ya se había fijado para texto de interfaz. */
-      .cf-subtitle { font-size: var(--text-xs); }
-      @media (min-width: 768px) {
-        .cf-subtitle { font-size: var(--text-sm); }
-      }
       @media (max-width: 767px) {
         .stepper-image-col { display: none !important; }
         .stepper-content-col { padding: 24px 24px 20px !important; }
@@ -226,19 +216,6 @@ export default function ComoFuncionaStepper() {
               ya existe.
             </em>
           </motion.h1>
-
-          {/* Sin `white-space: nowrap`. Lo tenía, y la frase no entra en una línea
-              en ningún ancho: desbordaba 143px a 768 y 104px a 1024, y ese desborde
-              se propagaba al documento (100px y 61px de scroll horizontal en toda
-              la página, medidos). Al subir el cuerpo habría empeorado. */}
-          <p className="cf-subtitle" style={{
-            fontFamily: 'var(--font-dz-ui)',
-            color: 'var(--dz-muted)',
-            lineHeight: 1.6,
-            margin: 0,
-          }}>
-            Un acompañamiento cercano y a medida, del primer mensaje al día en que abres tu puerta.
-          </p>
         </div>
 
         {/* Divisor */}
