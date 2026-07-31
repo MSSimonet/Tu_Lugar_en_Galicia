@@ -648,3 +648,54 @@ condiciones`, `/politica-de-cookies`, `/politica-de-privacidad`, `/apps-utiles`.
 lead/[recordId], leads/[id], login) — herramienta interna de gestión de leads, nunca formó parte
 de ningún pedido de "toda la web" en ninguna sesión, usa su propio lenguaje visual
 (`--font-ui`/Plus Jakarta, sin `--dz-*`). No hay exclusiones silenciosas: esta es la única.
+
+---
+
+## 14. Dos trampas verificadas — leer antes de tocar tokens o medir contraste (2026-07-31)
+
+Las dos se descubrieron corrigiendo contraste y las dos hacen perder tiempo o, peor, dan por
+bueno algo que está roto. No son teoría: están medidas contra el CSS servido y el DOM real.
+
+### 14.1 Tailwind v4 poda los `--color-*` que solo se consumen con `var()` inline
+
+El namespace `--color-*` lo **gestiona Tailwind v4**: emite al CSS final solo los tokens que
+alguna utilidad generada referencia. Un token declarado en `@theme` que solo se usa como
+`style={{ color: 'var(--color-loquesea)' }}` **no llega al navegador**, sin error ni aviso.
+
+Medido el 2026-07-31 contra el CSS realmente servido: **33 de los 61 `--color-*` declarados en
+`app/globals.css` no se emiten**. Entre ellos `--color-laton-invertido`, que es un token propio
+del proyecto y hoy no existe en runtime — si alguien lo usa, hereda el color del padre.
+
+El síntoma es cruel: `var()` sin valor no rompe, la propiedad queda inválida y el elemento
+**hereda**. En un botón de acento eso significó blanco sobre ámbar en claro y, en oscuro, texto
+casi blanco sobre ámbar: **2,11:1, peor que el bug que se estaba arreglando**.
+
+Los `--dz-*`, `--po-*`, `--au-*` y `--mar-*` **no** tienen este problema: al no ser namespaces
+de Tailwind, se emiten enteros. Por eso `--dz-accent-ink` funciona y su equivalente en la capa
+chrome tuvo que llamarse **`--laton-ink`, sin el prefijo `--color-`**.
+
+**Regla:** un token nuevo que solo vaya a consumirse con `var()` inline **no lleva prefijo
+`--color-`**. Si tocás esta zona, verificá contra el CSS servido, no contra `globals.css`:
+
+```bash
+curl -s "http://localhost:3000/$(curl -s http://localhost:3000 | grep -o '_next/static/chunks/[^"]*\.css' | head -1)" | grep -c -- --tu-token
+```
+
+### 14.2 Para medir contraste en oscuro hay que CARGAR el tema, no togglear la clase
+
+Togglear `.dark` sobre `<html>` y leer `getComputedStyle` a continuación devuelve el color
+**anterior** en todo elemento que tenga una transición de color (`transition-colors`,
+`transition-brand`). El custom property se actualiza al instante, pero la propiedad que lo
+consume sigue animando.
+
+En la auditoría de las 6 páginas eso produjo **7 falsos positivos sobre 12 hallazgos brutos**,
+incluido un "texto blanco sobre blanco a 1,15:1" que en pantalla se veía perfecto. Esperar un
+frame no alcanza; a los 300 ms ya está bien, pero el margen depende de cada transición.
+
+**Regla:** para auditar el modo oscuro, `localStorage.setItem('tlg-theme','dark')` + recarga, y
+medir sobre la página ya pintada. Nunca togglear en caliente.
+
+**Corolario del mismo barrido:** cuando el texto va sobre una `<img>` o un `<video>` (tarjetas de
+`/ciudades`, Hero de Inicio), el contraste **no es medible** subiendo por los ancestros — el
+buscador de fondo trepa hasta el fondo de página y devuelve un número inventado (aparecía como
+`1.00:1`). Esos casos se resuelven mirando, no midiendo.

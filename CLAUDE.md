@@ -188,6 +188,21 @@ Auditoría completa de los 11 endpoints `/api/*`: secretos, auth/autorización, 
 
 Recorrido de las 17 páginas públicas (contraste medido, no estimado; claro y oscuro). Hallazgo más grave: **texto invisible en 28 archivos** por una sintaxis de Tailwind v4 rota (`text-[var(--color-*)]` no genera regla CSS) — ya resuelto en 3 commits por severidad (`2d08a6e`, `b43640b`, `e1ebaff`). Hallazgo pendiente de decisión de producto: **divergencia tipográfica en titulares** — `docs/design-system.md` especifica Fraunces para titulares editoriales, pero el código real usa Cormorant Garamond (`app/layout.tsx`). La tercera familia no documentada (Mulish) que existía en 20+ archivos ya fue consolidada en Plus Jakarta Sans —hoy documentada como `--font-ui`— en el commit `153960d`. Detalle completo en `docs/arranque.md`.
 
+### Auditoría diseño/UX de las 6 páginas (2026-07-31)
+
+6 páginas (`/`, `/ciudades`, `/comunidad`, `/sobre-silvana`, `/apps-utiles`, `/faq`) × 3 anchos (375/768/1512) × 2 temas = **36 mediciones** sobre el DOM real. `/como-funciona` quedó fuera del lote.
+
+**Sin un solo hallazgo:** desborde horizontal, fuentes por debajo de 12px, jerarquía de encabezados (un `h1` por página en todas), `img` sin `alt`, errores de consola.
+
+**Corregido en esta auditoría:** contraste del acento como color de texto en Inicio — `CTAFinal` 2,19→4,52:1 y el monograma de `Testimonios` 3,70→7,35:1 (commit `d046455`); y las 6 superficies del acento en la capa chrome, 3,44→7,35:1 (commit `4d95b74`).
+
+| ID | Severidad | Descripción | Archivo |
+|---|---|---|---|
+| U01 | 🟡 Medio | Botones "Editar" del historial de Gina: **38×19px**, por debajo del mínimo de 24×24 de WCAG 2.2 AA (2.5.8). Van apilados, así que tampoco los salva la excepción de espaciado. No son inline en una frase, así que no aplica esa otra excepción. **Anotado, sin corregir por decisión del usuario (2026-07-31).** | `components/gina/GinaMessages.tsx:140` |
+| U02 | 🟢 Decisión de producto | Tarjetas de `/ciudades`: título y descripción en blanco sobre foto. Hay scrim, pero la descripción cae sobre la zona clara del agua y queda marginal. **No es medible numéricamente** (el fondo es una fotografía distinta por ciudad) — se resuelve reforzando el degradado o acotando el texto a la franja oscura. Pendiente de decisión de diseño. | `app/ciudades/page.tsx` |
+
+> ⚠️ **Antes de repetir esta auditoría, leer `DESIGN.md` §14.** De 12 hallazgos numéricos brutos, **7 eran falsos positivos del método de medición**, no defectos del sitio. Las dos causas (poda de `--color-*` por Tailwind v4, y medir el tema oscuro togglear la clase en vez de cargarla) están documentadas ahí con la forma correcta de medir. Ojo que la poda de §14.1 es un problema **distinto** del `text-[var(--color-*)]` de la auditoría de 2026-07-04 de arriba, aunque los dos vengan de Tailwind v4.
+
 ---
 
 ## Simplificación automática post-implementación
