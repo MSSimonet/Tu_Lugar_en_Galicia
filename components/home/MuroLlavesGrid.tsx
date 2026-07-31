@@ -29,11 +29,25 @@ const RELACION_CELDA = 375 / 300;
  *  entran, y el ancho real se ajusta para que esas columnas llenen la ventana
  *  exacta. Bajarlo da una pared más densa de fotos más chicas; subirlo, menos
  *  fotos y más grandes. Es la única perilla de densidad. */
-const ANCHO_CELDA_OBJETIVO = 300;
+const ANCHO_CELDA_OBJETIVO = 180;
 /** Techo del alto de la ventana. En px y no en vh a propósito: con vh, esconder
  *  la barra de direcciones en móvil cambiaría la cantidad de filas y recolocaría
- *  la grilla a mitad de uso. */
-const ALTO_MAX = 640;
+ *  la grilla a mitad de uso.
+ *
+ *  Es responsive desde que ANCHO_CELDA_OBJETIVO bajó a 180: con celdas chicas
+ *  entraban TRES filas en móvil (594px de ventana en un iPhone SE, el 89% de la
+ *  pantalla). 552 es el techo más alto que deja la tercera fila afuera en todo
+ *  el rango 320–767px — medido, no estimado; a 553 reaparece a 360px de ancho.
+ *  De 768 para arriba se mantiene 640, que ahí nunca llegó a tres filas. */
+const ALTO_MAX_MOVIL = 552;
+const ALTO_MAX_ANCHO = 640;
+/** Mismo corte que usa --muro-margen en globals.css (2cm desde 768px). Se lee del
+ *  viewport y NO del ancho del contenedor: el contenedor no es monótono — a 767px
+ *  mide 719 y a 768px mide 617, porque el margen salta de 24px a 2cm. Deducir el
+ *  breakpoint del contenedor daría el techo equivocado justo en el cruce. */
+function altoMaxPara(viewportW: number): number {
+  return viewportW >= 768 ? ALTO_MAX_ANCHO : ALTO_MAX_MOVIL;
+}
 /** Margen de seguridad, en px, para que el redondeo no coma el borde. */
 const HOLGURA = 1;
 
@@ -68,11 +82,11 @@ interface GeometriaGrilla {
  *                                       asoma una punta rotada dentro del cuadro.
  *  Con eso, el ancho de la ventana queda repartido así:
  *      W = n·celdaW + (n−1)·gap + 2·margenX  ⟹  celdaW = (W − 2·h·n) / (n·(1+2·ox))
- *  El alto NO se impone: se deriva de cuántas filas enteras entran bajo ALTO_MAX.
+ *  El alto NO se impone: se deriva de cuántas filas enteras entran bajo altoMax.
  *  Es la única forma de que los dos ejes encajen exacto con celdas de proporción
  *  fija; si se fijaran ancho y alto a la vez el sistema queda sobredeterminado y
  *  siempre sobra una franja que corta la fila o la columna del borde. */
-function calcularGeometria(ancho: number): GeometriaGrilla {
+function calcularGeometria(ancho: number, altoMax: number): GeometriaGrilla {
   const columnas = Math.max(
     1,
     Math.round(ancho / (ANCHO_CELDA_OBJETIVO * (1 + 2 * SOBRESALE_X)))
@@ -82,7 +96,7 @@ function calcularGeometria(ancho: number): GeometriaGrilla {
   const margenX = celdaW * SOBRESALE_X + HOLGURA;
   const margenY = celdaW * SOBRESALE_Y + HOLGURA;
   const gap = 2 * margenX;
-  const filas = Math.max(1, Math.floor((ALTO_MAX + gap - 2 * margenY) / (celdaH + gap)));
+  const filas = Math.max(1, Math.floor((altoMax + gap - 2 * margenY) / (celdaH + gap)));
   const alto = filas * celdaH + (filas - 1) * gap + 2 * margenY;
   return { columnas, filas, celdaW, celdaH, margenX, margenY, gap, alto };
 }
@@ -141,7 +155,7 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
     // Geometría vigente. Se recalcula cuando cambia el ancho disponible, no en
     // cada render: de ella dependen el tamaño de celda, el alto de la ventana y
     // la posición de reposo.
-    let geo = calcularGeometria(root.clientWidth);
+    let geo = calcularGeometria(root.clientWidth, altoMaxPara(window.innerWidth));
     let pasoX = geo.celdaW + geo.gap;
     let pasoY = geo.celdaH + geo.gap;
     // Reposo: la grilla arranca ENCUADRADA, no en 0,0. Con 0,0 la celda (0,0)
@@ -171,7 +185,7 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
      *  posición de reposo encuadrada. Tira el pool porque las celdas existentes
      *  quedaron con el tamaño y el paso viejos. */
     function aplicarGeometria() {
-      geo = calcularGeometria(root!.clientWidth);
+      geo = calcularGeometria(root!.clientWidth, altoMaxPara(window.innerWidth));
       pasoX = geo.celdaW + geo.gap;
       pasoY = geo.celdaH + geo.gap;
       offsetX = geo.margenX;
