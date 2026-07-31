@@ -19,20 +19,73 @@ export interface FotoMuroLlaves {
   alt: string;
 }
 
-const CELL_W = 300; // vertical/retrato, conjunto foto+marco ~4:5
-const CELL_H = 375; // 300:375 = 4:5 exacto
-const GAP = 23;
 const PANEL_AUTO_CLOSE_MS = 3000;
-const STEP_X = CELL_W + GAP;
-const STEP_Y = CELL_H + GAP;
 const FRICCION = 0.92;
 const VELOCIDAD_MINIMA = 0.4;
 
-// Marco Polaroid: laterales y arriba finos y uniformes (8% del ancho del tile);
-// abajo notablemente más grueso (21% del alto, rango pedido 20-22%) — proporción
-// ajustada contra la referencia visual del usuario (mockup de Polaroid física).
-const POLAROID_PAD_SIDE = Math.round(CELL_W * 0.08);
-const POLAROID_PAD_BOTTOM = Math.round(CELL_H * 0.21);
+/** Proporción de la celda (foto + marco), 4:5 — la de una Polaroid. */
+const RELACION_CELDA = 375 / 300;
+/** Ancho de celda al que se APUNTA. No es un ancho fijo: decide cuántas columnas
+ *  entran, y el ancho real se ajusta para que esas columnas llenen la ventana
+ *  exacta. Bajarlo da una pared más densa de fotos más chicas; subirlo, menos
+ *  fotos y más grandes. Es la única perilla de densidad. */
+const ANCHO_CELDA_OBJETIVO = 300;
+/** Techo del alto de la ventana. En px y no en vh a propósito: con vh, esconder
+ *  la barra de direcciones en móvil cambiaría la cantidad de filas y recolocaría
+ *  la grilla a mitad de uso. */
+const ALTO_MAX = 640;
+/** Margen de seguridad, en px, para que el redondeo no coma el borde. */
+const HOLGURA = 1;
+
+// Cuánto SOBRESALE una celda rotada respecto de su caja sin rotar, como fracción
+// del ancho de celda. Es la clave de que antes no hubiera ni una foto entera:
+// las celdas se inclinan hasta 6° (ver rotacionParaCelda), así que una celda de
+// 300x375 ocupa en pantalla 337x404 y se comía el borde del recuadro aunque la
+// grilla estuviera perfectamente alineada. Medido en navegador: 335,3x402,6.
+//   ox = (w·cosθ + h·senθ − w) / 2      oy = (w·senθ + h·cosθ − h) / 2
+const ROTACION_MAX_RAD = (6 * Math.PI) / 180;
+const SOBRESALE_X =
+  (Math.cos(ROTACION_MAX_RAD) - 1 + RELACION_CELDA * Math.sin(ROTACION_MAX_RAD)) / 2;
+const SOBRESALE_Y =
+  (Math.sin(ROTACION_MAX_RAD) - RELACION_CELDA * (1 - Math.cos(ROTACION_MAX_RAD))) / 2;
+
+interface GeometriaGrilla {
+  columnas: number;
+  filas: number;
+  celdaW: number;
+  celdaH: number;
+  margenX: number;
+  margenY: number;
+  gap: number;
+  alto: number;
+}
+
+/** Geometría que hace que, en reposo, entren SÓLO celdas enteras y centradas.
+ *
+ *  Dos condiciones, y las dos salen del sobresalto de la rotación:
+ *    · margen = sobresalto + holgura  → la celda del borde entra completa.
+ *    · gap    = 2 · margen            → la celda vecina queda entera AFUERA, y no
+ *                                       asoma una punta rotada dentro del cuadro.
+ *  Con eso, el ancho de la ventana queda repartido así:
+ *      W = n·celdaW + (n−1)·gap + 2·margenX  ⟹  celdaW = (W − 2·h·n) / (n·(1+2·ox))
+ *  El alto NO se impone: se deriva de cuántas filas enteras entran bajo ALTO_MAX.
+ *  Es la única forma de que los dos ejes encajen exacto con celdas de proporción
+ *  fija; si se fijaran ancho y alto a la vez el sistema queda sobredeterminado y
+ *  siempre sobra una franja que corta la fila o la columna del borde. */
+function calcularGeometria(ancho: number): GeometriaGrilla {
+  const columnas = Math.max(
+    1,
+    Math.round(ancho / (ANCHO_CELDA_OBJETIVO * (1 + 2 * SOBRESALE_X)))
+  );
+  const celdaW = (ancho - 2 * HOLGURA * columnas) / (columnas * (1 + 2 * SOBRESALE_X));
+  const celdaH = celdaW * RELACION_CELDA;
+  const margenX = celdaW * SOBRESALE_X + HOLGURA;
+  const margenY = celdaW * SOBRESALE_Y + HOLGURA;
+  const gap = 2 * margenX;
+  const filas = Math.max(1, Math.floor((ALTO_MAX + gap - 2 * margenY) / (celdaH + gap)));
+  const alto = filas * celdaH + (filas - 1) * gap + 2 * margenY;
+  return { columnas, filas, celdaW, celdaH, margenX, margenY, gap, alto };
+}
 
 // Textura de papel sutil para el marco — ruido monocromático vía feTurbulence en
 // un SVG inline (data URI), sin agregar ningún archivo de imagen al proyecto.
@@ -55,6 +108,7 @@ function rotacionParaCelda(col: number, row: number): number {
 }
 
 export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const planeRef = useRef<HTMLDivElement>(null);
   const [panelFoto, setPanelFoto] = useState<FotoMuroLlaves | null>(null);
@@ -79,12 +133,22 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
   }, [panelFoto]);
 
   useEffect(() => {
+    const root = rootRef.current;
     const viewport = viewportRef.current;
     const plane = planeRef.current;
-    if (!viewport || !plane || fotos.length === 0) return;
+    if (!root || !viewport || !plane || fotos.length === 0) return;
 
-    let offsetX = 0;
-    let offsetY = 0;
+    // Geometría vigente. Se recalcula cuando cambia el ancho disponible, no en
+    // cada render: de ella dependen el tamaño de celda, el alto de la ventana y
+    // la posición de reposo.
+    let geo = calcularGeometria(root.clientWidth);
+    let pasoX = geo.celdaW + geo.gap;
+    let pasoY = geo.celdaH + geo.gap;
+    // Reposo: la grilla arranca ENCUADRADA, no en 0,0. Con 0,0 la celda (0,0)
+    // quedaba pegada a la esquina y su propia inclinación la dejaba cortada
+    // contra el borde — medido: 0 celdas enteras de 4 a 6 visibles.
+    let offsetX = geo.margenX;
+    let offsetY = geo.margenY;
     let dragging = false;
     let lastX = 0;
     let lastY = 0;
@@ -102,14 +166,32 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
       setPanelFoto(foto);
     }
 
+    /** Vuelca la geometría al DOM: tamaño de celda vía variables CSS (el marco y
+     *  el viñeteado se derivan de ellas con calc), alto de la ventana, y la
+     *  posición de reposo encuadrada. Tira el pool porque las celdas existentes
+     *  quedaron con el tamaño y el paso viejos. */
+    function aplicarGeometria() {
+      geo = calcularGeometria(root!.clientWidth);
+      pasoX = geo.celdaW + geo.gap;
+      pasoY = geo.celdaH + geo.gap;
+      offsetX = geo.margenX;
+      offsetY = geo.margenY;
+      root!.style.setProperty("--mlg-celda-w", `${geo.celdaW}px`);
+      root!.style.setProperty("--mlg-celda-h", `${geo.celdaH}px`);
+      root!.style.setProperty("--mlg-alto", `${geo.alto}px`);
+      pool.forEach((el) => el.remove());
+      pool.clear();
+      render();
+    }
+
     function render() {
       const vw = viewport!.clientWidth;
       const vh = viewport!.clientHeight;
       const buffer = 1;
-      const colStart = Math.floor(-offsetX / STEP_X) - buffer;
-      const colEnd = Math.floor((vw - offsetX) / STEP_X) + buffer;
-      const rowStart = Math.floor(-offsetY / STEP_Y) - buffer;
-      const rowEnd = Math.floor((vh - offsetY) / STEP_Y) + buffer;
+      const colStart = Math.floor(-offsetX / pasoX) - buffer;
+      const colEnd = Math.floor((vw - offsetX) / pasoX) + buffer;
+      const rowStart = Math.floor(-offsetY / pasoY) - buffer;
+      const rowEnd = Math.floor((vh - offsetY) / pasoY) + buffer;
 
       const needed = new Set<string>();
       for (let c = colStart; c <= colEnd; c++) {
@@ -120,7 +202,7 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
             const foto = fotoParaCelda(c, r);
             const el = document.createElement("div");
             el.className = "mlg-tile";
-            el.style.transform = `translate3d(${c * STEP_X}px, ${r * STEP_Y}px, 0)`;
+            el.style.transform = `translate3d(${c * pasoX}px, ${r * pasoY}px, 0)`;
 
             const polaroid = document.createElement("div");
             polaroid.className = "mlg-polaroid";
@@ -196,8 +278,17 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
       rafId = requestAnimationFrame(inertia);
     }
 
+    // Sólo se recalcula si cambió el ANCHO. El alto lo fija la propia grilla, así
+    // que un resize vertical (la barra de direcciones del móvil al aparecer y
+    // desaparecer) no debe reencuadrar y tirarle el arrastre al usuario.
+    let anchoPrevio = root.clientWidth;
     function onResize() {
-      render();
+      if (root!.clientWidth === anchoPrevio) {
+        render();
+        return;
+      }
+      anchoPrevio = root!.clientWidth;
+      aplicarGeometria();
     }
 
     viewport.addEventListener("pointerdown", onPointerDown);
@@ -206,7 +297,7 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
     viewport.addEventListener("pointerleave", endDrag);
     window.addEventListener("resize", onResize);
 
-    render();
+    aplicarGeometria();
 
     return () => {
       viewport.removeEventListener("pointerdown", onPointerDown);
@@ -221,14 +312,25 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
   }, [fotos]);
 
   return (
-    <div className="mlg-root">
+    <div ref={rootRef} className="mlg-root">
       <style>{`
         .mlg-root {
           position: relative;
           width: 100%;
-          height: 100%;
+          /* El alto lo calcula la grilla (filas enteras); el valor de respaldo es
+             para el HTML del servidor, que todavía no sabe el ancho disponible.
+             Está elegido cerca del resultado real (350-395px) para que el ajuste
+             al montar no mueva la página de forma perceptible. */
+          height: var(--mlg-alto, 380px);
           overflow: hidden;
           background-color: var(--dz-hero-bg);
+          /* Marco Polaroid: laterales y arriba finos y uniformes (8% del ancho del
+             tile); abajo notablemente más grueso (21% del alto, rango pedido
+             20-22%) — proporción ajustada contra la referencia visual del usuario
+             (mockup de Polaroid física). Ahora se derivan del tamaño de celda con
+             calc, porque ese tamaño dejó de ser una constante. */
+          --mlg-pad-lado: calc(var(--mlg-celda-w, 300px) * 0.08);
+          --mlg-pad-abajo: calc(var(--mlg-celda-h, 375px) * 0.21);
         }
         .mlg-viewport {
           position: absolute;
@@ -245,15 +347,16 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
         }
         .mlg-polaroid {
           position: relative;
-          width: ${CELL_W}px;
-          height: ${CELL_H}px;
+          width: var(--mlg-celda-w, 300px);
+          height: var(--mlg-celda-h, 375px);
           box-sizing: border-box;
-          padding: ${POLAROID_PAD_SIDE}px ${POLAROID_PAD_SIDE}px ${POLAROID_PAD_BOTTOM}px;
-          /* --dz-hero-text (no --dz-papel): el marco de una Polaroid física es
-             siempre claro, no debería invertir a casi-negro en modo oscuro como
-             hace --dz-papel — --dz-hero-text es el tono crema fijo del proyecto,
-             mismo criterio que ya usa el fondo de este componente (--dz-hero-bg). */
-          background-color: var(--dz-hero-text);
+          padding: var(--mlg-pad-lado) var(--mlg-pad-lado) var(--mlg-pad-abajo);
+          /* Gris claro en modo claro, apenas más oscuro en oscuro. Token propio
+             porque --dz-hero-text dejó de ser el "crema fijo" que este marco
+             asumía: cuando el Hero pasó a seguir el tema, el marco quedó casi
+             negro justo en modo claro. Los dos valores salen de la paleta
+             (--color-niebla y --dz-borde), ver globals.css. */
+          background-color: var(--dz-polaroid-marco);
           background-image: ${TEXTURA_PAPEL_URL};
           border-radius: 2px;
           box-shadow: var(--dz-shadow-md);
@@ -270,7 +373,7 @@ export function MuroLlavesGrid({ fotos }: { fotos: FotoMuroLlaves[] }) {
         .mlg-polaroid::after {
           content: '';
           position: absolute;
-          inset: ${POLAROID_PAD_SIDE}px ${POLAROID_PAD_SIDE}px ${POLAROID_PAD_BOTTOM}px;
+          inset: var(--mlg-pad-lado) var(--mlg-pad-lado) var(--mlg-pad-abajo);
           background: radial-gradient(ellipse at center, transparent 58%, rgba(0,0,0,.32) 100%);
           pointer-events: none;
         }

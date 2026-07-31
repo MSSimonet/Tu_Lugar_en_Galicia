@@ -13,7 +13,7 @@ export function MuroLlavesPreview() {
   return (
     <section
       className="px-[var(--space-6)] py-[var(--dz-section-y)]"
-      style={{ backgroundColor: 'var(--dz-luz)' }}
+      style={{ backgroundColor: 'transparent' /* la capa de fondo de pagina pinta el color; ver FondoAnimado */ }}
       aria-labelledby="muro-llaves-heading"
     >
       <div className="mx-auto max-w-4xl">
@@ -26,23 +26,36 @@ export function MuroLlavesPreview() {
         </p>
         <h2
           id="muro-llaves-heading"
-          className="mb-[var(--space-12)] text-center"
+          className="mb-[var(--space-4)] text-center"
           style={{ fontFamily: 'var(--font-dz-display)', fontWeight: 'var(--dz-weight-h2)', color: 'var(--dz-ink)', fontSize: 'var(--dz-text-h2)', lineHeight: 'var(--dz-leading-h2)' }}
         >
           El muro de llaves
         </h2>
+        {/* Pista de interacción. Va acá, entre el título y la grilla, y no debajo
+            de la grilla como estaba: se lee ANTES de llegar a lo que explica.
+            TODO Fase 2: crear página /muro-de-llaves con galería completa. */}
+        <p
+          className="mb-[var(--space-12)] text-center [font-size:var(--text-sm)]"
+          style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)' }}
+        >
+          Presiona y arrastra para explorar
+        </p>
       </div>
 
-      {/* Contenedor de la grilla — fuera del max-w-4xl del título a propósito:
-          +3cm por lado sobre ese ancho (pedido explícito), acotado con min() al
-          padding de la sección para no desbordar el viewport en móvil/tablet —
-          ahí converge al mismo ancho que el título (mismo comportamiento de
-          antes, sin desborde). Ningún otro comportamiento de la grilla cambia. */}
+      {/* Contenedor de la grilla — fuera del max-w-4xl del título a propósito.
+          El ancho ya no se deriva del ancho del título sino del VIEWPORT: deja
+          --muro-margen libre a cada lado (2cm desde 768px, ver globals.css), así
+          la ventana se ensancha con la pantalla en vez de toparse con un tope
+          fijo de 56rem+6cm que en monitores anchos dejaba ~10cm muertos por
+          lado. Ningún otro comportamiento de la grilla cambia. */}
       <div
-        className="mx-auto"
+        className="mx-auto muro-ventana"
         style={{
-          width: "min(calc(56rem + 6cm), calc(100vw - 2 * var(--space-6)))",
-          height: "clamp(546px, 71.5vh, 780px)", // +30% sobre clamp(420px, 55vh, 600px)
+          width: "calc(100vw - 2 * var(--muro-margen))",
+          // Sin alto: lo fija la grilla, que es la única que sabe cuántas filas
+          // ENTERAS entran con el tamaño de celda que le impone este ancho. Antes
+          // era clamp(546px, 71.5vh, 780px) y ese alto arbitrario era justamente
+          // lo que dejaba la última fila cortada por la mitad.
           borderRadius: "var(--dz-radius-card)",
           overflow: "hidden",
         }}
@@ -50,17 +63,6 @@ export function MuroLlavesPreview() {
         <MuroLlavesGrid fotos={llaves} />
       </div>
 
-      <div className="mx-auto max-w-4xl">
-        <div className="mt-[var(--space-8)] text-center">
-          {/* TODO Fase 2: crear página /muro-de-llaves con galería completa */}
-          <span
-            className="[font-size:var(--text-sm)] cursor-default"
-            style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-muted)' }}
-          >
-            Presiona y arrastra para explorar
-          </span>
-        </div>
-      </div>
     </section>
   );
 }
