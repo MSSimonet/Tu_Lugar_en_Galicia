@@ -77,8 +77,15 @@ function TarjetaTestimonio({ t }: { t: (typeof testimonios)[number] }) {
           style={{
             width: 36,
             height: 36,
-            backgroundColor: "var(--dz-borde)",
-            color: "var(--dz-accent-text)",
+            // Se invierte el par: antes era --dz-accent-text sobre --dz-borde y
+            // daba 3,70:1 en claro, por debajo de los 4,5:1 que pide texto de
+            // 12px (medido 2026-07-31; en oscuro sí pasaba, porque --dz-borde se
+            // oscurece y --dz-accent-text se vuelve el acento crudo).
+            // Este par es el mismo que usan los botones de acento y NO depende de
+            // esa inversión: los dos tokens son fijos, así que da 7,35:1 idéntico
+            // en claro y en oscuro.
+            backgroundColor: "var(--dz-accent)",
+            color: "var(--dz-accent-ink)",
             fontFamily: "var(--font-dz-display)",
             fontWeight: "var(--dz-weight-h3)",
             // 12px, no 0.72rem (11,5px) — minimo legible. Entra sin problema en
