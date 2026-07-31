@@ -120,10 +120,13 @@ export function GinaInput({ validacion, placeholder, deshabilitado, onEnvio }: P
           aria-label="Enviar respuesta"
           className="
             shrink-0 w-9 h-9 rounded-xl flex items-center justify-center
-            text-white transition-brand cursor-pointer
+            transition-brand cursor-pointer
             disabled:opacity-40 disabled:cursor-not-allowed
           "
-          style={{ backgroundColor: 'var(--color-laton)' }}
+          style={{
+            backgroundColor: 'var(--color-laton-claro)',
+            color: 'var(--laton-ink)',
+          }}
         >
           <svg
             className="w-4 h-4"

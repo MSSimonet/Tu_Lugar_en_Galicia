@@ -85,9 +85,9 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
                 style={
                   activo
                     ? {
-                        borderColor: 'var(--color-laton-oscuro)',
-                        backgroundColor: 'var(--color-laton-oscuro)',
-                        color: 'var(--color-sobre-laton)',
+                        borderColor: 'var(--color-laton)',
+                        backgroundColor: 'var(--color-laton-claro)',
+                        color: 'var(--laton-ink)',
                       }
                     : {
                         borderColor: 'var(--color-laton)',
@@ -112,10 +112,14 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
                 <span
                   className="shrink-0 w-4 h-4 rounded flex items-center justify-center"
                   style={{
+                    // Activo: el fondo del botón YA es --color-laton-claro, así que
+                    // la casilla se invierte (tinta sobre ámbar) para seguir siendo
+                    // visible; antes era ámbar sobre ámbar oscuro y ahora habría
+                    // desaparecido contra su propio botón.
                     border: activo
-                      ? '2px solid var(--color-laton-claro)'
+                      ? '2px solid var(--laton-ink)'
                       : '2px solid var(--color-laton)',
-                    backgroundColor: activo ? 'var(--color-laton-claro)' : 'transparent',
+                    backgroundColor: activo ? 'var(--laton-ink)' : 'transparent',
                   }}
                   aria-hidden="true"
                 >
@@ -126,7 +130,7 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
                       viewBox="0 0 10 8"
                       stroke="currentColor"
                       strokeWidth={2.5}
-                      style={{ color: 'var(--color-header-bg)' }}
+                      style={{ color: 'var(--color-laton-claro)' }}
                     >
                       <path d="M1 4l3 3 5-6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -149,8 +153,8 @@ export function GinaButtons({ opciones, multiselect, exclusivaValue, deshabilita
             disabled:opacity-40 disabled:cursor-not-allowed
           "
           style={{
-            backgroundColor: 'var(--color-laton)',
-            color: 'var(--color-sobre-laton)',
+            backgroundColor: 'var(--color-laton-claro)',
+            color: 'var(--laton-ink)',
             letterSpacing: '0.04em',
           }}
         >

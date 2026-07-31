@@ -188,8 +188,8 @@ export function useGinaEditor({
           onClick={() => ejecutarEdicion(confirmEdicion.pasoId)}
           className="flex-1 py-2 rounded-xl text-xs font-semibold transition-brand cursor-pointer"
           style={{
-            backgroundColor: 'var(--color-laton)',
-            color: 'var(--color-sobre-laton)',
+            backgroundColor: 'var(--color-laton-claro)',
+            color: 'var(--laton-ink)',
           }}
         >
           Sí, editar →

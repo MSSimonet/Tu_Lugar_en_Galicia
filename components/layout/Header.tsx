@@ -286,8 +286,8 @@ export function Header() {
                   fontFamily: 'var(--font-dz-ui)',
                   fontSize: '12px',
                   fontWeight: 700,
-                  color: 'var(--color-sobre-laton)',
-                  background: 'var(--color-laton)',
+                  color: 'var(--laton-ink)',
+                  background: 'var(--color-laton-claro)',
                   borderRadius: '999px',
                   border: 'none',
                   letterSpacing: '0.06em',
@@ -296,8 +296,8 @@ export function Header() {
                   flexShrink: 0,
                   whiteSpace: 'nowrap',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-laton-oscuro)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'var(--color-laton)')}
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-laton)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'var(--color-laton-claro)')}
               >
                 <span style={{ fontSize: '12px', lineHeight: '1' }}>✦</span>
                 Hablar con Gina

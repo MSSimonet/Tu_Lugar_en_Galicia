@@ -13,7 +13,10 @@
      Se mantienen los nombres --color-laton* (capa "chrome" del header/footer,
      siempre oscura) para no tocar Header.tsx/Footer.tsx/GinaButtons.tsx —
      mismo criterio no-destructivo que --dz-* arriba: solo cambian los valores. */
-  --color-laton:        #C27A1F; /* AA 7.1:1 con texto blanco encima */
+  --color-laton:        #C27A1F; /* 3.44:1 con blanco — NO usar como fondo de texto blanco.
+                                    Hoy es el HOVER de los botones acento: 5.34:1 con
+                                    --laton-ink. (El comentario anterior afirmaba
+                                    "AA 7.1:1 con texto blanco": era falso, medido 2026-07-31.) */
   --color-laton-claro:  #E0932E;
   --color-laton-oscuro: #9C5F19;
   --color-laton-text:   #9C5F19;
@@ -44,7 +47,21 @@
   --color-laton-borde:   #7A5230; /* mezcla acento/fondo oscuro para bordes estructurales */
   --color-nav-muted:     #A8A8A8; /* texto inactivo en nav oscuro */
   --color-header-active: #F0EDE6; /* texto activo/resaltado en nav oscuro */
-  --color-sobre-laton:   #ffffff; /* texto sobre botón acento (siempre blanco) */
+  --color-sobre-laton:   #ffffff; /* OJO: además de texto, se usa como FONDO claro
+                                     (useGinaEditor "Cancelar", HabilitarAgendaButton).
+                                     No repintarlo en oscuro: rompería esos dos. */
+  /* Texto sobre los botones acento de la capa chrome. Fijo en ambos temas —
+     mismo criterio y mismo valor que --dz-accent-ink, que ya resolvía bien este
+     problema en los CTA --dz-*. Nace para que el CTA "Hablar con Gina" y los
+     botones de Gina dejen de usar blanco sobre ámbar (3.44:1, fallaba AA).
+     Reposo #E0932E → 7.35:1 · hover #C27A1F → 5.34:1.
+
+     SIN prefijo --color-: ese namespace lo gestiona Tailwind v4 y PODA los tokens
+     que solo se consumen con var() inline, sin avisar (medido 2026-07-31: 33 de
+     los 61 --color-* declarados acá no llegan al CSS servido, entre ellos el
+     preexistente --color-laton-invertido). Los --dz-* se emiten enteros justamente
+     porque no son un namespace de Tailwind; este token sigue esa misma regla. */
+  --laton-ink:           #16140F;
 
   /* Tokens footer sin override dark (el footer es siempre oscuro) */
   /* Igual a --color-header-bg por referencia (antes tenía su propio hex, #14120F,

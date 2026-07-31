@@ -78,8 +78,9 @@ sus valores hacia el mismo ámbar, sin tocar `Header.tsx`/`Footer.tsx`:
 | Token CSS | Hex nuevo | Rol |
 |---|---|---|
 | `--color-header-bg` / `--color-footer-bg` | `#16140F` / `#14120F` | Fondo siempre oscuro |
-| `--color-laton` | `#C27A1F` | Botón "Hablar con Gina" — AA 7.1:1 con texto blanco |
-| `--color-laton-claro` | `#E0932E` | Wordmark, links activos — AA 7.75:1 sobre fondo oscuro |
+| `--color-laton` | `#C27A1F` | **Hover** de los botones acento — 5.34:1 con `--laton-ink` |
+| `--color-laton-claro` | `#E0932E` | Wordmark, links activos y **reposo** de los botones acento — 7.35:1 sobre `#16140F` |
+| `--laton-ink` | `#16140F` | Texto sobre los botones acento de la capa chrome — fijo, no invierte |
 | `--color-laton-oscuro` | `#9C5F19` | Hover |
 | `--color-laton-borde` | `#7A5230` | Bordes estructurales del header |
 | `--color-nav-muted` / `--color-header-active` / `--color-sobre-laton` / `--color-footer-border` | sin cambios | Neutros ya seguros, no necesitaban retinte |
@@ -229,7 +230,7 @@ claro/oscuro, solo el contenido de página lo hace. Ver tabla de retinte en §2.
   de fuente, ver §3), color `--color-laton-claro` (ahora ámbar)
 - **Nav links:** Cormorant, uppercase, tracking 0.1em, `--color-nav-muted` inactivo →
   `--color-laton-claro` activo/hover
-- **CTA "Hablar con Gina":** pill `--color-laton`, texto blanco (`--color-sobre-laton`), dispara
+- **CTA "Hablar con Gina":** pill `--color-laton-claro`, texto `--laton-ink`, dispara
   `CustomEvent('gina:open')` — **no tocar la lógica**, solo hereda el nuevo color automáticamente
 - **Toggle claro/oscuro:** botón Sun/Moon (`lucide-react`), `document.documentElement.classList.toggle('dark')` + `localStorage.setItem('tlg-theme', ...)` — sin cambios, ya funcionaba
 
