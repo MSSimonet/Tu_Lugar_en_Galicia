@@ -131,7 +131,10 @@ export function CarruselCiudades({ variant }: CarruselCiudadesProps) {
 
   return (
     <section
-      style={{ backgroundColor: "var(--dz-papel)" }}
+      // Transparente a propósito: el color lo pone la capa de fondo de página
+      // (--dz-fondo-pagina) y detrás corre FondoAnimado. Si esta sección pintara
+      // su propio fondo taparía al ícono (rediseño de fondos 2026-07-26).
+      style={{ backgroundColor: "transparent" }}
       aria-labelledby={variant === "preview" ? "ciudades-carrusel-heading" : undefined}
     >
       {variant === "preview" && (

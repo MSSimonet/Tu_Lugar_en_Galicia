@@ -12,7 +12,7 @@ export function CTAFinal() {
   return (
     <section
       className="px-[var(--space-6)] py-[var(--dz-section-y)]"
-      style={{ backgroundColor: 'var(--dz-hero-bg)' }}
+      style={{ backgroundColor: 'transparent' /* la capa de fondo de pagina pinta el color; ver FondoAnimado */ }}
       aria-labelledby="cta-final-heading"
     >
       <motion.div

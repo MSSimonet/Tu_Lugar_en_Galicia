@@ -25,14 +25,12 @@ export default function CiudadesIndexPage() {
         subtitle="Cada ciudad de Galicia tiene su carácter. Encuentra la que mejor se adapta a lo que buscas."
       />
 
-      {/* Color plano, no degradado: la base del Hero debe cortar nítida, igual
-          que en el Hero de Inicio (pedido explícito). El resto de las uniones de
-          la página conservan su degradado. */}
-      <div style={{ backgroundColor: 'var(--dz-papel)' }}>
+      {/* Cuerpo — fondo de página único; el divisor vuelve a ser un separador
+          lineal entre el Hero y el listado. */}
+      <div style={{ backgroundColor: 'var(--dz-fondo-pagina)' }}>
         <BrujulaDivider direction="rtl" />
+        <CarruselCiudades variant="listado" />
       </div>
-
-      <CarruselCiudades variant="listado" />
     </>
   )
 }

@@ -35,7 +35,7 @@ const TONOS: Record<PageHeroTone, ToneTokens> = {
     uiFont: 'var(--font-dz-ui)',
   },
   apps: {
-    background: 'transparent',
+    background: 'var(--dz-fondo-marco)',
     title: 'var(--au-hero-heading)',
     subtitle: 'var(--au-hero-body)',
     uiFont: 'var(--font-au-ui)',

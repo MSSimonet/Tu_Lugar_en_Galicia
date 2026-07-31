@@ -6,7 +6,6 @@ import { GinaButton } from '@/components/shared/GinaButton'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { PageHero } from '@/components/ui/PageHero'
 import { QSomosDivider } from '@/components/sobre-silvana/QSomosDivider'
-import { SectionFade } from '@/components/ui/SectionFade'
 import { staggerContainer, fadeUp } from '@/lib/motion/variants'
 
 const confianza = [
@@ -81,16 +80,15 @@ export function SobreSilvanaContenido() {
         }
       />
 
-      {/* Color plano, no degradado: la base del Hero corta nítida (pedido
-          explícito). El resto de las uniones conserva su degradado. */}
-      <div style={{ backgroundColor: 'var(--dz-luz)' }}>
+      {/* Cuerpo — fondo de página único; el divisor vuelve a ser un separador
+          lineal entre el Hero y la historia. */}
+      <div style={{ backgroundColor: 'var(--dz-fondo-pagina)' }}>
         <QSomosDivider direction="rtl" />
-      </div>
+        <div>
 
       {/* Historia en primera persona */}
       <motion.section
         className="py-[var(--dz-section-y)] px-[var(--space-6)]"
-        style={{ backgroundColor: 'var(--dz-luz)' }}
         variants={fadeUp}
         initial="hidden"
         whileInView="visible"
@@ -146,10 +144,8 @@ export function SobreSilvanaContenido() {
         </div>
       </motion.section>
 
-      <SectionFade from="var(--dz-luz)" to="var(--dz-papel)" />
-
       {/* Por qué confiar en mí */}
-      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-papel)' }}>
+      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]">
         {/* Misma medida de linea que "Mi historia" — ver nota alli */}
         <div className="mx-auto max-w-[68ch]">
           <motion.h2
@@ -198,12 +194,9 @@ export function SobreSilvanaContenido() {
         </div>
       </section>
 
-      <SectionFade from="var(--dz-papel)" to="var(--dz-luz)" />
-
       {/* Cierre + CTA */}
       <motion.section
         className="py-[var(--dz-section-y)] px-[var(--space-6)]"
-        style={{ backgroundColor: 'var(--dz-luz)' }}
         variants={fadeUp}
         initial="hidden"
         whileInView="visible"
@@ -240,7 +233,9 @@ export function SobreSilvanaContenido() {
             </Link>
           </div>
         </div>
-      </motion.section>
+        </motion.section>
+        </div>
+      </div>
     </>
   )
 }

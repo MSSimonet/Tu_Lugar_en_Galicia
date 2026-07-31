@@ -24,8 +24,14 @@ export function Eyebrow({ children, className = "", tone = "oscuro" }: EyebrowPr
         }
       : tone === "hero"
       ? {
-          color: "var(--dz-accent)",
-          background: "rgba(255,255,255,0.06)",
+          // --dz-accent-text y no --dz-accent: desde que el Hero sigue el tema
+          // (--dz-fondo-marco, blanco en claro) el acento crudo daba 2.51:1
+          // sobre blanco. --dz-accent-text ya está definido para invertir:
+          // #9C5F19 en claro y el acento crudo en oscuro (rediseño 2026-07-26).
+          color: "var(--dz-accent-text)",
+          // El fondo tintado con el propio acento funciona en los dos modos; el
+          // rgba(255,255,255,0.06) anterior era invisible sobre un marco claro.
+          background: "color-mix(in srgb, var(--dz-accent) 10%, transparent)",
           border: "1px solid color-mix(in srgb, var(--dz-accent) 35%, transparent)",
         }
       : {

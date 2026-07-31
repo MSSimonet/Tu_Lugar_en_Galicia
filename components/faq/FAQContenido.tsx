@@ -23,8 +23,10 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
         subtitle="Respondemos las preguntas que más nos hacen"
       />
 
+      {/* Cuerpo — fondo de pagina unico. Sin icono animado por ahora. */}
+      <div style={{ backgroundColor: 'var(--dz-fondo-pagina)' }}>
       {/* Bajada */}
-      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
+      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]">
         <div className="mx-auto max-w-3xl">
           <p
             className="text-[var(--text-sm)] leading-[var(--leading-cuerpo)]"
@@ -37,7 +39,7 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
       </section>
 
       {/* Categorías */}
-      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-papel)' }}>
+      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]">
         <motion.div
           className="mx-auto max-w-3xl space-y-[var(--space-12)]"
           variants={staggerContainer}
@@ -66,7 +68,7 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
       </section>
 
       {/* CTA al final — bookend fijo oscuro (Pedra e Ouro) */}
-      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-hero-bg)' }}>
+      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]">
         <motion.div
           className="mx-auto max-w-3xl text-center"
           variants={fadeUp}
@@ -109,6 +111,7 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
           </div>
         </motion.div>
       </section>
+      </div>
     </>
   )
 }

@@ -113,7 +113,7 @@ export async function FeedInstagram() {
   return (
     <section
       className="px-[var(--space-6)] py-[var(--dz-section-y)]"
-      style={{ backgroundColor: 'var(--dz-papel)' }}
+      style={{ backgroundColor: 'transparent' /* la capa de fondo de pagina pinta el color; ver FondoAnimado */ }}
       aria-labelledby="instagram-heading"
     >
       <div className="mx-auto max-w-4xl">

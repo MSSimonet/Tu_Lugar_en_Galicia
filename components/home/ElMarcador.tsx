@@ -194,7 +194,7 @@ export function ElMarcador() {
       `}</style>
       <section
         className="marcador-section"
-        style={{ backgroundColor: 'var(--dz-hero-bg)' }}
+        style={{ backgroundColor: 'transparent' /* la capa de fondo de pagina pinta el color; ver FondoAnimado */ }}
         aria-label="El marcador — cifras de trayectoria y en tiempo real"
       >
         <div className="mx-auto max-w-6xl">

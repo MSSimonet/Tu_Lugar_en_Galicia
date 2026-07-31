@@ -17,24 +17,22 @@ export function ComunidadContenido() {
         subtitle="Regístrate en el mapa de la comunidad y ofrece un café, una caminata o simplemente escuchar a quien acaba de llegar. Tu ubicación nunca se muestra con exactitud — solo una zona aproximada de tu barrio."
       />
 
-      {/* Color plano, no degradado: la base del Hero corta nítida (pedido
-          explícito). El resto de las uniones conserva su degradado. */}
-      <div style={{ backgroundColor: 'var(--dz-luz)' }}>
+      {/* Cuerpo — fondo de página único; el divisor vuelve a ser un separador
+          lineal entre el Hero y el formulario. */}
+      <div style={{ backgroundColor: 'var(--dz-fondo-pagina)' }}>
         <GenteDivider direction="rtl" />
+        <section className="py-[var(--dz-section-y)] px-[var(--space-6)]">
+          <motion.div
+            className="mx-auto max-w-2xl"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+          >
+            <FormularioComunidad />
+          </motion.div>
+        </section>
       </div>
-
-      {/* Formulario */}
-      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
-        <motion.div
-          className="mx-auto max-w-2xl"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
-        >
-          <FormularioComunidad />
-        </motion.div>
-      </section>
     </>
   )
 }

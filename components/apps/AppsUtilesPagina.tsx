@@ -15,7 +15,7 @@ export function AppsUtilesPagina() {
   const ciudadLabel = CIUDADES.find((c) => c.key === ciudad)?.label
 
   return (
-    <div style={{ backgroundColor: 'var(--au-bg)', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: 'var(--dz-fondo-pagina)', minHeight: '100vh' }}>
       {/* Franja superior — separador visual, coherente con el header del diseño de referencia */}
       <div className="h-1" style={{ backgroundColor: 'var(--au-header-bg)' }} aria-hidden="true" />
 
