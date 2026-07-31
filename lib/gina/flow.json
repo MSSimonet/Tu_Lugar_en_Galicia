@@ -577,12 +577,7 @@
   {
     "id": "despedida",
     "tipo": "botones",
-
-    "_nota_activacion": "TEXTO FUTURO (ETAPA 3 — envío por email): cuando el sistema de envío de Plan Estratégico por correo esté construido, reemplazá 'texto' por el valor de '_texto_futuro_email' y eliminá este bloque de campos prefijados con '_'. El texto activo se mueve a '_texto_actual_sin_email' para referencia.",
-
-    "_texto_futuro_email": "¡Perfecto, {{nombre}}! Acabamos de enviar tu Plan Estratégico personalizado a tu correo ({{email}}). Te recomendamos revisarlo con calma — ahí encontrarás, paso a paso, todo lo que necesitas para tu mudanza a Galicia. Nuestro equipo queda a tu disposición para cualquier duda, y también puedes visitar nuestra sección de ¿Tienes dudas? para más información. ¡Mucho ánimo, que este ya es un gran paso hacia Galicia!",
-
-    "texto": "¡Perfecto, {{nombre}}! En los próximos 2 días hábiles revisaremos tu caso con atención y te haremos llegar un plan a medida para tu situación. ¡Mucho ánimo, que este ya es un gran paso hacia Galicia!",
+    "texto": "¡Perfecto, {{nombre}}! Acabamos de enviar tu Plan Estratégico personalizado a tu correo ({{email}}). Te recomendamos revisarlo con calma — ahí encontrarás, paso a paso, todo lo que necesitas para tu mudanza a Galicia. Nuestro equipo queda a tu disposición para cualquier duda, y también puedes visitar nuestra sección de ¿Tienes dudas? para más información. ¡Mucho ánimo, que este ya es un gran paso hacia Galicia!",
     "opciones": [
       { "label": "Cerrar", "value": "cerrar" }
     ],

@@ -110,6 +110,9 @@ export function GinaConversation({
         const textoGina = personalizarTexto(
           data.siguientePaso.texto,
           data.sesionActualizada.nombre,
+          typeof data.sesionActualizada.respuestas['email'] === 'string'
+            ? data.sesionActualizada.respuestas['email']
+            : '',
         )
         if (textoGina.trim()) {
           await typingDelay(textoGina)
@@ -206,6 +209,9 @@ export function GinaConversation({
         const textoGina = personalizarTexto(
           siguientePaso.texto,
           sesionActualizada.nombre,
+          typeof sesionActualizada.respuestas['email'] === 'string'
+            ? sesionActualizada.respuestas['email']
+            : '',
         )
         await typingDelay(textoGina)
         setMensajes((prev) => [

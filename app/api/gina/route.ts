@@ -26,6 +26,10 @@ import { armarPlan } from '@/lib/plan/armador'
 import { generarPlanPdf } from '@/lib/plan/generarPdf'
 import { sendEmail, buildPlanEmail, buildPlanEmailFallidoAlerta } from '@/lib/admin/email'
 
+/** Mismo patrón que valida el cliente en components/gina/GinaInput.tsx. Acá es la
+ *  validación que cuenta: el cliente se puede saltear con un POST directo. */
+const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 const ratelimit =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
     ? new Ratelimit({
@@ -194,8 +198,11 @@ export async function POST(req: NextRequest) {
       guardado = false
       console.error('[gina] guardado completo falló tras 3 intentos — lead perdido, revisar logs')
     } else {
-      // Best-effort: nunca bloquea ni hace fallar la respuesta al usuario si el
-      // email no puede enviarse (mismo criterio que guardarTranscripcion abajo).
+      // Best-effort en cuanto a errores: un fallo de envío nunca hace fallar la
+      // respuesta al usuario (mismo criterio que guardarTranscripcion abajo).
+      // OJO: sí BLOQUEA — está await-eado, así que el render del PDF y la llamada
+      // a Resend (timeout 8s) corren antes de responder el último paso del
+      // cuestionario. El comentario anterior decía "nunca bloquea" y era falso.
       await enviarPlanPorEmail(leadId)
     }
   } else if (paso.accion === 'guardar_lead_parcial') {
@@ -441,6 +448,20 @@ async function enviarPlanPorEmail(leadId: string): Promise<void> {
   let lead: Awaited<ReturnType<typeof getLead>> | undefined
   try {
     lead = await getLead(leadId)
+
+    // El formato del email SOLO se validaba en el cliente (GinaInput.tsx): el
+    // servidor guarda `respuesta` cruda en flowEngine. Mientras el email era
+    // apenas un dato del lead eso era un problema de calidad; desde que este
+    // endpoint MANDA correo a esa dirección, un POST directo a /api/gina con un
+    // email arbitrario convertiría al sitio en emisor hacia cualquier
+    // destinatario, con adjunto y desde el dominio verificado de Resend.
+    // Se corta acá, antes del envío.
+    if (!EMAIL_VALIDO.test(lead.email ?? '')) {
+      console.error(
+        `[gina] Email del lead con formato inválido — no se envía el Plan. leadId: ${leadId}, ts: ${new Date().toISOString()}`,
+      )
+      return
+    }
     const planArmado = armarPlan({
       paisResidencia:        lead.paisResidencia,
       modalidad:             lead.modalidad,
@@ -459,7 +480,13 @@ async function enviarPlanPorEmail(leadId: string): Promise<void> {
       adultos:               lead.adultos,
     })
     const buffer = await generarPlanPdf(lead, planArmado)
-    const slug = lead.nombreCompleto.trim().replace(/\s+/g, '-').toLowerCase()
+    // El nombre lo escribe el usuario: se limpia a [a-z0-9-] para que no viaje
+    // ningún separador de ruta ni comilla dentro del filename del adjunto.
+    // `|| 'cliente'` cubre el nombre que queda vacío tras el filtrado (por
+    // ejemplo, escrito íntegro en un alfabeto no latino).
+    const slug =
+      lead.nombreCompleto.trim().replace(/\s+/g, '-').toLowerCase().replace(/[^a-z0-9-]/g, '') ||
+      'cliente'
 
     await sendEmail({
       to: lead.email,

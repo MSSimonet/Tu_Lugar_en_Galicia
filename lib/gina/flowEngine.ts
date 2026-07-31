@@ -194,9 +194,18 @@ function resolverRama(paso: Paso, valor: string): string {
 }
 
 /**
- * Sustituye {{nombre}} en el texto de un paso por el nombre real de la sesión.
- * Llamar antes de mostrar el texto al usuario.
+ * Sustituye {{nombre}} y {{email}} en el texto de un paso por los valores reales
+ * de la sesión. Llamar antes de mostrar el texto al usuario.
+ *
+ * {{email}} se sumó al activar el texto de despedida que confirma el envío del
+ * Plan Estratégico: sin esto el usuario habría leído "{{email}}" literal, porque
+ * la sustitución solo contemplaba el nombre.
  */
-export function personalizarTexto(texto: string, nombre: string): string {
-  return texto.replace(/\{\{nombre\}\}/g, nombre || 'amigo/a')
+export function personalizarTexto(texto: string, nombre: string, email = ''): string {
+  return texto
+    .replace(/\{\{nombre\}\}/g, nombre || 'amigo/a')
+    // El fallback va redactado para leerse bien entre paréntesis después de "a tu
+    // correo (…)", que es como lo usa el paso de despedida. En la práctica no se
+    // alcanza: el email es un paso obligatorio mucho antes de esa despedida.
+    .replace(/\{\{email\}\}/g, email || 'el que nos diste')
 }
