@@ -40,11 +40,11 @@ export function HeroPedraEOuro() {
     `}</style>
     <section
       className="relative flex flex-col"
-      // --dz-hero-bg en vez del #0B1012 hardcodeado que había: aquel era un negro
-      // frío/azulado y el de la sección siguiente (ElMarcador) es cálido (#16140F).
-      // Al quitar el degradado de la base del hero, ese salto de tono quedó a la
-      // vista en la unión (auditoría 2026-07-25, I4).
-      style={{ minHeight: '100svh', backgroundColor: 'var(--dz-hero-bg)' }}
+      // --dz-hero-inicio-* y no la familia --dz-hero-* de los Hero interiores:
+      // ésta es fija oscura en los dos temas. Acá el texto no va sobre el fondo
+      // del tema sino sobre el video + el scrim fijo oscuro, así que invertirlo
+      // en modo claro dejaba el titular casi negro sobre negro (ver globals.css).
+      style={{ minHeight: '100svh', backgroundColor: 'var(--dz-hero-inicio-bg)' }}
       aria-labelledby="hero-po-heading"
     >
       {/* ── Capa de fondo: video + degradado esfumado ── */}
@@ -86,7 +86,7 @@ export function HeroPedraEOuro() {
             height: '40px',
             background: 'rgba(0,0,0,0.45)',
             border: '1px solid rgba(255,255,255,0.25)',
-            color: 'var(--dz-hero-text)',
+            color: 'var(--dz-hero-inicio-text)',
             cursor: 'pointer',
           }}
         >
@@ -122,7 +122,7 @@ export function HeroPedraEOuro() {
               fontWeight: "var(--dz-weight-h1)",
               fontSize: "var(--dz-text-h1)",
               lineHeight: "var(--dz-leading-h1)",
-              color: "#F7F4ED",
+              color: "var(--dz-hero-inicio-text)",
               marginBottom: "1.25rem",
               textShadow: "0 2px 12px rgba(0,0,0,0.7)",
             }}
@@ -174,7 +174,7 @@ export function HeroPedraEOuro() {
               fontWeight: 400,
               fontSize: "1.05rem",
               lineHeight: 1.78,
-              color: "#e6e9e7",
+              color: "var(--dz-hero-inicio-text)",
               maxWidth: "600px",
               marginBottom: "2rem",
               textShadow: "0 2px 12px rgba(0,0,0,0.7)",
@@ -201,14 +201,14 @@ export function HeroPedraEOuro() {
             style={{
               fontFamily: "var(--font-dz-ui)",
               fontSize: "0.82rem",
-              color: "#aab2af",
+              color: "var(--dz-hero-inicio-muted)",
             }}
           >
             ¿Prefieres escribirlo?{" "}
             <Link
               href="/conocernos"
               style={{
-                color: "#aab2af",
+                color: "var(--dz-hero-inicio-muted)",
                 textDecoration: "underline",
                 textUnderlineOffset: "3px",
               }}
@@ -223,13 +223,13 @@ export function HeroPedraEOuro() {
       <div
         aria-hidden="true"
         className="absolute z-10 hidden flex-col items-center gap-2 md:flex"
-        style={{ bottom: '1.6rem', right: '5vw', color: 'rgba(243,239,228,0.75)' }}
+        style={{ bottom: '1.6rem', right: '5vw', color: 'var(--dz-hero-inicio-muted)' }}
       >
         {/* 12px, no 0.7rem (11,2px): minimo legible (auditoria responsive 2026-07-26) */}
         <span style={{ fontFamily: 'var(--font-dz-ui)', fontSize: '12px', letterSpacing: '0.08em' }}>
           SCROLL
         </span>
-        <span className="scroll-cue-line" style={{ width: '1px', height: '34px', background: 'rgba(243,239,228,0.5)' }} />
+        <span className="scroll-cue-line" style={{ width: '1px', height: '34px', background: 'var(--dz-hero-inicio-muted)' }} />
       </div>
     </section>
     </>
