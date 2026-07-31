@@ -328,6 +328,41 @@ details > dd {
   }
 }
 
+/* ── Escalón compacto del Hero interior ──────────────────────────────────────
+   El mínimo de arriba lo dicta /sobre-silvana, que es la más alta de las cinco
+   por el monograma. Como el requisito era que las cinco midieran igual, las tres
+   con menos contenido arrastraban mucho aire muerto. Medido el 2026-07-31, alto
+   impuesto menos alto natural:
+
+                    375px    768px   1512px
+     /faq            201px    108px    225px
+     /ciudades       159px     78px    195px
+     /apps-utiles    132px     52px    144px
+     /comunidad       78px     48px    104px
+     /sobre-silvana   15px      0px     12px
+
+   Esas tres primeras pasan a un segundo escalón. NO se las deja en alto natural:
+   entre ellas se diferencian hasta 69px y quedarían visiblemente desparejas al
+   navegar de una a otra. Siguen midiendo igual ENTRE SÍ, que era el espíritu de
+   la regla original; ahora hay dos alturas en vez de una.
+
+   Cada valor cubre el alto natural de la más alta de las tres en ese tramo
+   (/apps-utiles: 284, 316 y 368px) con ~12px de holgura, el mismo criterio que
+   usan los mínimos de arriba. */
+.dz-hero-compact {
+  --dz-hero-min-h: 18.5rem; /* 296px, sobre 284px de /apps-utiles */
+}
+@media (min-width: 768px) {
+  .dz-hero-compact {
+    --dz-hero-min-h: 20.5rem; /* 328px, sobre 316px */
+  }
+}
+@media (min-width: 1025px) {
+  .dz-hero-compact {
+    --dz-hero-min-h: 24rem; /* 384px, sobre 368px */
+  }
+}
+
 /* ── Divisor dorado entre secciones (components/ui/GoldDivider.tsx) ──────── */
 /* La línea mide 1px pero el brillo necesita alto propio, así que el contenedor
    no tiene altura: las dos capas se posicionan sobre él y no empujan el ritmo

@@ -18,6 +18,7 @@ export default function CiudadesIndexPage() {
           sesión 2026-07-26). Todo lo demás —caja, alto y ritmo vertical— sale
           del mismo PageHero que las otras cuatro. */}
       <PageHero
+        compact
         tone="claro"
         align="center"
         eyebrow={<Eyebrow tone="claro">Relocation especializado · Galicia</Eyebrow>}

@@ -18,6 +18,7 @@ export function FAQContenido({ categorias }: { categorias: Categoria[] }) {
       {/* Hero — bookend fijo oscuro (Pedra e Ouro). La base corta nítida: debajo
           va una <section> de color plano. */}
       <PageHero
+        compact
         eyebrow={<Eyebrow tone="hero">Preguntas frecuentes</Eyebrow>}
         title="¿Tienes dudas?"
         subtitle="Respondemos las preguntas que más nos hacen"

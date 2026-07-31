@@ -56,6 +56,11 @@ interface PageHeroProps {
    *  de /faq declaraba max-w-3xl (768px) y renderizaba 458px reales, distinto en
    *  cada página según el largo del texto (auditoría 2026-07-26, D4). */
   maxWidth?: number
+  /** Baja el alto mínimo al segundo escalón (`.dz-hero-compact` en globals.css).
+   *  Para las páginas cuyo Hero tiene poco contenido y arrastraba aire muerto:
+   *  hoy /ciudades, /apps-utiles y /faq. Las tres siguen midiendo igual entre sí;
+   *  /comunidad y /sobre-silvana se quedan en el escalón alto. */
+  compact?: boolean
 }
 
 /** Hero único de las páginas interiores. Es dueño de la caja (padding vertical,
@@ -69,6 +74,7 @@ export function PageHero({
   tone = 'oscuro',
   align = 'start',
   maxWidth = 768,
+  compact = false,
 }: PageHeroProps) {
   const tokens = TONOS[tone]
 
@@ -121,7 +127,12 @@ export function PageHero({
 
   return (
     <section
-      className="dz-hero flex flex-col justify-center px-[var(--space-6)] py-[var(--dz-hero-pad-y)]"
+      className={[
+        'dz-hero flex flex-col justify-center px-[var(--space-6)] py-[var(--dz-hero-pad-y)]',
+        compact ? 'dz-hero-compact' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       style={{ backgroundColor: tokens.background, minHeight: 'var(--dz-hero-min-h)' }}
     >
       <motion.div

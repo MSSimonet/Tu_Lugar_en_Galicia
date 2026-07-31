@@ -25,6 +25,7 @@ export function AppsUtilesPagina() {
           que conserva su sistema --au-* (decisión de marca, sesión 2026-07-26)
           y sólo toma de PageHero la caja y el ritmo vertical. */}
       <PageHero
+        compact
         tone="apps"
         maxWidth={900}
         eyebrow={
