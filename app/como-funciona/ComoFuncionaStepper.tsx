@@ -73,12 +73,55 @@ export default function ComoFuncionaStepper() {
   return (
     <>
     <style>{`
+      /* ── Imagen del paso activo ───────────────────────────────────────────
+         Escala en variable: es la perilla para achicar la imagen sin tocar la
+         animación, que la lee en los dos extremos del keyframe (si el keyframe
+         tuviera la escala escrita a mano, cambiarla acá haría saltar la imagen
+         al terminar de entrar). */
+      .stepper-image-col { --cf-img-escala: 0.9; }
+      .cf-slide {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        border-radius: 8px;
+        overflow: hidden;
+        opacity: 0;
+        transform: scale(var(--cf-img-escala)) translateX(0);
+        transform-origin: center center;
+        /* Salida: se desvanece en el lugar. Sólo la que ENTRA se desplaza; si
+           las dos se movieran, el cruce se lee como un barrido doble. */
+        transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .cf-slide-activa {
+        opacity: 1;
+        animation: cfEntraDesdeIzquierda 400ms cubic-bezier(0.4, 0, 0.2, 1) both;
+      }
+      /* Sólo transform y opacity: nada que dispare reflow. 400ms es el tope de
+         la marca para entradas de contenido — el crossfade anterior estaba en
+         850ms con easing genérico, fuera de esa regla. */
+      @keyframes cfEntraDesdeIzquierda {
+        from { opacity: 0; transform: scale(var(--cf-img-escala)) translateX(-6%); }
+        to   { opacity: 1; transform: scale(var(--cf-img-escala)) translateX(0); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .cf-slide { transition: none; }
+        .cf-slide-activa { animation: none; }
+      }
+
+      /* El tamaño del subtítulo vive acá y no en el style inline del <p> a
+         propósito: un valor inline le gana a cualquier media query, así que desde
+         el atributo no se puede escalar por breakpoint.
+         Sube de clamp(10px, 1.4vw, 13px) a la escala tipográfica del proyecto.
+         Aquel valor daba 10px en móvil y 10,75px a 768px, por debajo del mínimo
+         de 12px que el proyecto ya se había fijado para texto de interfaz. */
+      .cf-subtitle { font-size: var(--text-xs); }
+      @media (min-width: 768px) {
+        .cf-subtitle { font-size: var(--text-sm); }
+      }
       @media (max-width: 767px) {
         .stepper-image-col { display: none !important; }
-        .stepper-content-col { padding: 48px 24px 40px !important; }
-        /* En pantallas angostas, una sola línea a tamaño legible no entra —
-           se prefiere que ajuste en 2 líneas a que se corte en silencio. */
-        .cf-subtitle { white-space: normal !important; }
+        .stepper-content-col { padding: 24px 24px 20px !important; }
         /* Altura natural en mobile: con el alto fijo + overflow hidden, el paso 05
            quedaba cortado e inaccesible en 375×812 (auditoría 2026-07-19, A1.1). */
         .stepper-wrapper { height: auto !important; overflow: visible !important; }
@@ -105,7 +148,13 @@ export default function ComoFuncionaStepper() {
 
       {/* ── Columna izquierda (47%) — imagen ─────────────────────── */}
       <div className="stepper-image-col" style={{
-        width: '47%',
+        // Baja de 47% a 42%. Achicar la imagen por `scale` no habría servido para
+        // que entren los 5 pasos: es `position: absolute` dentro de esta columna,
+        // así que su escala no cambia ni un píxel del alto del layout. Lo que sí
+        // lo cambia es ESTE ancho: cada punto que cede la imagen se lo lleva la
+        // columna de texto, las descripciones envuelven en menos líneas y las 5
+        // filas se acortan.
+        width: '42%',
         flexShrink: 0,
         position: 'relative',
         background: 'var(--dz-hero-bg)',
@@ -113,23 +162,14 @@ export default function ComoFuncionaStepper() {
         alignSelf: 'stretch',
       }}>
 
-        {/* 5 imágenes apiladas con crossfade */}
+        {/* 5 imágenes apiladas. La que entra se desliza de izquierda a derecha; la
+            que sale sólo se desvanece, en el lugar. Ver .cf-slide en el <style>. */}
         {data.map((d, i) => (
           <div
             key={i}
+            className={i === active ? 'cf-slide cf-slide-activa' : 'cf-slide'}
             aria-hidden={i !== active}
-            style={{
-              position: 'absolute', inset: 0,
-              backgroundImage: `url(${d.src})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              opacity: i === active ? 1 : 0,
-              transition: 'opacity 0.85s ease',
-              transform: 'scale(0.90)',
-              transformOrigin: 'center center',
-              borderRadius: '8px',
-              overflow: 'hidden',
-            }}
+            style={{ backgroundImage: `url(${d.src})` }}
           />
         ))}
 
@@ -148,14 +188,14 @@ export default function ComoFuncionaStepper() {
            inaccesibles — el mismo defecto que ya se había corregido en mobile.
            PENDIENTE DE DECISIÓN: para poder aplicar el token hay que soltar antes el
            lock de altura de viewport de esta página (cambio de layout, no de escala). */
-        paddingTop: '32px',
-        paddingBottom: '24px',
+        paddingTop: '24px',
+        paddingBottom: '20px',
         paddingLeft: '44px',
         paddingRight: '44px',
       }}>
 
         {/* Encabezado */}
-        <div style={{ flexShrink: 0, marginBottom: '12px' }}>
+        <div style={{ flexShrink: 0, marginBottom: '8px' }}>
           {/* Eyebrow compartido (antes: <p> inline a 10px/0.15em sin píldora) — esta
               era la única página de contenido que no usaba el componente. */}
           <div style={{ marginBottom: '6px' }}>
@@ -173,24 +213,29 @@ export default function ComoFuncionaStepper() {
               lineHeight: 'var(--dz-leading-h1)',
               letterSpacing: '-0.01em',
               color: 'var(--dz-ink)',
-              margin: '1cm 0',
+              // Era '1cm 0' = 37,8px arriba y abajo, 75,6px de aire por un titular
+              // de dos líneas. 1cm es una unidad FÍSICA: mide igual en 375 que en
+              // 1024 y no escala con nada — el mismo defecto que ya se corrigió en
+              // los Hero interiores. Acá además era el mayor gasto de alto del
+              // encabezado, y ese alto es el que dejaba el paso 05 fuera de cuadro.
+              margin: 'var(--space-3) 0',
             }}
           >
             Tu hogar en Galicia{' '}
             <em style={{ fontStyle: 'italic', fontWeight: 700, color: 'var(--dz-accent-text)' }}>
               ya existe.
             </em>
-            <br />
-            Vamos a encontrarlo.
           </motion.h1>
 
+          {/* Sin `white-space: nowrap`. Lo tenía, y la frase no entra en una línea
+              en ningún ancho: desbordaba 143px a 768 y 104px a 1024, y ese desborde
+              se propagaba al documento (100px y 61px de scroll horizontal en toda
+              la página, medidos). Al subir el cuerpo habría empeorado. */}
           <p className="cf-subtitle" style={{
             fontFamily: 'var(--font-dz-ui)',
-            fontSize: 'clamp(10px, 1.4vw, 13px)',
             color: 'var(--dz-muted)',
             lineHeight: 1.6,
             margin: 0,
-            whiteSpace: 'nowrap',
           }}>
             Un acompañamiento cercano y a medida, del primer mensaje al día en que abres tu puerta.
           </p>
@@ -260,7 +305,10 @@ export default function ComoFuncionaStepper() {
                 </span>
 
                 {/* Nombre + descripción */}
-                <div style={{ flex: 1, minWidth: 0, padding: '6px 0' }}>
+                {/* 2px y no 6px de padding vertical: son 8px por fila, 40px en las
+                    cinco, y ese recorte no toca el texto — sólo el aire propio de
+                    la fila, que ya tiene el `gap` del borde superior. */}
+                <div style={{ flex: 1, minWidth: 0, padding: '2px 0' }}>
                   {/* <h3> real, no <div>: los 5 pasos son contenido de la página y antes
                       no existían en el árbol de headings (auditoría, §5). El peso sigue
                       alternando activo/inactivo — es señal de estado, no de jerarquía. */}

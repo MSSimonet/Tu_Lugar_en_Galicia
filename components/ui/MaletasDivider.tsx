@@ -50,7 +50,19 @@ export function MaletasDivider({ direction = "ltr" }: MaletasDividerProps) {
   });
 
   return (
-    <div aria-hidden="true" style={{ paddingLeft: DIVIDER_MARGEN_LATERAL, paddingRight: DIVIDER_MARGEN_LATERAL }}>
+    // El padding vertical va en este envoltorio y no en el contenedor de abajo:
+    // aquél tiene `overflow: hidden` y un alto calculado al milímetro para no
+    // recortar el ícono en los extremos del wobble, así que sumarle padding lo
+    // recortaría. Acá el aire queda por fuera del área de recorte.
+    <div
+      aria-hidden="true"
+      style={{
+        paddingLeft: DIVIDER_MARGEN_LATERAL,
+        paddingRight: DIVIDER_MARGEN_LATERAL,
+        paddingTop: 'var(--space-8)',
+        paddingBottom: 'var(--space-8)',
+      }}
+    >
       <style>{`
         .mld-estela {
           background-image: repeating-linear-gradient(to right, var(--dz-accent) 0 3px, transparent 3px 8px);
