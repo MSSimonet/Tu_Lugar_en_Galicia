@@ -200,6 +200,8 @@ Recorrido de las 17 páginas públicas (contraste medido, no estimado; claro y o
 | U01 | 🟡 Medio | Botones "Editar" del historial de Gina: **38×19px**, por debajo del mínimo de 24×24 de WCAG 2.2 AA (2.5.8). Van apilados, así que tampoco los salva la excepción de espaciado. No son inline en una frase, así que no aplica esa otra excepción. **Anotado, sin corregir por decisión del usuario (2026-07-31).** | `components/gina/GinaMessages.tsx:140` |
 | U02 | 🟢 Decisión de producto | Tarjetas de `/ciudades`: título y descripción en blanco sobre foto. Hay scrim, pero la descripción cae sobre la zona clara del agua y queda marginal. **No es medible numéricamente** (el fondo es una fotografía distinta por ciudad) — se resuelve reforzando el degradado o acotando el texto a la franja oscura. Pendiente de decisión de diseño. | `app/ciudades/page.tsx` |
 
+> ⚠️ **Antes de repetir esta auditoría, leer `DESIGN.md` §14.** De 12 hallazgos numéricos brutos, **7 eran falsos positivos del método de medición**, no defectos del sitio. Las dos causas (poda de `--color-*` por Tailwind v4, y medir el tema oscuro togglear la clase en vez de cargarla) están documentadas ahí con la forma correcta de medir. Ojo que la poda de §14.1 es un problema **distinto** del `text-[var(--color-*)]` de la auditoría de 2026-07-04 de arriba, aunque los dos vengan de Tailwind v4.
+
 ### Decisión de arquitectura — nonce de CSP vs. cacheo estático (2026-07-31)
 
 **No es un bug. Es un trade-off consciente, y conviene conocerlo antes de "optimizar" performance.**
@@ -210,7 +212,31 @@ Recorrido de las 17 páginas públicas (contraste medido, no estimado; claro y o
 
 Un nonce por request y HTML estático son **mutuamente excluyentes**. Si algún día el score pasa a ser un objetivo, la palanca es esta, y la discusión es *seguridad vs. caché* — no una optimización de paso. Alternativa a evaluar en ese caso: CSP por hashes sin nonce (permite estático, pero obliga a recalcular hashes ante cada cambio de script inline, que es lo que §14.1 ya documenta como frágil).
 
-> ⚠️ **Antes de repetir esta auditoría, leer `DESIGN.md` §14.** De 12 hallazgos numéricos brutos, **7 eran falsos positivos del método de medición**, no defectos del sitio. Las dos causas (poda de `--color-*` por Tailwind v4, y medir el tema oscuro togglear la clase en vez de cargarla) están documentadas ahí con la forma correcta de medir. Ojo que la poda de §14.1 es un problema **distinto** del `text-[var(--color-*)]` de la auditoría de 2026-07-04 de arriba, aunque los dos vengan de Tailwind v4.
+### Gate pre-merge a `main` (2026-07-31) — qué se encontró y qué se descartó
+
+Auditoría completa del repo antes de mergear `design/radical-explore` (39 commits). Herramientas: `tsc`, `eslint`, `next build`, `npm audit`, Unlighthouse sobre 19 rutas contra **build de producción**, y axe vía Lighthouse. Veredicto: mergeable tras parchear dependencias. Mergeado en `f1826a9`.
+
+**Estado sano y medido, para no volver a auditarlo desde cero:** `tsc` 0 · `eslint` 0 · `build` exit 0 · **cero `any`** en las 200 fuentes `.ts/.tsx` · cero `console.log` en `app`/`components`/`lib` · **SEO 100/100** y **Best Practices 100/100** en las 19 rutas · metadata + canonical en las 20 páginas públicas · **a11y 100/100** (tras corregir A1) · CLS 0,0000 y TBT 0 ms.
+
+**Lo que se corrigió:** las 2 vulnerabilidades críticas (`bc67141`), el `aria-hidden` con descendiente enfocable de `CiudadLayout.tsx` que bajaba las 5 páginas de ciudad a 96, la fuente única de `pasos.ts` que había quedado huérfana, y limpieza de código muerto (`c30dddf`).
+
+#### Descartes — cinco cosas que PARECÍAN hallazgos y no lo eran
+
+Vale más que la lista de hallazgos: son las trampas en las que volvería a caer quien repita esto.
+
+1. **"Sitemap appears to be missing"** (aviso de Unlighthouse) — falso. `robots.txt` apunta correctamente a `https://tulugarengalicia.com/sitemap.xml` y el escaneo corría contra `localhost`. Ambos responden 200. Config de producción correcta.
+2. **`lib/gsap/index.ts` "sin importar"** — falso. Se importa como directorio (`from "@/lib/gsap"`); el detector buscaba el nombre de archivo. **Cualquier barrido de huérfanos tiene que contemplar imports de directorio.**
+3. **32 tokens `--color-*` "rotos en runtime"** — falso. Tailwind v4 los poda (ver `DESIGN.md` §14.1), pero **ningún componente los consume**: son declaraciones muertas, no rotura. Son 31 defaults de shadcn más `--color-laton-invertido`.
+4. **Los 4 checkboxes de `/comunidad` bajo 24×24** — falso. Se midió el `<input>` (16×16) en vez del `<label>`, que es el objetivo real de click: 672×24 los tres de actividad y 24×24 el de RGPD, que ya había arreglado `0f01b8f`. **Para WCAG 2.5.8 se mide el objetivo, no el control.**
+5. **Las animaciones infinitas como causa del score 77** — falso, y se descartó midiendo: se les agregó pausa fuera de viewport y el score no se movió (77 → 77). Además **5 de las 6 ya respetaban `prefers-reduced-motion`**. La causa real es el nonce (ver subsección anterior).
+
+Sumados a los 7 falsos positivos de la auditoría de diseño/UX del mismo día: **la mayoría de lo que reporta una herramienta automática sobre este repo no es un defecto.** Verificar antes de tocar.
+
+#### Una regresión de copy que casi se publica
+
+Al reconectar `lib/como-funciona/pasos.ts` como fuente única se descubrió que las dos copias **ya habían divergido** en el paso 01: `pasos.ts` decía *"te devolvemos un primer diagnóstico"* y el Stepper *"un Plan Estratégico"*. El Stepper era lo publicado, y su texto es el correcto — corresponde al envío automático del Plan Estratégico (`16d3657`). **Un reconectado mecánico habría revertido copy en producción sin que nadie lo notara.** Se conservó el texto del Stepper y se actualizó `pasos.ts`.
+
+Moraleja para cualquier deduplicación futura: cuando dos copias de un dato llevan tiempo separadas, **primero comparar cuál está viva**, después unificar.
 
 ---
 
