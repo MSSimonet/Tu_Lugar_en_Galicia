@@ -307,17 +307,17 @@ M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, perform
 | `SILVANA_EMAIL` | Destino mails internos | ✅ Configurada | — | ✅ |
 | `CALCOM_WEBHOOK_SECRET` | Firma HMAC webhook Cal.com | ✅ Configurada (creada hace ~5 días) | — | ✅ |
 | `CRON_SECRET` | Auth cron Vercel | ✅ Configurada | — | ✅ |
-| `UPSTASH_REDIS_REST_URL` | Rate limiting Gina | ✅ Configurada (sesión 2026-07-02) | — | ⚠️ No está en example (A11) |
-| `UPSTASH_REDIS_REST_TOKEN` | Rate limiting Gina | ✅ Configurada (sesión 2026-07-02) | — | ⚠️ No está en example (A11) |
+| `UPSTASH_REDIS_REST_URL` | Rate limiting — 7 endpoints, fail-closed | ✅ Configurada (sesión 2026-07-02) | — | ✅ (añadida al example 2026-08-01, A11 resuelto) |
+| `UPSTASH_REDIS_REST_TOKEN` | Rate limiting — 7 endpoints, fail-closed | ✅ Configurada (sesión 2026-07-02) | — | ✅ (añadida al example 2026-08-01, A11 resuelto) |
 | `NEXT_PUBLIC_SITE_URL` | URL pública del sitio | ❌ No configurada | — | ✅ |
 | `AEMET_API_KEY` | Clima AEMET | ✅ Configurada | — | ✅ |
 | `SHEET_MARCADOR_ID` | Google Sheets El Marcador | ⚠️ Pendiente Silvana | — | ✅ |
 | `NEXT_PUBLIC_BEHOLD_WIDGET_ID` | Feed Instagram | ❌ Pendiente Silvana | — | — |
-| `CALCOM_API_KEY` | Cal.com gestión slots (Pieza 7) | ❌ No configurada | — | ✅ (marcada como obsoleta en example) |
+| `CALCOM_API_KEY` | Cal.com gestión slots (Pieza 7) — nunca implementada | ❌ No configurada | — | ❌ Eliminada de `.env.local.example` (2026-08-01, A12 resuelto) |
 | `DATABASE_URL` | BD (Fase 5 — no usar aún) | — | — | ✅ |
 | `STRIPE_SECRET_KEY` | Pagos (Fase 6) | — | — | ✅ |
 
-> ⚠️ `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` deben añadirse a `.env.local.example` (auditado A11 — pendiente técnico menor).
+> ✅ `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` ya están en `.env.local.example` (A11 resuelto el 2026-08-01). Ojo con la descripción vieja "rate limiting Gina": son **7** los endpoints que dependen de ellas y todos son fail-closed, así que sin estas dos variables el cuestionario de Gina y el formulario de contacto responden 503.
 
 ---
 
