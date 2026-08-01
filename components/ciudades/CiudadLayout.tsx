@@ -84,8 +84,14 @@ export function CiudadLayout({
         style={{ height: 'clamp(500px, 65vh, 700px)' }}
         aria-label={`Hero de ${nombre}`}
       >
-        {/* Fondo: video con fallback a imagen */}
-        <div className="absolute inset-0" aria-hidden="true">
+        {/* Fondo: video con fallback a imagen.
+            El contenedor NO lleva aria-hidden: axe marcaba aria-hidden-focus
+            porque un subárbol oculto de la accesibilidad contenía un elemento
+            enfocable (el <video>), y eso era lo único que bajaba estas 5 páginas
+            de 100 a 96 en Lighthouse. No hace falta: la <Image> ya es decorativa
+            (alt=""), el overlay no tiene contenido, y el <video> trae su propio
+            aria-hidden más tabIndex={-1}. */}
+        <div className="absolute inset-0">
           <Image
             src={posterSrc}
             alt=""
@@ -105,6 +111,7 @@ export function CiudadLayout({
             className="absolute inset-0 w-full h-full object-cover"
             style={{ objectPosition }}
             aria-hidden="true"
+            tabIndex={-1}
           >
             <source src={videoSrc} type="video/mp4" />
           </video>

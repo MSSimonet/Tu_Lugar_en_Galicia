@@ -774,6 +774,18 @@ details > dd {
   .au-emerg-pulse { animation: none; }
 }
 
+/* Skeleton de las cifras dinámicas de ElMarcador mientras cargan. */
+@keyframes mkdSkeletonPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+.mkd-skeleton-pulse {
+  animation: mkdSkeletonPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mkd-skeleton-pulse { animation: none; }
+}
+
 /* Estados hover/open del acordeón FAQAccordionPedraEOuro */
 .po-faq-details[open] {
   border-color: color-mix(in srgb, var(--po-ouro) 40%, transparent) !important;

@@ -4,41 +4,14 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'motion/react'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { fadeUp } from '@/lib/motion/variants'
+import { PASOS_COMO_FUNCIONA } from '@/lib/como-funciona/pasos'
 
 const INTERVAL_MS = 4200
 
-const data = [
-  {
-    num: '01', dur: '48 hs hábiles',
-    title: 'Cuéntanos tu caso',
-    desc: 'Nos cuentas tu situación y te devolvemos un Plan Estratégico sin compromiso.',
-    src: '/images/ciudades/tag_coruna.jpg',
-  },
-  {
-    num: '02', dur: '45–60 min',
-    title: 'Agendamos una videollamada',
-    desc: 'Agendamos una videollamada con nuestro equipo que te escuchará y te explicará el proceso completo. Sin letra chica.',
-    src: '/images/ciudades/tag_santiago.jpg',
-  },
-  {
-    num: '03', dur: '1–3 semanas',
-    title: 'Buscamos activamente',
-    desc: 'Recorremos el mercado completo y te presentamos opciones reales y filtradas.',
-    src: '/images/ciudades/tag_pontevedra.jpg',
-  },
-  {
-    num: '04', dur: 'A distancia',
-    title: 'Negociamos y cerramos',
-    desc: 'Negociamos con el propietario y gestionamos la firma desde donde estés.',
-    src: '/images/ciudades/tag_lugo.jpg',
-  },
-  {
-    num: '05', dur: 'Día de llegada',
-    title: 'Llegas y abres tu puerta',
-    desc: 'Nuestro equipo te espera en Galicia y te acompaña en tu primer día.',
-    src: '/images/ciudades/tag_coruna2.jpg',
-  },
-]
+// Los 5 pasos NO se declaran acá: vienen de lib/como-funciona/pasos.ts, que es la
+// fuente única. Este archivo tenía su propia copia y las dos ya habían divergido en
+// el paso 01 (auditoría pre-merge 2026-07-31).
+const data = PASOS_COMO_FUNCIONA
 
 export default function ComoFuncionaStepper() {
   const [selected, setSelected] = useState(0)
@@ -159,7 +132,7 @@ export default function ComoFuncionaStepper() {
             key={i}
             className={i === active ? 'cf-slide cf-slide-activa' : 'cf-slide'}
             aria-hidden={i !== active}
-            style={{ backgroundImage: `url(${d.src})` }}
+            style={{ backgroundImage: `url(${d.imagen})` }}
           />
         ))}
 
@@ -298,7 +271,7 @@ export default function ComoFuncionaStepper() {
                     transition: 'color .3s ease',
                     margin: 0,
                   }}>
-                    {d.title}
+                    {d.titulo}
                   </h3>
                   <div style={{
                     fontFamily: 'var(--font-dz-ui)',
@@ -308,7 +281,7 @@ export default function ComoFuncionaStepper() {
                     marginTop: '3px',
                     transition: 'color .3s ease',
                   }}>
-                    {d.desc}
+                    {d.descripcion}
                   </div>
                 </div>
 

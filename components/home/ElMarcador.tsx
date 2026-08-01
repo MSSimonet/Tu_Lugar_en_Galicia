@@ -249,13 +249,17 @@ export function ElMarcador() {
               >
                 {cifra.tipo === 'dinamica' && loading ? (
                   <div
+                    // La animación vive en .mkd-skeleton-pulse (globals.css) y no
+                    // inline: era la única `infinite` del proyecto sin guarda de
+                    // prefers-reduced-motion, y un valor inline no se puede anular
+                    // desde una media query (auditoría pre-merge 2026-07-31).
+                    className="mkd-skeleton-pulse"
                     style={{
                       margin: '0 auto 8px',
                       height: '32px',
                       width: '64px',
                       borderRadius: '4px',
                       background: 'rgba(255,255,255,0.22)',
-                      animation: 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite',
                     }}
                     aria-hidden="true"
                   />

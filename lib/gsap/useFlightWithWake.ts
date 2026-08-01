@@ -173,8 +173,27 @@ export function useFlightWithWake(
       });
       observer.observe(container);
 
+      // Pausa fuera de viewport. Estas animaciones son `repeat: -1` y estos
+      // divisores viven en casi todas las páginas, así que sin esto el avión
+      // sigue recorriendo su ciclo —y repintando cada frame— aunque esté a
+      // varias pantallas de distancia. Auditoría pre-merge 2026-07-31.
+      const visibilidad = new IntersectionObserver(
+        ([entrada]) => {
+          if (entrada.isIntersecting) {
+            ciclo?.resume();
+            wobble.resume();
+          } else {
+            ciclo?.pause();
+            wobble.pause();
+          }
+        },
+        { rootMargin: "100px" }
+      );
+      visibilidad.observe(container);
+
       return () => {
         observer.disconnect();
+        visibilidad.disconnect();
         ciclo?.kill();
         wobble.kill();
       };

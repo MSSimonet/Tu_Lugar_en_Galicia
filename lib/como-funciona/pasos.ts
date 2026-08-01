@@ -1,7 +1,16 @@
-// Fuente única de los 5 pasos reales del proceso — antes vivían duplicados con distinta
-// redacción en app/como-funciona/ComoFuncionaStepper.tsx (versión completa) y
+// Fuente única de los 5 pasos reales del proceso.
+//
+// Nació para matar una duplicación entre ComoFuncionaStepper.tsx (versión completa) y
 // components/home/ComoFuncionaTeaser.tsx (versión resumida, que además omitía por completo
-// el paso de la videollamada). Ambos consumen esta misma lista ahora.
+// el paso de la videollamada). El Teaser se eliminó después, al unificar Home, así que hoy
+// el único consumidor es el Stepper.
+//
+// Reconectado el 2026-07-31 tras la auditoría pre-merge: el archivo había quedado huérfano
+// y el Stepper tenía otra vez su propio array, con lo cual la duplicación había vuelto. Al
+// reconectarlo se detectó que las dos copias YA habían divergido en el paso 01 ("primer
+// diagnóstico" acá contra "Plan Estratégico" en el Stepper). Se conservó el texto del
+// Stepper, que es el que estaba publicado y el que corresponde al envío automático del Plan
+// Estratégico (commit 16d3657).
 
 export interface PasoComoFunciona {
   num: string;
@@ -16,7 +25,7 @@ export const PASOS_COMO_FUNCIONA: PasoComoFunciona[] = [
     num: "01",
     titulo: "Cuéntanos tu caso",
     duracion: "48 hs hábiles",
-    descripcion: "Nos cuentas tu situación y te devolvemos un primer diagnóstico sin compromiso.",
+    descripcion: "Nos cuentas tu situación y te devolvemos un Plan Estratégico sin compromiso.",
     imagen: "/images/ciudades/tag_coruna.jpg",
   },
   {

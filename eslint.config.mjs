@@ -15,6 +15,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Tooling de agentes, no código del proyecto: lo genera el setup de gstack y
+    // ya está gitignoreado, pero eslint igual lo recorría y aportaba los 149
+    // warnings del repo — ninguno en app/, components/ ni lib/ (auditoría
+    // pre-merge 2026-07-31).
+    ".agents/**",
+    ".claude/**",
   ]),
   ...storybook.configs["flat/recommended"]
 ]);
