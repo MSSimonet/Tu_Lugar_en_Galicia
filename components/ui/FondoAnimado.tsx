@@ -5,6 +5,15 @@ import Image from "next/image";
 import { useReducedMotion } from "motion/react";
 import { gsap, useGSAP, MotionPathPlugin } from "@/lib/gsap";
 import { construirTrayectoria, type Banda, type TrayectoriaKind } from "@/lib/gsap/trayectorias";
+import {
+  medirTextos,
+  filtrarPorFranja,
+  desplazamientoLibre,
+  distanciaAlTexto,
+  MARGEN_ESQUIVA,
+  MARGEN_LIBRE,
+  type RectTexto,
+} from "@/lib/gsap/esquiva";
 
 // Capa de fondo animada. Sustituye a los divisores lineales (AnimatedDivider,
 // BrujulaDivider, GenteDivider, QSomosDivider), que eran bloques insertados
@@ -32,6 +41,41 @@ const VELOCIDAD_PX_S = 46;
 const TRAMOS_OPACIDAD = [0.55, 0.32, 0.14];
 const ESTELA_PUNTOS = 34;
 const ESTELA_SEPARACION = 0.0021;
+
+// ── Esquiva de texto ────────────────────────────────────────────────────────
+
+/** Cuántos píxeles por delante mira el avión. Es lo que convierte la esquiva en
+ *  una maniobra y no en un rebote: cuando el texto entra en el margen, el avión
+ *  ya viene apartándose desde antes. */
+const VISTA_ADELANTE_PX = 130;
+
+/** Constante de tiempo del suavizado exponencial del desplazamiento, en
+ *  segundos. Con 0,15 la maniobra completa ~95% en 450ms, dentro de la ventana
+ *  de 300–600ms pedida, y como es exponencial no tiene principio ni fin brusco:
+ *  la velocidad angular nace y muere en cero sola. */
+const TAU_ESQUIVA = 0.15;
+
+/** Tope de giro por frame, en grados. */
+const GIRO_MAX_FRAME = 45;
+
+/** Inclinación máxima que se le suma al morro al apartarse, en grados, y la
+ *  velocidad de desplazamiento (px/s) que la satura. Sin esto el avión se
+ *  desplaza de costado como un cangrejo: se mueve en vertical sin mirar a dónde
+ *  va. */
+const BANQUEO_MAX = 20;
+const BANQUEO_SATURA = 140;
+
+/** Sobre cuántos puntos de estela se desvanece el desplazamiento. La estela
+ *  arrastra la maniobra y vuelve a la curva base por detrás. */
+const ESTELA_ARRASTRE = 18;
+
+// ── Piruetas ────────────────────────────────────────────────────────────────
+
+/** Cada cuánto tira el dado cada avión, y con qué probabilidad sale. */
+const PIRUETA_INTERVALO_MS = 2000;
+const PIRUETA_PROBABILIDAD = 0.04;
+const PIRUETA_MS_MIN = 400;
+const PIRUETA_MS_MAX = 700;
 
 // `rotBase`: corrección de orientación del PNG. El ángulo que devuelve
 // MotionPathPlugin toma 0° = apuntando a la DERECHA, así que un sprite dibujado
@@ -131,6 +175,23 @@ export function FondoAnimado({
       // movimiento, y no dependía del scroll sino del layout.
       let progreso = 0;
       let arrancado = false;
+
+      // Estado de esquiva y pirueta. Vive acá y no dentro de construir() por el
+      // mismo motivo que `progreso`: la capa se reconstruye cada vez que la
+      // página cambia de alto, y si el desplazamiento se reiniciara a 0 el avión
+      // pegaría un salto lateral en mitad de una maniobra.
+      //
+      // Cada avión tiene su propio juego de estas variables — nadie lee ni
+      // escribe el estado de otro. La única cosa compartida en toda la feature
+      // es la medición del DOM, que es un dato, no una decisión.
+      let textos: RectTexto[] = [];
+      let desvio = 0;
+      let desvioPrev = 0;
+      let rotActual = Number.NaN; // NaN = primer frame: adopta el ángulo real sin girar
+      let tPrev = 0;
+      let tSorteo = 0;
+      let piruetaIni = 0;
+      let piruetaFin = 0;
       function soltar() {
         arrancado = true;
         tween?.play();
@@ -154,6 +215,22 @@ export function FondoAnimado({
         const largo = (rawPath as unknown as { totalLength?: number }).totalLength ?? 0;
         const duracion = largo > 0 ? largo / VELOCIDAD_PX_S : 60;
 
+        // Vista adelantada expresada en unidades de progreso de ESTA curva: los
+        // 130px son de pantalla, y cada trayectoria tiene un largo distinto.
+        const pasoVista = largo > 0 ? VISTA_ADELANTE_PX / largo : 0;
+
+        // Texto que puede llegar a molestar a este avión. La medición del DOM
+        // está cacheada por tamaño de capa y la comparten los 14; acá cada uno
+        // se queda sólo con su franja, y con eso la prueba por frame pasa de
+        // cientos de rectángulos a unos pocos.
+        const franja = banda
+          ? {
+              min: (h / banda.total) * banda.indice - MARGEN_LIBRE,
+              max: (h / banda.total) * (banda.indice + 1) + MARGEN_LIBRE,
+            }
+          : { min: 0, max: h };
+        textos = filtrarPorFranja(medirTextos(capa!), franja.min, franja.max);
+
         // `r` avanza siempre 0→1; el sentido y el desfase se aplican al
         // convertirlo en posición sobre la curva. Así invertir la marcha no
         // requiere otra curva ni otro tween.
@@ -175,12 +252,112 @@ export function FondoAnimado({
             y: number;
             angle: number;
           };
-          gsap.set(icon, {
-            x: pos.x - ancho / 2,
-            y: pos.y - cfg.alto / 2,
+          // ── Reloj propio ──────────────────────────────────────────────────
+          // El suavizado y las piruetas se miden en tiempo real y no en frames:
+          // así una pestaña a 30fps hace la misma maniobra en los mismos
+          // milisegundos que una a 120.
+          const ahora = performance.now();
+          const dt = tPrev === 0 ? 1 / 60 : Math.min(0.05, (ahora - tPrev) / 1000);
+          tPrev = ahora;
+
+          // ── Esquiva ───────────────────────────────────────────────────────
+          // Se evalúa el punto donde el avión VA A ESTAR, no donde está, y se le
+          // suma el desplazamiento vigente: sin eso el avión pelea contra su
+          // propia maniobra y oscila alrededor del borde del texto.
+          if (textos.length > 0) {
+            // Se muestrea el TRAMO (acá, mitad de camino, y el punto adelantado),
+            // no sólo el punto adelantado. Con un único punto por delante el
+            // avión empezaba a apartarse a tiempo pero, justo cuando llegaba al
+            // texto, la mirada ya estaba del otro lado y veía pista libre: el
+            // desplazamiento volvía a cero y se metía encima del texto
+            // exactamente en el peor momento. Medido: 11% de las muestras caían
+            // dentro de un bloque de texto. Tomando el máximo del tramo, la
+            // maniobra se sostiene mientras dura el obstáculo.
+            let salida = desplazamientoLibre(pos.x, pos.y + desvio, textos, MARGEN_ESQUIVA);
+            for (let k = 1; k <= 2; k++) {
+              const p = MotionPathPlugin.getPositionOnPath(
+                rawPath,
+                posEn(sentido * pasoVista * (k / 2)),
+                false
+              );
+              const s = desplazamientoLibre(p.x, p.y + desvio, textos, MARGEN_ESQUIVA);
+              if (Math.abs(s) > Math.abs(salida)) salida = s;
+            }
+            let objetivo = desvio + salida;
+            // Nunca fuera de la capa: antes pasar cerca del texto que salirse de
+            // cuadro y dejar la banda vacía.
+            const techo = -(pos.y - cfg.alto / 2);
+            const piso = h - cfg.alto / 2 - pos.y;
+            if (objetivo < techo) objetivo = techo;
+            if (objetivo > piso) objetivo = piso;
+            desvio += (objetivo - desvio) * (1 - Math.exp(-dt / TAU_ESQUIVA));
+          } else if (desvio !== 0) {
+            desvio += (0 - desvio) * (1 - Math.exp(-dt / TAU_ESQUIVA));
+          }
+
+          const vDesvio = (desvio - desvioPrev) / dt;
+          desvioPrev = desvio;
+
+          // ── Pirueta ───────────────────────────────────────────────────────
+          if (ahora - tSorteo >= PIRUETA_INTERVALO_MS) {
+            tSorteo = ahora;
+            const enManiobra = Math.abs(desvio) > 1 || Math.abs(vDesvio) > 8;
+            if (
+              piruetaFin === 0 &&
+              !enManiobra &&
+              distanciaAlTexto(pos.x, pos.y + desvio, textos, MARGEN_LIBRE) >= MARGEN_LIBRE &&
+              Math.random() < PIRUETA_PROBABILIDAD
+            ) {
+              piruetaIni = ahora;
+              piruetaFin = ahora + PIRUETA_MS_MIN + Math.random() * (PIRUETA_MS_MAX - PIRUETA_MS_MIN);
+            }
+          }
+
+          let giroBarril = 0;
+          if (piruetaFin !== 0) {
+            const t = (ahora - piruetaIni) / (piruetaFin - piruetaIni);
+            if (t >= 1) piruetaFin = 0;
+            // easeInOutQuad sobre una vuelta entera: nace y muere quieta, y el
+            // pico de velocidad angular queda en ~24°/frame a 60fps con la
+            // pirueta más corta (400ms) — por debajo del tope de 45.
+            else giroBarril = 360 * (t < 0.5 ? 2 * t * t : 1 - 2 * (1 - t) * (1 - t));
+          }
+
+          // ── Rumbo ─────────────────────────────────────────────────────────
+          let rot = 0;
+          if (cfg.rota) {
+            // Sin banqueo el avión se aparta de costado, como un cangrejo: se
+            // mueve en vertical sin mirar hacia dónde va.
+            let banqueo = (vDesvio / BANQUEO_SATURA) * BANQUEO_MAX;
+            if (banqueo > BANQUEO_MAX) banqueo = BANQUEO_MAX;
+            else if (banqueo < -BANQUEO_MAX) banqueo = -BANQUEO_MAX;
+            if (sentido === -1) banqueo = -banqueo;
+
             // Yendo al revés el morro tiene que apuntar al revés, o el avión
             // vuela de cola.
-            rotation: cfg.rota ? pos.angle + cfg.rotBase + (sentido === -1 ? 180 : 0) : 0,
+            const objetivoRot = pos.angle + cfg.rotBase + (sentido === -1 ? 180 : 0) + banqueo;
+
+            if (Number.isNaN(rotActual)) {
+              rotActual = objetivoRot;
+            } else {
+              // Diferencia por el arco corto y con tope por frame: ni el cierre
+              // del recorrido ni una esquiva pueden producir un latigazo.
+              let d = ((objetivoRot - rotActual + 540) % 360) - 180;
+              if (d > GIRO_MAX_FRAME) d = GIRO_MAX_FRAME;
+              else if (d < -GIRO_MAX_FRAME) d = -GIRO_MAX_FRAME;
+              rotActual += d;
+            }
+            rot = rotActual;
+          }
+
+          gsap.set(icon, {
+            x: pos.x - ancho / 2,
+            y: pos.y + desvio - cfg.alto / 2,
+            rotation: rot,
+            // Siempre presente, aunque valga 0: así el transform es una matriz
+            // 3D de punta a punta y el navegador no cambia de tipo de matriz al
+            // arrancar una pirueta, que es de donde saldría un parpadeo.
+            rotationY: giroBarril,
           });
           // Progreso hacia atrás desde el ícono, con wrap circular: la estela
           // sigue la curva real. Va DETRÁS, así que con sentido -1 "detrás" es
@@ -189,7 +366,14 @@ export function FondoAnimado({
           for (let i = 0; i < ESTELA_PUNTOS; i++) {
             const q = posEn(-sentido * (i + 1) * ESTELA_SEPARACION);
             const pp = MotionPathPlugin.getPositionOnPath(rawPath, q, false);
-            const coord = `${pp.x.toFixed(1)} ${pp.y.toFixed(1)}`;
+            // La estela arrastra la maniobra: el desplazamiento se desvanece
+            // hacia atrás en vez de aplicarse entero, así la cola vuelve sola a
+            // la curva base. Es una aproximación deliberada — lo exacto sería
+            // guardar el histórico de desplazamientos y desfasarlo en el tiempo,
+            // pero la estela abarca ~4,6s de vuelo y ese buffer, por 14 aviones,
+            // cuesta más de lo que mejora en una línea punteada de fondo.
+            const arrastre = i < ESTELA_ARRASTRE ? desvio * (1 - i / ESTELA_ARRASTRE) : 0;
+            const coord = `${pp.x.toFixed(1)} ${(pp.y + arrastre).toFixed(1)}`;
             const tramo = Math.min(TRAMOS_OPACIDAD.length - 1, Math.floor(i / porTramo));
             // El punto de frontera se repite en el tramo anterior para que la
             // línea no muestre un hueco al cambiar de opacidad.
