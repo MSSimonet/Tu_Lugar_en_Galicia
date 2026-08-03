@@ -108,6 +108,10 @@ const MAX_INTERVALOS = 64;
 const bufA = new Float64Array(MAX_INTERVALOS);
 const bufB = new Float64Array(MAX_INTERVALOS);
 
+/** Borde por el que se sale de un bloque de texto: -1 arriba, +1 abajo, 0 el más
+ *  cercano. */
+export type LadoSalida = -1 | 0 | 1;
+
 /**
  * Desplazamiento vertical mínimo que saca al punto (x, y) de todo texto inflado
  * por `margen`. Devuelve 0 si el punto ya está libre.
@@ -115,12 +119,18 @@ const bufB = new Float64Array(MAX_INTERVALOS);
  * Los intervalos bloqueados se FUSIONAN antes de elegir salida. Sin fusionar,
  * con dos párrafos apilados el avión salía del primero y entraba en el segundo,
  * y el resultado era un zigzag entre los dos en vez de una esquiva.
+ *
+ * `preferido` fuerza el borde de salida. Con 0 sale por el más cercano, y ese
+ * borde cambia solo con que el avión pase la mitad del bloque: la salida da un
+ * volantazo de un extremo al otro y el avión oscila. Quien llama elige el lado
+ * UNA vez y lo sostiene mientras dure el obstáculo.
  */
 export function desplazamientoLibre(
   x: number,
   y: number,
   rects: readonly RectTexto[],
-  margen: number
+  margen: number,
+  preferido: LadoSalida = 0
 ): number {
   // 1. Intervalos verticales bloqueados en esta x.
   let n = 0;
@@ -164,7 +174,11 @@ export function desplazamientoLibre(
     const arriba = bufA[i];
     const abajo = bufB[i];
     if (y > arriba && y < abajo) {
-      // Salida por el borde más cercano.
+      // Los intervalos ya vienen fusionados y disjuntos, así que salir por
+      // cualquiera de los dos bordes cae en hueco libre: forzar el lado no puede
+      // dejar al avión dentro de otro bloque.
+      if (preferido < 0) return arriba - y;
+      if (preferido > 0) return abajo - y;
       return y - arriba <= abajo - y ? arriba - y : abajo - y;
     }
   }

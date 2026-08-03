@@ -133,6 +133,156 @@ function ocho(c: Caja): string {
   return trazar(c, 240, (_t, ang) => [Math.sin(ang), Math.sin(ang) * Math.cos(ang)]);
 }
 
+// ── Rizos (los lazos del dibujo) ────────────────────────────────────────────
+//
+// El lazo que se ve en la estela es del RECORRIDO, no del sprite: el avión lo
+// vuela y por eso queda dibujado. La pirueta de FondoAnimado.tsx es otra cosa
+// —el avión gira sobre su propio eje sin moverse del sitio— y no deja rastro.
+//
+// POR QUÉ VAN DENTRO DE `banda` Y NO MEZCLANDO `espiral`/`ocho`/`rulos`. Esos
+// generadores dibujan figuras centradas que barren el alto ENTERO de la capa, y
+// eso es exactamente la geometría que hacía que la cobertura dependiera del
+// timing (0 de 6 aviones en cuadro en la sección del marcador; ver `banda`).
+// Metiéndolos en la flota se recupera el dibujo pero se pierde la garantía.
+// El rizo da el mismo lazo sin tocar el confinamiento por franja.
+//
+// CÓMO SE INSERTA. El rizo es un círculo tangente a la curva, y se intercala en
+// la polilínea con el punto base CONGELADO: entra y sale con exactamente la
+// misma tangente, así que no hay cúspide ni cambio brusco de rumbo. Como
+// MotionPathPlugin reparametriza por longitud de arco, el avión lo recorre a la
+// misma velocidad que el resto del vuelo — un rizo de 36px de radio le lleva
+// unos 5s a 46px/s, que es un lazo lento, no un latigazo.
+
+/** Radio del rizo. El tope ABSOLUTO hace falta porque el alto de banda sale del
+ *  alto de la PÁGINA: sin él, en una página larga el rizo salía más ancho que el
+ *  viewport de un móvil. Las dos fracciones lo acotan además contra la banda y
+ *  contra el largo del cruce, y el mínimo descarta el rizo que ya no se leería
+ *  como lazo. */
+const RIZO_RADIO_MAX = 40;
+const RIZO_RADIO_MIN = 14;
+const RIZO_FRACCION_BANDA = 0.14;
+const RIZO_FRACCION_CRUCE = 0.05;
+
+/** Muestras por vuelta. Con radio ≤ 40px el error de cuerda queda en 0,15px. */
+const RIZO_PASOS = 36;
+
+/** Muestras por arco del cruce. */
+const BANDA_PASOS = 96;
+
+/** Rizo a insertar: dónde (t del arco) y hacia dónde se abre en coordenadas de
+ *  PANTALLA (+1 abajo). */
+interface Rizo {
+  t: number;
+  dir: 1 | -1;
+}
+
+function bez(t: number, a: number, b: number, c: number, d: number): number {
+  const u = 1 - t;
+  return u * u * u * a + 3 * u * u * t * b + 3 * u * t * t * c + t * t * t * d;
+}
+
+function bezDer(t: number, a: number, b: number, c: number, d: number): number {
+  const u = 1 - t;
+  return 3 * u * u * (b - a) + 6 * u * t * (c - b) + 3 * t * t * (d - c);
+}
+
+/** Radio que entra en la banda abriendo el rizo hacia `hacia`.
+ *
+ *  El círculo queda centrado a |tx|·radio del anclaje en la dirección elegida,
+ *  así que llega a (1+|tx|)·radio de ese lado y asoma (1−|tx|)·radio del
+ *  contrario. Hay que acotar contra los DOS: en móvil —banda alta y cruce corto,
+ *  o sea pendientes fuertes— mirando solo el lado propio el rizo se salía por
+ *  arriba al abrirse hacia abajo.
+ *
+ *  Y hay que hacerlo con la tangente y no con un margen fijo: en el vértice del
+ *  arco la curva base ya está pegada al borde de la banda (el combado llega al
+ *  92% de la media banda), pero ahí la tangente es horizontal, |tx|→1 y el rizo
+ *  no asoma NADA por el lado corto. Un margen fijo descartaba justo los rizos
+ *  del vértice, que son la mitad de los que se piden. */
+function radioQueEntra(
+  py: number,
+  absTx: number,
+  yMin: number,
+  yMax: number,
+  hacia: 1 | -1
+): number {
+  const propio = hacia === 1 ? yMax - py : py - yMin;
+  const contrario = hacia === 1 ? py - yMin : yMax - py;
+  const porPropio = propio / (1 + absTx);
+  const porContrario = absTx >= 1 ? Infinity : contrario / (1 - absTx);
+  return Math.min(porPropio, porContrario);
+}
+
+function insertarRizo(
+  puntos: [number, number][],
+  px: number,
+  py: number,
+  tx: number,
+  ty: number,
+  dir: 1 | -1,
+  radioMax: number,
+  yMin: number,
+  yMax: number
+): void {
+  // Si por el lado pedido no entra se prueba el otro, y si tampoco se saltea: un
+  // rizo aplastado contra el borde de la banda se lee como un error, no como un
+  // lazo.
+  const absTx = Math.abs(tx);
+  let hacia = dir;
+  let radio = Math.min(radioMax, radioQueEntra(py, absTx, yMin, yMax, hacia));
+  if (radio < RIZO_RADIO_MIN) {
+    hacia = hacia === 1 ? -1 : 1;
+    radio = Math.min(radioMax, radioQueEntra(py, absTx, yMin, yMax, hacia));
+    if (radio < RIZO_RADIO_MIN) return;
+  }
+
+  // Normal a izquierda de la tangente: (-ty, tx). Su componente vertical tiene
+  // el signo de tx, así que para abrir el rizo hacia el mismo lado de la PANTALLA
+  // en la ida y en la vuelta hay que corregir por el sentido de marcha.
+  const lado = tx >= 0 ? hacia : -hacia;
+  const nx = -ty * lado;
+  const ny = tx * lado;
+  // Se omiten k=0 y k=RIZO_PASOS: los dos caen sobre el anclaje, que ya está en
+  // la polilínea y vuelve a estarla en el punto siguiente del arco.
+  for (let k = 1; k < RIZO_PASOS; k++) {
+    const ang = (Math.PI * 2 * k) / RIZO_PASOS;
+    const s = Math.sin(ang);
+    const c = 1 - Math.cos(ang);
+    puntos.push([px + (tx * s + nx * c) * radio, py + (ty * s + ny * c) * radio]);
+  }
+}
+
+/** Vuelca un arco cúbico a la polilínea insertando un rizo en cada `t` pedido.
+ *  `desde` permite arrancar en el paso 1 y no repetir el punto de unión entre la
+ *  ida y la vuelta. */
+function arcoConRizos(
+  puntos: [number, number][],
+  cx: readonly [number, number, number, number],
+  cy: readonly [number, number, number, number],
+  rizos: readonly Rizo[],
+  radioMax: number,
+  yMin: number,
+  yMax: number,
+  desde: number
+): void {
+  let sig = 0;
+  for (let i = desde; i <= BANDA_PASOS; i++) {
+    const t = i / BANDA_PASOS;
+    const x = bez(t, cx[0], cx[1], cx[2], cx[3]);
+    const y = bez(t, cy[0], cy[1], cy[2], cy[3]);
+    puntos.push([x, y]);
+    while (sig < rizos.length && rizos[sig].t <= t) {
+      const dx = bezDer(t, cx[0], cx[1], cx[2], cx[3]);
+      const dy = bezDer(t, cy[0], cy[1], cy[2], cy[3]);
+      const largo = Math.hypot(dx, dy);
+      if (largo > 0) {
+        insertarRizo(puntos, x, y, dx / largo, dy / largo, rizos[sig].dir, radioMax, yMin, yMax);
+      }
+      sig++;
+    }
+  }
+}
+
 /** Sobresalto lateral, en px: cuánto se pasa el recorrido de los bordes
  *  izquierdo y derecho de la capa. Alcanza para que el sprite (≤48px de lado)
  *  quede entero fuera de cuadro en el punto de giro.
@@ -159,12 +309,16 @@ const SOBRESALTO_X = 64;
  *  quien elige cuántas bandas usar es app/page.tsx, que tiene esa medida.
  *
  *  Forma: una lente (dos arcos entre los mismos dos puntos, uno combado hacia
- *  arriba y otro hacia abajo). No tiene tramo de retorno oculto —los dos arcos
- *  son visibles— así que el avión está en cuadro ~95% del ciclo y la velocidad
- *  puede ser constante en TODO el recorrido, sin el tramo acelerado que hacía
- *  falta cuando el retorno era invisible.
+ *  arriba y otro hacia abajo) con dos o tres rizos intercalados. No tiene tramo
+ *  de retorno oculto —los dos arcos son visibles— así que el avión está en cuadro
+ *  ~95% del ciclo y la velocidad puede ser constante en TODO el recorrido, sin el
+ *  tramo acelerado que hacía falta cuando el retorno era invisible.
  *
- *  El giro cae en x = ±SOBRESALTO_X, fuera de cuadro: no se ve rebotar. */
+ *  El giro cae en x = ±SOBRESALTO_X, fuera de cuadro: no se ve rebotar.
+ *
+ *  Se emite como POLILÍNEA y no como dos cúbicas porque los rizos se insertan en
+ *  el marco local de la curva (tangente y normal punto a punto), y para eso hay
+ *  que muestrearla igual. La figura base es la misma cúbica de antes, evaluada. */
 function banda(w: number, h: number, b: Banda, semilla: number): string {
   const r = lcg(semilla);
   const alto = h / b.total;
@@ -179,7 +333,8 @@ function banda(w: number, h: number, b: Banda, semilla: number): string {
   const d = amp / 0.75;
   // Espejar el orden de los combados cambia por dónde arranca el avión sin
   // cambiar la figura.
-  const signo = r() < 0.5 ? 1 : -1;
+  const signo: 1 | -1 = r() < 0.5 ? 1 : -1;
+  const contra: 1 | -1 = signo === 1 ? -1 : 1;
   // Asimetría leve del punto de máximo combado: corre la panza del arco hacia un
   // lado, lo que le saca el aire de "onda de seno" perfecta.
   const sesgo = 0.06 * (r() * 2 - 1);
@@ -187,18 +342,57 @@ function banda(w: number, h: number, b: Banda, semilla: number): string {
   const x0 = -SOBRESALTO_X;
   const x1 = w + SOBRESALTO_X;
   const span = x1 - x0;
-  const f = (n: number) => n.toFixed(1);
-  const xa = f(x0 + span * (0.25 + sesgo));
-  const xb = f(x0 + span * (0.75 + sesgo));
+  const xa = x0 + span * (0.25 + sesgo);
+  const xb = x0 + span * (0.75 + sesgo);
 
-  return [
-    `M ${f(x0)} ${f(yc)}`,
-    // Ida: cruza combando hacia un lado.
-    `C ${xa} ${f(yc - signo * d)}, ${xb} ${f(yc - signo * d)}, ${f(x1)} ${f(yc)}`,
-    // Vuelta: cruza en el otro sentido combando hacia el otro lado.
-    `C ${xb} ${f(yc + signo * d)}, ${xa} ${f(yc + signo * d)}, ${f(x0)} ${f(yc)}`,
-    "Z",
-  ].join(" ");
+  const radioMax = Math.min(
+    RIZO_RADIO_MAX,
+    alto * RIZO_FRACCION_BANDA,
+    span * RIZO_FRACCION_CRUCE
+  );
+  // Los rizos se acotan contra los bordes de la BANDA, sin margen extra: la curva
+  // base ya llega al 92% de la media banda y el sprite ya asoma esos 24px a la
+  // banda vecina. Un rizo que respete el mismo límite no empeora nada.
+  const yMin = yTop;
+  const yMax = yTop + alto;
+
+  // Uno o dos rizos en la ida y uno en la vuelta, siempre entre el 26% y el 78%
+  // del arco: así el lazo cae en cuadro y lejos del giro de los extremos.
+  //
+  // El primero de cada arco se abre hacia el centro de la banda —el lado por el
+  // que el arco dejó sitio al combar— y el segundo hacia afuera, para que la
+  // flota no dibuje catorce lazos calcados en el mismo sentido. Si afuera no
+  // entra, `insertarRizo` lo devuelve hacia adentro solo.
+  const rizosIda: Rizo[] = r() < 0.5
+    ? [{ t: 0.26 + r() * 0.12, dir: signo }, { t: 0.62 + r() * 0.12, dir: contra }]
+    : [{ t: 0.38 + r() * 0.26, dir: signo }];
+  const rizosVuelta: Rizo[] = [{ t: 0.34 + r() * 0.3, dir: contra }];
+
+  const puntos: [number, number][] = [];
+  // Ida: cruza combando hacia un lado.
+  arcoConRizos(
+    puntos,
+    [x0, xa, xb, x1],
+    [yc, yc - signo * d, yc - signo * d, yc],
+    rizosIda,
+    radioMax,
+    yMin,
+    yMax,
+    0
+  );
+  // Vuelta: cruza en el otro sentido combando hacia el otro lado. Arranca en el
+  // paso 1 para no repetir el punto de unión.
+  arcoConRizos(
+    puntos,
+    [x1, xb, xa, x0],
+    [yc, yc + signo * d, yc + signo * d, yc],
+    rizosVuelta,
+    radioMax,
+    yMin,
+    yMax,
+    1
+  );
+  return puntosAPath(puntos);
 }
 
 /** Recta de esquina a esquina, ida y vuelta por la misma línea.
