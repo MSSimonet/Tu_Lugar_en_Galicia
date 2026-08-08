@@ -5,6 +5,7 @@ import { motion } from 'motion/react'
 import { CIUDADES, LOCAL_APPS, NATIONAL_CATEGORIES, type CiudadKey } from '@/lib/config/appsUtiles'
 import { staggerContainer, fadeUp } from '@/lib/motion/variants'
 import { PageHero } from '@/components/ui/PageHero'
+import { AppsDivider } from './AppsDivider'
 import { CityPicker } from './CityPicker'
 import { SeccionEmergencias } from './SeccionEmergencias'
 import { SeccionAcordeon } from './SeccionAcordeon'
@@ -45,7 +46,18 @@ export function AppsUtilesPagina() {
         subtitle="Las herramientas locales de tu ciudad, más las apps nacionales que vas a necesitar en cualquier parte de España."
       />
 
-      <div style={{ fontFamily: 'var(--font-au-ui)', color: 'var(--au-text)' }}>
+      {/* Separador animado entre el Hero y el selector, misma posición y misma
+          dirección que en las otras cuatro páginas de la familia. */}
+      <AppsDivider direction="rtl" />
+
+      {/* pt-[var(--dz-section-y)]: aire entre el divisor y el selector. Esta
+          página era la única de las cuatro con la sección siguiente sin padding
+          superior —solo `pb-2`— y por eso se veía pegada; Comunidad y Quiénes
+          Somos ya usaban este mismo token en su sección post-divisor. */}
+      <div
+        className="pt-[var(--dz-section-y)]"
+        style={{ fontFamily: 'var(--font-au-ui)', color: 'var(--au-text)' }}
+      >
         <div className="mx-auto max-w-[1160px] px-6 pb-2">
           <CityPicker seleccionada={ciudad} onSelect={setCiudad} />
         </div>
