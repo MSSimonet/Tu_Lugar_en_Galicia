@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "motion/react";
-import { useFlightWithWake, DIVIDER_MARGEN_LATERAL, DIVIDER_WOBBLE_AMPLITUDE } from "@/lib/gsap/useFlightWithWake";
+import { useFlightWithWake, apoyoEnFrontera, DIVIDER_MARGEN_LATERAL, DIVIDER_WOBBLE_AMPLITUDE } from "@/lib/gsap/useFlightWithWake";
 
 // Separador de la sección Ciudades — mismo motor de animación que
 // components/ui/AnimatedDivider.tsx (lib/gsap/useFlightWithWake.ts: línea fina +
@@ -48,7 +48,12 @@ export function BrujulaDivider({ direction = "ltr" }: BrujulaDividerProps) {
   });
 
   return (
-    <div aria-hidden="true" style={{ paddingLeft: DIVIDER_MARGEN_LATERAL, paddingRight: DIVIDER_MARGEN_LATERAL }}>
+    <div
+      aria-hidden="true"
+      // apoyoEnFrontera: sube el divisor media caja para que la estela quede
+      // clavada sobre la frontera hero/cuerpo. Ver lib/gsap/useFlightWithWake.ts.
+      style={{ ...apoyoEnFrontera(ICON_HEIGHT), paddingLeft: DIVIDER_MARGEN_LATERAL, paddingRight: DIVIDER_MARGEN_LATERAL }}
+    >
       <style>{`
         .bjd-estela {
           background-image: repeating-linear-gradient(to right, var(--dz-accent) 0 3px, transparent 3px 8px);

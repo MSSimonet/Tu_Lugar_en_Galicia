@@ -29,6 +29,37 @@ export const DIVIDER_MARGEN_LATERAL = "min(2cm, 6vw)";
 // esta amplitud) sin duplicar el número mágico.
 export const DIVIDER_WOBBLE_AMPLITUDE = 2;
 
+/** Alto del contenedor de un divisor: el ícono más el aire que necesita el
+ *  wobble arriba y abajo, para no recortarlo en los extremos de la oscilación. */
+export function altoContenedorDivisor(altoIcono: number): number {
+  return altoIcono + 2 * DIVIDER_WOBBLE_AMPLITUDE;
+}
+
+/** Apoya la LÍNEA de la estela justo sobre la frontera entre el hero y el cuerpo.
+ *
+ *  El problema que resuelve: la caja del divisor arranca EN la frontera, y la
+ *  estela corre por su centro vertical, así que la línea caía media caja por
+ *  debajo — medido en las 4 páginas: +25px en /ciudades (caja de 50) y +24px en
+ *  /comunidad, /sobre-silvana y /apps-utiles (caja de 48). Subir media caja lo
+ *  deja clavado en la frontera, sea cual sea el alto del ícono.
+ *
+ *  Se usa `position: relative` y NO `margin-top` negativo a propósito. En tres de
+ *  las cuatro páginas el divisor es el primer hijo de un div que solo lleva
+ *  `background-color`: sin borde, sin padding y sin contexto de formato propio,
+ *  un margen negativo COLAPSA con el padre y le arrastra el fondo hacia arriba,
+ *  con lo que el crema se comería los últimos 24px del hero. Con `relative` el
+ *  hueco sigue reservado, el fondo no se mueve y solo se desplaza el dibujo.
+ *
+ *  Consecuencia buscada: el ícono queda partido entre los dos fondos, mitad sobre
+ *  el del hero y mitad sobre el del cuerpo. Es el efecto pedido, no un defecto.
+ *
+ *  NO lo usa MaletasDivider: ese no es un divisor de hero —va entre el Stepper y
+ *  "Lo que no somos", dentro de su propio envoltorio con degradado— así que no
+ *  hay ninguna frontera sobre la que apoyarlo. */
+export function apoyoEnFrontera(altoIcono: number): { position: "relative"; top: string } {
+  return { position: "relative", top: `-${altoContenedorDivisor(altoIcono) / 2}px` };
+}
+
 // Ancho de ícono de referencia (el del avión) para normalizar la VELOCIDAD.
 // `recorridoDuration` sola no alcanzaba: la distancia real es
 // `ancho del contenedor − ancho del ícono`, y los íconos miden distinto
