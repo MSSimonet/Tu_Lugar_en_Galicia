@@ -3,19 +3,26 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "motion/react";
-import { useFlightWithWake, DIVIDER_MARGEN_LATERAL, DIVIDER_WOBBLE_AMPLITUDE } from "@/lib/gsap/useFlightWithWake";
+import { useFlightWithWake, apoyoEnFrontera, DIVIDER_MARGEN_LATERAL, DIVIDER_WOBBLE_AMPLITUDE } from "@/lib/gsap/useFlightWithWake";
 
 // Separador de la sección Quiénes Somos (/sobre-silvana) — mismo motor de
 // animación que components/ui/AnimatedDivider.tsx
 // (lib/gsap/useFlightWithWake.ts), con el medallón
-// (public/images/q-somos-divider-v2.png) en vez del avión. Fuente: imagen real
-// del usuario, fondo negro sólido removido (alpha real) — a pedido explícito
-// del usuario esta vez se mantiene el color de cobre/tierra tal cual salió
-// de la foto, sin recolorear al dorado del resto de los separadores.
+// (public/images/q-somos-divider-v3.png) en vez del avión. Fuente: imagen real
+// del usuario (aldaba_texto.png), fondo BLANCO removido con alfa real — ojo, las
+// versiones anteriores venían sobre negro y el método es distinto: acá el blanco
+// también aparece DENTRO del hueco del aro, así que se recorta por relleno desde
+// los bordes más detección de huecos, no por umbral.
+//
+// Se mantiene el color dorado tal cual salió de la foto, sin recolorear al ámbar
+// del theme — mismo criterio que la brújula de Ciudades.
 // `gira: false`: se traslada sin rotar, mantiene su orientación fija.
 //
 const ICON_HEIGHT = 44;
-const ICON_WIDTH = Math.round((ICON_HEIGHT * 519) / 512); // aspecto nativo de q-somos-divider-v2.png
+// Aspecto nativo de q-somos-divider-v3.png. Esta constante hay que actualizarla
+// SIEMPRE que se sustituya el archivo, o el ícono sale deformado: ya pasó dos
+// veces (519/512 → 374/448 → 405/448).
+const ICON_WIDTH = Math.round((ICON_HEIGHT * 405) / 448);
 // Alto mínimo del contenedor sin recortar el ícono en los extremos del wobble
 // vertical (pedido explícito: la sección no debe dejar espacio sobrante).
 const CONTAINER_HEIGHT = ICON_HEIGHT + 2 * DIVIDER_WOBBLE_AMPLITUDE;
@@ -41,7 +48,12 @@ export function QSomosDivider({ direction = "ltr" }: QSomosDividerProps) {
   });
 
   return (
-    <div aria-hidden="true" style={{ paddingLeft: DIVIDER_MARGEN_LATERAL, paddingRight: DIVIDER_MARGEN_LATERAL }}>
+    <div
+      aria-hidden="true"
+      // apoyoEnFrontera: sube el divisor media caja para que la estela quede
+      // clavada sobre la frontera hero/cuerpo. Ver lib/gsap/useFlightWithWake.ts.
+      style={{ ...apoyoEnFrontera(ICON_HEIGHT), paddingLeft: DIVIDER_MARGEN_LATERAL, paddingRight: DIVIDER_MARGEN_LATERAL }}
+    >
       <style>{`
         .qsd-estela {
           background-image: repeating-linear-gradient(to right, var(--dz-accent) 0 3px, transparent 3px 8px);
@@ -56,7 +68,7 @@ export function QSomosDivider({ direction = "ltr" }: QSomosDividerProps) {
       >
         {prefersReducedMotion ? (
           <div className="absolute top-1/2 left-1/2" style={{ transform: "translate(-50%, -50%)" }}>
-            <Image src="/images/q-somos-divider-v2.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
+            <Image src="/images/q-somos-divider-v3.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
           </div>
         ) : (
           <>
@@ -67,7 +79,7 @@ export function QSomosDivider({ direction = "ltr" }: QSomosDividerProps) {
               style={{ left: 0, top: "calc(50% - 1.133px)", height: "2.266px", width: 0 }}
             />
             <div ref={iconRef} className="absolute" style={{ left: 0, top: `calc(50% - ${ICON_HEIGHT / 2}px)` }}>
-              <Image src="/images/q-somos-divider-v2.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
+              <Image src="/images/q-somos-divider-v3.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
             </div>
           </>
         )}

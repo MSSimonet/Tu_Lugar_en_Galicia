@@ -25,7 +25,11 @@ import { useFlightWithWake, DIVIDER_MARGEN_LATERAL, DIVIDER_WOBBLE_AMPLITUDE } f
 // contra los otros divisores cae del 42% al ~18%.
 
 const ICON_HEIGHT = 44;
-const ICON_WIDTH = Math.round((ICON_HEIGHT * 513) / 226); // aspecto nativo de maletas-divider-v6.png
+// Aspecto nativo de maletas-divider-v6.png. Era 513/226 con la imagen anterior;
+// la sustitución de 2026-08-03 dejó el archivo en 616x271. El ancho redondeado
+// sale igual (100px) en los dos casos, pero se actualiza para que la constante
+// siga describiendo el archivo real y no uno que ya no existe.
+const ICON_WIDTH = Math.round((ICON_HEIGHT * 616) / 271);
 // Alto mínimo del contenedor sin recortar el ícono en los extremos del wobble
 // vertical (pedido explícito: la sección no debe dejar espacio sobrante).
 const CONTAINER_HEIGHT = ICON_HEIGHT + 2 * DIVIDER_WOBBLE_AMPLITUDE;

@@ -52,7 +52,7 @@ const ICONOS = {
   },
   brujula: { src: "/images/brujula-divider-v3.png", alto: 46, ratio: 510 / 512, rota: false, rotBase: 0 },
   gente: { src: "/images/gente-divider-v2.png", alto: 44, ratio: 633 / 512, rota: false, rotBase: 0 },
-  qsomos: { src: "/images/q-somos-divider-v2.png", alto: 44, ratio: 519 / 512, rota: false, rotBase: 0 },
+  qsomos: { src: "/images/q-somos-divider-v3.png", alto: 44, ratio: 405 / 448, rota: false, rotBase: 0 },
   maletas: { src: "/images/maletas-divider-v6.png", alto: 44, ratio: 513 / 226, rota: false, rotBase: 0 },
 } as const;
 
