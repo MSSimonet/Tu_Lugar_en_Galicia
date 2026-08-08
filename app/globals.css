@@ -40,7 +40,15 @@
   --color-blanco: #FFFCF7;
 
   /* Zona de header — permanece oscura en ambos modos (retinte Deslumbrante) */
-  --color-header-bg:     #16140F; /* = --dz-hero-bg, siempre oscuro */
+  /* Oscuro fijo, con override propio en .dark. El comentario anterior decía
+     "= --dz-hero-bg" y era FALSO: --dz-hero-bg resuelve a var(--dz-fondo-marco),
+     o sea #FFFFFF en claro y #1B1913 en oscuro, justo lo contrario de un valor
+     fijo oscuro. Los dos coincidieron en algún retinte anterior y el comentario
+     se quedó con la equivalencia después de que --dz-hero-bg pasara a seguir el
+     tema. Ningún color depende de esa frase, pero engañaba al leerla.
+     Desde el rediseño del nav el Header ya no lo consume —usa --nav-banda—; hoy
+     lo usan Footer (vía --color-footer-bg), GinaWidget y VistaEnVivo. */
+  --color-header-bg:     #16140F;
   --color-header-subtle: #C8BDB0; /* texto secundario sobre fondo oscuro del header */
 
   /* Tokens header sin override dark (el header es siempre oscuro) */
@@ -604,6 +612,18 @@ details > dd {
   --dz-hero-bg:    var(--dz-fondo-marco);
   --dz-hero-text:  #16140F;
   --dz-hero-muted: #6B6558;
+
+  /* Alto de la franja en la que el Hero se funde con el fondo de página, para
+     que la frontera no se lea como una línea. Lo consume PageHero.tsx, que lo
+     aplica a las cinco páginas que lo usan (/ciudades, /comunidad,
+     /sobre-silvana, /apps-utiles y /faq).
+
+     120px sobre un Hero de 296–480px de alto: la franja es lo bastante larga
+     para que el ojo no encuentre dónde empieza. El salto de color que disuelve
+     ya era pequeño de por sí —#FFFFFF a #F0F0EB en claro, #1B1913 a #0F1512 en
+     oscuro—, así que repartirlo en 120px lo vuelve apenas perceptible, que es el
+     efecto pedido. Es la única palanca: subirlo suaviza más, bajarlo endurece. */
+  --dz-hero-fundido: 120px;
 
   /* ── Hero de Inicio: SIEMPRE oscuro, en los dos temas ─────────────────────
      No usa la familia --dz-hero-* de arriba, que invierte con el tema, porque

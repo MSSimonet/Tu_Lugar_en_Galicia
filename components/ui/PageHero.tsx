@@ -133,7 +133,21 @@ export function PageHero({
       ]
         .filter(Boolean)
         .join(' ')}
-      style={{ backgroundColor: tokens.background, minHeight: 'var(--dz-hero-min-h)' }}
+      style={{
+        // Fundido al fondo de página en la franja final del Hero, en vez del
+        // corte seco que había antes. La última parada cae en el 100%, o sea
+        // EXACTAMENTE en la frontera, así que el cuerpo sigue con el mismo color
+        // y no queda ninguna costura: la transición deja de ser una línea y pasa
+        // a ser una zona.
+        //
+        // Sirve para las cinco páginas con una sola regla porque los tres tonos
+        // (`--dz-hero-bg`, `--dz-luz` y `--dz-fondo-marco`) resuelven al mismo
+        // color en cada tema —#FFFFFF en claro, #1B1913 en oscuro— y las cinco
+        // apoyan sobre `--dz-fondo-pagina`. Y como el degradado se escribe con
+        // tokens, el fundido acompaña al cambio de tema sin nada más.
+        background: `linear-gradient(to bottom, ${tokens.background} 0, ${tokens.background} calc(100% - var(--dz-hero-fundido)), var(--dz-fondo-pagina) 100%)`,
+        minHeight: 'var(--dz-hero-min-h)',
+      }}
     >
       <motion.div
         className={[
