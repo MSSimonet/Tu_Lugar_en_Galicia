@@ -85,6 +85,43 @@ sus valores hacia el mismo ámbar, sin tocar `Header.tsx`/`Footer.tsx`:
 | `--color-laton-borde` | `#7A5230` | Bordes estructurales del header |
 | `--color-nav-muted` / `--color-header-active` / `--color-sobre-laton` / `--color-footer-border` | sin cambios | Neutros ya seguros, no necesitaban retinte |
 
+#### Excepción: la BANDA del header ya no es siempre oscura (nav flotante, 2026-08-03)
+
+El rediseño del nav mete los links en una **pastilla oscura que flota** sobre la banda del header.
+Eso solo se lee si la banda contrasta con la pastilla, y por eso **la banda —y solo la banda— pasa
+a aclararse en tema claro**. Es la primera y única grieta en "la capa chrome es siempre oscura".
+
+Medido, no estimado: banda clara `#E8DFCC` contra pastilla `#16140F` da **13,90:1**. Con la banda
+oscura de antes el par quedaba en **1,03:1**, o sea la pastilla desaparecía.
+
+En tema oscuro el problema no tiene solución por tono: banda y pastilla son las dos casi negras y
+forzando la pastilla hasta `#241C13` sobre banda `#100B06` se llega a **1,17:1**. Dos superficies
+muy oscuras no producen ratio. Ahí la separación la hace un **borde** (`--color-laton-borde`), que
+es vocabulario que el header ya usaba, más la sombra.
+
+Tokens nuevos, todos en `app/globals.css`, **sin prefijo `--color-`** por la poda de Tailwind v4
+(§14.1): `--nav-banda`, `--nav-ink`, `--nav-muted`, `--nav-banda-borde`, `--nav-agenda-hover`,
+`--nav-pastilla`, `--nav-pastilla-ink`, `--nav-pastilla-activo`, `--nav-pastilla-borde`.
+
+**No se tocó ningún token existente.** En particular `--color-header-bg` sigue igual porque además
+del Header lo consumen Footer (vía `--color-footer-bg`), `GinaWidget` y `VistaEnVivo`.
+
+**Consecuencia asumida y aprobada:** en tema claro el header queda claro y **el Footer sigue
+oscuro**. Si algún día se quiere coherencia arriba/abajo, el cambio es del Footer y de sus tokens,
+y hay que volver a medir sus contrastes — no basta con reusar `--nav-*`.
+
+**Dos valores del mockup no se adoptaron tal cual:**
+- `#6B6558` como muted de tema claro daba **4,37:1** sobre la banda: no llega a AA para texto
+  normal. Se usa `#615B4E` → **5,09:1**.
+- El acento **no puede usarse como color de texto sobre la banda clara**: `#E0932E` sobre
+  `#E8DFCC` es **1,89:1**. El acento solo aparece como relleno de botón (con `--laton-ink`
+  encima) o dentro de la pastilla oscura.
+
+**Breakpoint de escritorio: `xl` (1280px), no `lg` (1024px).** Medido: a 1024px la fila desborda
+52px (`scrollWidth` 1076). Para que entrara habría que bajar el nav a 10px, por debajo del suelo
+de 12px que verifica la auditoría de diseño. Es la misma conclusión a la que ya había llegado la
+versión anterior del Header.
+
 **Decisión deliberada — wordmark sin cambio de tipografía:** el wordmark/tagline de Header y
 Footer usa `fontStyle: 'italic'` sobre Cormorant Garamond. `Jost` (la nueva display, ver §3) no
 tiene corte itálico cargado — cambiar la fuente ahí produciría una itálica falsa (oblicua,
@@ -226,7 +263,9 @@ comentarios en `app/globals.css`. Es deliberado: el chrome del sitio no invierte
 claro/oscuro, solo el contenido de página lo hace. Ver tabla de retinte en §2.
 
 - **Fondo:** `--color-header-bg` (#16140F) / `--color-footer-bg` (#14120F) — siempre oscuro
-- **Wordmark:** `aldaba.png` + "Tu Lugar / en Galicia" en Cormorant Garamond italic (sin cambios
+- **Wordmark:** `aldaba-tlg.png` (con alfa real; sustituye a `aldaba.png`, que traía el fondo
+  negro incrustado y se veía como un recuadro oscuro sobre la banda clara del nav rediseñado)
+  + "Tu Lugar / en Galicia" en Cormorant Garamond italic (sin cambios
   de fuente, ver §3), color `--color-laton-claro` (ahora ámbar)
 - **Nav links:** Cormorant, uppercase, tracking 0.1em, `--color-nav-muted` inactivo →
   `--color-laton-claro` activo/hover

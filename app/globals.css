@@ -63,6 +63,39 @@
      porque no son un namespace de Tailwind; este token sigue esa misma regla. */
   --laton-ink:           #16140F;
 
+  /* ── Nav flotante (rediseño 2026-08-03) ─────────────────────────────────────
+     PRIMERA EXCEPCIÓN a "la capa chrome es siempre oscura" (DESIGN.md §Capa
+     chrome): la BANDA del header se aclara en tema claro. El motivo es
+     funcional, no estético — la pastilla del nav es oscura en los dos temas, y
+     sobre una banda oscura no se lee como pieza flotante (medido: 1,03:1 entre
+     banda y pastilla; ver más abajo). Sobre banda clara son 13,90:1.
+
+     El alcance de la excepción es EXACTAMENTE la banda del header. No se toca
+     --color-header-bg, que además de Header lo consumen Footer (vía
+     --color-footer-bg), GinaWidget y VistaEnVivo. Consecuencia asumida y
+     aprobada: en tema claro el header queda claro y el footer sigue oscuro.
+
+     Sin prefijo --color-: se consumen con var() inline y Tailwind v4 poda ese
+     namespace sin avisar — misma regla que --laton-ink, ver el comentario de
+     arriba. */
+  --nav-banda:            #E8DFCC; /* banda del header */
+  --nav-ink:              #16140F; /* 13.90:1 sobre la banda */
+  --nav-muted:            #615B4E; /* 5.09:1 sobre la banda. El #6B6558 del mockup
+                                      daba 4.37:1 y no llega a AA para texto normal. */
+  --nav-banda-borde:      rgba(22,20,15,0.12);
+  --nav-agenda-hover:     rgba(22,20,15,0.06);
+
+  /* Pastilla del nav: oscura en AMBOS temas, es la pieza que flota. */
+  --nav-pastilla:         #16140F;
+  --nav-pastilla-ink:     #D6D2C8; /* 12.19:1 dentro de la pastilla */
+  --nav-pastilla-activo:  #F0A93E; /* 9.16:1 dentro de la pastilla */
+  /* En oscuro, banda y pastilla son las dos casi negras y NINGÚN par de tonos
+     las separa: forzando la pastilla hasta #241C13 sobre banda #100B06 se llega
+     a 1,17:1. Dos superficies muy oscuras no producen ratio, punto. Por eso la
+     separación la hace un BORDE —vocabulario que el header ya usa con
+     --color-laton-borde— y no un salto de luminancia. */
+  --nav-pastilla-borde:   transparent;
+
   /* Tokens footer sin override dark (el footer es siempre oscuro) */
   /* Igual a --color-header-bg por referencia (antes tenía su propio hex, #14120F,
      apenas distinto del header — quedaban dos "negros" ligeramente diferentes,
@@ -865,6 +898,17 @@ details > dd {
 
   /* Zona de header — bg sigue oscuro; header-subtle permanece igual (intencional) */
   --color-header-bg: #141210; /* más oscuro que en claro, mismo efecto: siempre dark */
+
+  /* Nav flotante — en oscuro la banda baja al negro más profundo del mockup y la
+     pastilla se levanta un escalón. El salto es de 1,17:1, o sea inapreciable
+     como contraste: quien separa de verdad las dos superficies es el borde. */
+  --nav-banda:           #100B06;
+  --nav-ink:             #F0EAD9; /* 15.80:1 sobre la banda */
+  --nav-muted:           #9C9484; /* 6.31:1 sobre la banda */
+  --nav-banda-borde:     rgba(240,234,217,0.10);
+  --nav-agenda-hover:    rgba(240,234,217,0.08);
+  --nav-pastilla:        #241C13; /* 11.12:1 con el ink de la pastilla, 8.36:1 con el activo */
+  --nav-pastilla-borde:  var(--color-laton-borde);
 
   /* --color-mar en oscuro: teal claro legible sobre fondos oscuros (7.40:1 sobre niebla-dark) */
   --color-mar: #52B5D4;

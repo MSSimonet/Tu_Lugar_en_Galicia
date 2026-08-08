@@ -159,10 +159,10 @@ export function Footer() {
             {/* Logo footer */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '14px' }}>
               <Image
-                src="/images/aldaba.png"
+                src="/images/aldaba-tlg.png"
                 alt=""
-                width={58}
-                height={75}
+                width={398}
+                height={448}
                 style={{ objectFit: 'contain', display: 'block', flexShrink: 0, width: 'auto', height: '58px' }}
                 priority
               />

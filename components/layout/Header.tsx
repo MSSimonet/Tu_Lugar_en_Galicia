@@ -6,6 +6,19 @@ import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { Sun, Moon } from 'lucide-react'
 
+// Nav flotante (rediseño 2026-08-03).
+//
+// La pieza del rediseño es la PASTILLA: los links dejan de vivir sobre la banda
+// del header y pasan a una cápsula oscura con sombra, que flota sobre ella. Para
+// que eso se lea hace falta que la banda contraste con la pastilla, y de ahí sale
+// la única decisión de sistema que toca este archivo: la banda del header ya no
+// es siempre oscura, se aclara en tema claro. El razonamiento y los números están
+// en app/globals.css, junto a los tokens --nav-*, y en DESIGN.md §Capa chrome.
+//
+// Los tokens --nav-* son nuevos y NO pisan ninguno existente. En concreto no se
+// toca --color-header-bg, que además de acá lo consumen Footer (vía
+// --color-footer-bg), GinaWidget y VistaEnVivo.
+
 const navLinks = [
   { label: 'Inicio',         href: '/'              },
   { label: 'Cómo funciona',  href: '/como-funciona' },
@@ -16,17 +29,19 @@ const navLinks = [
   { label: '¿Tienes dudas?', href: '/faq'            },
 ]
 
-const SPARKLES_PATH =
-  'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z'
+const SPARKLE_PATH =
+  'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z'
 
-function SparklesIcon({ color }: { color: string }) {
+function Sparkle({ size = 13 }: { size?: number }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" d={SPARKLES_PATH} />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d={SPARKLE_PATH} />
     </svg>
   )
 }
 
+/** Mecanismo real del proyecto para abrir a Gina: lo escucha GinaWidget.tsx y lo
+ *  disparan también Hero, CTAFinal, CiudadLayout y GinaButton. */
 function abrirGina() {
   window.dispatchEvent(new CustomEvent('gina:open'))
 }
@@ -38,9 +53,8 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const hamburgerRef = useRef<HTMLButtonElement>(null)
 
-  // Estado de scroll — mismo umbral (~40px) que el mockup (design-drafts/deslumbrante),
-  // agrega sombra/blur al header una vez que el contenido pasa debajo. Listener pasivo,
-  // sin depender de GSAP/ScrollTrigger para un toggle booleano tan simple.
+  // Estado de scroll — agrega sombra a la banda una vez que el contenido pasa
+  // por debajo. Listener pasivo, sin GSAP para un booleano.
   useEffect(() => {
     function handleScroll() {
       setScrolled(window.scrollY > 40)
@@ -59,6 +73,10 @@ export function Header() {
     setIsDark(document.documentElement.classList.contains('dark'))
   }, [])
 
+  // El toggle es de SITIO COMPLETO y ya lo era antes de este rediseño: togglea
+  // .dark en <html> y persiste en localStorage, y el script de app/layout.tsx lo
+  // relee antes de hidratar (respetando prefers-color-scheme si no hay elección
+  // guardada). No hace falta ningún ThemeProvider.
   const toggleTheme = () => {
     const newIsDark = document.documentElement.classList.toggle('dark')
     localStorage.setItem('tlg-theme', newIsDark ? 'dark' : 'light')
@@ -101,101 +119,103 @@ export function Header() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [menuOpen])
 
-  // Estilos compartidos para botones de utilidad
-  const utilBtnBase: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '36px',
-    border: '1px solid rgba(212,175,106,0.3)',
-    background: 'transparent',
-    cursor: 'pointer',
-    color: 'var(--color-laton-claro)',
-    transition: 'background 200ms ease',
-    flexShrink: 0,
-  }
+  const focusRing =
+    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--nav-pastilla-activo)]'
 
   return (
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--color-laton-borde)] focus:text-white focus:rounded-lg focus:font-[family-name:var(--font-dz-ui)]"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-[var(--nav-pastilla)] focus:text-[var(--nav-pastilla-ink)] focus:rounded-lg focus:font-[family-name:var(--font-dz-ui)]"
       >
         Ir al contenido principal
       </a>
 
       <header
-        className="h-16 xl:h-[92px]"
         style={{
-          background: 'var(--color-header-bg)',
-          borderBottom: '1px solid var(--color-laton-borde)',
+          background: 'var(--nav-banda)',
+          borderBottom: '1px solid var(--nav-banda-borde)',
           boxShadow: scrolled ? 'var(--dz-shadow-md)' : 'none',
-          transition: 'box-shadow 250ms ease',
+          transition: 'background 200ms ease, box-shadow 250ms ease',
           position: 'sticky',
           top: 0,
           zIndex: 50,
         }}
       >
-        {/*
-          Grid 1fr auto 1fr: col izquierda y derecha iguales → nav centrado sin overlap.
-          Breakpoint en xl (1280px, estándar de industria) — antes era 2xl (1536px) porque a
-          1280px el contenido no entraba con el gap/tamaño original. Se resolvió reduciendo
-          gap del nav (28px→20px) y de las CTAs (10px→8px) en vez de subir el breakpoint tan
-          alto, verificado con el navegador a 1280×800 (sin overflow ni solapamiento).
-        */}
         <div
-          className="max-w-[1440px] mx-auto h-full flex justify-between items-center xl:grid"
-          style={{ padding: '0 20px', gridTemplateColumns: '200px auto minmax(220px, 1fr)', columnGap: '20px' }}
+          className="max-w-[1440px] mx-auto flex items-center justify-between"
+          style={{ padding: '14px 20px', gap: '16px' }}
         >
 
-          {/* Col 1: Logo — izquierda */}
-          <div className="flex items-center">
-            <Link
-              href="/"
-              aria-label="Tu Lugar en Galicia — inicio"
+          {/* ── Logo + wordmark ── */}
+          <Link
+            href="/"
+            aria-label="Tu Lugar en Galicia — inicio"
+            className={focusRing}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              textDecoration: 'none',
+              flexShrink: 0,
+            }}
+          >
+            <Image
+              src="/images/aldaba-tlg.png"
+              alt=""
+              width={398}
+              height={448}
+              priority
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                textDecoration: 'none',
+                // 56px es la medida del mockup; se alcanza a partir de ~1650px.
+                // Por debajo se comprime para que la fila entre sin desbordar.
+                height: 'clamp(44px, 3.4vw, 56px)',
+                width: 'auto',
+                objectFit: 'contain',
+                display: 'block',
                 flexShrink: 0,
               }}
-            >
-              <span className="block h-10 xl:h-[70px]" style={{ flexShrink: 0 }}>
-                <Image
-                  src="/images/aldaba.png"
-                  alt=""
-                  width={54}
-                  height={70}
-                  style={{ objectFit: 'contain', display: 'block', height: '100%', width: 'auto' }}
-                  priority
-                />
-              </span>
-              <span
-                aria-hidden="true"
-                className="block h-6 xl:h-10"
-                style={{ width: '1px', backgroundColor: 'var(--color-laton-borde)', flexShrink: 0 }}
-              />
-              <span style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontSize: '20px',
-                fontWeight: 400,
+            />
+            <span
+              style={{
+                fontFamily: 'var(--font-cormorant)',
                 fontStyle: 'italic',
-                color: 'var(--color-laton-claro)',
-                letterSpacing: '0.05em',
-                lineHeight: 1.15,
+                fontSize: 'clamp(18px, 1.35vw, 23px)',
+                fontWeight: 600,
+                color: 'var(--nav-ink)',
+                letterSpacing: '0.04em',
+                lineHeight: 1.12,
                 whiteSpace: 'nowrap',
-              }}>
-                Tu Lugar<br />en Galicia
-              </span>
-            </Link>
-          </div>
+                transition: 'color 200ms ease',
+              }}
+            >
+              Tu Lugar<br />en Galicia
+            </span>
+          </Link>
 
-          {/* Col 2: Nav links — centro exacto (md+) */}
+          {/* ── Pastilla flotante con los links ── */}
           <nav
             aria-label="Navegación principal"
             className="hidden xl:flex items-center"
-            style={{ gap: '12px' }}
+            style={{
+              // El breakpoint es xl (1280) y NO lg (1024), medido: con 7 links,
+              // wordmark y 3 CTAs, a 1024px la fila desborda 52px
+              // (scrollWidth 1076). Para que entrara habría que bajar el nav a
+              // 10px, por debajo del suelo de 12px que la auditoría del proyecto
+              // verifica. Es la misma conclusión a la que ya había llegado la
+              // versión anterior de este archivo. Entre 1280 y 1024 se usa el
+              // panel móvil.
+              //
+              // Los clamp comprimen la pastilla en la parte baja del rango y le
+              // devuelven las medidas del mockup a partir de ~1500px.
+              gap: 'clamp(12px, 1.15vw, 20px)',
+              background: 'var(--nav-pastilla)',
+              border: '1px solid var(--nav-pastilla-borde)',
+              borderRadius: '999px',
+              padding: 'clamp(10px, 0.8vw, 12px) clamp(16px, 1.6vw, 24px)',
+              boxShadow: '0 12px 32px rgba(0,0,0,0.28)',
+              transition: 'background 200ms ease, border-color 200ms ease',
+            }}
           >
             {navLinks.map(({ label, href }) => {
               const active = isActive(href)
@@ -204,120 +224,130 @@ export function Header() {
                   key={href}
                   href={href}
                   aria-current={active ? 'page' : undefined}
-                  className="link-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton-borde)]"
+                  className={focusRing}
                   style={{
-                    position: 'relative',
+                    // inline-flex + minHeight: el objetivo táctil de cada link
+                    // llega a 24px (WCAG 2.2 AA, 2.5.8). El texto solo daría ~16.
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    minHeight: '24px',
                     fontFamily: 'var(--font-cormorant)',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    color: active ? 'var(--color-laton-claro)' : 'var(--color-nav-muted)',
+                    // 12px es el suelo: la auditoría de diseño del proyecto
+                    // verifica que no haya texto por debajo de esa medida.
+                    fontSize: 'clamp(12px, 0.86vw, 13px)',
+                    fontWeight: 600,
                     letterSpacing: '0.06em',
                     textTransform: 'uppercase',
-                    textDecoration: 'none',
                     whiteSpace: 'nowrap',
+                    textDecoration: 'none',
+                    color: active ? 'var(--nav-pastilla-activo)' : 'var(--nav-pastilla-ink)',
                     transition: 'color 200ms ease',
                   }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = 'var(--color-laton-claro)' }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.color = 'var(--color-nav-muted)' }}
+                  onMouseEnter={e => {
+                    if (!active) e.currentTarget.style.color = 'var(--nav-pastilla-activo)'
+                  }}
+                  onMouseLeave={e => {
+                    if (!active) e.currentTarget.style.color = 'var(--nav-pastilla-ink)'
+                  }}
                 >
                   {label}
-                  {active && (
-                    <span
-                      aria-hidden="true"
-                      style={{
-                        position: 'absolute',
-                        bottom: '-4px',
-                        left: 0,
-                        right: 0,
-                        height: '1px',
-                        background: 'var(--color-laton-borde)',
-                      }}
-                    />
-                  )}
                 </Link>
               )
             })}
           </nav>
 
-          {/* Col 3: CTAs (md+) + Hamburger (mobile) — derecha */}
-          <div className="flex items-center justify-end">
+          {/* ── CTAs de escritorio + hamburguesa ── */}
+          <div className="flex items-center justify-end" style={{ flexShrink: 0 }}>
+            <div className="hidden xl:flex items-center" style={{ gap: '10px' }}>
 
-            {/* ── CTAs desktop — orden: [Agenda] [✦ Hablar con Gina] [🌙/☀️] ── */}
-            <div className="hidden xl:flex items-center" style={{ gap: '6px' }}>
-
-              {/* 1. Agenda */}
+              {/* Agenda — outline */}
               <Link
                 href="/agenda"
+                className={focusRing}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  height: '36px',
-                  padding: '0 14px',
+                  height: '42px',
+                  padding: '0 clamp(12px, 1.2vw, 18px)',
                   fontFamily: 'var(--font-cormorant)',
                   fontSize: '12px',
-                  fontWeight: 500,
-                  color: 'var(--color-laton-claro)',
-                  border: '1px solid rgba(212,175,106,0.5)',
-                  background: 'transparent',
-                  letterSpacing: '0.1em',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
                   textTransform: 'uppercase',
+                  color: 'var(--nav-ink)',
+                  border: '1.5px solid var(--nav-ink)',
+                  background: 'transparent',
                   textDecoration: 'none',
-                  transition: 'background 200ms ease',
-                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
+                  transition: 'background 200ms ease, color 200ms ease, border-color 200ms ease',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,175,106,0.08)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--nav-agenda-hover)' }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
               >
                 Agenda
               </Link>
 
-              {/* 2. Hablar con Gina */}
+              {/* Conozcámonos — pastilla rellena de acento. El texto va en
+                  --laton-ink y no en blanco: 7.35:1 en reposo y 5.34:1 en hover,
+                  contra los 3.44:1 que daba el blanco. */}
               <button
                 type="button"
                 onClick={abrirGina}
+                className={focusRing}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '7px',
-                  height: '36px',
-                  padding: '0 14px',
+                  gap: '8px',
+                  height: '42px',
+                  padding: '0 clamp(14px, 1.5vw, 22px)',
                   fontFamily: 'var(--font-dz-ui)',
                   fontSize: '12px',
                   fontWeight: 700,
                   color: 'var(--laton-ink)',
                   background: 'var(--color-laton-claro)',
-                  borderRadius: '999px',
                   border: 'none',
-                  letterSpacing: '0.06em',
+                  borderRadius: '999px',
                   cursor: 'pointer',
-                  transition: 'background 200ms ease',
-                  flexShrink: 0,
                   whiteSpace: 'nowrap',
+                  transition: 'background 200ms ease',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-laton)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'var(--color-laton-claro)')}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-laton)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'var(--color-laton-claro)' }}
               >
-                <span style={{ fontSize: '12px', lineHeight: '1' }}>✦</span>
-                Hablar con Gina
+                <Sparkle />
+                Conozcámonos
               </button>
 
-              {/* 3. Toggle tema claro/oscuro */}
+              {/* Toggle de tema */}
               <button
                 type="button"
                 onClick={toggleTheme}
                 aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
-                style={{ ...utilBtnBase, width: '36px', borderRadius: '50%' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,175,106,0.08)' }}
+                className={focusRing}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '50%',
+                  border: '1px solid var(--nav-ink)',
+                  background: 'transparent',
+                  color: 'var(--nav-ink)',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                  transition: 'background 200ms ease, color 200ms ease, border-color 200ms ease',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--nav-agenda-hover)' }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
               >
-                {isDark ? <Sun size={15} strokeWidth={1.6} /> : <Moon size={15} strokeWidth={1.6} />}
+                {isDark ? <Sun size={16} strokeWidth={1.6} /> : <Moon size={15} strokeWidth={1.6} />}
               </button>
-
             </div>
 
-            {/* Hamburger — solo mobile */}
+            {/* Hamburguesa — solo móvil */}
             <button
               ref={hamburgerRef}
               type="button"
@@ -325,24 +355,43 @@ export function Header() {
               aria-expanded={menuOpen}
               aria-controls={menuOpen ? 'mobile-menu' : undefined}
               aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-              className="xl:hidden flex flex-col justify-center gap-1.5 w-11 h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-laton-borde)]"
+              className={`xl:hidden flex flex-col items-center justify-center gap-1.5 w-11 h-11 ${focusRing}`}
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
             >
-              <span className={['block h-0.5 w-6 bg-white transition-transform duration-200', menuOpen ? 'translate-y-2 rotate-45' : ''].join(' ')} />
-              <span className={['block h-0.5 w-6 bg-white transition-opacity duration-200', menuOpen ? 'opacity-0' : ''].join(' ')} />
-              <span className={['block h-0.5 w-6 bg-white transition-transform duration-200', menuOpen ? '-translate-y-2 -rotate-45' : ''].join(' ')} />
+              <span
+                className="block h-0.5 w-[22px] transition-transform duration-200"
+                style={{ background: 'var(--nav-ink)', transform: menuOpen ? 'translateY(8px) rotate(45deg)' : undefined }}
+              />
+              <span
+                className="block h-0.5 w-[22px] transition-opacity duration-200"
+                style={{ background: 'var(--nav-ink)', opacity: menuOpen ? 0 : 1 }}
+              />
+              <span
+                className="block h-0.5 w-[22px] transition-transform duration-200"
+                style={{ background: 'var(--nav-ink)', transform: menuOpen ? 'translateY(-8px) rotate(-45deg)' : undefined }}
+              />
             </button>
           </div>
         </div>
 
-        {/* Menú móvil */}
+        {/* ── Panel móvil ── */}
         {menuOpen && (
           <nav
             id="mobile-menu"
             aria-label="Navegación móvil"
-            className="xl:hidden px-6 py-5 flex flex-col gap-5"
-            style={{ background: 'var(--color-header-bg)', borderTop: '1px solid rgba(184,148,63,0.3)' }}
+            className="xl:hidden flex flex-col"
+            style={{
+              maxWidth: '1440px',
+              margin: '0 auto 16px',
+              background: 'var(--nav-pastilla)',
+              border: '1px solid var(--nav-pastilla-borde)',
+              borderRadius: '20px',
+              padding: '20px',
+              gap: '16px',
+              boxShadow: '0 12px 32px rgba(0,0,0,0.32)',
+              width: 'calc(100% - 40px)',
+            }}
           >
-            {/* Nav links */}
             {navLinks.map(({ label, href }) => {
               const active = isActive(href)
               return (
@@ -351,15 +400,18 @@ export function Header() {
                   href={href}
                   onClick={() => setMenuOpen(false)}
                   aria-current={active ? 'page' : undefined}
-                  className="link-underline"
+                  className={focusRing}
                   style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    minHeight: '24px',
                     fontFamily: 'var(--font-dz-ui)',
                     fontSize: '13px',
-                    fontWeight: 300,
-                    color: active ? 'var(--color-header-active)' : 'var(--color-nav-muted)',
-                    letterSpacing: '0.08em',
+                    fontWeight: 400,
+                    letterSpacing: '0.05em',
                     textTransform: 'uppercase',
                     textDecoration: 'none',
+                    color: active ? 'var(--nav-pastilla-activo)' : 'var(--nav-pastilla-ink)',
                   }}
                 >
                   {label}
@@ -367,79 +419,82 @@ export function Header() {
               )
             })}
 
-            {/* Hablar con Gina */}
             <button
               type="button"
               onClick={() => { abrirGina(); setMenuOpen(false) }}
-              aria-label="Hablar con Gina, abrir asistente"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontFamily: 'var(--font-dz-ui)',
-                fontSize: '13px',
-                fontWeight: 300,
-                color: 'var(--color-nav-muted)',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                letterSpacing: '0.03em',
-                padding: 0,
-              }}
-            >
-              <SparklesIcon color="var(--color-laton-borde)" />
-              Hablar con Gina
-            </button>
-
-            {/* Agenda */}
-            <Link
-              href="/agenda"
-              onClick={() => setMenuOpen(false)}
+              className={focusRing}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                gap: '7px',
+                height: '46px',
+                marginTop: '4px',
+                fontFamily: 'var(--font-dz-ui)',
+                fontSize: '13px',
+                fontWeight: 700,
+                color: 'var(--laton-ink)',
+                background: 'var(--color-laton-claro)',
+                border: 'none',
+                borderRadius: '999px',
+                cursor: 'pointer',
+              }}
+            >
+              <Sparkle />
+              Conozcámonos
+            </button>
+
+            <Link
+              href="/agenda"
+              onClick={() => setMenuOpen(false)}
+              className={focusRing}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '24px',
                 fontFamily: 'var(--font-cormorant)',
                 fontSize: '13px',
-                fontWeight: 500,
-                color: 'var(--color-laton-claro)',
-                border: '1px solid var(--color-laton-borde)',
-                padding: '9px 22px',
-                letterSpacing: '0.12em',
+                fontWeight: 700,
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
+                color: 'var(--nav-pastilla-ink)',
                 textDecoration: 'none',
               }}
             >
               Agenda
             </Link>
 
-            {/* ── Utilidades: tema ── */}
-            <div style={{ borderTop: '1px solid rgba(184,148,63,0.2)', paddingTop: '16px' }}>
-              <button
-                type="button"
-                onClick={() => { toggleTheme(); setMenuOpen(false) }}
-                aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  fontFamily: 'var(--font-dz-ui)',
-                  fontSize: '13px',
-                  fontWeight: 300,
-                  color: 'var(--color-nav-muted)',
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  letterSpacing: '0.03em',
-                  padding: 0,
-                }}
-              >
-                {isDark
-                  ? <><Sun size={14} strokeWidth={1.8} /><span>Modo claro</span></>
-                  : <><Moon size={14} strokeWidth={1.8} /><span>Modo oscuro</span></>
-                }
-              </button>
-            </div>
+            {/* Utilidades: tema, separado por una línea */}
+            <button
+              type="button"
+              onClick={() => { toggleTheme(); setMenuOpen(false) }}
+              aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
+              className={focusRing}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                minHeight: '24px',
+                paddingTop: '14px',
+                fontFamily: 'var(--font-dz-ui)',
+                fontSize: '12px',
+                fontWeight: 400,
+                letterSpacing: '0.04em',
+                color: 'var(--nav-pastilla-ink)',
+                background: 'transparent',
+                // Solo borde superior: hace de separador entre el bloque de
+                // navegación y las utilidades, como en el mockup.
+                border: 'none',
+                borderTop: '1px solid var(--color-footer-border)',
+                cursor: 'pointer',
+              }}
+            >
+              {isDark
+                ? <><Sun size={14} strokeWidth={1.6} /><span>Modo claro</span></>
+                : <><Moon size={13} strokeWidth={1.6} /><span>Modo oscuro</span></>}
+            </button>
           </nav>
         )}
       </header>
