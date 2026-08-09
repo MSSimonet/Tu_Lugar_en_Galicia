@@ -32,7 +32,16 @@ export default function AdminLoginPage() {
     setLoading(false)
 
     if (!result || result.error) {
-      setError('Email o contraseña incorrectos.')
+      // El rate limiting del callback de credenciales (SEC-02) viaja como status HTTP:
+      // sin esta rama, quedar throttleado se leería como "contraseña incorrecta" y llevaría
+      // a seguir reintentando, que es justo lo contrario de lo que hay que hacer.
+      if (result?.status === 429) {
+        setError('Demasiados intentos fallidos. Espera unos minutos antes de volver a probar.')
+      } else if (result?.status === 503) {
+        setError('El login no está disponible en este momento. Avisa al equipo técnico.')
+      } else {
+        setError('Email o contraseña incorrectos.')
+      }
       return
     }
 
