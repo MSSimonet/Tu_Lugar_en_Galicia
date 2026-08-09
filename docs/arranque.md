@@ -228,6 +228,37 @@ Esta sesión cubrió solo la **fase de seguridad** de una auditoría global más
 - **Performance** (Lighthouse en producción — pendiente desde certificación de Fase 1, criterio C6 nunca verificado con medición real).
 - **QA funcional end-to-end** — recorrido completo de los flujos de negocio (Gina → Supabase → agenda → PDF → mails) verificando comportamiento, no solo seguridad.
 
+### 5.5 — SEO-03: `canonical` faltante en 8 páginas públicas (sesión 2026-08-08)
+
+Hallazgo lateral que apareció al cerrar SEO-01/02 (commit `4ba1578`). **No se tocó** — es un pendiente propio, separado de aquel commit por decisión del usuario.
+
+**Qué se midió.** Contra el servidor real, leyendo `<link rel="canonical">` del HTML servido:
+
+| Página | canonical |
+|---|---|
+| `/ciudades` | ❌ ausente |
+| `/contacto` | ❌ ausente |
+| `/comunidad` | ❌ ausente |
+| `/comunidad/mapa` | ❌ ausente |
+| `/aviso-legal` | ❌ ausente |
+| `/faq` | ✅ `https://tulugarengalicia.com/faq` (control) |
+
+`/faq` es el control: confirma que la medición distingue de verdad. Por el mismo patrón faltan también en `/politica-de-cookies` y `/terminos-y-condiciones` — **8 páginas públicas en total**.
+
+**Causa.** Dos formas conviven para declarar metadata. Las páginas que sí tienen canonical pasan por `getNextMetadata()` (`lib/seo/metadata.ts`), que lo emite desde `PAGE_METADATA[page].canonical`. Las 8 que no lo tienen declaran un objeto `Metadata` suelto con `title` + `description` y nada más. `app/layout.tsx` define `metadataBase` pero **eso no genera canonical** — Next.js no lo deriva solo.
+
+**Corrige una afirmación falsa de la documentación.** `CLAUDE.md` §9 (gate pre-merge del 2026-07-31) afirma "metadata + canonical en las 20 páginas públicas". La primera mitad es cierta, la segunda no: son 12 de 20. Actualizar esa línea cuando se resuelva esto.
+
+**Severidad: baja.** Google auto-canonicaliza cuando no hay tag. Sube un escalón desde `4ba1578`, porque 4 de las 8 ahora están en el sitemap y ahí es donde más pesa la ausencia.
+
+**Dos caminos para el fix** (elegir uno, no mezclar — hoy el problema es justamente que conviven):
+1. Sumar las 8 a `PAGE_METADATA` y pasarlas por `getNextMetadata()`. Unifica el enfoque y arrastra OG + Twitter cards, que también les faltan. Más trabajo, deja una sola forma de hacerlo.
+2. Agregar `alternates: { canonical: … }` a mano en el `Metadata` de cada página. Mínimo y quirúrgico, pero perpetúa las dos formas.
+
+Recomendado el 1 para las 4 públicas de marketing, y el 2 para las 4 legales, que no necesitan OG.
+
+**Ojo con las legales.** Están fuera del sitemap por decisión confirmada (2026-08-08), no por olvido. Que se les agregue canonical no significa que entren al sitemap.
+
 ---
 
 ## 6 — Cambios de configuración de esta sesión (2026-07-02)

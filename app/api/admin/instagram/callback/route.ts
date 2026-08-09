@@ -9,17 +9,25 @@
  * lee /media, ver lib/instagram/graph.ts).
  *
  * Sin Authorization: Bearer (no puede llevarlo una navegación de navegador real). La seguridad
- * acá es: (1) `state` firmado con TTL de 10 min (lib/instagram/oauthState.ts, CSRF), y (2) el
- * `code` es de un solo uso y Meta solo lo emite para el `redirect_uri` exacto registrado en la
- * app — no hay superficie para que un tercero cuele un code ajeno sin conocer también el secret.
+ * acá es: (1) sesión de NextAuth, (2) `state` firmado con TTL de 10 min
+ * (lib/instagram/oauthState.ts, CSRF), y (3) el `code` es de un solo uso y Meta solo lo emite
+ * para el `redirect_uri` exacto registrado en la app.
+ *
+ * La sesión se agregó en la auditoría 2026-08-08 (IG-01) junto con el gate de /autorizar: el
+ * `state` por sí solo no distinguía a Silvana de un tercero que recorriera el flujo con su
+ * propia cuenta de Facebook. Funciona con una navegación que viene de facebook.com porque la
+ * cookie de sesión de Auth.js es SameSite=Lax, y Lax sí se envía en navegaciones GET de nivel
+ * superior. La verificación final de qué cuenta quedó conectada vive en `saveInstagramToken`
+ * (INSTAGRAM_EXPECTED_IG_USER_ID, ver lib/instagram/tokenRepo.ts).
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@/auth'
 import { verifyOAuthState } from '@/lib/instagram/oauthState'
 import { exchangeCodeForShortLivedToken, exchangeLongLivedUserToken, fetchPaginaConInstagram } from '@/lib/instagram/graph'
-import { saveInstagramToken } from '@/lib/instagram/tokenRepo'
+import { ERROR_CUENTA_NO_AUTORIZADA, saveInstagramToken } from '@/lib/instagram/tokenRepo'
 
-function paginaResultado(titulo: string, mensaje: string): NextResponse {
+function paginaResultado(titulo: string, mensaje: string, status = 200): NextResponse {
   const html = `<!DOCTYPE html>
 <html lang="es">
 <head><meta charset="UTF-8" /><title>${titulo}</title></head>
@@ -28,7 +36,7 @@ function paginaResultado(titulo: string, mensaje: string): NextResponse {
   <p style="color:#696560;">${mensaje}</p>
 </body>
 </html>`
-  return new NextResponse(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } })
+  return new NextResponse(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } })
 }
 
 function redirectUri(req: NextRequest): string {
@@ -36,6 +44,15 @@ function redirectUri(req: NextRequest): string {
 }
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
+  const session = await auth()
+  if (!session) {
+    return paginaResultado(
+      'Sesión no iniciada',
+      'Para conectar la cuenta tenés que estar con la sesión abierta en el panel. Iniciá sesión y volvé a empezar la conexión desde ahí.',
+      401,
+    )
+  }
+
   const code = req.nextUrl.searchParams.get('code')
   const state = req.nextUrl.searchParams.get('state')
   const errorParam = req.nextUrl.searchParams.get('error')
@@ -45,7 +62,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   if (!code || !state || !verifyOAuthState(state)) {
-    return paginaResultado('Link inválido o vencido', 'Este link de conexión ya expiró (dura 10 minutos) o no es válido. Generá uno nuevo.')
+    return paginaResultado('Link inválido o vencido', 'Este link de conexión ya expiró (dura 10 minutos) o no es válido. Generá uno nuevo.', 400)
   }
 
   try {
@@ -55,7 +72,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     await saveInstagramToken({ igUserId, pageId, accessToken: pageAccessToken, userAccessToken: longLivedUserToken, expiresAt })
   } catch (err) {
     console.error('[instagram/callback] error:', err instanceof Error ? err.message : 'unknown')
-    return paginaResultado('No se pudo conectar', 'Hubo un error conectando la cuenta de Instagram. Avisale al equipo técnico.')
+    if (err instanceof Error && err.message === ERROR_CUENTA_NO_AUTORIZADA) {
+      return paginaResultado(
+        'Esa no es la cuenta configurada',
+        'La cuenta que aprobaste no es la que este sitio tiene fijada como oficial. No se guardó nada. Si de verdad querés cambiar de cuenta, hay que actualizar INSTAGRAM_EXPECTED_IG_USER_ID en Vercel.',
+        403,
+      )
+    }
+    return paginaResultado('No se pudo conectar', 'Hubo un error conectando la cuenta de Instagram. Avisale al equipo técnico.', 502)
   }
 
   return paginaResultado('Cuenta de Instagram conectada ✓', 'Ya podés cerrar esta pestaña — el feed del sitio va a mostrar los posts reales en unos minutos.')
