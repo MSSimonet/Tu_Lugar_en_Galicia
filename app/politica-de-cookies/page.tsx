@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
+import { SITE_URL } from '@/lib/config/site'
 import { LegalHero } from '@/components/legal/LegalHero'
 import { LegalSection } from '@/components/legal/LegalSection'
 
 export const metadata: Metadata = {
   title: 'Política de Cookies',
   description: 'Política de cookies de Tu Lugar en Galicia, agencia de relocation especializada en Galicia.',
+  alternates: { canonical: `${SITE_URL}/politica-de-cookies` },
 }
 
 export default function PoliticaDeCookiesPage() {

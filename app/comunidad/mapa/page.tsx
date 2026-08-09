@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { SITE_URL } from '@/lib/config/site'
 import { MapaComunidad } from '@/components/comunidad/MapaComunidad'
 import { ComunidadMapaHero } from '@/components/comunidad/ComunidadMapaHero'
 
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
   title: 'Encuentra a tu gente en Galicia',
   description:
     'Encuentra a otras familias y vecinos en Galicia dispuestos a tomar un café, salir a caminar o simplemente escucharte. Mira quién está cerca de ti.',
+  alternates: { canonical: `${SITE_URL}/comunidad/mapa` },
 }
 
 export default function ComunidadMapaPage() {

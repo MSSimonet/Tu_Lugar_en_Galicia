@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
+import { SITE_URL } from '@/lib/config/site'
 import { LegalHero } from '@/components/legal/LegalHero'
 import { LegalSection } from '@/components/legal/LegalSection'
 
 export const metadata: Metadata = {
   title: 'Términos y Condiciones',
   description: 'Términos y condiciones del servicio de Tu Lugar en Galicia, agencia de relocation especializada en Galicia.',
+  alternates: { canonical: `${SITE_URL}/terminos-y-condiciones` },
 }
 
 export default function TerminosYCondicionesPage() {
