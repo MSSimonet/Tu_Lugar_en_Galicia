@@ -68,3 +68,8 @@ storybook-static
 
 # Artefactos de Playwright MCP (logs y snapshots de sesiones de verificación)
 .playwright-mcp/
+
+# Material de referencia local — videos de OTROS sitios que se analizan para
+# replicar una animación. No es contenido del proyecto: no se publica (por eso
+# no vive en /public) ni se commitea.
+tmp-referencia/
