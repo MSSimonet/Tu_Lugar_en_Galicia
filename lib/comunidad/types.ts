@@ -39,5 +39,12 @@ export interface ComunidadRegistroInput {
   ciudad: string
   disponibilidad: Actividad[]
   contacto?: string
+  /**
+   * Opt-in para mostrar el teléfono (PII-01, migración 0010). Viaja desde el formulario,
+   * pero NO se aplica al enviarlo: va dentro del pendiente y solo llega a la fila cuando la
+   * persona confirma su email (§5.6). Ese es el único motivo por el que este campo puede ser
+   * controlado por el cliente sin reabrir el agujero que cerró aquel fix.
+   */
+  mostrarContacto?: boolean
   rgpd: boolean
 }

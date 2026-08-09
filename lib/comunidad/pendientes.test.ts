@@ -96,6 +96,20 @@ describe('consumirPendiente — camino feliz', () => {
     expect(resultado).toEqual({ ok: true, perfil: PERFIL })
   })
 
+  it.each([true, false, undefined])(
+    'transporta mostrarContacto=%s sin alterarlo (opt-in de PII-01)',
+    async valor => {
+      const creado = await crearPendiente({ ...PERFIL, mostrarContacto: valor })
+      const resultado = await consumirPendiente(creado!.id, creado!.token)
+
+      // Este flag decide si el teléfono de una persona se entrega o no. Que llegue al otro
+      // lado exactamente como salió es la razón por la que puede viajar desde el cliente: el
+      // pendiente solo se aplica tras confirmar el email (§5.6).
+      expect(resultado.ok).toBe(true)
+      expect(resultado.ok && resultado.perfil.mostrarContacto).toBe(valor)
+    },
+  )
+
   it('consume de verdad: el segundo uso del mismo link devuelve "usado"', async () => {
     const creado = await crearPendiente(PERFIL)
 

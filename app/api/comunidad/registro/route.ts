@@ -116,6 +116,9 @@ export async function POST(req: NextRequest) {
   if (typeof input.fotoUrl === 'string' && input.fotoUrl.trim() && !isValidFotoUrl(input.fotoUrl.trim())) {
     return NextResponse.json({ error: 'La URL de la foto no es válida (debe ser https).' }, { status: 400 })
   }
+  if (input.mostrarContacto !== undefined && typeof input.mostrarContacto !== 'boolean') {
+    return NextResponse.json({ error: 'Datos inválidos.' }, { status: 400 })
+  }
 
   const email = input.email.trim().toLowerCase()
   const nombre = input.nombre.trim()
@@ -125,6 +128,11 @@ export async function POST(req: NextRequest) {
   const disponibilidad = input.disponibilidad as Actividad[]
   const contacto = typeof input.contacto === 'string' && input.contacto.trim() ? input.contacto.trim() : undefined
   const fotoUrl = typeof input.fotoUrl === 'string' && input.fotoUrl.trim() ? input.fotoUrl.trim() : undefined
+  // Se acepta `true` aunque no venga teléfono en este envío: puede haber uno guardado de un
+  // registro anterior y esta ser justamente la vez que la persona decide mostrarlo. Rechazarlo
+  // rompería ese caso legítimo. Y activarlo sin número no expone nada — /api/comunidad/[id]/contacto
+  // exige que la columna tenga contenido, así que un flag sin teléfono detrás no entrega nada.
+  const mostrarContacto = input.mostrarContacto === true
 
   // 3. Geocodificar la intersección (Nominatim — decisión cerrada en el doc §7).
   const coords = await geocodificarInterseccion(calle1, calle2, ciudad)
@@ -150,6 +158,7 @@ export async function POST(req: NextRequest) {
     lng: coords.lng,
     disponibilidad,
     contacto,
+    mostrarContacto,
   })
   if (!pendiente) {
     console.error('[comunidad/registro] no se pudo crear el pendiente — faltan variables de Upstash')

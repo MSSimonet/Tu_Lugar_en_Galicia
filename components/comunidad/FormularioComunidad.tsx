@@ -58,6 +58,9 @@ export function FormularioComunidad() {
   const [fotoUrl, setFotoUrl] = useState('')
   const [disponibilidad, setDisponibilidad] = useState<Actividad[]>([])
   const [contacto, setContacto] = useState('')
+  // Arranca en false a propósito: el opt-in es explícito (PII-01). Nadie publica su teléfono
+  // por no haber mirado una casilla ya marcada.
+  const [mostrarContacto, setMostrarContacto] = useState(false)
   const [rgpd, setRgpd] = useState(false)
 
   const [status, setStatus] = useState<Status>('idle')
@@ -115,6 +118,7 @@ export function FormularioComunidad() {
       ciudad,
       disponibilidad,
       contacto: contacto.trim() || undefined,
+      mostrarContacto,
       rgpd,
     }
 
@@ -395,14 +399,34 @@ export function FormularioComunidad() {
           style={inputStyle}
           placeholder="+34 600 123 456"
         />
-        {/* El texto anterior decía que dejar el campo vacío era lo que evitaba exponer el
-            número. Dejó de ser cierto con la migración 0010 (PII-01): ahora el teléfono no se
-            muestra nunca por defecto, lo llenes o no, y la visibilidad depende de
-            `mostrar_contacto` —hoy se activa a pedido— y no de si el campo tiene algo. */}
+        {/* Historial de este texto, para no volver atrás sin querer:
+            (1) decía que dejar el campo vacío era lo que evitaba exponer el número — falso
+                desde la migración 0010 (PII-01), corregido en 3a13a97;
+            (2) decía "escríbenos y lo activamos" — cierto hasta que existió la casilla de
+                abajo, que es la que decide la visibilidad. */}
         <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
-          Tu número no se muestra en el mapa. Quien te vea podrá escribirte igual: verá un botón
-          para enviarte un mensaje privado, que te llega por email. Si prefieres que se muestre,
-          escríbenos y lo activamos.
+          Quien te vea podrá escribirte aunque no dejes tu número: verá un botón para enviarte
+          un mensaje privado, que te llega por email.
+        </p>
+
+        <label
+          htmlFor="mostrarContacto"
+          className="flex items-center gap-3 cursor-pointer mt-1"
+        >
+          <input
+            id="mostrarContacto"
+            type="checkbox"
+            checked={mostrarContacto}
+            onChange={e => setMostrarContacto(e.target.checked)}
+            className="h-4 w-4 shrink-0 cursor-pointer"
+            style={{ accentColor: 'var(--dz-accent)' }}
+          />
+          <span style={{ fontFamily: 'var(--font-dz-ui)', fontSize: 'var(--text-sm)', color: 'var(--dz-ink)' }}>
+            Mostrar mi teléfono en mi perfil del mapa
+          </span>
+        </label>
+        <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
+          Si no la marcas, tu número no se muestra a nadie.
         </p>
       </div>
 

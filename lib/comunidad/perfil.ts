@@ -9,6 +9,7 @@ export interface UpsertPerfilInput {
   lng: number
   disponibilidad: Actividad[]
   contacto?: string
+  mostrarContacto?: boolean
 }
 
 /**
@@ -38,6 +39,14 @@ export async function upsertPerfilComunidad(input: UpsertPerfilInput): Promise<C
       ? input.disponibilidad
       : (existente?.disponibilidad ?? []),
     contacto: input.contacto ?? existente?.contacto ?? null,
+    // `??` y no `||`: acá `false` es un valor deliberado, no un vacío. Con `||`, desmarcar la
+    // casilla no podría distinguirse de no haberla mandado, y apagar el teléfono sería
+    // imposible. Con `??`, solo `undefined` conserva lo que ya había.
+    //
+    // El default final es `false`: si nadie dijo nada y no hay fila previa, el teléfono nace
+    // oculto. Es la misma garantía que da la migración 0010 a nivel de columna, repetida acá
+    // para que no dependa de un default de la base que alguien podría cambiar.
+    mostrar_contacto: input.mostrarContacto ?? existente?.mostrar_contacto ?? false,
     updated_at: new Date().toISOString(),
   }
 
