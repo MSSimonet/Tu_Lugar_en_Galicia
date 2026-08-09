@@ -1,10 +1,14 @@
 import type { Metadata } from 'next'
+import { SITE_URL } from '@/lib/config/site'
 import { LegalHero } from '@/components/legal/LegalHero'
 import { LegalSection } from '@/components/legal/LegalSection'
 
 export const metadata: Metadata = {
   title: 'Aviso Legal',
   description: 'Aviso legal de Tu Lugar en Galicia, agencia de relocation especializada en Galicia.',
+  // Canonical sí, sitemap no: las cuatro legales quedan fuera de app/sitemap.ts por
+  // decisión confirmada (2026-08-08), no por olvido. Una cosa no implica la otra.
+  alternates: { canonical: `${SITE_URL}/aviso-legal` },
 }
 
 export default function AvisoLegalPage() {

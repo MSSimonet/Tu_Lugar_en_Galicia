@@ -51,11 +51,31 @@ El cliente no debe saber que ya podríamos tener sus datos previos.
    (`cafe_cerveza_mate`, `caminata`, `apoyo_emocional`).
 4. Contacto: teléfono opcional (WhatsApp).
 
-**Paso 2 — Procesamiento (Upsert en Supabase, Email como clave única):**
+**Paso 2 — Confirmación del email, y recién después el upsert:**
+
+> ⚠️ **Actualizado 2026-08-09.** Hasta esta fecha el Paso 2 escribía en Supabase directamente
+> al enviar el formulario. Eso era el agujero §5.6 de `docs/arranque.md`: el email es la PK de
+> la tabla y nadie verificaba que quien mandaba el POST fuera su dueño, así que sabiendo el
+> email de una persona registrada se le pisaba la fila entera — incluida su ubicación en el
+> mapa. El upsert descrito abajo sigue siendo exactamente el mismo; lo que cambió es **cuándo**
+> se ejecuta.
+
+1. `POST /api/comunidad/registro` valida, geocodifica, y guarda el perfil en un buffer
+   temporal en Upstash (`comunidad:pendiente:<uuid>`, TTL 24 h). **No toca la tabla.**
+2. Manda un mail a la dirección declarada con un link firmado
+   (`/comunidad/confirmar?id=…&token=…`, HMAC-SHA256 vía `lib/admin/tokens.ts`).
+3. El link abre una página; su botón llama a `POST /api/comunidad/confirmar`, que verifica la
+   firma, consume el pendiente (`getdel`, atómico) y **recién ahí** hace el upsert.
+
+El upsert en sí, sin cambios desde el diseño original (email como clave única):
 
 - Usuario nuevo: crea registro.
 - Usuario existente: no duplica fila, completa/actualiza campos faltantes (coordenadas,
   disponibilidad, contacto), mantiene datos previos intactos.
+
+Consecuencia práctica: **actualizar tu propio perfil también pide confirmar por mail.** Esa
+fricción es justamente la prueba de posesión, y es lo que habilita el toggle self-service de
+teléfono que quedó pendiente en PII-01.
 
 ## 3. Puente Supabase → Airtable
 
