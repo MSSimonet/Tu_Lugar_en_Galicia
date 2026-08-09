@@ -17,11 +17,6 @@ function iniciales(nombre: string): string {
     .join('')
 }
 
-function urlWhatsapp(contacto: string): string {
-  const soloDigitos = contacto.replace(/\D/g, '')
-  return `https://wa.me/${soloDigitos}`
-}
-
 export function TarjetaPerfil({ perfil }: TarjetaPerfilProps) {
   const [mostrarForm, setMostrarForm] = useState(false)
 
@@ -77,23 +72,12 @@ export function TarjetaPerfil({ perfil }: TarjetaPerfilProps) {
         </div>
       )}
 
-      {perfil.contacto ? (
-        <a
-          href={urlWhatsapp(perfil.contacto)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center px-3 py-2 font-bold [font-size:var(--text-xs)] uppercase tracking-[0.08em] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
-          style={{
-            fontFamily: 'var(--font-dz-ui)',
-            borderRadius: '8px',
-            backgroundColor: 'var(--dz-accent)',
-            color: '#1A1410',
-            outlineColor: 'var(--dz-accent)',
-          }}
-        >
-          Escribir por WhatsApp
-        </a>
-      ) : mostrarForm ? (
+      {/* Desde la migración 0010 (PII-01) el teléfono ya no viaja en la carga del mapa, así que
+          esta tarjeta no lo tiene para armar un link de WhatsApp: todos los perfiles caen al
+          mensaje privado, que ya era la rama por defecto de quien no dejaba teléfono. El camino
+          de WhatsApp vuelve en el commit siguiente, pidiendo el número de a uno y solo para
+          quien haya activado `mostrar_contacto`. */}
+      {mostrarForm ? (
         <FormMensajePrivado destinatarioId={perfil.id} />
       ) : (
         <button
