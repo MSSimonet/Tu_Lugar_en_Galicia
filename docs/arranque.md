@@ -1,7 +1,15 @@
 # Documento de arranque — Tu Lugar en Galicia
 
-> Actualizado 2026-07-04. Próxima sesión: leer este archivo antes de actuar.
+> Actualizado 2026-08-09. Próxima sesión: leer este archivo antes de actuar.
 > Reglas completas en `CLAUDE.md`.
+>
+> **Lo primero, si vas a mergear `fix/hallazgos-agosto-2`: leer §5.9.** Hay un bloqueo real
+> —los links de confirmación de Comunidad dan 404 hasta que el deploy esté vivo— que no se
+> arregla con código, sino con el orden de las operaciones.
+>
+> **Sesión 2026-08-09** (rama `fix/hallazgos-agosto-2`, 5 commits): se cerraron los tres
+> pendientes de esta lista — §5.7 (skill de voz), §5.6 (sobrescritura de perfiles sin auth) y
+> §5.5 (SEO-03). Aparecieron cinco pendientes nuevos: §5.9 a §5.13.
 
 ---
 
@@ -228,7 +236,19 @@ Esta sesión cubrió solo la **fase de seguridad** de una auditoría global más
 - **Performance** (Lighthouse en producción — pendiente desde certificación de Fase 1, criterio C6 nunca verificado con medición real).
 - **QA funcional end-to-end** — recorrido completo de los flujos de negocio (Gina → Supabase → agenda → PDF → mails) verificando comportamiento, no solo seguridad.
 
-### 5.5 — SEO-03: `canonical` faltante en 8 páginas públicas (sesión 2026-08-08)
+### 5.5 — ✅ RESUELTO — SEO-03: `canonical` faltante en 7 páginas públicas (2026-08-09, `e3cfec4`)
+
+> **Resuelto en `e3cfec4`.** Camino 2 (mínimo): `alternates.canonical` a mano en cada página.
+> 7 archivos, +16 líneas, cero cambios en `lib/`. Verificado contra el servidor leyendo el
+> HTML servido: las 7 emiten canonical; `/`, `/faq` y `/ciudades/vigo` (control) sin cambios.
+>
+> **Eran 7, no 8 — y 13 de 20, no 12.** El texto de abajo decía otra cosa y estaba mal: midió
+> 5 páginas, infirió 2 más por el mismo patrón, y sumó 8. Se corrigió midiendo ruta por ruta
+> sobre las 20 públicas. Se conserva el texto original para no perder el razonamiento, pero
+> **los números buenos son estos.**
+>
+> `/comunidad/confirmar` (nueva en `005e7bf`) queda fuera a propósito: es `noindex, nofollow`,
+> una URL de un solo uso con un token firmado. No lleva canonical ni entra al sitemap.
 
 Hallazgo lateral que apareció al cerrar SEO-01/02 (commit `4ba1578`). **No se tocó** — es un pendiente propio, separado de aquel commit por decisión del usuario.
 
@@ -259,7 +279,34 @@ Recomendado el 1 para las 4 públicas de marketing, y el 2 para las 4 legales, q
 
 **Ojo con las legales.** Están fuera del sitemap por decisión confirmada (2026-08-08), no por olvido. Que se les agregue canonical no significa que entren al sitemap.
 
-### 5.6 — 🔴 Cualquiera puede sobrescribir el perfil de comunidad de otra persona (2026-08-08)
+### 5.6 — ✅ RESUELTO — Cualquiera podía sobrescribir el perfil de comunidad de otra persona (2026-08-09, `005e7bf`)
+
+> **Resuelto en `005e7bf`** por el camino que este propio texto proponía: verificación por
+> email con el HMAC de `lib/admin/tokens.ts`. El registro ya no escribe en `comunidad`; guarda
+> el perfil en Upstash (TTL 24 h) y manda un mail firmado. La única escritura vive en
+> `POST /api/comunidad/confirmar`.
+>
+> **Verificado end-to-end contra infraestructura real** (2026-08-09), con la fila de prueba
+> borrada después y el estado restaurado (4 filas / 3 pines, igual que antes):
+>
+> | Propiedad | Prueba |
+> |---|---|
+> | El registro no escribe | POST 200 y el mapa siguió en 3 pines, sin fila |
+> | Un token forjado no escribe | 400, tabla intacta |
+> | El mail llega y se ve bien | Confirmado por el usuario en su casilla |
+> | Confirmar escribe con los datos correctos | Fila creada, `mostrar_contacto: false` (default PII-01 sostenido) |
+> | Reusar el enlace no duplica | `getdel` atómico → `usado` |
+>
+> Decisiones de diseño y sus descartes, en el mensaje de `005e7bf`. Lo más importante para
+> quien retome: **`lib/admin/tokens.ts` no se tocó**, y el sujeto que se firma lleva prefijo
+> (`comunidad-pendiente:<uuid>`) como separación de dominio contra los tokens de admin, que
+> usan el mismo `INTERNAL_API_SECRET` y también son uuid desde que los leads viven en Supabase.
+>
+> ⛔ **Ver §5.9 antes de mergear: los links de confirmación no funcionan hasta que la rama esté
+> desplegada.**
+>
+> El toggle self-service de teléfono queda **desbloqueado**: ya hay prueba de posesión del email
+> y una página donde puede vivir (`/comunidad/confirmar`).
 
 Hallazgo lateral de PII-01. **No se tocó: es scope nuevo, para una sesión de seguridad propia.** Es más grave que el PII-01 que lo destapó.
 
@@ -277,7 +324,32 @@ Mover el pin de una familia inmigrante a una dirección que el atacante elige no
 
 **Alcance de la revisión cuando se retome:** el mismo patrón de "confío en el email que me mandan" hay que buscarlo en `/api/comunidad/mensaje` (ahí el remitente declara su email sin verificación, aunque el impacto es menor: solo afecta el `replyTo`).
 
-### 5.7 — La skill `voz-tu-lugar-en-galicia` no existe (2026-08-08)
+### 5.7 — ✅ RESUELTO — La skill `voz-tu-lugar-en-galicia` no existía (2026-08-09, `e18a60f`)
+
+> **Resuelto en `e18a60f`** por la primera salida: se creó de verdad, en
+> `.claude/skills/voz-tu-lugar-en-galicia/SKILL.md`, apuntando a
+> `docs/contexto-estrategico.md:393-398` como fuente **sin duplicarla**.
+>
+> **Hizo falta tocar `.gitignore`, y ese era el detalle que faltaba en el análisis de abajo.**
+> `.claude/skills/` estaba ignorado entero (a propósito: la colección instalada entró por error
+> en `3fb0b7a` con 13,3 MB en 735 archivos). Crear el archivo sin más no lo habría commiteado,
+> no habría sobrevivido a un clone, y `CLAUDE.md` seguiría apuntando al vacío — el mismo bug
+> con más vida. Git no permite re-incluir dentro de un directorio excluido entero, así que la
+> regla pasó a `.claude/skills/*` más `!.claude/skills/voz-tu-lugar-en-galicia/`. Verificado
+> que no arrastra la colección: `git add --dry-run --all .claude/` stagea exactamente 1 archivo.
+>
+> **Corrección al conteo:** son 5 referencias prescriptivas (las que dice abajo) **más 2 en
+> código** que el texto original no contó: `lib/admin/email.ts:171` y `:272`, que citan la skill
+> en comentarios como si existiera.
+>
+> La skill suma sobre el doc: alcance (copy de cliente sí, comentarios y `/docs` no), ejemplos
+> buenos tomados de copy real publicado, una sección sobre mensajes de error, y un checklist.
+> Incluye una precisión deliberada: `CLAUDE.md` §6.1 dice "nunca 'vos' **con el cliente**", y
+> ese matiz se pierde en las otras cuatro referencias, que dicen "sin excepción" a secas —
+> pero `contexto-estrategico.md` y medio `/docs` están en rioplatense porque son internos, y
+> eso **no se toca**. Sin esa aclaración, la próxima sesión "corrige" documentación que está bien.
+
+### 5.7 (texto original del hallazgo, 2026-08-08)
 
 **`CLAUDE.md` obliga a usar una skill que no está en el disco.** Buscada por nombre en todo el repo y en `~/.claude/`: cero resultados. En `.claude/skills/` solo viven las 74 carpetas de `design-references/`.
 
@@ -288,6 +360,104 @@ La exigen cinco lugares: `CLAUDE.md` §6.1 ("Todo texto publicado: aplicar skill
 Lo que sí existe y hace de fuente de verdad hoy es `docs/contexto-estrategico.md:393-398` — cálido y cercano, "tú" neutro (nunca "vos", nunca "vosotros"), directo y sin rodeos, empático, nunca corporativo. Es lo que se aplicó al copy de PII-01 (commit `3a13a97`).
 
 **Dos salidas, elegir una:** crear la skill de verdad, o quitar las cinco referencias y apuntar a `contexto-estrategico.md`. Lo que no conviene es dejarla como está: una regla marcada "sin excepción" que apunta al vacío enseña a ignorar las reglas del archivo.
+
+---
+
+### 5.9 — ⛔ BLOQUEO DE MERGE — los links de confirmación no funcionan hasta desplegar (2026-08-09)
+
+**Esto no es una nota al pie. Si la rama `fix/hallazgos-agosto-2` se mergea sin tener esto en
+cuenta, nadie puede completar un alta en Comunidad.**
+
+**El mecanismo.** El mail de confirmación arma su link con `EMAIL_BASE_URL`
+(`lib/admin/email.ts`), que vale `NEXT_PUBLIC_SITE_URL ?? 'https://tu-lugar-en-galicia.vercel.app'`.
+Como `NEXT_PUBLIC_SITE_URL` no está configurada en Vercel (ver §8), el link apunta siempre a
+`https://tu-lugar-en-galicia.vercel.app/comunidad/confirmar?...`. Esa ruta **solo existe en esta
+rama**. Hasta que el deploy esté vivo, todo link enviado da 404 — y como el alta ya no escribe
+en la base sin ese clic, el registro queda inutilizable.
+
+**Consecuencia del orden de operaciones:** entre el merge y el deploy de Vercel hay una ventana
+en la que el formulario acepta altas, manda mails, y ninguna se puede confirmar. Los pendientes
+expiran solos en 24 h sin dejar rastro en la base, así que no se corrompe nada — pero esas
+personas se quedan afuera del mapa sin saber por qué.
+
+**Qué hacer al mergear:**
+1. Mergear y **esperar a que el deploy de Vercel termine** antes de anunciar o probar nada.
+2. Verificar con un alta real que el link del mail resuelve (no 404).
+3. Recién entonces dar la feature por viva.
+
+**Ojo con los dos `SITE_URL`.** Son dos constantes distintas con valores distintos, y confundirlas
+rompe cosas en silencio:
+
+| Constante | Valor | Para qué |
+|---|---|---|
+| `lib/config/site.ts:9` | `https://tulugarengalicia.com` | canonical/OG — dominio propio, **todavía sin registrar** (S10) |
+| `lib/admin/email.ts` → `EMAIL_BASE_URL` | `NEXT_PUBLIC_SITE_URL ?? vercel.app` | links dentro de mails — tienen que resolver **hoy** |
+
+Si algún día se registra el dominio propio y se configura `NEXT_PUBLIC_SITE_URL`, los dos
+convergen y este problema desaparece.
+
+### 5.10 — La skill `motion-tu-lugar-en-galicia` no existe (2026-08-09)
+
+**Mismo bug que §5.7, sin resolver.** Buscada en `.claude/skills/` y en `~/.claude/skills/`:
+cero resultados. La exigen tres lugares: `CLAUDE.md:286` ("toda animación/transición nueva"),
+`DESIGN.md:362` (duraciones máximas) y `docs/adr/010-stack-animacion-interaccion.md:85`, que
+incluso indica dónde debería vivir (`.claude/skills/`).
+
+Se detectó al resolver §5.7 y **se dejó fuera a propósito**, porque la decisión del usuario fue
+sobre la skill de voz. Las salidas son las mismas dos: crearla (el contenido ya existe disperso
+en `DESIGN.md` §7 y el ADR-010 — `BRAND_EASE`, ≤400 ms entradas, ≤200 ms micro-interacciones,
+`prefers-reduced-motion` obligatorio, prohibido animar layout) o quitar las tres referencias.
+
+Si se crea: **la excepción de `.gitignore` hay que ampliarla**, con el mismo cuidado de §5.7.
+
+### 5.11 — Falta OG/Twitter cards en las 4 páginas públicas de marketing (2026-08-09)
+
+Aparecido al resolver SEO-03, y **deliberadamente fuera de aquel commit** por decisión del
+usuario (el pedido era superficie mínima).
+
+`/ciudades`, `/contacto`, `/comunidad` y `/comunidad/mapa` ahora tienen canonical, pero siguen
+sin `openGraph` ni `twitter`. Las 13 que pasan por `getNextMetadata()` los tienen gratis vía
+`buildOpenGraph()` (`lib/seo/og.ts`).
+
+**Por qué importa más de lo que parece:** compartir `/comunidad/mapa` por WhatsApp muestra un
+link pelado, sin imagen ni título. Este negocio se comparte por WhatsApp e Instagram entre
+familias latinoamericanas — es el canal, no un extra.
+
+**Fix:** sumar esas 4 a `PAGE_METADATA` y pasarlas por `getNextMetadata()` (camino 1 de §5.5).
+Arrastra OG + Twitter y de paso unifica el enfoque en esas 4. Las 4 legales no lo necesitan.
+
+### 5.12 — `/api/comunidad/mensaje` no verifica al remitente (2026-08-09)
+
+Ya estaba anotado dentro de §5.6 como "alcance de la revisión cuando se retome". Se deja como
+pendiente propio porque §5.6 se cerró sin tocarlo, por decisión del usuario.
+
+`remitenteEmail` llega del cliente sin verificación y va directo al `replyTo` del mail
+([route.ts:118](../app/api/comunidad/mensaje/route.ts)). Se puede mandar un mensaje firmado con
+el nombre y el email de un tercero: quien lo reciba responde a una casilla que el remitente real
+eligió. Impacto menor que §5.6 —no se escribe nada en la base— pero es suplantación.
+
+**Ahora tiene arreglo limpio, que antes no existía:** exigir que el remitente sea un miembro
+verificado de la comunidad. Esa noción nació con §5.6.
+
+### 5.13 — El widget de Gina borra la página entera del árbol de accesibilidad (2026-08-09)
+
+`components/gina/GinaWidget.tsx` renderiza un `<div aria-modal="true">` que es **flotante**
+(`fixed bottom-6 right-6 z-50`), no un diálogo modal. `aria-modal="true"` le dice a la
+tecnología asistiva que todo lo que está fuera de ese nodo no existe.
+
+**Efecto medido** (2026-08-09, sobre el DOM real de `/comunidad`): con el widget abierto, el
+formulario de registro completo —672×1233 px, perfectamente visible en pantalla, sin un solo
+ancestro con `aria-hidden`— **desaparece del árbol de accesibilidad**. Para quien navega con
+lector de pantalla, con Gina abierta el resto de la página no está.
+
+Se descubrió de casualidad: las herramientas de automatización no encontraban los campos del
+formulario aunque el DOM los tenía.
+
+**Fix probable:** quitar `aria-modal="true"` (es un panel flotante, no un modal) o convertirlo
+en un modal de verdad con foco atrapado y fondo inerte. Lo primero es casi seguro lo correcto.
+
+**No se tocó** porque `DESIGN.md` §7 prohíbe tocar `components/gina/**` fuera de forma/color/
+animación. Requiere una tarea propia con el `Accessibility Auditor`.
 
 ---
 

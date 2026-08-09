@@ -216,7 +216,7 @@ Un nonce por request y HTML estático son **mutuamente excluyentes**. Si algún 
 
 Auditoría completa del repo antes de mergear `design/radical-explore` (39 commits). Herramientas: `tsc`, `eslint`, `next build`, `npm audit`, Unlighthouse sobre 19 rutas contra **build de producción**, y axe vía Lighthouse. Veredicto: mergeable tras parchear dependencias. Mergeado en `f1826a9`.
 
-**Estado sano y medido, para no volver a auditarlo desde cero:** `tsc` 0 · `eslint` 0 · `build` exit 0 · **cero `any`** en las 200 fuentes `.ts/.tsx` · cero `console.log` en `app`/`components`/`lib` · **SEO 100/100** y **Best Practices 100/100** en las 19 rutas · metadata + canonical en las 20 páginas públicas · **a11y 100/100** (tras corregir A1) · CLS 0,0000 y TBT 0 ms.
+**Estado sano y medido, para no volver a auditarlo desde cero:** `tsc` 0 · `eslint` 0 · `build` exit 0 · **cero `any`** en las 200 fuentes `.ts/.tsx` · cero `console.log` en `app`/`components`/`lib` · **SEO 100/100** y **Best Practices 100/100** en las 19 rutas · metadata en las 20 páginas públicas · canonical **hoy sí en 20 de 20**, pero ojo: cuando se escribió esta línea eran 13 de 20 y la afirmación era falsa — se completó el 2026-08-09 (SEO-03, `docs/arranque.md` §5.5) · **a11y 100/100** (tras corregir A1) · CLS 0,0000 y TBT 0 ms.
 
 **Lo que se corrigió:** las 2 vulnerabilidades críticas (`bc67141`), el `aria-hidden` con descendiente enfocable de `CiudadLayout.tsx` que bajaba las 5 páginas de ciudad a 96, la fuente única de `pasos.ts` que había quedado huérfana, y limpieza de código muerto (`c30dddf`).
 
