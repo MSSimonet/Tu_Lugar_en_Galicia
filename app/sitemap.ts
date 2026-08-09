@@ -12,6 +12,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
+      // Hub de ciudades: mismo nivel que sus cinco hijas, que ya estaban listadas.
+      url: `${SITE_URL}/ciudades`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
       url: `${SITE_URL}/ciudades/vigo`,
       lastModified,
       changeFrequency: 'weekly',
@@ -66,6 +73,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
+      // Canal de contacto principal desde que se retiró WhatsApp (A08): mismo
+      // nivel que las otras dos páginas de conversión, /conocernos y /agenda.
+      url: `${SITE_URL}/contacto`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
       url: `${SITE_URL}/agenda`,
       lastModified,
       changeFrequency: 'monthly',
@@ -75,6 +90,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE_URL}/apps-utiles`,
       lastModified,
       changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${SITE_URL}/comunidad`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      // El mapa cambia cada vez que se registra una familia, no cuando se edita
+      // la página — de ahí 'weekly' frente al 'monthly' de /comunidad.
+      url: `${SITE_URL}/comunidad/mapa`,
+      lastModified,
+      changeFrequency: 'weekly',
       priority: 0.6,
     },
   ]
