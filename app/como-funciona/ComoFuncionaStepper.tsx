@@ -51,7 +51,12 @@ export default function ComoFuncionaStepper() {
          animación, que la lee en los dos extremos del keyframe (si el keyframe
          tuviera la escala escrita a mano, cambiarla acá haría saltar la imagen
          al terminar de entrar). */
-      .stepper-image-col { --cf-img-escala: 0.9; }
+      /* Escalonamiento imagen/texto. En la referencia el texto arranca solo y la
+         imagen entra ~0,65s después, sobre transiciones de 1,0-1,3s. Acá el tope
+         de marca para entradas de contenido son 400ms, así que se replica la
+         PROPORCIÓN (la imagen entra pasada la mitad del movimiento del texto), no
+         el número: 180ms sobre 400ms. */
+      .stepper-image-col { --cf-img-escala: 0.9; --cf-retraso-img: 180ms; }
       .cf-slide {
         position: absolute;
         inset: 0;
@@ -63,12 +68,17 @@ export default function ComoFuncionaStepper() {
         transform: scale(var(--cf-img-escala)) translateX(0);
         transform-origin: center center;
         /* Salida: se desvanece en el lugar. Sólo la que ENTRA se desplaza; si
-           las dos se movieran, el cruce se lee como un barrido doble. */
-        transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+           las dos se movieran, el cruce se lee como un barrido doble.
+           El retraso va también acá, no sólo en la que entra: si sólo se
+           demorara la entrada, durante esos 180ms la que sale ya estaría a
+           media opacidad y la de abajo no habría empezado, así que asomaría el
+           fondo de la columna. Demorando las dos, la saliente aguanta entera
+           mientras se mueve el texto y recién después cruzan. */
+        transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1) var(--cf-retraso-img);
       }
       .cf-slide-activa {
         opacity: 1;
-        animation: cfEntraDesdeIzquierda 400ms cubic-bezier(0.4, 0, 0.2, 1) both;
+        animation: cfEntraDesdeIzquierda 400ms cubic-bezier(0.4, 0, 0.2, 1) var(--cf-retraso-img) both;
       }
       /* Sólo transform y opacity: nada que dispare reflow. 400ms es el tope de
          la marca para entradas de contenido — el crossfade anterior estaba en
@@ -77,9 +87,22 @@ export default function ComoFuncionaStepper() {
         from { opacity: 0; transform: scale(var(--cf-img-escala)) translateX(-6%); }
         to   { opacity: 1; transform: scale(var(--cf-img-escala)) translateX(0); }
       }
+      /* El título de la fila activa sube al puesto en vez de sólo cambiar de
+         color. Arranca en 0.25 y no en 0 a propósito: la fila NO aparece, ya
+         estaba en pantalla en su estado apagado — un fade desde cero la haría
+         parpadear. Es transform + opacity, nada que dispare reflow. */
+      .cf-titulo-activo {
+        animation: cfTituloSube 400ms cubic-bezier(0.4, 0, 0.2, 1) both;
+      }
+      @keyframes cfTituloSube {
+        from { opacity: 0.25; transform: translateY(7px); }
+        to   { opacity: 1;    transform: translateY(0); }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         .cf-slide { transition: none; }
         .cf-slide-activa { animation: none; }
+        .cf-titulo-activo { animation: none; }
       }
 
       @media (max-width: 767px) {
@@ -135,6 +158,50 @@ export default function ComoFuncionaStepper() {
             style={{ backgroundImage: `url(${d.imagen})` }}
           />
         ))}
+
+        {/* Contador de fracción vertical (paso actual sobre total), tomado de la
+            referencia. Va sobre una placa --dz-luz con texto --dz-ink, no en
+            blanco crudo sobre la foto: es el mismo par superficie/texto que usa
+            la columna de contenido, así el contraste queda garantizado en claro
+            y en oscuro y no depende de qué foto toque. Ese fue exactamente el
+            defecto U02 de la auditoría (texto blanco cayendo sobre la zona clara
+            de una foto), y acá cada paso trae una foto distinta.
+
+            aria-hidden: no aporta nada al lector de pantalla — el paso activo ya
+            lo comunica el aria-pressed de cada fila. */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: '24px',
+            // Arriba y no abajo: la columna mide `calc(100vh - 68px)` y con el
+            // header sticky su borde inferior cae justo en el pliegue, así que
+            // anclado abajo el contador quedaba al ras del borde de la ventana
+            // (medido: y=836+64=900 en un viewport de 900) y se cortaba en
+            // cuanto la ventana era un poco más baja o la columna crecía.
+            top: '24px',
+            zIndex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '10px 14px',
+            borderRadius: '8px',
+            background: 'var(--dz-luz)',
+            boxShadow: '0 2px 10px rgb(0 0 0 / 0.18)',
+            fontFamily: 'var(--font-dz-display)',
+            lineHeight: 1,
+            userSelect: 'none',
+          }}
+        >
+          <span style={{ fontSize: '20px', fontWeight: 700, fontStyle: 'italic', color: 'var(--dz-ink)' }}>
+            {data[active].num}
+          </span>
+          <span style={{ width: '18px', height: '1px', background: 'var(--dz-borde)' }} />
+          <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--dz-muted)' }}>
+            {String(data.length).padStart(2, '0')}
+          </span>
+        </div>
 
       </div>
 
@@ -259,10 +326,30 @@ export default function ComoFuncionaStepper() {
                     cinco, y ese recorte no toca el texto — sólo el aire propio de
                     la fila, que ya tiene el `gap` del borde superior. */}
                 <div style={{ flex: 1, minWidth: 0, padding: '2px 0' }}>
+                  {/* `duracion` ya existía en lib/como-funciona/pasos.ts y no se
+                      renderizaba en ningún lado. Ocupa el lugar del "STEP N" de la
+                      referencia —etiqueta chica en versalitas sobre el título— pero
+                      dice algo que el número de la izquierda no dice: cuánto tarda
+                      ese paso. Va arriba y no al final de la fila para no competir
+                      por el ancho con la descripción cuando el texto envuelve. */}
+                  <span style={{
+                    display: 'block',
+                    fontFamily: 'var(--font-dz-ui)',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    letterSpacing: '0.14em',
+                    textTransform: 'uppercase',
+                    lineHeight: 1.2,
+                    color: isAct ? 'var(--dz-accent-text)' : 'var(--dz-muted)',
+                    transition: 'color .3s ease',
+                    marginBottom: '3px',
+                  }}>
+                    {d.duracion}
+                  </span>
                   {/* <h3> real, no <div>: los 5 pasos son contenido de la página y antes
                       no existían en el árbol de headings (auditoría, §5). El peso sigue
                       alternando activo/inactivo — es señal de estado, no de jerarquía. */}
-                  <h3 style={{
+                  <h3 className={isAct ? 'cf-titulo-activo' : undefined} style={{
                     fontFamily: 'var(--font-dz-display)',
                     fontSize: 'var(--dz-text-h3)',
                     fontWeight: isAct ? 'var(--dz-weight-h3)' : 500,
