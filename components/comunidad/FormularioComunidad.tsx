@@ -364,9 +364,14 @@ export function FormularioComunidad() {
           style={inputStyle}
           placeholder="+34 600 123 456"
         />
+        {/* El texto anterior decía que dejar el campo vacío era lo que evitaba exponer el
+            número. Dejó de ser cierto con la migración 0010 (PII-01): ahora el teléfono no se
+            muestra nunca por defecto, lo llenes o no, y la visibilidad depende de
+            `mostrar_contacto` —hoy se activa a pedido— y no de si el campo tiene algo. */}
         <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
-          Si lo dejas en blanco, quienes te vean en el mapa igual podrán escribirte: en vez de
-          un enlace directo verán un botón para enviarte un mensaje privado, sin exponer tu número.
+          Tu número no se muestra en el mapa. Quien te vea podrá escribirte igual: verá un botón
+          para enviarte un mensaje privado, que te llega por email. Si prefieres que se muestre,
+          escríbenos y lo activamos.
         </p>
       </div>
 

@@ -140,11 +140,16 @@ export function MapaComunidad() {
 
       try {
         const supabase = getSupabaseBrowserClient()
-        // Lista explícita de columnas — nunca 'email' (clave primaria de la tabla). El mapa
-        // público no debe recibir ni exponer el email de nadie (docs/comunidad-de-acogida.md §4).
+        // Lista explícita de columnas, y dos ausencias obligatorias: 'email' (clave primaria,
+        // desde la migración 0002) y 'contacto' (el teléfono, desde la 0010 — PII-01). La anon
+        // key no tiene grant sobre ninguna de las dos: agregar cualquiera acá no devolvería esa
+        // columna "de más", haría fallar la consulta ENTERA con 42501 y el mapa quedaría sin un
+        // solo pin. Es lo que pasó entre las migraciones 0002 y 0003.
+        // 'mostrar_contacto' sí viaja: es un booleano, no un dato personal, y es lo que decide
+        // si TarjetaPerfil ofrece el teléfono o el formulario de mensaje privado.
         const { data, error } = await supabase
           .from('comunidad')
-          .select('id,nombre,foto_url,lat,lng,disponibilidad,contacto,updated_at')
+          .select('id,nombre,foto_url,lat,lng,disponibilidad,mostrar_contacto,updated_at')
 
         if (error) throw new Error(error.message)
         const perfiles = (data ?? []) as ComunidadPerfilPublico[]
