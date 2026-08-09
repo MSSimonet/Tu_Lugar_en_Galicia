@@ -63,7 +63,16 @@ storybook-static
 # config de .claude/ (launch.json, settings.json, session-start.ps1,
 # pre-compact.ps1) SI son del proyecto — CLAUDE.md documenta el hook
 # SessionStart y sin ellos se rompe al clonar.
-.claude/skills/
+#
+# La forma es `skills/*` y no `skills/` A PROPOSITO: git no permite re-incluir nada
+# dentro de un directorio excluido entero, asi que con `skills/` la excepcion de abajo
+# no tendria efecto. Excluyendo el CONTENIDO (`/*`) la excepcion si funciona, y todo
+# lo demas (las 24 skills instaladas + design-references) sigue afuera igual.
+.claude/skills/*
+# Excepcion puntual: skill escrita para ESTE proyecto, no instalada. CLAUDE.md §6.1 y
+# §10 la exigen para todo el copy publicado, asi que tiene que sobrevivir a un clone —
+# si no, la regla vuelve a apuntar al vacio (hallazgo §5.7 de docs/arranque.md).
+!.claude/skills/voz-tu-lugar-en-galicia/
 .agents/
 
 # Artefactos de Playwright MCP (logs y snapshots de sesiones de verificación)
