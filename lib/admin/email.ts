@@ -14,6 +14,20 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tu-lugar-en-galicia.vercel.app'
 
 /**
+ * Base absoluta para links que van DENTRO de un email.
+ *
+ * OJO — no confundir con el `SITE_URL` de lib/config/site.ts, que vale
+ * "https://tulugarengalicia.com". Aquel es el dominio propio, todavía sin registrar
+ * (pendiente S10 de docs/arranque.md §4), y sirve para canonical/OG, donde declarar la
+ * URL futura es correcto. Un link de email tiene que resolver HOY: si un mail de
+ * confirmación apuntara al dominio pendiente, nadie podría completar su registro.
+ *
+ * Se exporta para que lib/comunidad/email.ts use exactamente esta misma decisión en vez
+ * de volver a elegir una base por su cuenta.
+ */
+export const EMAIL_BASE_URL = SITE_URL
+
+/**
  * Escapa caracteres HTML especiales antes de interpolar texto de usuario en
  * un template de email. Sin esto, un nombre/mensaje con "<img onerror=...>"
  * se renderiza como HTML real en el cliente de correo del destinatario.

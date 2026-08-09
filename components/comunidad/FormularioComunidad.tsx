@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ACTIVIDADES, type Actividad, type ComunidadRegistroInput } from '@/lib/comunidad/types'
 
@@ -51,8 +50,6 @@ interface FormErrors {
 }
 
 export function FormularioComunidad() {
-  const router = useRouter()
-
   const [email, setEmail] = useState('')
   const [calle1, setCalle1] = useState('')
   const [calle2, setCalle2] = useState('')
@@ -129,8 +126,9 @@ export function FormularioComunidad() {
       })
 
       if (res.ok) {
+        // Ya no se redirige al mapa: el perfil todavía no existe. El alta se completa
+        // recién cuando la persona abre el enlace del correo (§5.6 de docs/arranque.md).
         setStatus('success')
-        router.push('/comunidad/mapa')
         return
       }
 
@@ -150,7 +148,40 @@ export function FormularioComunidad() {
     }
   }
 
-  const isBusy = status === 'loading' || status === 'success'
+  // El formulario se reemplaza entero: dejarlo visible invitaría a reenviarlo pensando que
+  // no funcionó, y cada reenvío es otro correo. Lo único que falta ahora está en la casilla.
+  if (status === 'success') {
+    return (
+      <div
+        className="flex flex-col gap-4 p-6"
+        style={{
+          borderRadius: 'var(--dz-radius-card)',
+          backgroundColor: 'var(--dz-papel)',
+          border: '1px solid var(--dz-borde)',
+          boxShadow: 'var(--dz-shadow-sm)',
+        }}
+        role="status"
+      >
+        <h2
+          style={{
+            fontFamily: 'var(--font-dz-display)',
+            fontWeight: 700,
+            fontSize: 'var(--text-lg)',
+            color: 'var(--dz-ink)',
+          }}
+        >
+          Revisa tu correo
+        </h2>
+        <p className="leading-[var(--leading-cuerpo)]" style={{ ...helperStyle, fontSize: 'var(--text-sm)' }}>
+          Te enviamos un enlace a <strong style={{ color: 'var(--dz-ink)' }}>{email.trim()}</strong>.
+          Ábrelo y tu perfil aparece en el mapa.
+        </p>
+        <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
+          El enlace vale 24 horas. Si no lo ves, mira en la carpeta de spam.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-10">
@@ -425,7 +456,7 @@ export function FormularioComunidad() {
 
       <button
         type="submit"
-        disabled={isBusy}
+        disabled={status === 'loading'}
         className="self-start inline-flex items-center justify-center px-8 py-4 font-bold [font-size:var(--text-sm)] tracking-[0.10em] uppercase disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{
           fontFamily: 'var(--font-dz-ui)',
@@ -436,7 +467,7 @@ export function FormularioComunidad() {
           boxShadow: 'var(--dz-shadow-md)',
         }}
       >
-        {status === 'loading' ? 'Enviando…' : status === 'success' ? 'Redirigiendo…' : 'Unirme al mapa de la comunidad'}
+        {status === 'loading' ? 'Enviando…' : 'Unirme al mapa de la comunidad'}
       </button>
     </form>
   )
