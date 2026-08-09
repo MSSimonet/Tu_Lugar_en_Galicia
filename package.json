@@ -9,6 +9,9 @@
     "lint": "eslint",
     "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
+    "test:coverage": "vitest run --project unit --coverage",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

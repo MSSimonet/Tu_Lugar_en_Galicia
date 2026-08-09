@@ -1,0 +1,49 @@
+name: Gates — tipos, lint y tests
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+# Cancela corridas viejas de la misma rama: si se pushea dos veces seguidas, solo interesa
+# el resultado del ultimo commit.
+concurrency:
+  group: gates-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # 22 LTS: el repo no fija engines ni .nvmrc. Si algun dia se agrega uno,
+          # cambiar esto por node-version-file para tener una sola fuente de verdad.
+          node-version: '22'
+          cache: 'npm'
+
+      # `npm ci` y no `npm install`: instala exactamente lo que dice package-lock.json y
+      # falla si el lock y el package.json divergen, en vez de arreglarlo en silencio.
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Tipos
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
+
+      # Corre solo el proyecto `unit` de vitest (ver vitest.config.ts): el proyecto de
+      # Storybook necesita los binarios de Playwright y no aporta nada a este gate.
+      - name: Tests
+        run: npm test
+
+# NOTA — por que NO corre `npm run build` aca:
+# el build necesitaria las variables de entorno reales para no romperse de forma distinta a
+# como se rompe en Vercel, y meter secretos en este workflow para un chequeo que Vercel ya
+# hace en cada deploy seria sumar superficie sin ganar informacion. Vercel es el gate de
+# build; esto es el gate de tipos, estilo y logica. Si algun dia el build empieza a fallar
+# por algo que tsc no ve, reconsiderarlo.
