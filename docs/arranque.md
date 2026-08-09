@@ -259,6 +259,36 @@ Recomendado el 1 para las 4 públicas de marketing, y el 2 para las 4 legales, q
 
 **Ojo con las legales.** Están fuera del sitemap por decisión confirmada (2026-08-08), no por olvido. Que se les agregue canonical no significa que entren al sitemap.
 
+### 5.6 — 🔴 Cualquiera puede sobrescribir el perfil de comunidad de otra persona (2026-08-08)
+
+Hallazgo lateral de PII-01. **No se tocó: es scope nuevo, para una sesión de seguridad propia.** Es más grave que el PII-01 que lo destapó.
+
+**El problema.** `upsertPerfilComunidad()` ([lib/comunidad/perfil.ts:19-52](../lib/comunidad/perfil.ts)) hace un upsert con `onConflict: 'email'`, y `POST /api/comunidad/registro` **nunca verifica que quien manda el POST sea dueño de ese email**. Valida formato, origen y rate limit — nada más. No hay login, magic link, token de verificación ni sesión en toda la feature de comunidad: `grep` de `localStorage|sessionStorage|registrado|acceso|gate` sobre `components/comunidad/` no devuelve una sola coincidencia.
+
+**Qué permite hoy, en producción.** Sabiendo el email de una persona registrada —o probando emails— se puede pisar su fila entera: nombre, foto, y **su ubicación en el mapa**. El teléfono se conserva solo (`input.contacto ?? existente?.contacto`, [perfil.ts:40](../lib/comunidad/perfil.ts)), así que no hace falta conocerlo para quedarse con él.
+
+Mover el pin de una familia inmigrante a una dirección que el atacante elige no es vandalismo cosmético: el mapa es, literalmente, "dónde vive esta persona".
+
+**Por qué importa para el toggle que quedó pendiente.** El punto 5 del diseño de PII-01 —un switch "mostrar mi teléfono"— **se descartó por esto**. Con este agujero abierto, exponer `mostrar_contacto` como campo actualizable convierte "sé tu email" en "publico tu teléfono y después lo leo por el endpoint": el atacante manda un registro con el email de la víctima y el flag en `true`, y cosecha el número por `/api/comunidad/[id]/contacto`. Sería el único cambio que **empeora** la exposición respecto de hoy.
+
+**Por eso el orden correcto es: primero esto, después el toggle.** No al revés.
+
+**Camino de fix (no implementado).** Verificación por email antes de escribir. La pieza ya existe y está probada: `generateAdminToken`/`verifyAdminToken` ([lib/admin/tokens.ts](../lib/admin/tokens.ts)), HMAC-SHA256 con TTL, el mismo esquema del acceso a la ficha del lead. El alta manda un mail con un link firmado; hasta que se abre, la fila no se crea ni se actualiza. Eso resuelve el agujero **y** habilita el toggle self-service, que puede vivir en esa misma página de "gestiona tu perfil".
+
+**Alcance de la revisión cuando se retome:** el mismo patrón de "confío en el email que me mandan" hay que buscarlo en `/api/comunidad/mensaje` (ahí el remitente declara su email sin verificación, aunque el impacto es menor: solo afecta el `replyTo`).
+
+### 5.7 — La skill `voz-tu-lugar-en-galicia` no existe (2026-08-08)
+
+**`CLAUDE.md` obliga a usar una skill que no está en el disco.** Buscada por nombre en todo el repo y en `~/.claude/`: cero resultados. En `.claude/skills/` solo viven las 74 carpetas de `design-references/`.
+
+La exigen cinco lugares: `CLAUDE.md` §6.1 ("Todo texto publicado: aplicar skill…"), `CLAUDE.md` §10 dos veces ("TODO el copy que se escribe — sin excepción", "SIEMPRE → nunca escribir copy sin esta skill"), `DESIGN.md:423` y `docs/crm-supabase-fase0.md:657`. Este propio archivo la lista en la línea 401.
+
+**Consecuencia real:** toda sesión que haya escrito copy en este proyecto invocó una skill inexistente o se la saltó en silencio. La regla más enfática de la sección de copy no se ha cumplido nunca de la forma en que está escrita.
+
+Lo que sí existe y hace de fuente de verdad hoy es `docs/contexto-estrategico.md:393-398` — cálido y cercano, "tú" neutro (nunca "vos", nunca "vosotros"), directo y sin rodeos, empático, nunca corporativo. Es lo que se aplicó al copy de PII-01 (commit `3a13a97`).
+
+**Dos salidas, elegir una:** crear la skill de verdad, o quitar las cinco referencias y apuntar a `contexto-estrategico.md`. Lo que no conviene es dejarla como está: una regla marcada "sin excepción" que apunta al vacío enseña a ignorar las reglas del archivo.
+
 ---
 
 ## 6 — Cambios de configuración de esta sesión (2026-07-02)
