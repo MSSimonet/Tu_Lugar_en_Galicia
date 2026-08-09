@@ -20,6 +20,13 @@ export function buildComunidadConfirmacionEmail(params: {
   // generado por el servidor, pero codificarlos igual evita que un cambio de formato futuro
   // rompa el link en silencio.
   const url = `${EMAIL_BASE_URL}/comunidad/confirmar?id=${encodeURIComponent(params.id)}&token=${encodeURIComponent(params.token)}`
+  // El `&` que separa los dos parametros va escapado a `&amp;` porque esto se interpola en
+  // HTML, no en texto plano. Con `token` da igual, pero HTML5 resuelve un puñado de entidades
+  // legadas SIN punto y coma final (`&copy`, `&reg`, `&not`, `&para`, `&times`...): el dia que
+  // alguien renombre un parametro a uno de esos, el link se rompe en silencio y solo para
+  // algunas personas. Un caracter ahora cierra esa puerta. Los clientes de correo lo decodifican
+  // de vuelta a `&`, asi que la URL que abre la persona es identica.
+  const urlHtml = escapeHtml(url)
 
   const rows = `
           <tr>
@@ -42,7 +49,7 @@ export function buildComunidadConfirmacionEmail(params: {
               </p>
 
               <p style="margin:0 0 28px;">
-                <a href="${url}"
+                <a href="${urlHtml}"
                    style="display:inline-block;background:#D4AF6A;color:#1A1410;text-decoration:none;font-weight:700;font-size:14px;letter-spacing:0.10em;text-transform:uppercase;padding:16px 32px;border-radius:999px;">
                   Confirmar mi registro
                 </a>
@@ -59,7 +66,7 @@ export function buildComunidadConfirmacionEmail(params: {
 
               <p style="margin:28px 0 0;font-size:13px;color:#696560;">
                 Si el botón no funciona, copia y pega esta dirección en tu navegador:<br>
-                <span style="word-break:break-all;color:#7A5F22;">${url}</span>
+                <span style="word-break:break-all;color:#7A5F22;">${urlHtml}</span>
               </p>
             </td>
           </tr>
