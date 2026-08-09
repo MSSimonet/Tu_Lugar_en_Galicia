@@ -3,13 +3,11 @@
 > Actualizado 2026-08-09. Próxima sesión: leer este archivo antes de actuar.
 > Reglas completas en `CLAUDE.md`.
 >
-> **Lo primero, si vas a mergear `fix/hallazgos-agosto-2`: leer §5.9.** Hay un bloqueo real
-> —los links de confirmación de Comunidad dan 404 hasta que el deploy esté vivo— que no se
-> arregla con código, sino con el orden de las operaciones.
->
-> **Sesión 2026-08-09** (rama `fix/hallazgos-agosto-2`, 5 commits): se cerraron los tres
-> pendientes de esta lista — §5.7 (skill de voz), §5.6 (sobrescritura de perfiles sin auth) y
-> §5.5 (SEO-03). Aparecieron cinco pendientes nuevos: §5.9 a §5.13.
+> **Sesión 2026-08-09** (rama `fix/hallazgos-agosto-2`, 5 commits, mergeada en `a555ce0`):
+> se cerraron los tres pendientes de esta lista — §5.7 (skill de voz), §5.6 (sobrescritura de
+> perfiles sin auth) y §5.5 (SEO-03). **Los tres están desplegados y verificados en producción.**
+> Aparecieron cinco pendientes nuevos: §5.10 a §5.14. El §5.9 (bloqueo de merge) nació y se
+> cerró dentro de la misma sesión.
 
 ---
 
@@ -302,8 +300,19 @@ Recomendado el 1 para las 4 públicas de marketing, y el 2 para las 4 legales, q
 > (`comunidad-pendiente:<uuid>`) como separación de dominio contra los tokens de admin, que
 > usan el mismo `INTERNAL_API_SECRET` y también son uuid desde que los leads viven en Supabase.
 >
-> ⛔ **Ver §5.9 antes de mergear: los links de confirmación no funcionan hasta que la rama esté
-> desplegada.**
+> **✅ CERRADO DEFINITIVAMENTE — verificado en producción (2026-08-09, post-deploy).** Mergeado
+> en `a555ce0`. Tras el deploy se repitió el flujo entero contra el dominio real, no contra dev:
+>
+> - `POST /api/comunidad/registro` en `tu-lugar-en-galicia.vercel.app` → 200, y el mapa de
+>   producción siguió en 3 pines: **el alta no escribió**.
+> - Mail recibido y **clic hecho por el usuario** sobre el link real del correo: llevó a la
+>   página de confirmación y de ahí al mapa. Sin 404.
+> - Fila creada con los datos exactos, `id` nuevo (`8e5ceda4…`, distinto del de la prueba
+>   anterior, o sea alta y no update) y `mostrar_contacto: false`.
+> - Fila borrada y estado restaurado: **4 filas / 3 pines**, idéntico al previo.
+>
+> El §5.9 que decía "no dar la feature por viva hasta probar esto" queda satisfecho. **La feature
+> está viva.**
 >
 > El toggle self-service de teléfono queda **desbloqueado**: ya hay prueba de posesión del email
 > y una página donde puede vivir (`/comunidad/confirmar`).
@@ -363,7 +372,21 @@ Lo que sí existe y hace de fuente de verdad hoy es `docs/contexto-estrategico.m
 
 ---
 
-### 5.9 — ⛔ BLOQUEO DE MERGE — los links de confirmación no funcionan hasta desplegar (2026-08-09)
+### 5.9 — ✅ CERRADO — el bloqueo de merge de los links de confirmación (2026-08-09)
+
+> **Cerrado el mismo día que se abrió.** Se siguió la secuencia al pie: mergear (`a555ce0`) →
+> esperar el deploy → alta real en el dominio de producción → clic real sobre el link del mail →
+> verificar la fila → borrarla. El link **no dio 404** y la feature quedó viva. Detalle en §5.6.
+>
+> **La ventana de riesgo existió y duró segundos.** Medido: justo antes del deploy,
+> `/comunidad/confirmar` en producción daba **404** mientras `/comunidad` daba 200 — o sea, el
+> sitio vivo sirviendo un formulario cuyos mails no se podían confirmar. Al primer sondeo
+> posterior ya respondía 200. Que haya sido corto fue suerte del timing, no del diseño.
+>
+> **Se deja escrito porque el mecanismo vuelve.** Cualquier feature futura que mande links por
+> mail a una ruta nueva tiene exactamente este problema, y no se ve en code review: el código
+> está bien, lo que falla es el orden de las operaciones. La tabla de los dos `SITE_URL` de
+> abajo sigue vigente y es la trampa de fondo.
 
 **Esto no es una nota al pie. Si la rama `fix/hallazgos-agosto-2` se mergea sin tener esto en
 cuenta, nadie puede completar un alta en Comunidad.**
@@ -458,6 +481,51 @@ en un modal de verdad con foco atrapado y fondo inerte. Lo primero es casi segur
 
 **No se tocó** porque `DESIGN.md` §7 prohíbe tocar `components/gina/**` fuera de forma/color/
 animación. Requiere una tarea propia con el `Accessibility Auditor`.
+
+### 5.14 — Rediseño de `/comunidad/mapa` (producto — baja prioridad, sin fecha)
+
+**Idea de Marcelo, para más adelante. No bloquea nada de lo actual y no es un defecto:** la
+página funciona, está verificada end-to-end y cumple su función. Esto es querer que se vea y se
+sienta mejor.
+
+Alcance a definir cuando se retome — hoy es una intención, no una especificación:
+
+- **Hero** de la página del mapa.
+- **Layout del mapa**: tamaño, proporción, cómo convive con el resto de la página.
+- **Presentación de los pines**: cómo se muestran los participantes, la tarjeta de perfil, el
+  clustering, el estado de "poca gente todavía".
+
+**Dato medido que importa para el diseño de los pines:** Nominatim **no es determinista** para
+intersecciones. Las dos altas de prueba del 2026-08-09 usaron exactamente el mismo cruce (Rúa do
+Príncipe × Rúa Urzáiz, Vigo) y cayeron a unos **700 m** una de otra:
+
+```
+prueba 1:  42.2340291,  -8.7123304
+prueba 2:  42.23590405, -8.7202204
+```
+
+No es un defecto ni un riesgo: la imprecisión es el objetivo, y más varianza es más privacidad,
+no menos. Pero tiene dos consecuencias de diseño reales:
+
+1. **Dos personas que escriben el mismo cruce no caen en el mismo punto.** Cualquier idea que
+   asuma "misma esquina = mismo pin" (agrupar por ubicación, detectar vecinos, "hay 3 personas
+   en tu esquina") no se sostiene sobre este geocoder.
+2. **El copy promete un "círculo de privacidad de unos 200 metros"** (`FormularioComunidad.tsx`).
+   Eso describe la intención del producto, no la varianza real del geocoding, que es varias veces
+   mayor. Si el rediseño llega a dibujar el círculo en el mapa, ojo con prometer una precisión
+   que el dato no tiene.
+
+Cuando se retome, tres cosas que ya están decididas y no conviene re-litigar:
+
+1. La ubicación es **aproximada a propósito** (círculo de privacidad de ~200 m). Ningún rediseño
+   puede aumentar la precisión visual de un pin.
+2. El teléfono **no se muestra nunca por defecto** — depende de `mostrar_contacto` (PII-01,
+   migración 0010). El camino de contacto por defecto es el mensaje privado.
+3. Todo copy nuevo pasa por la skill `voz-tu-lugar-en-galicia` (§5.7).
+
+Agentes naturales para la tarea: `UI Designer` + `Brand Guardian` + `Frontend Developer`, con
+`Accessibility Auditor` al cierre. **Ojo:** si el rediseño toca el widget de Gina o convive con
+él, ver §5.13 antes.
 
 ---
 
