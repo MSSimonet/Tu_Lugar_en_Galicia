@@ -426,7 +426,16 @@ export function FormularioComunidad() {
           </span>
         </label>
         <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
-          Si no la marcas, tu número no se muestra a nadie.
+          Si no la marcas, tu número no se muestra a nadie. Puedes cambiarlo cuando quieras
+          desde{' '}
+          <Link
+            href="/comunidad/gestionar"
+            className="underline underline-offset-2"
+            style={{ color: 'var(--dz-accent-text)' }}
+          >
+            gestionar tu perfil
+          </Link>
+          .
         </p>
       </div>
 

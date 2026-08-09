@@ -59,3 +59,66 @@ export async function upsertPerfilComunidad(input: UpsertPerfilInput): Promise<C
   if (error) throw new Error(`Supabase upsert: ${error.message}`)
   return data as ComunidadPerfil
 }
+
+// ─────────────────────────────────────────────────────────────────────────────────────────
+// Operaciones de la página de gestión de perfil (Toggle B / PII-01).
+//
+// Las tres son DELIBERADAMENTE ESTRECHAS y no reusan upsertPerfilComunidad. Esa función
+// escribe la fila entera, que es lo correcto en el alta; acá cada operación toca lo mínimo.
+// Si mañana alguien agrega campos al body del endpoint de gestión, no hay nada que puedan
+// escribir: no existe el camino.
+// ─────────────────────────────────────────────────────────────────────────────────────────
+
+/** Lo que la página de gestión necesita mostrar. Nunca incluye el teléfono ni la ubicación. */
+export interface PerfilParaGestion {
+  nombre: string
+  mostrarContacto: boolean
+  /** Si hay un número guardado — NO el número. La página no necesita verlo para decidir. */
+  tieneContacto: boolean
+}
+
+export async function leerPerfilParaGestion(email: string): Promise<PerfilParaGestion | null> {
+  const supabase = getSupabaseServerClient()
+  const { data, error } = await supabase
+    .from('comunidad')
+    .select('nombre,contacto,mostrar_contacto')
+    .eq('email', email.trim().toLowerCase())
+    .maybeSingle()
+
+  if (error) throw new Error(`Supabase select: ${error.message}`)
+  if (!data) return null
+
+  return {
+    nombre: data.nombre,
+    mostrarContacto: data.mostrar_contacto,
+    tieneContacto: Boolean(data.contacto?.trim()),
+  }
+}
+
+/** Actualiza UNA columna. Nada más de la fila puede cambiar por esta vía. */
+export async function actualizarMostrarContacto(email: string, valor: boolean): Promise<void> {
+  const supabase = getSupabaseServerClient()
+  const { error } = await supabase
+    .from('comunidad')
+    .update({ mostrar_contacto: valor, updated_at: new Date().toISOString() })
+    .eq('email', email.trim().toLowerCase())
+
+  if (error) throw new Error(`Supabase update: ${error.message}`)
+}
+
+/**
+ * Borrado definitivo del perfil (RGPD art. 17, derecho de supresión).
+ *
+ * Es un DELETE real, no un borrado lógico: la persona pidió desaparecer del mapa y una fila
+ * marcada como "inactiva" seguiría siendo un dato personal almacenado sin base legal. No queda
+ * nada que rehabilitar — si vuelve, se registra de nuevo.
+ */
+export async function borrarPerfil(email: string): Promise<void> {
+  const supabase = getSupabaseServerClient()
+  const { error } = await supabase
+    .from('comunidad')
+    .delete()
+    .eq('email', email.trim().toLowerCase())
+
+  if (error) throw new Error(`Supabase delete: ${error.message}`)
+}
