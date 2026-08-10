@@ -1,18 +1,11 @@
-import type { Metadata } from 'next'
-import { SITE_URL } from '@/lib/config/site'
+import { getNextMetadata } from '@/lib/seo/metadata'
 import { MapaComunidad } from '@/components/comunidad/MapaComunidad'
 import { ComunidadMapaHero } from '@/components/comunidad/ComunidadMapaHero'
 
-export const metadata: Metadata = {
-  // Antes era 'Formando comunidad', idéntico al de /comunidad: dos URLs distintas
-  // con el mismo título confunden en resultados de búsqueda, en el historial y en
-  // las pestañas, y no coincidía con el H1 real de esta página, que es "Encuentra
-  // a tu gente en Galicia" (auditoría 2026-07-25, I8).
-  title: 'Encuentra a tu gente en Galicia',
-  description:
-    'Encuentra a otras familias y vecinos en Galicia dispuestos a tomar un café, salir a caminar o simplemente escucharte. Mira quién está cerca de ti.',
-  alternates: { canonical: `${SITE_URL}/comunidad/mapa` },
-}
+// El título ("Encuentra a tu gente en Galicia", distinto del de /comunidad por la auditoría
+// 2026-07-25 I8) vive ahora en PAGE_METADATA como `comunidadMapa`, con el razonamiento anotado
+// ahí para que no se unifique por parecer duplicado.
+export const metadata = getNextMetadata('comunidadMapa')
 
 export default function ComunidadMapaPage() {
   return (

@@ -1,16 +1,10 @@
-import type { Metadata } from 'next'
-import { SITE_URL } from '@/lib/config/site'
+import { getNextMetadata } from '@/lib/seo/metadata'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { PageHero } from '@/components/ui/PageHero'
 import { CarruselCiudades } from '@/components/ciudades/CarruselCiudades'
 import { BrujulaDivider } from '@/components/ciudades/BrujulaDivider'
 
-export const metadata: Metadata = {
-  title: 'Ciudades de Galicia',
-  description:
-    'Vigo, A Coruña, Santiago de Compostela, Pontevedra y Lugo. Descubre la ciudad de Galicia que mejor se adapta a tu vida.',
-  alternates: { canonical: `${SITE_URL}/ciudades` },
-}
+export const metadata = getNextMetadata('ciudadesIndice')
 
 export default function CiudadesIndexPage() {
   return (

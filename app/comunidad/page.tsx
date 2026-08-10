@@ -1,13 +1,7 @@
-import type { Metadata } from 'next'
-import { SITE_URL } from '@/lib/config/site'
+import { getNextMetadata } from '@/lib/seo/metadata'
 import { ComunidadContenido } from '@/components/comunidad/ComunidadContenido'
 
-export const metadata: Metadata = {
-  title: 'Formando comunidad',
-  description:
-    'Únete a la comunidad de Galicia: ofrece un café, una caminata o simplemente escuchar a quien acaba de llegar.',
-  alternates: { canonical: `${SITE_URL}/comunidad` },
-}
+export const metadata = getNextMetadata('comunidad')
 
 export default function ComunidadPage() {
   return <ComunidadContenido />
