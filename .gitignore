@@ -73,6 +73,7 @@ storybook-static
 # §10 la exigen para todo el copy publicado, asi que tiene que sobrevivir a un clone —
 # si no, la regla vuelve a apuntar al vacio (hallazgo §5.7 de docs/arranque.md).
 !.claude/skills/voz-tu-lugar-en-galicia/
+!.claude/skills/motion-tu-lugar-en-galicia/
 .agents/
 
 # Artefactos de Playwright MCP (logs y snapshots de sesiones de verificación)
