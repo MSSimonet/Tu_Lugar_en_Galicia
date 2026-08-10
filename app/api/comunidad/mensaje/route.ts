@@ -4,7 +4,8 @@ import { Redis } from '@upstash/redis'
 import { getRealIp } from '@/lib/utils/ip'
 import { getSupabaseServerClient } from '@/lib/supabase/serverClient'
 import { sendEmail } from '@/lib/admin/email'
-import { buildComunidadMensajeEmail } from '@/lib/comunidad/email'
+import { buildComunidadConfirmarMensajeEmail } from '@/lib/comunidad/email'
+import { crearMensajePendiente } from '@/lib/comunidad/mensajes'
 import type { ComunidadPerfil } from '@/lib/comunidad/types'
 import { isValidUuid } from '@/lib/utils/validation'
 
@@ -104,23 +105,44 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Ese perfil ya no está disponible.' }, { status: 404 })
   }
 
-  // 4. Enviar el mensaje por email — replyTo apunta al remitente para que el destinatario
-  //    pueda contestar directo, sin que la plataforma tenga que retransmitir la respuesta.
+  // 4. El mensaje NO se entrega todavía.
+  //
+  //    Antes, acá se mandaba el correo al destinatario con `replyTo: remitenteEmail`, un dato
+  //    que el cliente declaraba sin ninguna verificación. Eso permitía cosechar el email de un
+  //    miembro: mandarle un mensaje creíble con un replyTo propio y esperar a que respondiera.
+  //    El email de los miembros es justamente lo que la migración 0002 sacó del alcance de la
+  //    anon key (§5.12 de docs/arranque.md).
+  //
+  //    Ahora el mensaje espera en un sobre y se le manda un enlace al REMITENTE. Solo al
+  //    abrirlo se entrega — así el replyTo es siempre una casilla que quien escribe controla.
+  const pendiente = await crearMensajePendiente({
+    destinatarioId,
+    remitenteNombre: remitenteNombreLimpio,
+    remitenteEmail: remitenteEmailLimpio,
+    mensaje: mensajeLimpio,
+  })
+  if (!pendiente) {
+    console.error('[comunidad/mensaje] no se pudo crear el pendiente — faltan variables de Upstash')
+    return NextResponse.json({ error: 'Servicio no disponible' }, { status: 503 })
+  }
+
+  // 5. Mail al remitente. Si falla, no se entregó nada y el sobre expira solo en 1 h.
   try {
     await sendEmail({
-      to: destinatario.email,
-      subject: `${remitenteNombreLimpio} te escribió desde Formando comunidad`,
-      html: buildComunidadMensajeEmail({
-        destinatarioNombre: destinatario.nombre,
+      to: remitenteEmailLimpio,
+      subject: 'Confirma tu mensaje en Formando comunidad',
+      html: buildComunidadConfirmarMensajeEmail({
         remitenteNombre: remitenteNombreLimpio,
+        destinatarioNombre: destinatario.nombre,
         mensaje: mensajeLimpio,
+        id: pendiente.id,
+        token: pendiente.token,
       }),
-      replyTo: remitenteEmailLimpio,
     })
   } catch (err) {
     const status = err instanceof Error ? err.message.match(/^Resend error (\d+)/)?.[1] : undefined
     console.error(`[comunidad/mensaje] Resend falló — status: ${status ?? 'desconocido'}, ts: ${new Date().toISOString()}`)
-    return NextResponse.json({ error: 'No se pudo enviar el mensaje. Intenta de nuevo.' }, { status: 500 })
+    return NextResponse.json({ error: 'No pudimos enviarte el correo de confirmación. Intenta de nuevo.' }, { status: 500 })
   }
 
   return NextResponse.json({ ok: true })

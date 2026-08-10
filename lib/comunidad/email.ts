@@ -160,6 +160,90 @@ export function buildComunidadGestionEmail(params: {
 }
 
 /**
+ * Mail que pide al REMITENTE que confirme su propio mensaje antes de entregarlo (§5.12).
+ *
+ * Va a la dirección que el remitente declaró, que es justamente la que hay que verificar. Como
+ * los otros dos, tiene dos destinatarios posibles —quien escribió, y quien recibe esto porque
+ * un tercero puso su dirección— y por eso cierra igual: al segundo se le dice que no haga nada.
+ *
+ * Se nombra al destinatario del mensaje a propósito: su nombre ya es público en el mapa, así
+ * que no revela nada nuevo, y le permite al remitente comprobar que eligió a la persona
+ * correcta antes de que el mensaje salga.
+ */
+export function buildComunidadConfirmarMensajeEmail(params: {
+  remitenteNombre: string
+  destinatarioNombre: string
+  mensaje: string
+  id: string
+  token: string
+}): string {
+  const remitente = escapeHtml(params.remitenteNombre.split(' ')[0] || params.remitenteNombre)
+  const destinatario = escapeHtml(params.destinatarioNombre)
+  const mensaje = escapeHtml(params.mensaje)
+  const url = `${EMAIL_BASE_URL}/comunidad/mensaje/confirmar?id=${encodeURIComponent(params.id)}&token=${encodeURIComponent(params.token)}`
+  const urlHtml = escapeHtml(url)
+
+  const rows = `
+          <tr>
+            <td style="background:#141210;padding:28px 40px;text-align:center;">
+              <span style="font-family:Georgia,serif;font-size:22px;font-weight:400;font-style:italic;color:#D4AF6A;letter-spacing:0.06em;">
+                Tu Lugar en Galicia
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:40px 40px 32px;color:#2D2926;font-size:16px;line-height:1.7;">
+              <p style="margin:0 0 8px;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#B8943F;">
+                Formando comunidad
+              </p>
+
+              <p style="margin:0 0 20px;">Hola ${remitente},</p>
+
+              <p style="margin:0 0 28px;">
+                Escribiste a ${destinatario} desde el mapa. Confirma que este correo es tuyo y
+                se lo enviamos:
+              </p>
+
+              <p style="margin:0 0 28px;">
+                <a href="${urlHtml}"
+                   style="display:inline-block;background:#D4AF6A;color:#1A1410;text-decoration:none;font-weight:700;font-size:14px;letter-spacing:0.10em;text-transform:uppercase;padding:16px 32px;border-radius:999px;">
+                  Confirmar y enviar
+                </a>
+              </p>
+
+              <p style="margin:0 0 8px;font-size:13px;color:#696560;">Tu mensaje:</p>
+              <div style="background:#F5F0E8;border-radius:6px;padding:16px 20px;font-size:14px;line-height:1.7;color:#1E1C19;white-space:pre-wrap;">${mensaje}</div>
+
+              <p style="margin:28px 0 20px;">
+                El enlace vale una hora. Si no lo usas, el mensaje no se envía.
+              </p>
+
+              <p style="margin:0 0 20px;">
+                ¿No escribiste tú? No hagas nada. Sin ese clic no sale nada, y nadie recibe tu
+                dirección.
+              </p>
+
+              <p style="margin:28px 0 0;font-size:13px;color:#696560;">
+                Si el botón no funciona, copia y pega esta dirección en tu navegador:<br>
+                <span style="word-break:break-all;color:#7A5F22;">${urlHtml}</span>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#f5f0e8;padding:16px 40px;text-align:center;font-size:11px;color:#696560;font-family:Georgia,serif;">
+              Formando comunidad — Tu Lugar en Galicia
+            </td>
+          </tr>`
+
+  return buildEmailShell({
+    title: 'Confirma tu mensaje — Formando comunidad',
+    tableWidth: 600,
+    tableStyle: 'background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;',
+    rows,
+  })
+}
+
+/**
  * Template del mensaje privado de Comunidad de Acogida (docs/comunidad-de-acogida.md §4).
  * Nunca incluye el email del remitente en el cuerpo visible más allá del nombre — el
  * destinatario responde vía reply-to (ver app/api/comunidad/mensaje/route.ts), sin que la

@@ -78,14 +78,20 @@ export function FormMensajePrivado({ destinatarioId }: FormMensajePrivadoProps) 
   }
 
   if (estado === 'enviado') {
+    // Decía "Mensaje enviado", y desde §5.12 eso es falso: el mensaje NO sale hasta que el
+    // remitente abre el enlace que le mandamos. Prometer un envío que todavía no ocurrió
+    // dejaría a la persona esperando una respuesta que nadie va a poder darle.
     return (
-      <p
+      <div
         role="status"
-        className="[font-size:var(--text-xs)]"
+        className="flex flex-col gap-1 [font-size:var(--text-xs)]"
         style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
       >
-        Mensaje enviado. Si responde, lo hará directo a tu email.
-      </p>
+        <p>Revisa tu correo: te enviamos un enlace para confirmar el mensaje.</p>
+        <p style={{ color: 'var(--dz-muted)' }}>
+          Hasta que lo abras, no se envía. Así quien lo reciba sabe que tu dirección es real.
+        </p>
+      </div>
     )
   }
 
