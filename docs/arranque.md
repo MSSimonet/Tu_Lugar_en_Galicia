@@ -8,6 +8,19 @@
 > perfiles sin auth) y §5.5 (SEO-03). **Los tres están desplegados y verificados en producción.**
 > Aparecieron cinco pendientes nuevos: §5.10 a §5.14. El §5.9 (bloqueo de merge) nació y se
 > cerró dentro de la misma sesión.
+>
+> **Sesión 2026-08-10** (directo sobre `main`, 9 commits). Cerró todo lo que quedaba de código:
+> §5.10, §5.11, §5.12 y §5.13, más el primer test del proyecto, el Toggle A/B de PII-01 y un
+> fix de z-index del mapa. Novedades que conviene leer antes de auditar:
+>
+> - **§5.13 era un falso positivo.** El widget de Gina no borra la página del árbol de
+>   accesibilidad; lo decía una herramienta que no lee el árbol real. El bug era otro y menor.
+> - **§5.12 subió de 🟡 a 🟠** al mirarlo de cerca: era una vía de cosecha de emails.
+> - **Cuatro pendientes viejos (§5.2: A3, M1, M2, M3) estaban resueltos hacía rato** y esta
+>   lista los arrastraba abiertos. M4 sigue abierto pero cambió de naturaleza.
+> - El proyecto **ya tiene tests** (36) y un gate de CI que corre en cada push y PR.
+>
+> Nuevos: §5.16 (og:image atado a S10), §5.17 (nota de arquitectura), §5.18 (fines de línea).
 
 ---
 
@@ -211,13 +224,35 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 |---|---|---|---|
 | ~~A1~~ | ~~🟠 Alto~~ | ✅ **RESUELTO** (`c873534`) — rate limiting + verificación de origen agregados a `/api/contacto` | `app/api/contacto/route.ts` |
 | ~~A2~~ | ~~🟠 Alto~~ | ✅ **RESUELTO** (`c873534`) — `/api/lead` ahora falla cerrado si falta config de Upstash, igual que `/api/gina` | `app/api/lead/route.ts` |
-| A3 | 🟠 Alto | CSP con `'unsafe-inline'` en `script-src` — anula gran parte del valor de la CSP como mitigación XSS | `middleware.ts:9` |
+| ~~A3~~ | ~~🟠 Alto~~ | ✅ **RESUELTO** — verificado contra el código el 2026-08-10. `middleware.ts:50` usa `'nonce-${nonce}'` + hashes SHA-256; **no hay `unsafe-inline` en `script-src`**. Sigue solo en `style-src`, que es la decisión aceptada y documentada (A05 de `CLAUDE.md` §9, por el uso masivo de `style={{}}`). `CLAUDE.md` ya lo daba por resuelto; esta tabla lo arrastraba abierto | `middleware.ts:50` |
 | ~~A4~~ | ~~🟠 Alto~~ | ✅ **RESUELTO** (`c873534`) — límite de tamaño agregado para respuestas tipo array en `/api/gina` | `app/api/gina/route.ts` |
-| M1 | 🟡 Medio | Sin rate limiting en endpoints de token admin (`plan/pdf`, `habilitar-agenda`) — riesgo bajo porque el token no es adivinable, pero sin freno si llegara a filtrarse | `app/api/plan/[recordId]/pdf/route.ts`, `app/api/admin/habilitar-agenda/[recordId]/route.ts` |
-| M2 | 🟡 Medio | Posible conflicto de precedencia entre `vercel.json` (`Referrer-Policy: strict-origin-when-cross-origin` para todas las rutas) y `middleware.ts` (`no-referrer` específico para rutas admin) — **sin verificar con una request real en producción** | `vercel.json`, `middleware.ts` |
-| M3 | 🟡 Medio | Mensajes de error internos expuestos al cliente en `/api/gina` (`(e as Error).message` de `obtenerPaso()` revela nombres de pasos de `flow.json`) | `app/api/gina/route.ts:96-99,114-117` |
-| M4 | 🟡 Medio | 2 vulnerabilidades moderadas en dependencias (`next`→`postcss` interno del build, XSS en stringify) — bajo riesgo real, es tooling de build no runtime servido al usuario | `package.json` (npm audit) |
+| ~~M1~~ | ~~🟡 Medio~~ | ✅ **RESUELTO** — verificado 2026-08-10: los dos endpoints tienen `Ratelimit` | `app/api/plan/[recordId]/pdf/route.ts`, `app/api/admin/habilitar-agenda/[recordId]/route.ts` |
+| ~~M2~~ | ~~🟡 Medio~~ | ✅ **RESUELTO** — el conflicto ya no existe: `Referrer-Policy` se declara **únicamente** en `middleware.ts` (línea 96, con el motivo escrito ahí) y se sacó de `vercel.json`. No hay dos fuentes que puedan pisarse | `middleware.ts:96` |
+| ~~M3~~ | ~~🟡 Medio~~ | ✅ **RESUELTO** — ningún `NextResponse.json` de `/api/gina` interpola un `.message`. El único `err.message` que queda (línea 544) solo extrae un status HTTP para el log, no viaja al cliente | `app/api/gina/route.ts` |
+| M4 | 🟡 Medio | ⚠️ **Abierto, pero cambió de naturaleza — el número engaña.** Ver el bloque de abajo | `package.json` (npm audit) |
 | ~~—~~ | ~~🟡 Medio~~ | ✅ **RESUELTO** (`c873534`) — `app/api/admin/recordatorio-silvana/route.ts` tenía el mismo patrón de HTML sin escapar que C2 (`plataformaHtml`); ya usa `escapeHtml()` | `app/api/admin/recordatorio-silvana/route.ts` |
+
+#### M4 — por qué "3 altas" no significa lo mismo que antes (medido 2026-08-10)
+
+`CLAUDE.md` §9 describe M4 con **3 altas** que eran `postcss@8.4.31` y `sharp@0.34.5`,
+empaquetadas por `next` dentro de `node_modules/next/node_modules/`. Hoy `npm audit` sigue
+diciendo 3 altas, pero **son otras**:
+
+```
+@storybook/nextjs-vite        [high]  fixAvailable: false
+image-size                    [high]  fixAvailable: false
+vite-plugin-storybook-nextjs  [high]  fixAvailable: false
++ 3 moderadas (@storybook/addon-mcp, @storybook/mcp, valibot)
+0 criticas
+```
+
+Las de `postcss`/`sharp` **desaparecieron** — presumiblemente con el bump a `next@16.3.0`
+(`362070e`). Las tres que quedan son **todas de Storybook, devDependencies puras**: no entran al
+bundle de producción ni se sirven al usuario. El riesgo real bajó bastante aunque el número no
+se haya movido, y las tres tienen `fixAvailable: false` — dependen de un release upstream.
+
+**Moraleja para la próxima auditoría:** no comparar el conteo de `npm audit` contra el
+documentado. Comparar los paquetes.
 
 ### 5.3 — Auditoría UX/UI (sesión 2026-07-04) — pendientes
 
@@ -314,8 +349,9 @@ Recomendado el 1 para las 4 públicas de marketing, y el 2 para las 4 legales, q
 > El §5.9 que decía "no dar la feature por viva hasta probar esto" queda satisfecho. **La feature
 > está viva.**
 >
-> El toggle self-service de teléfono queda **desbloqueado**: ya hay prueba de posesión del email
-> y una página donde puede vivir (`/comunidad/confirmar`).
+> El toggle self-service de teléfono quedó **desbloqueado** y ya está **implementado**
+> (2026-08-09, `9f4e934` + `78c2373`): casilla en el registro y página
+> `/comunidad/gestionar` para cambiarlo después. Con eso PII-01 queda cerrado del todo.
 
 Hallazgo lateral de PII-01. **No se tocó: es scope nuevo, para una sesión de seguridad propia.** Es más grave que el PII-01 que lo destapó.
 
@@ -419,7 +455,20 @@ rompe cosas en silencio:
 Si algún día se registra el dominio propio y se configura `NEXT_PUBLIC_SITE_URL`, los dos
 convergen y este problema desaparece.
 
-### 5.10 — La skill `motion-tu-lugar-en-galicia` no existe (2026-08-09)
+### 5.10 — ✅ RESUELTO — La skill `motion-tu-lugar-en-galicia` no existía (2026-08-10, `2e77963`)
+
+> Creada en `.claude/skills/motion-tu-lugar-en-galicia/SKILL.md`, apuntando a
+> `docs/adr/010-stack-animacion-interaccion.md` como fuente **sin duplicarlo**. Suma lo que el
+> ADR no tiene reunido: el `BRAND_EASE` real leído del código (`[0.4, 0, 0.2, 1]`), los techos
+> de duración de `DESIGN.md` §7, la tabla de qué está instalado y qué no (`lenis` sigue
+> aprobado pero **sin instalar**), y un checklist.
+>
+> `.gitignore` extendido con la segunda excepción, sobre el patrón que estableció `e18a60f`.
+> Verificado que no arrastra la colección instalada.
+>
+> **Con esto, las dos skills que `CLAUDE.md` daba por existentes existen de verdad.**
+
+**Texto original del hallazgo (2026-08-09):**
 
 **Mismo bug que §5.7, sin resolver.** Buscada en `.claude/skills/` y en `~/.claude/skills/`:
 cero resultados. La exigen tres lugares: `CLAUDE.md:286` ("toda animación/transición nueva"),
@@ -433,7 +482,22 @@ en `DESIGN.md` §7 y el ADR-010 — `BRAND_EASE`, ≤400 ms entradas, ≤200 ms 
 
 Si se crea: **la excepción de `.gitignore` hay que ampliarla**, con el mismo cuidado de §5.7.
 
-### 5.11 — Falta OG/Twitter cards en las 4 páginas públicas de marketing (2026-08-09)
+### 5.11 — ✅ RESUELTO (con una salvedad grande) — OG/Twitter cards (2026-08-10, `a4c4949`)
+
+> Las 4 páginas pasan por `getNextMetadata()`. Verificado contra el servidor: `og:title`,
+> `og:image`, `twitter:card` y `canonical` presentes en las cuatro.
+>
+> **El riesgo del cambio era el título, no el OG.** `getNextMetadata()` emite `title.absolute`,
+> que **no pasa** por el template `'%s | Tu Lugar en Galicia'` de `app/layout.tsx`. Copiar a
+> `PAGE_METADATA` el título corto que tenía cada página habría cambiado en silencio el título
+> de 4 páginas publicadas. Los cuatro son los completos, y salen idénticos a antes.
+>
+> ### ⚠️ Esto todavía NO logra lo que lo justificaba — ver §5.16
+>
+> `og:image` apunta a `https://tulugarengalicia.com/og-default.jpg` y **ese dominio no
+> resuelve**. Compartir por WhatsApp sigue sin mostrar imagen hasta que se registre el dominio.
+
+**Texto original del hallazgo (2026-08-09):**
 
 Aparecido al resolver SEO-03, y **deliberadamente fuera de aquel commit** por decisión del
 usuario (el pedido era superficie mínima).
@@ -449,7 +513,39 @@ familias latinoamericanas — es el canal, no un extra.
 **Fix:** sumar esas 4 a `PAGE_METADATA` y pasarlas por `getNextMetadata()` (camino 1 de §5.5).
 Arrastra OG + Twitter y de paso unifica el enfoque en esas 4. Las 4 legales no lo necesitan.
 
-### 5.12 — `/api/comunidad/mensaje` no verifica al remitente (2026-08-09)
+### 5.12 — ✅ RESUELTO — `/api/comunidad/mensaje` no verificaba al remitente (2026-08-10, `df694b1`)
+
+> **RECLASIFICADO DE 🟡 A 🟠 antes de arreglarlo.** El texto de abajo lo llamaba suplantación,
+> "impacto menor que §5.6 porque no se escribe nada en la base". Mirando el flujo completo es
+> algo peor: **una vía de cosecha del email de los miembros**, que es justo el dato que las
+> migraciones 0002 y 0010 trabajaron para proteger.
+>
+> 1. el atacante elige un perfil del mapa, que es público;
+> 2. manda un mensaje creíble con `replyTo: atacante@…`;
+> 3. la persona responde de buena fe y su cliente manda la respuesta a esa casilla;
+> 4. el atacante ya tiene su email personal.
+>
+> El endpoint devolvía por la puerta de atrás lo que 0002 sacó del alcance de la anon key, con
+> la víctima colaborando sin saberlo.
+>
+> **El fix reusa la FORMA de §5.6, no su código.** Se descartó la lectura literal —exigir que
+> el remitente sea miembro verificado— porque obligaría a registrarse en el mapa para
+> escribirle a alguien: dos correos y tres pasos para mandar un hola. En cambio, el mensaje
+> espera en un sobre firmado y se manda un enlace a la dirección declarada; solo al abrirlo se
+> entrega. Así el `replyTo` es siempre una casilla demostradamente controlada por quien escribe.
+>
+> Efecto lateral bueno: **mata el spam**, que antes no requería controlar ningún buzón.
+>
+> **Fricción asumida:** suma un correo y un clic a mandar un mensaje, en una función pensada
+> para ser liviana. Decisión consciente — el dato en juego es el email personal de gente que
+> confió en el mapa.
+>
+> Dos cosas que aparecieron implementando: el destinatario se vuelve a buscar **al confirmar**
+> (puede haberse dado de baja en el medio, algo que recién es posible desde el Toggle B), y un
+> token manipulado **no consume el sobre** — un enlace mal copiado no puede costarle el mensaje
+> a quien lo escribió.
+
+**Texto original del hallazgo (2026-08-09):**
 
 Ya estaba anotado dentro de §5.6 como "alcance de la revisión cuando se retome". Se deja como
 pendiente propio porque §5.6 se cerró sin tocarlo, por decisión del usuario.
@@ -462,7 +558,50 @@ eligió. Impacto menor que §5.6 —no se escribe nada en la base— pero es sup
 **Ahora tiene arreglo limpio, que antes no existía:** exigir que el remitente sea un miembro
 verificado de la comunidad. Esa noción nació con §5.6.
 
-### 5.13 — El widget de Gina borra la página entera del árbol de accesibilidad (2026-08-09)
+### 5.13 — ✅ RESUELTO — el foco no volvía al cerrar el widget de Gina (2026-08-10, `09884d3`)
+
+> ## ⚠️ El hallazgo original de esta sección era FALSO
+>
+> El título decía "el widget de Gina borra la página entera del árbol de accesibilidad".
+> **No es cierto, y conviene entender por qué antes de volver a auditar accesibilidad acá.**
+>
+> Medido el 2026-08-10 con el árbol de accesibilidad **real**, vía CDP (Chrome DevTools
+> Protocol), en los dos estados:
+>
+> | Widget | Árbol real |
+> |---|---|
+> | **Cerrado** (por defecto) | Página completa: los 11 campos del formulario, labels, checkboxes, submit, header, footer. Gina **ausente** — `aria-hidden` + `inert` funcionan |
+> | **Abierto** | Página completa **más** el diálogo marcado `modal`. Nada se colapsa |
+>
+> **De dónde salió el error:** la herramienta `read_page` del MCP de navegador construye su
+> propio árbol desde el DOM, no el de accesibilidad, y mostraba **exactamente lo inverso de la
+> realidad** — incluía el widget `aria-hidden`+`inert` y omitía el formulario visible. Se
+> confirmó con un A/B: se quitó `aria-modal` en caliente y el formulario **siguió sin aparecer**,
+> o sea que ni siquiera era la causa de lo que la herramienta mostraba.
+>
+> Es el mismo género que los 12 falsos positivos que ya documenta `CLAUDE.md` §9. **Van 13.**
+> Para juzgar accesibilidad en este repo: usar el árbol de CDP, no una heurística sobre el DOM.
+>
+> ### El bug real, que era otro y más chico — resuelto en `09884d3`
+>
+> Al cerrar, el foco se quedaba sobre el botón de cerrar, que en ese mismo instante pasa a
+> estar dentro de un contenedor `inert` + `aria-hidden`. Para quien navega por teclado, cerrar
+> dejaba el foco en el limbo (`volvioAlTrigger: false`). El patrón ARIA de diálogo exige
+> devolverlo al disparador.
+>
+> Fix: se guarda `document.activeElement` al abrir y se restaura al cerrar, más `aria-modal`
+> condicional (antes se declaraba también con el panel cerrado). No se tocó nada de la lógica
+> de conversación.
+>
+> **Un detalle que solo aparece midiendo:** la primera versión restauraba el foco solo si
+> seguía dentro del diálogo, y no funcionaba nunca — cuando el contenedor recibe `inert` el
+> navegador desenfoca su contenido en el acto, así que el foco ya está en `body` y esa
+> condición jamás se cumple. La versión final restaura si nadie más lo reclamó.
+>
+> Severidad real: 🟡, no 🟠. Molestia de teclado, no barrera.
+
+**Texto original del hallazgo (2026-08-09) — conservado porque su parte descriptiva sigue
+siendo cierta, pero su conclusión no:**
 
 `components/gina/GinaWidget.tsx` renderiza un `<div aria-modal="true">` que es **flotante**
 (`fixed bottom-6 right-6 z-50`), no un diálogo modal. `aria-modal="true"` le dice a la
@@ -481,6 +620,104 @@ en un modal de verdad con foco atrapado y fondo inerte. Lo primero es casi segur
 
 **No se tocó** porque `DESIGN.md` §7 prohíbe tocar `components/gina/**` fuera de forma/color/
 animación. Requiere una tarea propia con el `Accessibility Auditor`.
+
+### 5.15 — 🟢 Riesgo residual aceptado: canal lateral de tiempo en `/api/comunidad/gestionar/solicitar` (2026-08-09)
+
+**Aceptado, no pendiente de arreglo.** Decisión del usuario al mergear `78c2373`. Se documenta
+para que no se "descubra" de nuevo en una auditoría futura y se trate como hallazgo.
+
+**El mecanismo.** El endpoint que manda el enlace de gestión responde `{ok:true}` 200 exista o
+no un perfil con ese email — eso es correcto y deliberado, y evita convertirlo en un oráculo de
+quién está en el mapa. Pero los dos caminos **no tardan lo mismo**: el de perfil existente crea
+una sesión en Redis y llama a Resend, y eso son cientos de milisegundos más. Alguien que mida
+con cuidado, repitiendo, puede distinguir un email registrado de uno que no lo está.
+
+**Por qué se acepta.** Es el mismo tipo de riesgo que A09 (token en query string) y la misma
+lectura: el dato que se filtra es "esta persona está en el mapa de comunidad", el ataque exige
+medición estadística sobre un endpoint con rate limit de 3 cada 10 minutos por IP, y el mapa ya
+es público —lo que no es público es la correspondencia con el email—.
+
+**Qué costaría cerrarlo, si algún día cambia la evaluación.** Dos caminos, los dos con precio:
+
+1. No esperar al envío del mail (`void sendEmail(...)`) para que ambos caminos vuelvan igual de
+   rápido. Precio: se pierde la detección de fallos de Resend, y hoy ese `catch` es lo único que
+   avisa si los correos dejaron de salir.
+2. Retardo artificial hasta un piso fijo. Precio: complejidad y un número mágico que hay que
+   mantener cuando cambie la latencia de Resend.
+
+Ninguno es gratis, y por eso no se hizo junto con la feature.
+
+### 5.16 — 🟠 `og:image` apunta a un dominio que no resuelve — atado a S10 (2026-08-10)
+
+**Se resuelve solo el día que se registre `tulugarengalicia.com`. No hay nada que arreglar en
+el código, y tocarlo sería contraproducente.**
+
+`lib/seo/og.ts` arma `og:image` como `${SITE_URL}/og-default.jpg`, con `SITE_URL` =
+`https://tulugarengalicia.com` (`lib/config/site.ts:9`). Medido el 2026-08-10:
+
+```
+https://tulugarengalicia.com/og-default.jpg      -> 000 (no resuelve)
+https://tu-lugar-en-galicia.vercel.app/…jpg      -> 200
+```
+
+**Consecuencia:** las 17 páginas que emiten OG tienen las etiquetas correctas, pero **ningún
+cliente puede traer la imagen**. Compartir por WhatsApp muestra un link sin miniatura — que es
+exactamente lo que §5.11 vino a arreglar y todavía no arregla. Y el canal importa: este negocio
+se comparte por WhatsApp e Instagram entre familias latinoamericanas.
+
+**Por qué NO se cambia al dominio de Vercel:** arreglaría hoy y rompería el día de la
+migración, y encima dejaría las URLs de OG apuntando a un dominio que no es el canónico. Es el
+mismo par de constantes de §5.9 (`SITE_URL` de SEO vs. `EMAIL_BASE_URL` de mails), con la
+diferencia de que ahí sí hacía falta el fallback porque un enlace de correo tiene que resolver
+hoy; una etiqueta OG puede declarar el dominio futuro.
+
+**Al cerrar S10, verificar:** que la imagen dé 200 en el dominio propio, y pasar una URL por el
+validador de enlaces de WhatsApp o Facebook antes de darlo por hecho.
+
+### 5.17 — 🟢 Nota de arquitectura: el primitivo de sobres firmados (2026-08-10)
+
+No es un pendiente. Es un puntero, para que quien agregue el cuarto flujo de "te mando un
+enlace por mail" no escriba un cuarto módulo.
+
+`lib/comunidad/sobreFirmado.ts` (`16de977`) concentra la mecánica: payload en Redis bajo un uuid
+opaco + token HMAC que prueba que ese uuid lo emitió el servidor. Tres flujos lo usan y difieren
+solo en tres parámetros:
+
+| Flujo | dominio | TTL | ¿consume al leer? |
+|---|---|---|---|
+| Alta de perfil (§5.6) | `pendiente` | 24 h | sí |
+| Gestión de perfil (Toggle B) | `gestion` | 1 h | no |
+| Mensaje privado (§5.12) | `mensaje` | 1 h | sí |
+
+**Dos cosas que no se pueden tocar sin romper cosas vivas:**
+
+1. **El formato de la clave y del sujeto.** `comunidad:<dominio>:<uuid>` (dos puntos) y
+   `comunidad-<dominio>:<uuid>` (guion). La asimetría es fea y es deliberada: hay sobres en
+   producción en todo momento y enlaces ya enviados por correo. Cambiar la clave los deja
+   huérfanos; cambiar el sujeto invalida los tokens ya firmados.
+2. **El prefijo de dominio.** Es lo único que impide que un token de un flujo valga en otro —
+   los tres firman uuids con el mismo `INTERNAL_API_SECRET`, y los ids de leads en Supabase
+   también son uuid, así que la colisión alcanzaría a los tokens de admin. Hay tests que cubren
+   la matriz completa; si se ponen rojos, es esto.
+
+### 5.18 — 🟢 Los fines de línea de `.gitignore` (2026-08-10)
+
+Nota de método, para no volver a analizarlo desde cero.
+
+`.gitignore` estaba **mixto** (55 líneas CRLF + 20 LF). Cada vez que se edita desde una
+herramienta de este entorno, la cola del archivo se renormaliza a CRLF y el diff muestra ~28
+líneas fantasma —borradas y re-añadidas idénticas— por un cambio de una línea. Pasó dos veces:
+en `e18a60f` se corrigió antes de commitear reescribiendo el archivo con los bytes originales;
+en `2e77963` se detectó **después** del push y se decidió dejarlo (opción 1), porque un commit
+correctivo agregaría otras 28 líneas de churn para arreglar algo cosmético.
+
+`core.autocrlf` está en `false` y no hay `.gitattributes`, así que git guarda los bytes tal
+cual. El archivo hoy es 100% CRLF.
+
+**Sugerencia de prevención, NO aplicada** (pendiente de evaluación): un `.gitattributes` con
+una sola línea —`.gitignore text eol=lf`— haría que git normalice ese archivo y el problema
+desaparezca para siempre. Precio: fuerza **una** renormalización ruidosa la próxima vez que se
+toque, y después nunca más. No se aplicó porque merece decidirse en frío, no de paso.
 
 ### 5.14 — Rediseño de `/comunidad/mapa` (producto — baja prioridad, sin fecha)
 
