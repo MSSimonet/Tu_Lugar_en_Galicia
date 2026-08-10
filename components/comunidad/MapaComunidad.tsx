@@ -205,7 +205,27 @@ export function MapaComunidad() {
       <div
         ref={contenedorRef}
         className="h-full w-full"
-        style={{ backgroundColor: 'var(--dz-papel)' }}
+        style={{
+          backgroundColor: 'var(--dz-papel)',
+          // `isolation: isolate` crea un contexto de apilamiento y encierra ahí dentro TODOS
+          // los z-index internos de Leaflet. Sin esto, el mapa tapa el header al hacer scroll.
+          //
+          // El motivo, medido (2026-08-09): el CSS de Leaflet asigna 200-700 a los panes y
+          // 1000 a los controles (.leaflet-top/.leaflet-bottom), y el header sticky vale 50.
+          // El contenedor del mapa es `position: relative` con `z-index: auto`, que NO crea
+          // contexto de apilamiento, y ningún ancestro lo creaba tampoco — se comprobó la
+          // cadena entera hasta <main>. Así que esos 1000 competían contra el 50 del header
+          // en el contexto raíz, y ganaban.
+          //
+          // Se ve sobre todo en móvil: ahí el mapa ocupa todo el ancho y su borde izquierdo
+          // —donde vive el control de zoom— queda justo debajo del header. En escritorio el
+          // mapa es de 720px centrado y el control cae más adentro, así que pasa desapercibido.
+          //
+          // `isolation` en vez de `z-index: 0`: dice la intención ("los z-index de este
+          // subárbol son asunto suyo") y no agrega un número que alguien tenga que mantener
+          // sincronizado con el del header.
+          isolation: 'isolate',
+        }}
         aria-label="Mapa de familias en Galicia"
       />
 
