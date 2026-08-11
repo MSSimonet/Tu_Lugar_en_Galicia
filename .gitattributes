@@ -1,0 +1,27 @@
+# Fines de línea — el repositorio guarda LF, siempre.
+#
+# POR QUÉ: este repo se edita en Windows y se construye y despliega en Linux (Vercel). Sin una
+# regla explícita, cada máquina y cada herramienta decide por su cuenta y el índice termina
+# mezclado. Antes de este archivo el estado era: 293 archivos con LF, 31 con CRLF, 18 con LF en
+# el índice pero CRLF en disco, y 1 con ambos estilos dentro del mismo archivo.
+#
+# Los 18 del tercer grupo son los peores: git los daba por limpios porque su caché de stat
+# coincidía, pero el blob del índice y el del disco tenían hash distinto. Es diferencia real
+# escondida, del tipo que aparece semanas después como un diff enorme que nadie pidió.
+#
+# `text=auto` deja que git detecte qué es texto por contenido (los binarios quedan intactos) y
+# `eol=lf` fija LF tanto en el índice como al hacer checkout, en todos los sistemas.
+* text=auto eol=lf
+
+# Binarios declarados a mano además de la detección automática: son las extensiones que este
+# repo realmente tiene, y una marca explícita evita que un archivo raro se cuele como texto y
+# git intente normalizarlo (lo que lo corrompería).
+*.png  binary
+*.jpg  binary
+*.avif binary
+*.ico  binary
+*.mp4  binary
+
+# Nota sobre los .ps1: se quedan en LF, sin excepción para CRLF. Ya estaban en LF en índice y
+# en disco, y `.claude/session-start.ps1` se ejecuta en cada arranque de sesión sin problemas,
+# así que forzarlos a CRLF sería cambiar algo que funciona sin ningún motivo.
