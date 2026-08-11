@@ -204,7 +204,7 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 | S2 | Cuenta Cal.com — event types configurados con disponibilidad real | Cal.com → crear/verificar evento "Videollamada 30 min" con horarios reales |
 | S8 | Feed Instagram — **ya no es Behold.so** | Silvana conecta su cuenta desde `/api/admin/instagram/conectar` (Graph API vía Facebook Login). Después: cargar `INSTAGRAM_EXPECTED_IG_USER_ID` en Vercel |
 | S9 | Google Sheet El Marcador | Sheet ID → `SHEET_MARCADOR_ID` en Vercel |
-| S10 | Dominio `tulugarengalicia.com` | Registrar → Cloudflare DNS → Vercel Domains |
+| S10 | Dominio `tulugarengalicia.com` | Registrar → **cargar `NEXT_PUBLIC_SITE_URL` en Vercel y redeployar (§5.19 — ANTES del DNS, o los formularios dan 403)** → Cloudflare DNS → Vercel Domains. Cierra también §5.16 |
 
 ---
 
@@ -700,7 +700,26 @@ solo en tres parámetros:
    también son uuid, así que la colisión alcanzaría a los tokens de admin. Hay tests que cubren
    la matriz completa; si se ponen rojos, es esto.
 
-### 5.18 — 🟢 Los fines de línea de `.gitignore` (2026-08-10)
+### 5.18 — ✅ RESUELTO — Los fines de línea de `.gitignore` (2026-08-10 → cerrado 2026-08-11, `a98b776`)
+
+> **Cerrado el 2026-08-11 y con más alcance del que pedía esta ficha.** Se aplicó
+> `.gitattributes` con `* text=auto eol=lf` (no solo la línea de `.gitignore`), porque al medir
+> apareció algo que esta ficha no sabía: **18 archivos tenían LF en el índice y CRLF en disco, y
+> git los daba por limpios** porque su caché de stat coincidía — el blob del índice y el del
+> disco tenían hash distinto (verificado con `git rev-parse :archivo` contra `git hash-object
+> archivo`). El mínimo sugerido acá habría dejado vivo ese grupo.
+>
+> La renormalización se absorbió en un commit propio y aislado: 33 archivos, 6291 inserciones y
+> 6264 borrados, **sin un solo cambio de contenido** — probado con
+> `git diff --cached --ignore-cr-at-eol`, que reduce el diff entero a `.gitattributes`.
+>
+> Decisión: los `.ps1` **no** se fuerzan a CRLF. Ya estaban en LF y `.claude/session-start.ps1`
+> corre en cada arranque sin problema.
+>
+> Riesgo descartado midiendo: la CSP de `middleware.ts` fija hashes SHA-256 de scripts inline y
+> `layout.tsx`/`page.tsx` estaban entre los renormalizados. Los dos scripts son de **una sola
+> línea** (template literal y `JSON.stringify`), así que los fines de línea del archivo no pueden
+> alterar sus bytes.
 
 Nota de método, para no volver a analizarlo desde cero.
 
@@ -718,6 +737,217 @@ cual. El archivo hoy es 100% CRLF.
 una sola línea —`.gitignore text eol=lf`— haría que git normalice ese archivo y el problema
 desaparezca para siempre. Precio: fuerza **una** renormalización ruidosa la próxima vez que se
 toque, y después nunca más. No se aplicó porque merece decidirse en frío, no de paso.
+
+### 5.19 — 🔴 ALTA — `NEXT_PUBLIC_SITE_URL` sin cargar deja el dominio propio fuera del allowlist de orígenes (2026-08-11)
+
+**Hoy no rompe nada. El día que se registre `tulugarengalicia.com` rompe TODOS los formularios
+del sitio, y el orden en que se hagan las dos cosas decide si hay caída o no.**
+
+**Hermano de §5.16 y atado al mismo pendiente, S10.** §5.16 es el `og:image` que no carga; este
+es el mismo dominio, pero del lado del servidor y con consecuencia funcional, no cosmética.
+
+#### Qué se midió
+
+Los endpoints públicos arman su allowlist así (idéntico en `registro`, `contacto`, `lead`,
+`mensaje`, `mensaje/confirmar`, `gestionar/solicitar`, `gestionar/aplicar`, `confirmar`):
+
+```ts
+const allowedOrigins = [
+  'https://tu-lugar-en-galicia.vercel.app',
+  process.env.NEXT_PUBLIC_SITE_URL,
+  process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`,
+  process.env.NODE_ENV === 'development' && 'http://localhost:3000',
+].filter(Boolean)
+```
+
+`NEXT_PUBLIC_SITE_URL` figura como **❌ No configurada** en la tabla de §8 de este mismo
+documento. El dato estaba escrito hace tiempo; lo que nadie había conectado es **qué implica
+para el chequeo de origen**. Medido contra producción el 2026-08-11, tres orígenes de control
+sobre `POST /api/comunidad/mensaje/confirmar`:
+
+| `Origin` enviado | Respuesta |
+|---|---|
+| `https://tulugarengalicia.com` | **403 `Origen no permitido`** |
+| `https://tu-lugar-en-galicia.vercel.app` | 400 (pasa el chequeo, falla por body vacío) |
+| `https://evil.example.com` | 403 `Origen no permitido` |
+
+**El dominio propio del negocio recibe exactamente el mismo trato que un dominio atacante.**
+
+#### Por qué hoy no es un bug activo
+
+`tulugarengalicia.com` todavía no está registrado (**S10** sigue pendiente, confirmado por
+Marcelo el 2026-08-11 abriéndolo en su navegador: no resuelve). Nadie llega por ahí, así que
+nadie recibe el 403. Es una bomba con temporizador, no un incendio.
+
+#### Instrucción operativa — el orden importa
+
+Al cerrar **S10**, hacerlo en este orden y no en otro:
+
+1. **PRIMERO** cargar `NEXT_PUBLIC_SITE_URL=https://tulugarengalicia.com` en las variables de
+   entorno de Vercel **y redeployar** (es `NEXT_PUBLIC_*`, se inyecta en build: sin redeploy no
+   toma efecto).
+2. **DESPUÉS** apuntar el DNS del dominio a Vercel.
+
+Si se hace al revés, entre el paso 2 y el paso 1 **todo formulario del sitio devuelve 403** a
+cualquiera que entre por el dominio nuevo: alta de comunidad, contacto, lead del diagnóstico,
+mensajes privados y gestión de perfil. Sin error visible más que un fallo genérico.
+
+3. Verificar después con el mismo control de arriba: un `POST` con
+   `Origin: https://tulugarengalicia.com` **no** debe devolver 403.
+
+> **Nota de método:** el barrido de origen se puede repetir sin registrar el dominio y sin
+> resolverlo por DNS — el servidor solo lee la cabecera `Origin`, así que basta mandarla a mano
+> contra el alias de Vercel. Es el control que se usó acá.
+
+### 5.20 — 🟡 MEDIA — 21 de los 32 endpoints nunca pasaron por una auditoría de seguridad (2026-08-11)
+
+Barrido **de lectura**, sin tocar código. Surge de corregir `CLAUDE.md` §9, que decía "los 11
+endpoints `/api/*`" como si fuera el tamaño actual de la API.
+
+Las 11 rutas auditadas el 2026-07-04 se identificaron con precisión, no de memoria:
+`git ls-tree -r --name-only $(git rev-list -1 --before="2026-07-05" main) -- app/api` devuelve
+**exactamente 11** `route.ts`. O sea que la cifra original era correcta **en su fecha**; lo que
+cambió es la API. Hoy son **32**, así que **21 nunca fueron auditadas**.
+
+#### Las 21, con lo que tienen y lo que no
+
+| Ruta | Método | Origen | Rate limit | Auth |
+|---|---|---|---|---|
+| `/api/admin/campos-custom` | POST | NO | NO | sesión |
+| `/api/admin/instagram/autorizar` | GET | NO | NO | sesión |
+| `/api/admin/instagram/callback` | GET | NO | NO | sesión |
+| `/api/admin/instagram/conectar` | POST | NO | NO | Bearer secret |
+| `/api/admin/instagram/refrescar-token` | GET | NO | NO | Bearer secret |
+| `/api/admin/leads/[id]/campos-custom` | PATCH | NO | NO | sesión |
+| `/api/admin/leads/[id]/etapa` | PATCH | NO | NO | sesión |
+| `/api/admin/leads/[id]/notas/[notaId]` | PATCH | NO | NO | sesión |
+| `/api/admin/leads/[id]/notas` | POST | NO | NO | sesión |
+| `/api/admin/leads/[id]` | DELETE | NO | NO | sesión |
+| `/api/admin/pipeline/etapas/[id]` | PATCH | NO | NO | sesión |
+| `/api/admin/pipeline/etapas` | POST | NO | NO | sesión |
+| `/api/auth/[...nextauth]` | POST | NO | sí | (propia de NextAuth) |
+| `/api/comunidad/[id]/contacto` | GET | NO | sí | — (el flag es el control) |
+| `/api/comunidad/confirmar` | POST | sí | sí | sobre firmado |
+| `/api/comunidad/gestionar/aplicar` | POST | sí | sí | sobre firmado |
+| `/api/comunidad/gestionar/solicitar` | POST | sí | sí | — |
+| `/api/comunidad/mensaje/confirmar` | POST | sí | sí | sobre firmado |
+| `/api/comunidad/mensaje` | POST | sí | sí | — |
+| `/api/comunidad/registro` | POST | sí | sí | — |
+| `/api/instagram/posts` | GET | NO | NO | — |
+
+#### Prioridad, del criterio "público y sin ninguna de las dos"
+
+1. **🟡 `/api/instagram/posts` — el único endpoint público sin origen NI rate limit.** Es el
+   primero a revisar. Severidad real acotada: sirve posts que ya son públicos en Instagram y
+   tiene `revalidate = 600`, así que la caché absorbe el grueso. Lo que no tiene es techo: es un
+   proxy anónimo y gratuito contra la Graph API de Meta, y la cuota que se consuma es la del
+   proyecto.
+2. **🟢 Los 12 de `/api/admin/*` — sin rate limit, pero los 12 tienen auth** (10 por sesión
+   NextAuth, 2 por `Bearer INTERNAL_API_SECRET`). Falta defensa en profundidad, no hay puerta
+   abierta. El middleware **no** los cubre: gatea `/admin/*` (páginas HTML) y deja
+   explícitamente afuera `/api/admin/` y `/api/webhooks/`, que llevan su propia auth.
+3. **Los 6 de Comunidad están completos** (origen + rate limit + sobre firmado donde aplica).
+   Es la superficie más nueva y la mejor protegida — se construyó después de las auditorías.
+
+#### Dos NO-hallazgos, para que nadie los "arregle"
+
+- **`/api/comunidad/[id]/contacto` sin chequeo de origen es deliberado y está documentado en su
+  propia cabecera:** es un `GET` y los navegadores no mandan `Origin` en `GET`, así que el
+  chequeo no aportaría nada. El control real es el flag `mostrar_contacto`.
+- **`/api/auth/[...nextauth]` sin chequeo de origen** — NextAuth trae su propio CSRF token. Y sí
+  tiene rate limit, agregado en SEC-02.
+
+**Advertencia de método:** la primera corrida de este barrido marcó `conectar` y
+`refrescar-token` como **sin auth**. Era falso: usan `isAuthorized()` de `lib/admin/auth.ts` y
+el detector no conocía ese helper. **Van 14 falsos positivos en este repo** — verificar antes de
+tocar sigue siendo la regla.
+
+### 5.21 — ✅ CERRADO — Barrido de variables CSS referenciadas pero no definidas (2026-08-11)
+
+Nació de un bug real y termina en un **resultado negativo que conviene dejar escrito**, para que
+nadie repita el barrido creyendo que hay una mina de bugs.
+
+#### La parte que SÍ era real: la escala de espaciado
+
+`app/globals.css` define `--space-` **1, 2, 3, 4, 6, 8, 12, 16, 24**. El código usaba además
+**`--space-5`** y **`--space-10`**, que no existen. Una clase como `gap-[var(--space-10)]` no
+genera regla: el espaciado queda en **0**, sin error de build ni de linter.
+
+- `--space-5`: 6 usos (eyebrows de Comunidad + puntos del carrusel de testimonios).
+- `--space-10`: 3 usos, y son los peores — era el `gap` entre secciones de las **tres páginas
+  legales** (`/aviso-legal`, `/politica-de-cookies`, `/terminos-y-condiciones`), que estaban
+  publicadas con **separación cero** entre secciones.
+
+Corregidos en `39b42c4` y `773fc8d`. El valor de reemplazo de las legales no se eligió a ojo:
+`app/politica-de-privacidad/page.tsx:27` tiene el **string de clase idéntico** con
+`gap-[var(--space-12)]` — la hermana que sí funciona. Medido tras el fix: **0 → 48px**.
+
+Apareció además un segundo bug encadenado, en 4 páginas: el `<h1>` lleva `mb-[var(--space-N)]`
+**y a la vez** `margin: 0` en el estilo inline, que le gana siempre. El reset de Tailwind ya deja
+los encabezados en 0, así que ese `margin: 0` era además redundante.
+
+#### La parte que NO era nada: todo el resto de los namespaces
+
+Se barrió el repo entero comparando cada `var(--x)` contra toda declaración `--x:`. Resultado:
+**16 candidatas, 16 falsos positivos, 0 huérfanas reales.**
+
+| Candidatas | Por qué NO son un problema |
+|---|---|
+| `--color-loquesea`, `--dz-`, `--po-`, `--text-` | Prosa dentro de `DESIGN.md` y otros `.md`, no código |
+| `--font-` (en `AdminPrimitives.tsx`) | Está dentro de un comentario JSDoc; el código usa `var(--font-ui)`, que sí existe |
+| Las 7 `--font-cormorant/inter/jost/lato/playfair/plus-jakarta/unbounded` | Las registra **`next/font`** en `app/layout.tsx` (`variable: "--font-x"`) y se aplican al `<html>` en la línea 109. Existen en runtime, no como texto en `globals.css` |
+| `--mlg-alto`, `--mlg-celda-w`, `--mlg-celda-h`, `--rot` | Se setean por JS con `element.style.setProperty()` en `MuroLlavesGrid.tsx`. Las tres `--mlg-*` llevan además fallback en el `var()` |
+
+**Por qué la escala de espaciado era la única rota, y no es casualidad:** los `--space-*` se
+consumen desde **clases arbitrarias de Tailwind** (`mb-[var(--space-5)]`), y ahí nadie valida
+nada — ni Tailwind ni TypeScript ni el linter. Los otros namespaces o están declarados en
+`globals.css`, o los inyecta `next/font`, o se setean por JS con fallback. **El riesgo vive en la
+sintaxis de clase arbitraria, no en los tokens.**
+
+> **Decisión explícita que NO se tomó:** definir `--space-5: 1.25rem` y `--space-10: 2.5rem` en
+> `globals.css` habría respetado la intención original con dos líneas, en vez de remapear 8 usos.
+> Se descartó **por ahora**: ampliar la escala de tokens es una decisión del sistema de diseño y
+> no se toma de paso dentro de un fix. Queda anotada como posible decisión futura — si se toma,
+> los remapeos de `773fc8d` se revierten.
+
+### 5.22 — ✅ VERIFICADO END-TO-END contra producción — Toggle B y §5.12 (2026-08-11)
+
+Las dos features estaban implementadas y marcadas como resueltas, pero **verificadas solo contra
+dev local**. Esta es la primera pasada contra el deploy real, con datos reales y correo real.
+
+**Salvedad de alcance:** se corrió contra `https://tu-lugar-en-galicia.vercel.app`, que es el
+mismo deploy de producción. No se pudo usar `tulugarengalicia.com` porque no resuelve (S10) — y
+aunque resolviera, hoy daría 403 por §5.19.
+
+#### Toggle B — alta, gestión y baja
+
+| Paso | Evidencia |
+|---|---|
+| La fila **no existe** antes de confirmar | Alta a las 13:53; `updated_at` de la fila en Supabase, **13:57:45** — el momento del clic. Es la garantía de §5.6, medida |
+| Sobre pendiente consumido | La clave `comunidad:pendiente:*` desaparece de Redis tras el clic (`getdel` atómico) |
+| Encender visibilidad | `mostrar_contacto: false → true` |
+| **Flag encendido SIN teléfono cargado** | `GET /api/comunidad/[id]/contacto` → **404 `No disponible.`**, idéntico byte a byte a un perfil inexistente. Es la garantía que promete el comentario de `registro/route.ts`, cumplida |
+| Apagar visibilidad | `true → false` |
+| Baja RGPD | Fila borrada en Supabase **y** sesión de gestión cerrada en Redis |
+
+#### §5.12 — mensaje privado, con dos controles negativos
+
+| Prueba | Resultado |
+|---|---|
+| Mensaje escrito | Queda en Redis **sin entregar** — que es el punto entero de §5.12 |
+| **Control:** token firmado para el dominio `gestion` sobre un sobre `mensaje` | **400 rechazado** — la separación de dominio de §5.17 funciona de verdad |
+| Token legítimo del dominio `mensaje` | 200 y `destinatarioNombre` correcto |
+| **Entrega real en la bandeja** | ✅ **Confirmada por Marcelo el 2026-08-11.** No es "Resend aceptó el envío": el correo llegó y se leyó. Es el último eslabón, el único que no se puede verificar desde el código |
+| Sobre tras la entrega | Consumido |
+| **Control de replay:** mismo sobre, firma nueva y válida | **400 "ya se envió"** — no se entrega dos veces |
+
+Remitente y destinatario fueron la misma casilla de prueba, así que ningún miembro real recibió
+un mensaje de test.
+
+**Método reutilizable:** no hizo falta el clic humano en el correo. El token se firma con el
+mismo algoritmo del servidor (`lib/admin/tokens.ts`) usando `INTERNAL_API_SECRET` de
+`.env.local`, sobre el uuid que se lee del sobre en Redis. Sirve para probar cualquiera de los
+tres flujos de sobre firmado sin depender de una bandeja de entrada.
 
 ### 5.14 — Rediseño de `/comunidad/mapa` (producto — baja prioridad, sin fecha)
 
@@ -845,7 +1075,8 @@ M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, perform
 | `CRON_SECRET` | Auth cron Vercel | ✅ Configurada | — | ✅ |
 | `UPSTASH_REDIS_REST_URL` | Rate limiting — 7 endpoints, fail-closed | ✅ Configurada (sesión 2026-07-02) | — | ✅ (añadida al example 2026-08-01, A11 resuelto) |
 | `UPSTASH_REDIS_REST_TOKEN` | Rate limiting — 7 endpoints, fail-closed | ✅ Configurada (sesión 2026-07-02) | — | ✅ (añadida al example 2026-08-01, A11 resuelto) |
-| `NEXT_PUBLIC_SITE_URL` | URL pública del sitio | ❌ No configurada | — | ✅ |
+| `NEXT_PUBLIC_SITE_URL` | URL pública del sitio — **entra en el allowlist de orígenes de todos los endpoints públicos** | ❌ No configurada | — | ✅ |
+| ↳ | 🔴 **Ver §5.19 antes de tocar S10.** Sin esta variable, `tulugarengalicia.com` recibe **403** en todo formulario. Cargarla y redeployar **ANTES** de apuntar el DNS | | | |
 | `AEMET_API_KEY` | Clima AEMET | ✅ Configurada | — | ✅ |
 | `SHEET_MARCADOR_ID` | Google Sheets El Marcador | ⚠️ Pendiente Silvana | — | ✅ |
 | ~~`NEXT_PUBLIC_BEHOLD_WIDGET_ID`~~ | ~~Feed Instagram~~ | **Obsoleta (2026-08-11)** — Behold.so se abandonó; hoy el feed es Graph API + Supabase. Cero referencias en código | — | — |
@@ -862,6 +1093,11 @@ M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, perform
 ## 9 — Arquitectura clave
 
 ### Rutas API activas
+
+> ⚠️ **Esta tabla está incompleta: lista 10 rutas y el repo tiene 32** (medido el 2026-08-11 con
+> `find app/api -name route.ts | wc -l`). Se conserva porque describe el propósito de las
+> troncales con un detalle que no está en otro lado, pero **no sirve como inventario**. Para la
+> lista completa con origen / rate limit / auth de las 21 que faltan acá, ver **§5.20**.
 
 | Ruta | Método | Auth | Propósito |
 |---|---|---|---|
@@ -918,33 +1154,42 @@ Leer **siempre** antes de crear o modificar cualquier componente visual. Paleta 
 Reglas completas en `CLAUDE.md` — no duplicar aquí.
 ## Estado técnico al cierre
 
-> Actualizado — sesión 2026-07-04.
+> Actualizado — sesión 2026-08-11. (El bloque anterior había quedado congelado en 2026-07-04,
+> con los "últimos 10 commits" de esa fecha y un working tree "pendiente de confirmar".)
 
-### Últimos 10 commits
+### Commits de la sesión 2026-08-11
 
 ```
-c960296 fix(security): escapar HTML en templates de email para prevenir inyección (C2)
-b8a2327 fix(security): prevenir IDOR en /api/gina mediante firma HMAC del recordId
-e1ebaff fix: corregir tono de color en texto secundario por sintaxis Tailwind rota
-b43640b fix: corregir color equivocado en elementos funcionales por sintaxis Tailwind rota
-2d08a6e fix: corregir texto invisible por sintaxis Tailwind rota (text-[var(--color-*)])
-1b10394 fix(security): sanear logs de errores para evitar exposición indirecta de PII (A02)
-0b8a539 simplify: dejar "Vamos a conocernos" como único CTA en sección final de home
-5f30fec fix(security): reducir TTL de token admin de 72h a 24h (A15)
-08645ea fix: agregar width explícito al logo del header para eliminar warning de Next Image
-7b78ef6 fix: eliminar rótulo de número de trámite en PDF y actualizar referencias cruzadas
+773fc8d fix(ui): reemplazar los tokens de espaciado inexistentes --space-5 y --space-10
+2d462d2 docs: corregir el conteo de endpoints y el feed de Instagram (Behold.so era falso)
+39b42c4 fix(comunidad): separar eyebrow, titulo y parrafo en /comunidad/confirmar
+a98b776 chore: normalizar fines de linea a LF con .gitattributes (cierra 5.18)
 ```
+
+Los cuatro pusheados a `origin/main`, cada uno con `tsc` 0 / `eslint` 0 / `test` 36/36 /
+`build` exit 0. Este commit de documentación va encima.
+
+### Qué dejó la sesión
+
+- **Cerrado:** §5.18 (fines de línea, con más alcance del que pedía la ficha).
+- **Verificado end-to-end contra producción por primera vez:** Toggle B y §5.12 → **§5.22**.
+- **Abierto 🔴 ALTA:** **§5.19** — `NEXT_PUBLIC_SITE_URL` y el allowlist de orígenes. Es el que
+  hay que leer antes de tocar S10.
+- **Abierto 🟡 MEDIA:** **§5.20** — 21 de 32 endpoints nunca auditados; el más urgente es
+  `/api/instagram/posts`.
+- **Cerrado con resultado negativo:** **§5.21** — fuera de la escala de espaciado no hay
+  variables CSS huérfanas (16 candidatas, 16 falsos positivos).
 
 ### Working tree
 
 ```
-(pendiente confirmar tras esta actualización de docs — ver git status en la sesión)
+Limpio salvo dos assets sin versionar, que vienen de antes de esta sesión:
+  public/images/pin point rojo.png
+  public/videos/hero_comunidad.mp4
 ```
 
 ### Pendientes de push (origin/main..HEAD)
 
 ```
-(ninguno al cierre de la sesión de código — origin/main en c960296.
- Esta actualización de documentación (CLAUDE.md, arranque.md, auditoria-2026-07-01.md,
- certificacion-fase-1-2026-07-01.md) está sin commitear, a la espera de revisión.)
+Ninguno al cierre — origin/main == main.
 ```
