@@ -740,7 +740,15 @@ details > dd {
      mecanismo no-destructivo que --au-accent ya usaba desde sesión 1. Cero cambios en los
      componentes de components/apps/** — todos consumen --au-* por variable, así que repuntar
      la definición acá alcanza para todo el árbol. */
-  --au-bg:              var(--dz-papel);
+  /* Capa de PÁGINA, no de superficie. Apuntaba a --dz-papel, que funcionaba mientras --dz-luz
+     (fondo de las tarjetas) era blanco puro. Al sacar el blanco (2026-08-11) los dos quedaron
+     en #F7F5F0 y las tarjetas de acordeón se volvieron planas contra el fondo. Apuntar a
+     --dz-fondo-pagina recupera la separación reusando el sistema de dos capas que ya existe,
+     en vez de devolverle el blanco a las tarjetas. Medido sobre #F0F0EB: 16.10:1 --au-heading,
+     5.06:1 --au-hero-body, 4.52:1 --au-accent-text. Los tres AA.
+     Solo se toca la definición CLARA: en oscuro --dz-papel (#0E0D0B) y --dz-luz (#1B1913) ya
+     son distintos entre sí, así que ahí nunca hubo aplanamiento. */
+  --au-bg:              var(--dz-fondo-pagina);
   --au-header-bg:       var(--dz-luz);
   --au-card:            var(--dz-luz);
   --au-accent:          #E0932E; /* retinte Deslumbrante (= --dz-accent) — acento y bordes activos, fijo en ambos temas */

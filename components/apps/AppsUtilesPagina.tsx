@@ -78,7 +78,6 @@ export function AppsUtilesPagina() {
                 <SeccionAcordeon
                   label={`Apps de ${ciudadLabel}`}
                   apps={LOCAL_APPS[ciudad]}
-                  abiertaPorDefecto
                 />
               </motion.div>
               {NATIONAL_CATEGORIES.map((cat) => (

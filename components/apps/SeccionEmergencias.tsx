@@ -3,12 +3,16 @@ import { NUMEROS_EMERGENCIA } from '@/lib/config/appsUtiles'
 export function SeccionEmergencias() {
   return (
     <details
-      className="group relative left-1/2 w-screen -translate-x-1/2 overflow-hidden rounded-[10px] box-border"
-      style={{ border: '1px solid var(--au-border-strong)', backgroundColor: 'var(--au-card)', maxWidth: '1100px' }}
+      // Antes: `relative left-1/2 w-screen -translate-x-1/2` + maxWidth 1100px, o sea que se
+      // escapaba del contenedor de la página (max-w-[840px]) y quedaba más ancho que la lista
+      // de Apps que tiene debajo. Sin el breakout ocupa el ancho de su contenedor y las dos
+      // secciones alinean sus bordes.
+      className="group overflow-hidden rounded-[10px] box-border"
+      style={{ border: '1px solid var(--au-border-strong)', backgroundColor: 'var(--au-card)' }}
       open
     >
       <summary
-        className="flex cursor-pointer list-none items-center justify-between gap-3 px-[18px] py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="transition-brand flex cursor-pointer list-none items-center justify-between gap-3 px-[18px] py-3.5 hover:[background-color:var(--au-header-bg)] focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{ outlineColor: 'var(--au-accent)' }}
       >
         <span className="flex items-center gap-2.5">
