@@ -16,7 +16,7 @@ export default function PoliticaDeCookiesPage() {
 
       <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
         <div
-          className="flex flex-col gap-[var(--space-10)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)]"
+          className="flex flex-col gap-[var(--space-12)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)]"
           style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
         >
 

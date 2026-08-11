@@ -27,7 +27,7 @@ export default async function ConfirmarMensajePage({
       }}
     >
       <div className="mx-auto max-w-2xl">
-        <div className="mb-[var(--space-5)]">
+        <div className="mb-[var(--space-4)]">
           <Eyebrow>Formando comunidad</Eyebrow>
         </div>
 
@@ -40,7 +40,8 @@ export default async function ConfirmarMensajePage({
             color: 'var(--dz-ink)',
             lineHeight: 'var(--dz-leading-h1)',
             letterSpacing: '-0.01em',
-            margin: 0,
+            // Sin `margin: 0`: el estilo inline le ganaba a la clase mb-[...] del h1 y el
+            // titulo quedaba pegado al parrafo. El reset de Tailwind ya deja los encabezados en 0.
           }}
         >
           Confirma tu mensaje
