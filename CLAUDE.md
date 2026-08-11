@@ -174,7 +174,13 @@ El 2026-06-28 se realizó la primera auditoría total del proyecto (código, seg
 
 ### Auditoría de seguridad — Fase 1 (2026-07-04)
 
-Auditoría completa de los 11 endpoints `/api/*`: secretos, auth/autorización, validación de inputs, rate limiting, CORS/headers, dependencias, webhooks, manejo de errores.
+Auditoría completa de los 11 endpoints `/api/*` **que existían en esa fecha**: secretos, auth/autorización, validación de inputs, rate limiting, CORS/headers, dependencias, webhooks, manejo de errores.
+
+> ⚠️ **Corregido el 2026-08-11 — esta línea decía "los 11 endpoints" a secas y se leía como el
+> tamaño actual de la API.** Hoy son **32** rutas (`find app/api -name route.ts | wc -l`). O sea
+> que esta auditoría cubrió **11 de 32**: las **21** restantes —todo el CRM de admin, todo
+> Comunidad, y los endpoints de Instagram— nunca pasaron por ella. No tratar esta sección como
+> si certificara la superficie completa de la API.
 
 | ID | Severidad | Estado |
 |---|---|---|

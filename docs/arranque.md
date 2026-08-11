@@ -202,7 +202,7 @@ Lista consolidada. Nada de código hasta que Silvana confirme.
 | # | Pendiente | Acción |
 |---|---|---|
 | S2 | Cuenta Cal.com — event types configurados con disponibilidad real | Cal.com → crear/verificar evento "Videollamada 30 min" con horarios reales |
-| S8 | Feed Instagram (Behold.so) | behold.so → widget ID → `NEXT_PUBLIC_BEHOLD_WIDGET_ID` en Vercel |
+| S8 | Feed Instagram — **ya no es Behold.so** | Silvana conecta su cuenta desde `/api/admin/instagram/conectar` (Graph API vía Facebook Login). Después: cargar `INSTAGRAM_EXPECTED_IG_USER_ID` en Vercel |
 | S9 | Google Sheet El Marcador | Sheet ID → `SHEET_MARCADOR_ID` en Vercel |
 | S10 | Dominio `tulugarengalicia.com` | Registrar → Cloudflare DNS → Vercel Domains |
 
@@ -848,7 +848,9 @@ M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, perform
 | `NEXT_PUBLIC_SITE_URL` | URL pública del sitio | ❌ No configurada | — | ✅ |
 | `AEMET_API_KEY` | Clima AEMET | ✅ Configurada | — | ✅ |
 | `SHEET_MARCADOR_ID` | Google Sheets El Marcador | ⚠️ Pendiente Silvana | — | ✅ |
-| `NEXT_PUBLIC_BEHOLD_WIDGET_ID` | Feed Instagram | ❌ Pendiente Silvana | — | — |
+| ~~`NEXT_PUBLIC_BEHOLD_WIDGET_ID`~~ | ~~Feed Instagram~~ | **Obsoleta (2026-08-11)** — Behold.so se abandonó; hoy el feed es Graph API + Supabase. Cero referencias en código | — | — |
+| `INSTAGRAM_APP_ID` / `INSTAGRAM_APP_SECRET` | Feed Instagram (Graph API vía Facebook Login) | ⚠️ En `.env.local`; sin verificar en Vercel | — | — |
+| `INSTAGRAM_EXPECTED_IG_USER_ID` | Fija la cuenta de IG esperada (IG-01, auditoría 2026-08-08) | ❌ Pendiente — cargar tras la primera conexión | — | — |
 | `CALCOM_API_KEY` | Cal.com gestión slots (Pieza 7) — nunca implementada | ❌ No configurada | — | ❌ Eliminada de `.env.local.example` (2026-08-01, A12 resuelto) |
 | `DATABASE_URL` | BD (Fase 5 — no usar aún) | — | — | ✅ |
 | `STRIPE_SECRET_KEY` | Pagos (Fase 6) | — | — | ✅ |
