@@ -35,7 +35,7 @@ const ratelimit =
 /** Mensajes de cara al usuario para cada final posible (voz: qué pasó y qué hacer). */
 const MENSAJES: Record<'invalido' | 'expirado' | 'usado', string> = {
   invalido: 'Este enlace no es válido. Vuelve a registrarte y te mandamos uno nuevo.',
-  expirado: 'Este enlace caducó — vale 24 horas. Vuelve a registrarte y te mandamos uno nuevo.',
+  expirado: 'Pasaron más de 24 horas y el enlace ya no es válido — nada grave, es solo por tu seguridad. Vuelve a registrarte y te mandamos uno nuevo.',
   usado: 'Este enlace ya no sirve: o ya lo usaste, o pasaron más de 24 horas. Si no te ves en el mapa, vuelve a registrarte.',
 }
 

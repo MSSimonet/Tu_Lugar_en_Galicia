@@ -30,7 +30,9 @@ export default async function ConfirmarPage({
       }}
     >
       <div className="mx-auto max-w-2xl">
-        <div className="mb-[var(--space-5)]">
+        {/* --space-5 no existe en la escala de globals.css (1,2,3,4,6,8,12,16,24): la regla
+            no se generaba y el eyebrow quedaba pegado al título. */}
+        <div className="mb-[var(--space-4)]">
           <Eyebrow>Formando comunidad</Eyebrow>
         </div>
 
@@ -43,7 +45,9 @@ export default async function ConfirmarPage({
             color: 'var(--dz-ink)',
             lineHeight: 'var(--dz-leading-h1)',
             letterSpacing: '-0.01em',
-            margin: 0,
+            // Sin `margin: 0` acá: el estilo inline le ganaba a mb-[var(--space-6)] de arriba
+            // y el título quedaba pegado al párrafo. El reset de Tailwind ya deja los
+            // encabezados en margin 0, así que la clase es la única que manda.
           }}
         >
           Confirma tu registro
