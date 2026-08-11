@@ -570,7 +570,10 @@ details > dd {
   /* Inversores — claro por defecto, override bajo .dark */
   --dz-ink:      #16140F; /* texto principal — AA 16.89:1 sobre dz-papel */
   --dz-papel:    #F7F5F0; /* fondo de sección */
-  --dz-luz:      #FFFFFF; /* fondo de tarjeta/superficie */
+  --dz-luz:      #F7F5F0; /* fondo de tarjeta/superficie. Era #FFFFFF hasta 2026-08-11:
+                             se sacó el blanco absoluto de todas las vistas y se adoptó el
+                             mismo valor que --dz-papel. Contraste medido sobre este fondo:
+                             16.89:1 --dz-ink, 5.31:1 --dz-muted, 4.74:1 --dz-accent-text. */
   --dz-muted:    #6B6558; /* texto secundario — AA 5.31:1 sobre dz-papel */
   --dz-borde:    #DCDAD5;
 
@@ -603,12 +606,18 @@ details > dd {
   --dz-fondo-pagina: #F0F0EB; /* = #F7F5F0 + 3% var(--color-atlantico), resuelto a hex.
      Bajo de 5% a 3%: a 5% (#ECEDE8) el fondo dejaba --dz-accent-text en 4.39:1,
      por debajo de AA para texto normal (medido en navegador, no estimado). */
-  --dz-fondo-marco:  #FFFFFF;
+  --dz-fondo-marco:  #F7F5F0; /* Era #FFFFFF hasta 2026-08-11 (fuera el blanco absoluto).
+     CONSECUENCIA ASUMIDA Y DECIDIDA: las dos capas de fondo se separaban 1.143:1 con el blanco
+     y ahora se separan 1.049:1, o sea que el marco y la página quedan casi del mismo color y
+     --dz-hero-fundido de abajo casi no tiene nada que fundir. Se aceptó a cambio de sacar el
+     blanco puro de todas las vistas. Si algún día se quiere recuperar la separación, la palanca
+     es oscurecer --dz-fondo-pagina, NO volver el marco a blanco — pero ojo con el techo de
+     --dz-accent-text, que a #ECEDE8 ya cae a 4.39:1 y perfora AA. */
 
   /* El Hero deja de ser un "bookend fijo oscuro" y pasa a seguir el tema, así
      que sus textos ya no pueden ser claros fijos: invierten con el modo.
-     Valores medidos sobre --dz-fondo-marco (#FFFFFF en claro): 18.4:1 el
-     titular, 5.79:1 el secundario. */
+     Valores medidos sobre --dz-fondo-marco: con el blanco de antes daban 18.4:1 el titular y
+     5.79:1 el secundario; sobre el #F7F5F0 actual dan 16.89:1 y 5.31:1. Los dos siguen AA. */
   --dz-hero-bg:    var(--dz-fondo-marco);
   --dz-hero-text:  #16140F;
   --dz-hero-muted: #6B6558;
@@ -620,7 +629,8 @@ details > dd {
 
      120px sobre un Hero de 296–480px de alto: la franja es lo bastante larga
      para que el ojo no encuentre dónde empieza. El salto de color que disuelve
-     ya era pequeño de por sí —#FFFFFF a #F0F0EB en claro, #1B1913 a #0F1512 en
+     ya era pequeño de por sí —hoy #F7F5F0 a #F0F0EB en claro (antes #FFFFFF, o sea que ahora
+     es aún más chico: ver la nota de --dz-fondo-marco), #1B1913 a #0F1512 en
      oscuro—, así que repartirlo en 120px lo vuelve apenas perceptible, que es el
      efecto pedido. Es la única palanca: subirlo suaviza más, bajarlo endurece. */
   --dz-hero-fundido: 120px;

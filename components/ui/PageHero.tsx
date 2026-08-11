@@ -142,9 +142,12 @@ export function PageHero({
         //
         // Sirve para las cinco páginas con una sola regla porque los tres tonos
         // (`--dz-hero-bg`, `--dz-luz` y `--dz-fondo-marco`) resuelven al mismo
-        // color en cada tema —#FFFFFF en claro, #1B1913 en oscuro— y las cinco
-        // apoyan sobre `--dz-fondo-pagina`. Y como el degradado se escribe con
-        // tokens, el fundido acompaña al cambio de tema sin nada más.
+        // color en cada tema —#F7F5F0 en claro desde 2026-08-11 (antes #FFFFFF),
+        // #1B1913 en oscuro— y las cinco apoyan sobre `--dz-fondo-pagina`. Y como
+        // el degradado se escribe con tokens, el fundido acompaña al cambio de
+        // tema sin nada más. Esa igualdad entre los tres tonos es la invariante
+        // que hace que esto funcione: si algún día uno se separa, este degradado
+        // deja de servir para las cinco.
         background: `linear-gradient(to bottom, ${tokens.background} 0, ${tokens.background} calc(100% - var(--dz-hero-fundido)), var(--dz-fondo-pagina) 100%)`,
         minHeight: 'var(--dz-hero-min-h)',
       }}
