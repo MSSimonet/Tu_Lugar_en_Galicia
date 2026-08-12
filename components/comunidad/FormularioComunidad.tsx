@@ -129,6 +129,46 @@ export function FormularioComunidad() {
     if (errorUbicacion) setErrorUbicacion('')
   }
 
+  /**
+   * Orden visual de los campos. NO es el orden de las claves de FormErrors: ese es el orden
+   * en que `validate()` las escribe, y con `Object.keys` bastaría reordenar una línea de
+   * validación para que el foco saltara al campo equivocado. Acá el orden está atado a cómo
+   * se ve el formulario, que es lo que la persona espera.
+   */
+  const ORDEN_DE_CAMPOS: (keyof FormErrors)[] = [
+    'email', 'calle1', 'calle2', 'ciudad', 'nombre', 'disponibilidad', 'rgpd',
+  ]
+
+  /**
+   * Lleva el foco al primer campo con error tras un envío fallido.
+   *
+   * Sin esto el foco se quedaba en el `<body>` (medido: `document.activeElement` = BODY): se
+   * pintaban cinco errores más abajo y quien navega con teclado o lector de pantalla no
+   * recibía ninguna señal de que el envío no salió. Desde su punto de vista, pulsar "Enviar"
+   * no hacía nada.
+   *
+   * El `role="alert"` de cada mensaje no alcanza para este caso: anuncia el texto del error,
+   * pero no deja el cursor donde hay que corregir, así que había que recorrer el formulario a
+   * ciegas para encontrarlo.
+   */
+  function moverFocoAlPrimerError(errores: FormErrors) {
+    const primero = ORDEN_DE_CAMPOS.find((campo) => errores[campo])
+    if (!primero) return
+    // 'disponibilidad' no es un input: el error es del grupo, así que el foco va al primer
+    // checkbox del fieldset, que es el control real que hay que tocar para resolverlo.
+    const id = primero === 'disponibilidad' ? `actividad-${ACTIVIDADES[0].id}` : primero
+    const destino = document.getElementById(id)
+    if (!destino) return
+    destino.focus()
+    // `block: 'center'` y no el default: el mensaje de error vive DEBAJO del campo, así que
+    // dejarlo pegado al borde superior del viewport lo escondería justo a él.
+    destino.scrollIntoView({ block: 'center', behavior: prefiereMenosMovimiento() ? 'auto' : 'smooth' })
+  }
+
+  function prefiereMenosMovimiento(): boolean {
+    return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  }
+
   function validate(): FormErrors {
     const next: FormErrors = {}
     if (!email.trim()) next.email = 'Indica tu email.'
@@ -151,6 +191,7 @@ export function FormularioComunidad() {
     const validation = validate()
     if (Object.keys(validation).length > 0) {
       setErrors(validation)
+      moverFocoAlPrimerError(validation)
       return
     }
     setErrors({})
@@ -452,7 +493,16 @@ export function FormularioComunidad() {
           </p>
         </div>
 
-        <fieldset className="flex flex-col gap-2">
+        {/* aria-describedby en el FIELDSET y no en cada checkbox: el error es del grupo
+            ("selecciona al menos una"), no de una casilla concreta. Puesto en cada input, un
+            lector de pantalla repetiría el mismo error tres veces, una por opción.
+            Era el único de los cinco errores del formulario sin `id` y sin nadie que lo
+            referenciara: se anunciaba por su role="alert" al aparecer, pero después quedaba
+            huérfano — al tabular hasta las casillas no había forma de volver a oírlo. */}
+        <fieldset
+          className="flex flex-col gap-2"
+          aria-describedby={errors.disponibilidad ? 'disponibilidad-error' : undefined}
+        >
           <legend className={labelClass} style={labelStyle}>
             ¿Cómo te gustaría ayudar?{requiredMark}
           </legend>
@@ -478,7 +528,9 @@ export function FormularioComunidad() {
             ))}
           </div>
           {errors.disponibilidad && (
-            <p className={errorClass} style={errorStyle} role="alert">{errors.disponibilidad}</p>
+            <p id="disponibilidad-error" className={errorClass} style={errorStyle} role="alert">
+              {errors.disponibilidad}
+            </p>
           )}
         </fieldset>
       </div>
