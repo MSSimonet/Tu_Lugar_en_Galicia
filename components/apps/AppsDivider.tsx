@@ -16,13 +16,24 @@ import { useFlightWithWake, apoyoEnFrontera, DIVIDER_MARGEN_LATERAL, DIVIDER_WOB
 // cualquier viewport. Fijar una duración propia es justo lo que producía 82,9
 // px/s contra 74,7 entre divisores (auditoría 2026-07-25, C1).
 //
-// Imagen: public/images/apps-divider-v2.png — foto del usuario (escritorio,
-// tablet y móvil en dorado) con el fondo removido. OJO: la v1 venía sobre fondo
-// BLANCO y la v2 sobre fondo NEGRO, así que el recorte no es el mismo trabajo. Se
-// hizo con flood fill desde los bordes y no con umbral de luminancia: el arte tiene
-// sombras propias y un umbral plano las habría agujereado. Se conservan sus
-// colores originales, sin recolorear al ámbar del theme, igual criterio que la
-// brújula y el medallón de Quiénes Somos.
+// Imagen: public/images/apps-divider-v3.png — foto del usuario (escritorio,
+// tablet y móvil) con el fondo removido. OJO: la v1 venía sobre fondo BLANCO y la
+// v2 sobre fondo NEGRO, así que el recorte no es el mismo trabajo. Se hizo con
+// flood fill desde los bordes y no con umbral de luminancia: el arte tiene sombras
+// propias y un umbral plano las habría agujereado.
+//
+// COLOR (v3): reencajado en el ámbar de la familia, #E8A848 — el mismo que domina
+// el 95% de gente-divider-v2.png (Comunidad) y el 85% de maletas-divider-v6.png.
+// La v2 conservaba el color original del arte, un dorado mostaza cuyo tono dominante
+// medía #A87828: al lado de los otros cuatro divisores se leía como otro material,
+// no como el mismo objeto en otra sección.
+//
+// El reencaje NO es un teñido plano. La ilustración tiene volumen —biseles, reflejos,
+// la sombra bajo cada pantalla— y pintarla de un color liso la habría dejado chata.
+// Se conservó la luminancia relativa de cada pixel y se desplazó la escala para que
+// el dominante caiga exactamente en #E8A848; el resto se acomodó alrededor a la
+// misma distancia que tenía. Medido después: dominante #E8A848 (34%), con los
+// reflejos repartidos en #F8B848 y #F8C858.
 //
 // `gira: false`: se traslada sin rotar. Los tres dispositivos tienen orientación
 // legible —pantallas hacia el espectador—, así que girarlos 180° en cada extremo
@@ -35,7 +46,7 @@ import { useFlightWithWake, apoyoEnFrontera, DIVIDER_MARGEN_LATERAL, DIVIDER_WOB
 // separa algún día, el divisor acompaña a su página.
 
 const ICON_HEIGHT = 44; // mismo alto que gente, q-somos y maletas
-const ICON_WIDTH = Math.round((ICON_HEIGHT * 616) / 271); // aspecto nativo de apps-divider-v2.png
+const ICON_WIDTH = Math.round((ICON_HEIGHT * 616) / 271); // aspecto nativo de apps-divider-v3.png
 // Alto mínimo del contenedor sin recortar el ícono en los extremos del wobble.
 const CONTAINER_HEIGHT = ICON_HEIGHT + 2 * DIVIDER_WOBBLE_AMPLITUDE;
 
@@ -80,7 +91,7 @@ export function AppsDivider({ direction = "ltr" }: AppsDividerProps) {
       >
         {prefersReducedMotion ? (
           <div className="absolute top-1/2 left-1/2" style={{ transform: "translate(-50%, -50%)" }}>
-            <Image src="/images/apps-divider-v2.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
+            <Image src="/images/apps-divider-v3.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
           </div>
         ) : (
           <>
@@ -91,7 +102,7 @@ export function AppsDivider({ direction = "ltr" }: AppsDividerProps) {
               style={{ left: 0, top: "calc(50% - 1.133px)", height: "2.266px", width: 0 }}
             />
             <div ref={iconRef} className="absolute" style={{ left: 0, top: `calc(50% - ${ICON_HEIGHT / 2}px)` }}>
-              <Image src="/images/apps-divider-v2.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
+              <Image src="/images/apps-divider-v3.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
             </div>
           </>
         )}

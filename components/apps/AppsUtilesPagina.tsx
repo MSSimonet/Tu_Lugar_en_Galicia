@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import { CIUDADES, LOCAL_APPS, NATIONAL_CATEGORIES, type CiudadKey } from '@/lib/config/appsUtiles'
 import { staggerContainer, fadeUp } from '@/lib/motion/variants'
 import { PageHero } from '@/components/ui/PageHero'
@@ -14,6 +14,28 @@ import { EstadoVacio } from './EstadoVacio'
 export function AppsUtilesPagina() {
   const [ciudad, setCiudad] = useState<CiudadKey | null>(null)
   const ciudadLabel = CIUDADES.find((c) => c.key === ciudad)?.label
+  const resultadosRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
+
+  // Al elegir ciudad, los números de emergencia quedan a la vista sin scrollear.
+  //
+  // Hacía falta hacer algo: medido en un viewport de 720px, el bloque arrancaba en y=922 —o
+  // sea, fuera de pantalla— porque encima tiene el Hero, el divisor y el selector de ciudad.
+  // Y es el dato más urgente de la página: el 112 no se busca con tiempo.
+  //
+  // Se resuelve moviendo el scroll y no achicando lo de arriba: el Hero es el `PageHero`
+  // compartido por las cinco páginas interiores y su alto es una decisión de marca (ver
+  // components/ui/PageHero.tsx), así que recortarlo acá rompería esa igualdad para arreglar
+  // un problema de esta página sola.
+  useEffect(() => {
+    if (!ciudad || !resultadosRef.current) return
+    resultadosRef.current.scrollIntoView({
+      // El salto seco es lo correcto con reduced-motion: el desplazamiento suave es
+      // justamente el tipo de movimiento amplio que esa preferencia pide evitar.
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      block: 'start',
+    })
+  }, [ciudad, prefersReducedMotion])
 
   return (
     <div style={{ backgroundColor: 'var(--dz-fondo-pagina)', minHeight: '100vh' }}>
@@ -66,7 +88,10 @@ export function AppsUtilesPagina() {
           {ciudad ? (
             <motion.div
               key={ciudad}
-              className="mt-6 flex flex-col gap-2.5"
+              ref={resultadosRef}
+              // scroll-mt: deja el aire del header sticky por encima al hacer scrollIntoView,
+              // que si no clava el borde del bloque justo debajo del header y lo tapa.
+              className="mt-6 flex scroll-mt-24 flex-col gap-2.5"
               variants={staggerContainer}
               initial="hidden"
               animate="visible"
