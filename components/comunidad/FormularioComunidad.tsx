@@ -15,7 +15,9 @@ const inputBase =
 const inputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-dz-ui)',
   borderRadius: 'var(--dz-radius-input)',
-  borderColor: 'var(--dz-borde)',
+  // --dz-borde-input y no --dz-borde: el segundo mide 1.28:1 en claro y 1.19:1 en oscuro
+  // sobre este mismo fondo, o sea que el recuadro del campo no se veía. Ver globals.css.
+  borderColor: 'var(--dz-borde-input)',
   backgroundColor: 'var(--dz-luz)',
   color: 'var(--dz-ink)',
 }

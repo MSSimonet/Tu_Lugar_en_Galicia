@@ -576,6 +576,14 @@ details > dd {
                              16.89:1 --dz-ink, 5.31:1 --dz-muted, 4.74:1 --dz-accent-text. */
   --dz-muted:    #6B6558; /* texto secundario — AA 5.31:1 sobre dz-papel */
   --dz-borde:    #DCDAD5;
+  /* Borde de campos de formulario. Misma familia cálida que --dz-borde (r>g>b), solo
+     empujado hasta que se vea. No es una preferencia estética: --dz-borde sobre --dz-luz
+     mide 1.28:1 en claro y 1.19:1 en oscuro, o sea que el recuadro del input es
+     prácticamente invisible y no llega al 3:1 que pide WCAG 1.4.11 para el borde de un
+     control. Este token mide 3.20:1 en claro y 3.30:1 en oscuro — visible sin volverse
+     un marco pesado. --dz-borde se queda como está: separa tarjetas y filas, donde un
+     borde tenue es lo correcto. */
+  --dz-borde-input: #8D897F;
 
   /* Fijos — no invierten con el tema, igual filosofía que --po-ouro */
   --dz-accent:       #E0932E; /* acento único de marca */
@@ -885,6 +893,7 @@ details > dd {
   --dz-ink:   #F3EFE4;
   --dz-muted: #9C9484;
   --dz-borde: #292825;
+  --dz-borde-input: #6F6B60; /* 3.30:1 sobre --dz-luz oscuro — ver el comentario en :root */
   --dz-accent-text: var(--dz-accent); /* el acento crudo ya es AA sobre fondo oscuro — 7.75:1 */
 
   /* Dos capas de fondo — el marco queda un escalón MÁS CLARO que la página, así
