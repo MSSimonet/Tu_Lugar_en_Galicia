@@ -6,6 +6,9 @@ import { FormMensajePrivado } from './FormMensajePrivado'
 
 interface TarjetaPerfilProps {
   perfil: ComunidadPerfilPublico
+  /** En el listado de perfiles sin pin (B1) la tarjeta llena su celda de la grilla; en el
+   *  popup de Leaflet se queda en los 260px que declara `bindPopup`. */
+  enListado?: boolean
 }
 
 function iniciales(nombre: string): string {
@@ -28,7 +31,7 @@ type EstadoContacto = 'oculto' | 'cargando' | 'visible' | 'error'
 const botonBase =
   'inline-flex items-center justify-center px-3 py-2 font-bold [font-size:var(--text-xs)] uppercase tracking-[0.08em] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2'
 
-export function TarjetaPerfil({ perfil }: TarjetaPerfilProps) {
+export function TarjetaPerfil({ perfil, enListado = false }: TarjetaPerfilProps) {
   const [mostrarForm, setMostrarForm] = useState(false)
   const [estadoContacto, setEstadoContacto] = useState<EstadoContacto>('oculto')
   const [contacto, setContacto] = useState<string | null>(null)
@@ -60,12 +63,12 @@ export function TarjetaPerfil({ perfil }: TarjetaPerfilProps) {
   }
 
   return (
-    <div className="flex flex-col gap-3 p-3" style={{ maxWidth: '260px' }}>
+    <div className="flex flex-col gap-3 p-3" style={enListado ? undefined : { maxWidth: '260px' }}>
       <div className="flex items-center gap-3">
-        {perfil.foto_url ? (
+        {perfil.foto_publica ? (
           // eslint-disable-next-line @next/next/no-img-element -- popup de Leaflet, fuera del árbol de <Image> de Next.
           <img
-            src={perfil.foto_url}
+            src={perfil.foto_publica}
             alt=""
             width={48}
             height={48}

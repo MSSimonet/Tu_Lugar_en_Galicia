@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { ACTIVIDADES, type Actividad, type ComunidadRegistroInput } from '@/lib/comunidad/types'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
+type EstadoFoto = 'idle' | 'subiendo' | 'listo'
 
 const CIUDADES = ['Vigo', 'A Coruña', 'Santiago de Compostela', 'Pontevedra', 'Lugo']
 
@@ -68,6 +69,48 @@ export function FormularioComunidad() {
   const [errorUbicacion, setErrorUbicacion] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
 
+  const [estadoFoto, setEstadoFoto] = useState<EstadoFoto>('idle')
+  const [errorFoto, setErrorFoto] = useState('')
+  const inputFotoRef = useRef<HTMLInputElement>(null)
+
+  // La foto se sube en cuanto se elige, no al enviar el formulario. Así el error de una imagen
+  // rechazada (formato, tamaño) aparece al lado del campo y no después de mandar todo lo demás,
+  // que es donde más molesta.
+  async function subirFoto(archivo: File | undefined) {
+    if (!archivo) return
+    setErrorFoto('')
+    setEstadoFoto('subiendo')
+
+    const datos = new FormData()
+    datos.append('foto', archivo)
+
+    try {
+      const res = await fetch('/api/comunidad/foto', { method: 'POST', body: datos })
+      const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string }
+      if (!res.ok || !data.url) {
+        setErrorFoto(data.error ?? 'No pudimos subir la imagen. Intenta de nuevo.')
+        setEstadoFoto('idle')
+        // Se limpia el input para que volver a elegir el MISMO archivo dispare un change nuevo:
+        // si no, el navegador considera que el valor no cambió y no vuelve a intentarlo.
+        if (inputFotoRef.current) inputFotoRef.current.value = ''
+        return
+      }
+      setFotoUrl(data.url)
+      setEstadoFoto('listo')
+    } catch {
+      setErrorFoto('Error de conexión al subir la imagen.')
+      setEstadoFoto('idle')
+      if (inputFotoRef.current) inputFotoRef.current.value = ''
+    }
+  }
+
+  function quitarFoto() {
+    setFotoUrl('')
+    setEstadoFoto('idle')
+    setErrorFoto('')
+    if (inputFotoRef.current) inputFotoRef.current.value = ''
+  }
+
   function toggleActividad(id: Actividad) {
     setDisponibilidad(prev =>
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
@@ -88,8 +131,10 @@ export function FormularioComunidad() {
     const next: FormErrors = {}
     if (!email.trim()) next.email = 'Indica tu email.'
     if (!nombre.trim()) next.nombre = 'Indica tu nombre o alias.'
-    if (!calle1.trim()) next.calle1 = 'Indica la primera calle.'
-    if (!calle2.trim()) next.calle2 = 'Indica la segunda calle.'
+    // Las calles son opcionales, pero van de a dos: con una sola no hay intersección que
+    // ubicar. Solo se reclama la que falta cuando la otra ya está escrita.
+    if (calle1.trim() && !calle2.trim()) next.calle2 = 'Indica también la segunda calle, o deja las dos vacías.'
+    if (calle2.trim() && !calle1.trim()) next.calle1 = 'Indica también la primera calle, o deja las dos vacías.'
     if (!ciudad) next.ciudad = 'Selecciona una ciudad.'
     if (disponibilidad.length === 0) next.disponibilidad = 'Selecciona al menos una opción.'
     if (!rgpd) next.rgpd = 'Debes aceptar la política de privacidad para continuar.'
@@ -113,8 +158,8 @@ export function FormularioComunidad() {
       email,
       nombre,
       fotoUrl: fotoUrl.trim() || undefined,
-      calle1,
-      calle2,
+      calle1: calle1.trim() || undefined,
+      calle2: calle2.trim() || undefined,
       ciudad,
       disponibilidad,
       contacto: contacto.trim() || undefined,
@@ -234,21 +279,24 @@ export function FormularioComunidad() {
             Tu ubicación, con privacidad
           </h2>
           <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
-            No te pedimos tu dirección exacta ni el número de tu casa. Con el cruce de estas dos
-            calles creamos un círculo de privacidad de unos 200 metros alrededor de tu zona —
-            así apareces en el mapa sin revelar dónde vives exactamente.
+            No te pedimos tu dirección exacta ni el número de tu casa. Con el cruce de dos calles
+            creamos un círculo de privacidad de unos 200 metros alrededor de tu zona — así
+            apareces en el mapa sin revelar dónde vives exactamente.
+          </p>
+          <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
+            Si prefieres no indicarlas, déjalas vacías: tu perfil aparece igual en la lista de la
+            comunidad, sin marca en el mapa, y quien quiera puede escribirte lo mismo.
           </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <label htmlFor="calle1" className={labelClass} style={labelStyle}>
-              Primera calle{requiredMark}
+              Primera calle <span className="font-normal opacity-60">(opcional)</span>
             </label>
             <input
               id="calle1"
               type="text"
-              required
               value={calle1}
               onChange={e => handleCalle1Change(e.target.value)}
               className={inputBase}
@@ -263,12 +311,11 @@ export function FormularioComunidad() {
 
           <div className="flex flex-col gap-2">
             <label htmlFor="calle2" className={labelClass} style={labelStyle}>
-              Segunda calle{requiredMark}
+              Segunda calle <span className="font-normal opacity-60">(opcional)</span>
             </label>
             <input
               id="calle2"
               type="text"
-              required
               value={calle2}
               onChange={e => handleCalle2Change(e.target.value)}
               className={inputBase}
@@ -334,22 +381,72 @@ export function FormularioComunidad() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label htmlFor="fotoUrl" className={labelClass} style={labelStyle}>
+          <span className={labelClass} style={labelStyle}>
             Foto <span className="font-normal opacity-60">(opcional)</span>
-          </label>
-          <input
-            id="fotoUrl"
-            type="url"
-            value={fotoUrl}
-            onChange={e => setFotoUrl(e.target.value)}
-            className={inputBase}
-            style={inputStyle}
-            placeholder="https://..."
-          />
+          </span>
+          <div className="flex flex-wrap items-center gap-3">
+            {/* El <input type="file"> nativo no se puede estilar y su texto ("Sin archivos
+                seleccionados") no se puede traducir ni cambiar. Se oculta de la vista —no de
+                los lectores de pantalla, que siguen viendo un campo de archivo con su label— y
+                el <label> hace de botón. Es la misma técnica que usa el checkbox de RGPD de
+                más abajo para agrandar su área de click. */}
+            <input
+              id="foto"
+              ref={inputFotoRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={e => subirFoto(e.target.files?.[0])}
+              className="sr-only"
+            />
+            <label
+              htmlFor="foto"
+              className="inline-flex cursor-pointer items-center px-5 py-3 font-semibold [font-size:var(--text-sm)] transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2"
+              style={{
+                fontFamily: 'var(--font-dz-ui)',
+                borderRadius: 'var(--dz-radius-input)',
+                border: '1px solid var(--dz-borde)',
+                backgroundColor: 'var(--dz-luz)',
+                color: 'var(--dz-ink)',
+                opacity: estadoFoto === 'subiendo' ? 0.6 : 1,
+              }}
+            >
+              {fotoUrl ? 'Cambiar foto' : 'Elegir una foto'}
+            </label>
+
+            {estadoFoto === 'subiendo' && (
+              <span style={helperStyle} aria-live="polite">Subiendo…</span>
+            )}
+            {estadoFoto === 'listo' && fotoUrl && (
+              <span className="flex items-center gap-3" aria-live="polite">
+                {/* eslint-disable-next-line @next/next/no-img-element -- previsualización de un archivo recién subido, fuera del pipeline de <Image>. */}
+                <img
+                  src={fotoUrl}
+                  alt="Vista previa de tu foto"
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 rounded-full object-cover"
+                  style={{ border: '1px solid var(--dz-borde)' }}
+                />
+                <button
+                  type="button"
+                  onClick={quitarFoto}
+                  className="underline underline-offset-2 [font-size:var(--text-xs)]"
+                  style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-accent-text)', cursor: 'pointer' }}
+                >
+                  Quitar
+                </button>
+              </span>
+            )}
+          </div>
+
+          {errorFoto && (
+            <p className={errorClass} style={errorStyle} role="alert">{errorFoto}</p>
+          )}
+
           <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
-            Pega el enlace a una foto tuya que ya esté publicada en internet (por ejemplo, tu
-            foto de perfil en redes sociales). Todavía no tenemos un sistema para subir
-            archivos directamente.
+            JPG, PNG o WebP, hasta 4 MB. Le borramos los datos ocultos que traen las fotos del
+            móvil —entre ellos el GPS del lugar donde se tomó— antes de guardarla. La revisamos
+            a mano antes de publicarla, así que tarda un poco en aparecer en tu perfil.
           </p>
         </div>
 

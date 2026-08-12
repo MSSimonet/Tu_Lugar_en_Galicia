@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import type { Map as LeafletMap, MarkerClusterGroup, PopupEvent } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
-import { getSupabaseBrowserClient } from '@/lib/comunidad/supabaseBrowser'
-import type { ComunidadPerfilPublico } from '@/lib/comunidad/types'
+import type { ComunidadPerfilUbicado } from '@/lib/comunidad/types'
+import type { EstadoPerfiles } from '@/lib/comunidad/usePerfilesPublicos'
 import { TarjetaPerfil } from './TarjetaPerfil'
 
 // Íconos por defecto de Leaflet — copiados a /public/leaflet/ y referenciados como rutas
@@ -52,6 +52,32 @@ const CIUDAD_CENTROS: { nombre: string; lat: number; lng: number }[] = [
   { nombre: 'Lugo', lat: 43.0097, lng: -7.5567 },
 ]
 
+// Pin de gota con la bolita interior coloreada. Reemplaza al círculo plano de 16px que había
+// antes y a los íconos por defecto de Leaflet.
+//
+// Es SVG dibujado acá y NO el PNG `pin point rojo.png` con un `filter: hue-rotate()` encima,
+// que era el otro camino posible. Tres motivos, en orden de peso:
+//   1. `hue-rotate` gira el tono de la imagen ENTERA — el borde blanco y la sombra se tiñen
+//      con la bolita, así que el pin deja de ser el mismo dibujo en cada ciudad.
+//   2. El ángulo de giro no es el color: para llegar a un verde bosque desde un rojo teja hay
+//      que buscar el grado a ojo, y el resultado no coincide con el hex de CIUDAD_COLORES.
+//      Los cinco colores dejarían de ser los cinco colores declarados arriba.
+//   3. Un `<svg>` inline pesa ~400 bytes y no suma una petición de red por pin.
+const PIN_ANCHO = 22
+const PIN_ALTO = 30
+
+function pinSvg(color: string): string {
+  return [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${PIN_ANCHO}" height="${PIN_ALTO}" viewBox="0 0 22 30" aria-hidden="true">`,
+    // Cuerpo: gota con la punta abajo. El relleno es oscuro y fijo en las cinco ciudades —
+    // lo que identifica a la ciudad es la bolita, igual que en el pin de referencia.
+    '<path d="M11 29.2C11 29.2 20.4 17.9 20.4 11.3 20.4 5.6 16.2 1 11 1S1.6 5.6 1.6 11.3C1.6 17.9 11 29.2 11 29.2Z"',
+    ' fill="#241F17" stroke="#FFFFFF" stroke-width="1.6" stroke-linejoin="round"/>',
+    `<circle cx="11" cy="11" r="4.6" fill="${color}"/>`,
+    '</svg>',
+  ].join('')
+}
+
 function colorPorCiudadMasCercana(lat: number, lng: number): string {
   let masCercana = CIUDAD_CENTROS[0]
   let distanciaMinima = Infinity
@@ -65,14 +91,22 @@ function colorPorCiudadMasCercana(lat: number, lng: number): string {
   return CIUDAD_COLORES[masCercana.nombre]
 }
 
-type EstadoMapa = 'cargando' | 'listo' | 'error'
+export interface MapaComunidadProps {
+  /** Solo perfiles con pin. El filtro y la consulta viven en `usePerfilesPublicos`. */
+  perfiles: ComunidadPerfilUbicado[]
+  estado: EstadoPerfiles
+}
 
-export function MapaComunidad() {
+export function MapaComunidad({ perfiles, estado }: MapaComunidadProps) {
   const contenedorRef = useRef<HTMLDivElement>(null)
   const mapaRef = useRef<LeafletMap | null>(null)
-  const [estado, setEstado] = useState<EstadoMapa>('cargando')
 
   useEffect(() => {
+    // Se espera a tener los perfiles antes de montar Leaflet: montarlo vacío y volver a
+    // montarlo al llegar los datos significaría construir y destruir el mapa dos veces en
+    // cada visita, con su parpadeo correspondiente.
+    if (estado !== 'listo') return
+
     let activo = true
     const raicesPopup: Root[] = []
 
@@ -138,52 +172,32 @@ export function MapaComunidad() {
 
       const grupoClusters: MarkerClusterGroup = L.markerClusterGroup()
 
-      try {
-        const supabase = getSupabaseBrowserClient()
-        // Lista explícita de columnas, y dos ausencias obligatorias: 'email' (clave primaria,
-        // desde la migración 0002) y 'contacto' (el teléfono, desde la 0010 — PII-01). La anon
-        // key no tiene grant sobre ninguna de las dos: agregar cualquiera acá no devolvería esa
-        // columna "de más", haría fallar la consulta ENTERA con 42501 y el mapa quedaría sin un
-        // solo pin. Es lo que pasó entre las migraciones 0002 y 0003.
-        // 'mostrar_contacto' sí viaja: es un booleano, no un dato personal, y es lo que decide
-        // si TarjetaPerfil ofrece el teléfono o el formulario de mensaje privado.
-        const { data, error } = await supabase
-          .from('comunidad')
-          .select('id,nombre,foto_url,lat,lng,disponibilidad,mostrar_contacto,updated_at')
-
-        if (error) throw new Error(error.message)
-        const perfiles = (data ?? []) as ComunidadPerfilPublico[]
-
-        perfiles.forEach((perfil) => {
-          const color = colorPorCiudadMasCercana(perfil.lat, perfil.lng)
-          const icono = L.divIcon({
-            className: '',
-            html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.4);"></span>`,
-            iconSize: [16, 16],
-            iconAnchor: [8, 8],
-            popupAnchor: [0, -8],
-          })
-          // `alt` es opción de Marker (no de Icon) — reemplaza el "Marker" genérico
-          // por un nombre accesible real (A3-5).
-          const marcador = L.marker([perfil.lat, perfil.lng], {
-            icon: icono,
-            alt: perfil.nombre ? `Familia ${perfil.nombre} en el mapa` : 'Familia en el mapa de comunidad',
-          })
-          const contenedorPopup = document.createElement('div')
-          const raiz = createRoot(contenedorPopup)
-          raicesPopup.push(raiz)
-          raiz.render(<TarjetaPerfil perfil={perfil} />)
-          marcador.bindPopup(contenedorPopup, { minWidth: 260, maxWidth: 300 })
-          grupoClusters.addLayer(marcador)
+      perfiles.forEach((perfil) => {
+        const icono = L.divIcon({
+          className: '',
+          html: pinSvg(colorPorCiudadMasCercana(perfil.lat, perfil.lng)),
+          iconSize: [PIN_ANCHO, PIN_ALTO],
+          // La punta del pin es la que apunta a la coordenada, no su centro: el ancla va al
+          // pie (mitad del ancho, alto completo). Con el ancla al centro el pin señalaría
+          // ~14px más al norte de donde está la persona.
+          iconAnchor: [PIN_ANCHO / 2, PIN_ALTO],
+          popupAnchor: [0, -PIN_ALTO],
         })
+        // `alt` es opción de Marker (no de Icon) — reemplaza el "Marker" genérico
+        // por un nombre accesible real (A3-5).
+        const marcador = L.marker([perfil.lat, perfil.lng], {
+          icon: icono,
+          alt: perfil.nombre ? `Familia ${perfil.nombre} en el mapa` : 'Familia en el mapa de comunidad',
+        })
+        const contenedorPopup = document.createElement('div')
+        const raiz = createRoot(contenedorPopup)
+        raicesPopup.push(raiz)
+        raiz.render(<TarjetaPerfil perfil={perfil} />)
+        marcador.bindPopup(contenedorPopup, { minWidth: 260, maxWidth: 300 })
+        grupoClusters.addLayer(marcador)
+      })
 
-        mapa.addLayer(grupoClusters)
-        if (!activo) return
-        setEstado('listo')
-      } catch (err) {
-        console.error('[MapaComunidad] Error cargando perfiles:', err instanceof Error ? err.message : 'error desconocido')
-        if (activo) setEstado('error')
-      }
+      mapa.addLayer(grupoClusters)
     }
 
     iniciarMapa()
@@ -198,7 +212,7 @@ export function MapaComunidad() {
       mapaRef.current?.remove()
       mapaRef.current = null
     }
-  }, [])
+  }, [perfiles, estado])
 
   return (
     <div className="relative h-full w-full">

@@ -5,8 +5,9 @@ export interface UpsertPerfilInput {
   email: string
   nombre: string
   fotoUrl?: string
-  lat: number
-  lng: number
+  /** Opcionales desde la migración 0011 (B1): el alta sin intersección no las trae. */
+  lat?: number
+  lng?: number
   disponibilidad: Actividad[]
   contacto?: string
   mostrarContacto?: boolean
@@ -33,8 +34,11 @@ export async function upsertPerfilComunidad(input: UpsertPerfilInput): Promise<C
     email: emailLimpio,
     nombre: input.nombre,
     foto_url: input.fotoUrl ?? existente?.foto_url ?? null,
-    lat: input.lat,
-    lng: input.lng,
+    // Mismo criterio de "upsert silencioso" que el resto de la fila: un alta nueva sin
+    // intersección no borra la ubicación que la persona ya había dado antes. Para quitarse
+    // del mapa existe el borrado de perfil, que es explícito y borra todo.
+    lat: input.lat ?? existente?.lat ?? null,
+    lng: input.lng ?? existente?.lng ?? null,
     disponibilidad: input.disponibilidad.length > 0
       ? input.disponibilidad
       : (existente?.disponibilidad ?? []),

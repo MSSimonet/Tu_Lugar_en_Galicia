@@ -58,9 +58,15 @@ export async function middleware(req: NextRequest) {
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     // https://*.tile.openstreetmap.org: tiles del mapa de Comunidad de Acogida (Leaflet.js).
+    // https://*.supabase.co: las fotos de perfil de Comunidad, que desde B2 se suben a
+    //   Supabase Storage y se sirven desde ahí. Es el host de nuestro propio proyecto, no un
+    //   tercero abierto, y el bucket solo acepta escritura de la service_role (migración 0012).
+    //   Ojo con el dato al pasar: mientras la foto era una URL pegada a mano ("tu foto de
+    //   perfil en redes sociales"), esta directiva ya la estaba bloqueando — ninguna de esas
+    //   fotos llegó nunca a verse. Pasar a archivo subido arregla eso de paso.
     // placehold.co salió de la lista (auditoría 2026-07-25, C3): ya no queda
     // ninguna imagen servida por ese host, así que deja de estar permitido.
-    "img-src 'self' data: blob: https://*.tile.openstreetmap.org",
+    "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.supabase.co",
     "media-src 'self'",
     "frame-src https://app.cal.com https://cal.com",
     // https://*.supabase.co: el mapa de Comunidad de Acogida consume Supabase directo desde

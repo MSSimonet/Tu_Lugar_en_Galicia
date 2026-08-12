@@ -27,11 +27,28 @@ function isValidContacto(value: string): boolean {
   return value.length <= MAX_CONTACTO && /^[\d\s()+.\-]+$/.test(value)
 }
 
+/**
+ * Desde B2 la foto no es una URL que la persona pegue: es un archivo que sube a
+ * /api/comunidad/foto, que la sanea y devuelve su URL en nuestro propio Storage. Así que acá
+ * ya no vale cualquier https, solo una URL de ese bucket.
+ *
+ * No es un detalle de limpieza. Aceptando un host arbitrario, el campo "foto" es un
+ * redireccionador: quien lo controla ve la IP y el user-agent de todo el que abra el mapa, y
+ * puede cambiar la imagen por otra cosa después de que Silvana la aprobó. Atarla a nuestro
+ * bucket cierra las dos cosas de una vez.
+ */
 function isValidFotoUrl(value: string): boolean {
   if (value.length > MAX_FOTO_URL) return false
+  const base = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!base) return false
   try {
     const url = new URL(value)
-    return url.protocol === 'https:'
+    const host = new URL(base).host
+    return (
+      url.protocol === 'https:' &&
+      url.host === host &&
+      url.pathname.startsWith('/storage/v1/object/public/comunidad-fotos/')
+    )
   } catch {
     return false
   }
@@ -95,11 +112,19 @@ export async function POST(req: NextRequest) {
   if (!input.nombre || typeof input.nombre !== 'string' || input.nombre.trim().length < 2 || input.nombre.trim().length > MAX_NOMBRE) {
     return NextResponse.json({ error: 'El nombre/alias es obligatorio.' }, { status: 400 })
   }
-  if (
-    !input.calle1 || typeof input.calle1 !== 'string' || input.calle1.trim().length > MAX_CALLE ||
-    !input.calle2 || typeof input.calle2 !== 'string' || input.calle2.trim().length > MAX_CALLE
-  ) {
-    return NextResponse.json({ error: 'Indica las dos calles de tu intersección.' }, { status: 400 })
+  // Calles opcionales (B1), pero indivisibles: o vienen las dos o no viene ninguna. Con una
+  // sola no hay intersección que geocodificar, y aceptarla en silencio dejaría a la persona
+  // creyendo que quedó en el mapa cuando en realidad quedó en el listado.
+  const calle1Bruta = typeof input.calle1 === 'string' ? input.calle1.trim() : ''
+  const calle2Bruta = typeof input.calle2 === 'string' ? input.calle2.trim() : ''
+  if (calle1Bruta.length > MAX_CALLE || calle2Bruta.length > MAX_CALLE) {
+    return NextResponse.json({ error: 'Los nombres de calle son demasiado largos.' }, { status: 400 })
+  }
+  if (Boolean(calle1Bruta) !== Boolean(calle2Bruta)) {
+    return NextResponse.json(
+      { error: 'Para aparecer en el mapa hacen falta las dos calles. Déjalas las dos vacías si prefieres no indicarlas.' },
+      { status: 400 },
+    )
   }
   if (!input.ciudad || typeof input.ciudad !== 'string' || !CIUDADES_VALIDAS.includes(input.ciudad.trim())) {
     return NextResponse.json({ error: 'La ciudad es obligatoria.' }, { status: 400 })
@@ -114,7 +139,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'El teléfono/WhatsApp no es válido.' }, { status: 400 })
   }
   if (typeof input.fotoUrl === 'string' && input.fotoUrl.trim() && !isValidFotoUrl(input.fotoUrl.trim())) {
-    return NextResponse.json({ error: 'La URL de la foto no es válida (debe ser https).' }, { status: 400 })
+    return NextResponse.json({ error: 'La foto no es válida. Vuelve a subirla.' }, { status: 400 })
   }
   if (input.mostrarContacto !== undefined && typeof input.mostrarContacto !== 'boolean') {
     return NextResponse.json({ error: 'Datos inválidos.' }, { status: 400 })
@@ -122,8 +147,6 @@ export async function POST(req: NextRequest) {
 
   const email = input.email.trim().toLowerCase()
   const nombre = input.nombre.trim()
-  const calle1 = input.calle1.trim()
-  const calle2 = input.calle2.trim()
   const ciudad = input.ciudad.trim()
   const disponibilidad = input.disponibilidad as Actividad[]
   const contacto = typeof input.contacto === 'string' && input.contacto.trim() ? input.contacto.trim() : undefined
@@ -135,12 +158,20 @@ export async function POST(req: NextRequest) {
   const mostrarContacto = input.mostrarContacto === true
 
   // 3. Geocodificar la intersección (Nominatim — decisión cerrada en el doc §7).
-  const coords = await geocodificarInterseccion(calle1, calle2, ciudad)
-  if (!coords) {
-    return NextResponse.json(
-      { error: 'No pudimos ubicar esa intersección. Revisa los nombres de las calles.' },
-      { status: 422 },
-    )
+  //    Sin calles no se geocodifica nada y el perfil queda sin pin: aparece en el listado de
+  //    /comunidad/mapa. Deliberadamente NO se cae a un punto por defecto (centro de la ciudad
+  //    elegida, o ese centro con ruido aleatorio): las dos opciones dibujan un pin donde la
+  //    persona no está, y en un mapa que significa "dónde vive esta gente" eso es un dato
+  //    falso, no una aproximación.
+  let coords: { lat: number; lng: number } | null = null
+  if (calle1Bruta && calle2Bruta) {
+    coords = await geocodificarInterseccion(calle1Bruta, calle2Bruta, ciudad)
+    if (!coords) {
+      return NextResponse.json(
+        { error: 'No pudimos ubicar esa intersección. Revisa los nombres de las calles.' },
+        { status: 422 },
+      )
+    }
   }
 
   // 4. Guardar el alta a la espera de que su dueño confirme el email.
@@ -154,8 +185,8 @@ export async function POST(req: NextRequest) {
     email,
     nombre,
     fotoUrl,
-    lat: coords.lat,
-    lng: coords.lng,
+    lat: coords?.lat,
+    lng: coords?.lng,
     disponibilidad,
     contacto,
     mostrarContacto,
