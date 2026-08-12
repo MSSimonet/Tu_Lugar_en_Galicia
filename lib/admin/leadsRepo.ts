@@ -14,7 +14,16 @@
 
 import { getSupabaseServerClient } from '@/lib/supabase/serverClient'
 
-export interface AirtableRecord {
+/**
+ * Se llamaba `AirtableRecord` hasta 2026-08-12: era el último rastro literal de Airtable en el
+ * código, ya sin ninguna llamada detrás. El nombre importaba porque hacía creer que este repo
+ * seguía hablando con Airtable — de hecho fue parte de lo que motivó un pedido de "migrar Gina
+ * a Supabase" cuando Gina ya estaba en Supabase desde el 2026-07-12.
+ *
+ * La FORMA sí se conserva a propósito (`id` + `createdTime` + `fields`): es la que consumen los
+ * templates de email y el panel de admin. Cambiarla sería un refactor de otra escala.
+ */
+export interface LeadRecord {
   id: string
   createdTime: string
   fields: Record<string, unknown>
@@ -84,7 +93,7 @@ const REVERSE_COLUMN_MAP: Record<string, string> = Object.fromEntries(
 )
 
 /** Convierte una fila de Supabase (snake_case + campos_custom) al shape {id, createdTime, fields} camelCase. */
-function rowToRecord(row: Record<string, unknown>): AirtableRecord {
+function rowToRecord(row: Record<string, unknown>): LeadRecord {
   const fields: Record<string, unknown> = {}
   for (const [snakeKey, value] of Object.entries(row)) {
     if (snakeKey === 'id' || snakeKey === 'created_at' || snakeKey === 'updated_at') continue
@@ -133,7 +142,7 @@ const EXPIRACION_MS = 7 * 24 * 60 * 60 * 1000 // 7 días en milisegundos
  * cuya fechaHabilitacion tiene más de 7 días de antigüedad.
  * Estos son candidatos a marcar como 'expirado'.
  */
-export async function getLeadsConCodigoActivo(): Promise<AirtableRecord[]> {
+export async function getLeadsConCodigoActivo(): Promise<LeadRecord[]> {
   const supabase = getSupabaseServerClient()
   const { data, error } = await supabase
     .from('leads')
@@ -159,7 +168,7 @@ export async function getLeadsConCodigoActivo(): Promise<AirtableRecord[]> {
  * Reemplaza al listAllRecords(filterByFormula) de Airtable — PostgREST no tiene el
  * límite de 100/página de Airtable, no hace falta paginar manualmente.
  */
-export async function listRecordsPorCalificacion(calificaciones: string[]): Promise<AirtableRecord[]> {
+export async function listRecordsPorCalificacion(calificaciones: string[]): Promise<LeadRecord[]> {
   const supabase = getSupabaseServerClient()
   const { data, error } = await supabase.from('leads').select('*').in('calificacion', calificaciones)
   if (error) throw new Error(`Supabase listRecordsPorCalificacion: ${error.message}`)
@@ -192,7 +201,7 @@ export async function validateCodigoAgenda(code: string): Promise<boolean> {
 }
 
 /** Busca un lead por su email (case-insensitive). Devuelve null si no existe. */
-export async function findLeadByEmail(email: string): Promise<AirtableRecord | null> {
+export async function findLeadByEmail(email: string): Promise<LeadRecord | null> {
   const supabase = getSupabaseServerClient()
   // Escapa los wildcards de ILIKE (%, _) y el propio backslash de escape — sin esto, un email
   // con esos caracteres se interpreta como patrón en vez de texto literal.
@@ -207,7 +216,7 @@ export async function findLeadByEmail(email: string): Promise<AirtableRecord | n
  * Devuelve leads con cita confirmada cuya fechaCita cae entre ahora y ahora + 75 minutos.
  * Usado por el recordatorio horario.
  */
-export async function getLeadsConCitaProxima(): Promise<AirtableRecord[]> {
+export async function getLeadsConCitaProxima(): Promise<LeadRecord[]> {
   const supabase = getSupabaseServerClient()
   const ahora = Date.now()
   const limite = ahora + 75 * 60 * 1000

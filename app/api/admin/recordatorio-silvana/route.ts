@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorized } from '@/lib/admin/auth'
-import { getLeadsConCitaProxima, type AirtableRecord } from '@/lib/admin/leadsRepo'
+import { getLeadsConCitaProxima, type LeadRecord } from '@/lib/admin/leadsRepo'
 import { generateAdminToken } from '@/lib/admin/tokens'
 import { sendEmail, escapeHtml } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
@@ -59,7 +59,7 @@ function minutosHasta(iso: string): number {
 
 // ── Template HTML del recordatorio ───────────────────────────────────────────
 
-function buildRecordatorio(record: AirtableRecord, profileUrl: string): string {
+function buildRecordatorio(record: LeadRecord, profileUrl: string): string {
   const f          = record.fields
   const nombre     = str(f.nombreCompleto)
   const email      = str(f.email)
@@ -169,7 +169,7 @@ function buildRecordatorio(record: AirtableRecord, profileUrl: string): string {
 
 // ── Template HTML completo ────────────────────────────────────────────────────
 
-function buildEmail(records: AirtableRecord[], siteUrl: string): string {
+function buildEmail(records: LeadRecord[], siteUrl: string): string {
   const hora = new Date().toLocaleTimeString('es-ES', {
     hour: '2-digit', minute: '2-digit',
     timeZone: TIMEZONE,
