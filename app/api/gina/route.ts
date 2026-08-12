@@ -30,12 +30,44 @@ import { sendEmail, buildPlanEmail, buildPlanEmailFallidoAlerta } from '@/lib/ad
  *  validación que cuenta: el cliente se puede saltear con un POST directo. */
 const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+/**
+ * Presupuesto de peticiones por IP.
+ *
+ * ANTES ERAN 60, Y ESE NÚMERO PRODUCÍA UN BUG REAL. El cálculo original —anotado acá— era
+ * "máx. 44 pasos en la rama más larga del flow + 25% de margen = 60": o sea, calibrado para
+ * UNA pasada exacta del cuestionario. Pero nadie completa un formulario de 44 preguntas de una
+ * sola vez y a la primera. Quien abandona y vuelve a empezar, o edita una respuesta del medio
+ * y re-responde lo que sigue, gasta una segunda tanda de peticiones y cruza el tope.
+ *
+ * Y cuando lo cruza, no falla al empezar: falla A MITAD del cuestionario, con todo lo
+ * respondido en pantalla. Reportado el 2026-08-12 al responder "2" en p22_habitaciones.
+ *
+ * Medido antes de tocar el número (no estimado):
+ *
+ *   una conversación completa .................. 32 peticiones
+ *   tope anterior .............................. 60 → ni dos conversaciones
+ *   petición 61 ................................ 429, en mitad de la segunda
+ *
+ * El nuevo tope sale de la rama más larga (44) más los 2 pasos virtuales, que también hacen su
+ * propio POST (avanzarPasoVirtual en GinaConversation.tsx) — unas 46 por conversación— por 5
+ * conversaciones. Deja lugar de sobra para reintentos y ediciones sin dejar de ser un tope.
+ *
+ * Subirlo no aumenta el coste por petición: este endpoint NO llama al LLM (el flujo es
+ * determinista, sale de flow.json; el tipo de paso `llm` está sin usar). Lo que hace es escribir
+ * en Postgres, y por conversación solo puede crear UN lead: `guardar_nivel1` inserta una vez y
+ * el resto son updates de esa misma fila, protegidos además por la firma HMAC del leadId.
+ */
+const PETICIONES_POR_CONVERSACION = 46
+const CONVERSACIONES_POR_VENTANA = 5
+
 const ratelimit =
   process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
     ? new Ratelimit({
         redis: Redis.fromEnv(),
-        // Máx. 44 pasos en rama más larga del flow + 25% margen = 60
-        limiter: Ratelimit.slidingWindow(60, '10 m'),
+        limiter: Ratelimit.slidingWindow(
+          PETICIONES_POR_CONVERSACION * CONVERSACIONES_POR_VENTANA,
+          '10 m',
+        ),
         analytics: false,
         prefix: 'ratelimit:gina',
       })
