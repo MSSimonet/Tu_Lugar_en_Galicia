@@ -130,9 +130,19 @@ export function GinaMessages({
           {/* Burbuja (+ pill Editar para mensajes de usuario) */}
           {msg.de === 'usuario' ? (
             <div className="flex flex-col items-end gap-1 min-w-0">
+              {/* Una sola línea, sin wrap.
+                  La respuesta del usuario casi siempre es el label de un botón ("Piso /
+                  Apartamento", "4 o más") y partirlo en dos líneas hacía que una elección de
+                  dos palabras ocupara el mismo alto que un párrafo de Gina. Con `max-w-[75%]`
+                  y `pre-wrap` se partía aunque hubiera sitio de sobra al lado.
+                  Ahora la burbuja puede usar el ancho completo de la fila y no parte nunca;
+                  el ellipsis es solo la red para un texto libre muy largo (un email, una
+                  profesión), y en ese caso el valor entero sigue disponible en el `title` y en
+                  el aria-label del botón Editar de abajo. */}
               <div
-                className="max-w-[75%] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words rounded-2xl rounded-br-none"
+                className="max-w-full min-w-0 overflow-hidden text-ellipsis whitespace-nowrap px-3 py-2 text-sm leading-relaxed rounded-2xl rounded-br-none"
                 style={{ backgroundColor: 'var(--dz-ink)', color: 'var(--dz-borde)' }}
+                title={msg.texto}
               >
                 {msg.texto}
               </div>
