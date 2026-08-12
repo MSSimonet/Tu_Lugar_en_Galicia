@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Play } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import { CIUDADES, type Ciudad } from "@/lib/ciudades/data";
 import { useSlideInCards } from "@/lib/gsap/useSlideInCards";
@@ -70,20 +69,30 @@ function CiudadCard({ ciudad, headingLevel }: { ciudad: Ciudad; headingLevel: "h
           className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100"
         />
       )}
+      {/* Scrim inferior. Antes era una sola parada (rgba(10,9,6,.85) → transparent
+          al 55%) y con eso el TÍTULO se leía bien pero la descripción caía justo
+          en la zona de desvanecido — sobre la foto clara del agua quedaba
+          marginal (U02 de CLAUDE.md, marcado como no medible porque el fondo es
+          una foto distinta por ciudad).
+
+          Se resuelve por el lado que sí es medible: en vez de estimar el brillo
+          de cada foto, se refuerza el scrim hasta que el PEOR CASO POSIBLE —un
+          fotograma blanco puro debajo— ya pase AA. En la franja de la
+          descripción el scrim vale ~0,72, que sobre blanco compone rgb(79,79,79)
+          y contra el texto (blanco roto al 82%) da 5,57:1. El título, más abajo,
+          apoya sobre 0,92 y sobra. La foto sigue viéndose: arriba del 78% el
+          scrim es totalmente transparente. */}
       <div
         aria-hidden="true"
         className="absolute inset-0"
-        style={{ background: "linear-gradient(0deg, rgba(10,9,6,.85) 0%, transparent 55%)" }}
+        style={{
+          background:
+            "linear-gradient(0deg, rgba(10,9,6,0.92) 0%, rgba(10,9,6,0.72) 26%, rgba(10,9,6,0.34) 52%, transparent 78%)",
+        }}
       />
-      {!prefersReducedMotion && (
-        <span
-          aria-hidden="true"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full"
-          style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(6px)", color: "#fff" }}
-        >
-          <Play size={13} fill="currentColor" strokeWidth={0} />
-        </span>
-      )}
+      {/* Sin ícono de play: el hover ya reproduce el video y el triángulo sólo
+          agregaba un elemento flotante sobre la foto. No es regresión de a11y —
+          era aria-hidden, o sea que nunca lo anunció ningún lector de pantalla. */}
       <div className="absolute inset-x-0 bottom-0 p-5">
         {/* clamp: a 1.5rem fijo, "Santiago de Compostela" envolvía a 3 líneas en las
             tarjetas de 208px del grid de 5 columnas y tapaba el 53% de la foto
