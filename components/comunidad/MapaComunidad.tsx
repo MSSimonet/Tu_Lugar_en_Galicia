@@ -31,17 +31,29 @@ const GALICIA_BOUNDS: [[number, number], [number, number]] = [
 ]
 const GALICIA_MIN_ZOOM = 8
 
-// Un color por ciudad, elegido para máxima distinción entre sí (5 hues separados en la
-// rueda de color) y coherentes en saturación/peso con la paleta Deslumbrante — ninguno
-// domina sobre los demás. Cada perfil se asigna a la ciudad más cercana por distancia — la
-// tabla `comunidad` no guarda la ciudad, solo lat/lng geocodificados en el alta (ver
+// Un pin por ciudad. Cada perfil se asigna a la ciudad más cercana por distancia — la tabla
+// `comunidad` no guarda la ciudad, solo lat/lng geocodificados en el alta (ver
 // lib/comunidad/nominatim.ts).
-const CIUDAD_COLORES: Record<string, string> = {
-  'A Coruña': '#C0392B', // rojo teja
-  Vigo: '#2E5A8C', // azul petróleo
-  Pontevedra: '#E0932E', // dorado — dz-accent
-  'Santiago de Compostela': '#6B4A8C', // violeta
-  Lugo: '#4A7856', // verde bosque
+//
+// Son las chinchetas que dejó Marcelo, una por color. Reemplazan al SVG de gota que se
+// dibujaba acá: el color ya no se elige en código, viene en la propia imagen.
+//
+// SOBRE LOS ARCHIVOS — lo que hubo que hacerles antes de poder usarlos:
+//   · Los .png originales NO eran transparentes. El damero de "fondo transparente" estaba
+//     PINTADO en los píxeles: los cinco medían 100% opacos, con alpha 255 en las 4 esquinas.
+//     Se quitó con flood fill desde los bordes y no con umbral global de color, porque la
+//     aguja es metálica y sus reflejos caen en el mismo rango de gris claro que el damero —
+//     un umbral la habría agujereado. Misma lección que el recorte de apps-divider (7f3a486).
+//   · Pesaban ~5 MB cada uno (2048x2048, salvo Vigo a 347x347). Recortados al contenido y
+//     exportados a WebP a 44x60 (2x exacto de los 30px de pantalla, para retina) quedan en
+//     ~1,7 KB cada uno: los cinco juntos pesan 8,5 KB contra los 25 MB de los originales.
+//     Los .png fuente NO se versionan.
+const CIUDAD_PINES: Record<string, string> = {
+  'A Coruña': '/images/pin_coruna.webp', // azul
+  Vigo: '/images/pin_vigo.webp', // rojo
+  Pontevedra: '/images/pin_pontevedra.webp', // amarillo
+  'Santiago de Compostela': '/images/pin_santiago.webp', // verde
+  Lugo: '/images/pin_lugo.webp', // rosa
 }
 
 const CIUDAD_CENTROS: { nombre: string; lat: number; lng: number }[] = [
@@ -52,33 +64,24 @@ const CIUDAD_CENTROS: { nombre: string; lat: number; lng: number }[] = [
   { nombre: 'Lugo', lat: 43.0097, lng: -7.5567 },
 ]
 
-// Pin de gota con la bolita interior coloreada. Reemplaza al círculo plano de 16px que había
-// antes y a los íconos por defecto de Leaflet.
-//
-// Es SVG dibujado acá y NO el PNG `pin point rojo.png` con un `filter: hue-rotate()` encima,
-// que era el otro camino posible. Tres motivos, en orden de peso:
-//   1. `hue-rotate` gira el tono de la imagen ENTERA — el borde blanco y la sombra se tiñen
-//      con la bolita, así que el pin deja de ser el mismo dibujo en cada ciudad.
-//   2. El ángulo de giro no es el color: para llegar a un verde bosque desde un rojo teja hay
-//      que buscar el grado a ojo, y el resultado no coincide con el hex de CIUDAD_COLORES.
-//      Los cinco colores dejarían de ser los cinco colores declarados arriba.
-//   3. Un `<svg>` inline pesa ~400 bytes y no suma una petición de red por pin.
+// Tamaño en pantalla, igual al del SVG que reemplaza. El archivo se exporta al doble
+// (44x60) y el navegador lo baja: así se ve nítido también en pantallas retina.
 const PIN_ANCHO = 22
 const PIN_ALTO = 30
 
-function pinSvg(color: string): string {
-  return [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${PIN_ANCHO}" height="${PIN_ALTO}" viewBox="0 0 22 30" aria-hidden="true">`,
-    // Cuerpo: gota con la punta abajo. El relleno es oscuro y fijo en las cinco ciudades —
-    // lo que identifica a la ciudad es la bolita, igual que en el pin de referencia.
-    '<path d="M11 29.2C11 29.2 20.4 17.9 20.4 11.3 20.4 5.6 16.2 1 11 1S1.6 5.6 1.6 11.3C1.6 17.9 11 29.2 11 29.2Z"',
-    ' fill="#241F17" stroke="#FFFFFF" stroke-width="1.6" stroke-linejoin="round"/>',
-    `<circle cx="11" cy="11" r="4.6" fill="${color}"/>`,
-    '</svg>',
-  ].join('')
-}
+// La punta de la aguja es lo que apunta a la coordenada, y en esta chincheta NO está en el
+// centro de abajo sino en la esquina INFERIOR IZQUIERDA — el dibujo es diagonal. Medido sobre
+// los cinco archivos ya recortados: el píxel opaco más bajo cae en x≈0,5% y y≈99,9%.
+// Anclarlo al centro, como pedía el SVG anterior, correría cada pin ~11px al este.
+const PIN_ANCLA: [number, number] = [0, PIN_ALTO]
 
-function colorPorCiudadMasCercana(lat: number, lng: number): string {
+// El popup abre por encima de la bolita, no de la aguja. El centro de la bolita está en
+// (60,6%, 27,4%) del recorte —centroide de los píxeles saturados, la aguja gris no cuenta—,
+// o sea (13, 8) en pantalla; relativo al ancla eso es (+13, -22), y se sube un poco más para
+// despegarlo del borde superior.
+const PIN_ANCLA_POPUP: [number, number] = [13, -28]
+
+function pinPorCiudadMasCercana(lat: number, lng: number): string {
   let masCercana = CIUDAD_CENTROS[0]
   let distanciaMinima = Infinity
   for (const ciudad of CIUDAD_CENTROS) {
@@ -88,7 +91,7 @@ function colorPorCiudadMasCercana(lat: number, lng: number): string {
       masCercana = ciudad
     }
   }
-  return CIUDAD_COLORES[masCercana.nombre]
+  return CIUDAD_PINES[masCercana.nombre]
 }
 
 export interface MapaComunidadProps {
@@ -173,15 +176,14 @@ export function MapaComunidad({ perfiles, estado }: MapaComunidadProps) {
       const grupoClusters: MarkerClusterGroup = L.markerClusterGroup()
 
       perfiles.forEach((perfil) => {
-        const icono = L.divIcon({
-          className: '',
-          html: pinSvg(colorPorCiudadMasCercana(perfil.lat, perfil.lng)),
+        // L.icon y no L.divIcon: ahora el pin ES una imagen, así que se usa el tipo de ícono
+        // que Leaflet tiene para eso. De paso, el navegador cachea los cinco archivos y no
+        // hay que serializar markup por cada marcador.
+        const icono = L.icon({
+          iconUrl: pinPorCiudadMasCercana(perfil.lat, perfil.lng),
           iconSize: [PIN_ANCHO, PIN_ALTO],
-          // La punta del pin es la que apunta a la coordenada, no su centro: el ancla va al
-          // pie (mitad del ancho, alto completo). Con el ancla al centro el pin señalaría
-          // ~14px más al norte de donde está la persona.
-          iconAnchor: [PIN_ANCHO / 2, PIN_ALTO],
-          popupAnchor: [0, -PIN_ALTO],
+          iconAnchor: PIN_ANCLA,
+          popupAnchor: PIN_ANCLA_POPUP,
         })
         // `alt` es opción de Marker (no de Icon) — reemplaza el "Marker" genérico
         // por un nombre accesible real (A3-5).
