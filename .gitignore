@@ -74,6 +74,20 @@ storybook-static
 # si no, la regla vuelve a apuntar al vacio (hallazgo §5.7 de docs/arranque.md).
 !.claude/skills/voz-tu-lugar-en-galicia/
 !.claude/skills/motion-tu-lugar-en-galicia/
+
+# settings.local.json — allowlist de permisos de la maquina, NO config del proyecto (a
+# diferencia de settings.json, que si esta versionado a proposito, ver arriba).
+#
+# Se ignora por seguridad, no por prolijidad: el archivo guarda los comandos aprobados
+# TAL CUAL se ejecutaron, y varios de ellos eran curls a la API de Airtable con el
+# Personal Access Token escrito en la linea. Hoy hay un token en texto plano repetido
+# una docena de veces ahi dentro. Nunca llego a un commit (verificado con
+# `git log --all -S`), pero estaba untracked Y sin ignorar: un `git add -A` distraido lo
+# publicaba. Esto cierra esa via. El token igual hay que revocarlo en Airtable — un
+# credencial vivo de un servicio que el proyecto ya no usa no tiene por que seguir siendo
+# valido (hallazgo 2026-08-12).
+.claude/settings.local.json
+
 .agents/
 
 # Artefactos de Playwright MCP (logs y snapshots de sesiones de verificación)
