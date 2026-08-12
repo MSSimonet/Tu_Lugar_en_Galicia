@@ -13,7 +13,7 @@
 | Flujo | `lib/gina/flow.json` — array de pasos en JSON |
 | API | `app/api/gina/route.ts` — procesa respuesta, decide guardado |
 | Widget | `components/gina/GinaWidget.tsx` — gestiona estado y mensajes |
-| CRM | Airtable — tabla `Leads` |
+| CRM | **Supabase/Postgres — tabla `leads`** (`lib/leads.ts`, migración `0004_leads_schema.sql`) |
 
 **Tipos de paso:**
 - `botones` — opciones fijas (puede ser multiselect, puede tener excluyente)
@@ -24,18 +24,40 @@
 
 ---
 
-## Guardado en Airtable
+## Guardado en Supabase
+
+> **Esta sección decía "Airtable" hasta 2026-08-12 y era falsa desde el 2026-07-12**, cuando los
+> leads migraron a Supabase (`docs/crm-supabase-fase0.md`). El código nunca dejó de funcionar —
+> lo que estaba mal era el documento, que es justamente el que CLAUDE.md declara "fuente de
+> verdad del cuestionario". Corregido tras verificar los tres guardados end-to-end contra la
+> base real.
 
 | Evento | Acción | Cuándo | Qué guarda |
 |---|---|---|---|
-| `guardar_nivel1` | **POST** — crea fila nueva | Al procesar `p15_telefono` | `nombreCompleto`, `email`, `telefono` |
-| `guardar_lead_parcial` | **PATCH** — actualiza la misma fila | Al procesar `p11_lead_preparacion` | Todo lo capturado hasta ese punto (sin campos de nivel 2) |
-| `guardar_lead_completo` | **PATCH** — actualiza la misma fila | Al procesar `atribucion` | Todos los campos del flujo completo |
+| `guardar_nivel1` | **insert** — crea fila nueva | Al procesar `p15_telefono` | `nombreCompleto`, `email`, `telefono` |
+| `guardar_lead_parcial` | **update** — actualiza la misma fila | Al procesar `p11_lead_preparacion` | Todo lo capturado hasta ese punto (sin campos de nivel 2) |
+| `guardar_lead_completo` | **update** — actualiza la misma fila | Al procesar `atribucion` | Todos los campos del flujo completo |
 
-- `guardar_nivel1` es **bloqueante** (await): la respuesta de Airtable devuelve el `recordId` que se almacena en la sesión.
-- Los dos PATCH posteriores usan ese `recordId` para actualizar la misma fila.
-- Si `guardar_nivel1` falla (red, etc.), el PATCH final hace **POST** como fallback — el lead no se pierde.
-- `comprendeServicio: true` y `consentimientoRGPD: true` se añaden automáticamente en el mapper de `route.ts`; no hay paso que los pregunte.
+- `guardar_nivel1` es **bloqueante** (await): el insert devuelve el `id` (uuid) de la fila, que se
+  almacena en la sesión como `leadId`.
+- Ese `leadId` viaja al cliente **firmado con HMAC** (`leadIdSig`). El servidor solo lo acepta de
+  vuelta si la firma valida; si no, lo descarta y trata la sesión como nueva. Sin eso, cualquiera
+  podría inyectar el `leadId` de otra persona y sobrescribirle los datos (hallazgo C1 de la
+  auditoría de seguridad, `app/api/gina/route.ts`).
+- Los dos updates posteriores usan ese `leadId` para actualizar la misma fila.
+- Si `guardar_nivel1` falla, el guardado final hace **insert** como fallback — el lead no se
+  pierde. Verificado el 2026-08-12 simulando la caída: sin `leadId` en sesión, el guardado
+  completo insertó la fila entera con sus campos de nivel 2.
+- Los tres guardados van con **3 reintentos**. Si aun así fallan, la respuesta al cliente lleva
+  `guardado: false`.
+- `comprendeServicio: true` y `consentimientoRGPD: true` se añaden automáticamente en el mapper de
+  `route.ts`; no hay paso que los pregunte.
+
+**Nombres de columna:** el flujo y el tipo `LeadData` usan camelCase; la tabla usa snake_case
+(`nombreCompleto` → `nombre_completo`). La traducción vive en `toRow()`/`fromRow()` de
+`lib/leads.ts`, los dos únicos puntos del proyecto que conocen los nombres reales de columna. Los
+nombres que figuran en cada paso de este documento son los del **campo del flujo**, no los de la
+columna.
 
 ---
 
@@ -45,7 +67,7 @@
 
 ---
 
-#### `bienvenida` · `botones` · sin campo Airtable
+#### `bienvenida` · `botones` · sin campo en `leads`
 
 > "¡Hola! Soy Gina, tu asistente virtual del equipo de Tu Lugar en Galicia.
 >
@@ -59,7 +81,7 @@
 
 ---
 
-#### `rgpd` · `botones` · sin campo Airtable
+#### `rgpd` · `botones` · sin campo en `leads`
 
 > "Antes de continuar, quiero ser transparente contigo desde el principio: para poder ayudarte, voy a guardar las respuestas que me des (como tu nombre, tu contacto y lo que me cuentes de tu situación). Las usamos solo para preparar tu plan y para que el equipo de Tu Lugar en Galicia pueda contactarte. No se las damos a nadie más, y puedes pedirnos ver o borrar tus datos cuando quieras. ¿Te parece bien?"
 
@@ -70,7 +92,7 @@
 
 ---
 
-#### `rgpd_politica` · `botones` · sin campo Airtable
+#### `rgpd_politica` · `botones` · sin campo en `leads`
 
 > "Puedes leer nuestra política en tulugarengalicia.com/privacidad. Cuando quieras, seguimos."
 
@@ -84,7 +106,7 @@
 
 ---
 
-#### `p1_nombre` · `input` · Airtable: `nombreCompleto`
+#### `p1_nombre` · `input` · campo: `nombreCompleto`
 
 > "Para empezar, ¿cómo te llamas? (nombre y apellido)"
 
@@ -94,7 +116,7 @@
 
 ---
 
-#### `p2_email` · `input` · Airtable: `email`
+#### `p2_email` · `input` · campo: `email`
 
 > "Encantada, {{nombre}}. ¿Me dejas un email que uses a menudo?"
 
@@ -103,12 +125,12 @@
 
 ---
 
-#### `p15_telefono` · `input` · Airtable: `telefono` · **`guardar_nivel1` ← PRIMER GUARDADO**
+#### `p15_telefono` · `input` · campo: `telefono` · **`guardar_nivel1` ← PRIMER GUARDADO**
 
 > "Perfecto, {{nombre}}. ¿Me dejas también un teléfono de contacto con el prefijo de tu país?"
 
 - Validación: `telefono`
-- Al procesar esta respuesta: **POST a Airtable** (crea fila con `nombreCompleto`, `email`, `telefono`). Guarda `airtableRecordId` en sesión.
+- Al procesar esta respuesta: **insert en Supabase** (crea fila con `nombreCompleto`, `email`, `telefono`). Guarda `leadId` (uuid) firmado en sesión.
 - → `p3_origen`
 
 ---
@@ -117,7 +139,7 @@
 
 ---
 
-#### `p3_origen` · `botones` · Airtable: `paisResidencia` (guarda el value)
+#### `p3_origen` · `botones` · campo: `paisResidencia` (guarda el value)
 
 > "Para darte la guía adecuada, ¿ya vives en España, o estás planificando tu llegada desde otro país?"
 
@@ -130,7 +152,7 @@
 
 ---
 
-#### `p3b_pais` · `input` · Airtable: `paisResidencia` *(solo si eligió "Vengo de fuera")*
+#### `p3b_pais` · `input` · campo: `paisResidencia` *(solo si eligió "Vengo de fuera")*
 
 > "¿Desde qué país nos escribes?"
 
@@ -140,7 +162,7 @@
 
 ---
 
-#### `p4_plazo` · `botones` · Airtable: `fechaLlegada`
+#### `p4_plazo` · `botones` · campo: `fechaLlegada`
 
 > "¿En qué plazo necesitas tener resuelta tu vivienda en Galicia?"
 
@@ -156,7 +178,7 @@
 
 ---
 
-#### `p5_ciudad` · `botones` · Airtable: `ciudadDestino`
+#### `p5_ciudad` · `botones` · campo: `ciudadDestino`
 
 > "¿A qué ciudad de Galicia te diriges? Nuestro foco principal es Vigo y A Coruña."
 
@@ -173,7 +195,7 @@
 
 ---
 
-#### `p6a_adultos` · `botones` · Airtable: `adultos`
+#### `p6a_adultos` · `botones` · campo: `adultos`
 
 > "¿Cuántos adultos se mudan? (incluyéndote)"
 
@@ -188,7 +210,7 @@
 
 ---
 
-#### `p6b_menores` · `botones` · sin campo Airtable (solo enrutamiento)
+#### `p6b_menores` · `botones` · sin campo en `leads` (solo enrutamiento)
 
 > "¿Viajan menores de edad contigo?"
 
@@ -199,7 +221,7 @@
 
 ---
 
-#### `p6c_ninos` · `botones` · Airtable: `ninos` *(solo si hay menores)*
+#### `p6c_ninos` · `botones` · campo: `ninos` *(solo si hay menores)*
 
 > "¿Cuántos niños de 0 a 12 años?"
 
@@ -214,7 +236,7 @@
 
 ---
 
-#### `p6d_adolescentes` · `botones` · Airtable: `adolescentes` *(solo si hay menores)*
+#### `p6d_adolescentes` · `botones` · campo: `adolescentes` *(solo si hay menores)*
 
 > "¿Y adolescentes de 13 a 17 años?"
 
@@ -229,7 +251,7 @@
 
 ---
 
-#### `p7_mascotas` · `botones` · Airtable: `mascotas`
+#### `p7_mascotas` · `botones` · campo: `mascotas`
 
 > "Te pregunto por las mascotas porque cerca del 80% de los propietarios no las admite. ¿Viajas con alguna mascota?"
 
@@ -240,7 +262,7 @@
 
 ---
 
-#### `p7b_tipo` · `botones` · **multiselect** · Airtable: `mascotaTipo` *(solo si hay mascotas)*
+#### `p7b_tipo` · `botones` · **multiselect** · campo: `mascotaTipo` *(solo si hay mascotas)*
 
 > "¿Qué tipo de mascota tienes? Puedes marcar más de una."
 
@@ -257,7 +279,7 @@
 
 ---
 
-#### `p7c_cant_perros` · `botones` · Airtable: `cantidadPerros` *(solo si mascotaTipo incluye "perro")*
+#### `p7c_cant_perros` · `botones` · campo: `cantidadPerros` *(solo si mascotaTipo incluye "perro")*
 
 > "¿Cuántos perros tienes?"
 
@@ -271,7 +293,7 @@
 
 ---
 
-#### `p7c_cant_gatos` · `botones` · Airtable: `cantidadGatos` *(solo si mascotaTipo incluye "gato")*
+#### `p7c_cant_gatos` · `botones` · campo: `cantidadGatos` *(solo si mascotaTipo incluye "gato")*
 
 > "¿Cuántos gatos tienes?"
 
@@ -285,7 +307,7 @@
 
 ---
 
-#### `p7b_peso` · `botones` · Airtable: `mascotaPeso` *(solo si mascotaTipo incluye "perro")*
+#### `p7b_peso` · `botones` · campo: `mascotaPeso` *(solo si mascotaTipo incluye "perro")*
 
 > "¿Cuánto pesa aproximadamente tu perro?"
 
@@ -299,7 +321,7 @@
 
 ---
 
-#### `p8_documentacion` · `botones` · Airtable: `documentacion`
+#### `p8_documentacion` · `botones` · campo: `documentacion`
 
 > "¿Cuál es tu situación para residir legalmente en España?"
 
@@ -316,7 +338,7 @@
 
 ---
 
-#### `p9_laboral` · `botones` · Airtable: `situacionLaboral`
+#### `p9_laboral` · `botones` · campo: `situacionLaboral`
 
 > "¿Cuál es o será tu situación laboral en España?"
 
@@ -334,7 +356,7 @@
 
 ---
 
-#### `p10_ingresos` · `botones` · Airtable: `ingresosMensuales`
+#### `p10_ingresos` · `botones` · campo: `ingresosMensuales`
 
 > "Para orientarte mejor y proponerte opciones realistas para tu búsqueda, ¿en qué rango de ingresos mensuales del hogar te ubicas?"
 
@@ -348,7 +370,7 @@
 
 ---
 
-#### `p10_sin_ingresos_msg` · `botones` · **sin campo Airtable** *(solo si eligió `sin-ingresos`)*
+#### `p10_sin_ingresos_msg` · `botones` · **sin campo en `leads`** *(solo si eligió `sin-ingresos`)*
 
 > "Sin problema, {{nombre}}: muchas familias llegan así y la solvencia se resuelve con otro tipo de respaldo (ahorros, aval o seguro). Lo vemos en la siguiente pregunta."
 
@@ -358,7 +380,7 @@
 
 ---
 
-#### `p11_garantias` · `botones` · **multiselect** · exclusivo: `ninguna` · Airtable: `garantias`
+#### `p11_garantias` · `botones` · **multiselect** · exclusivo: `ninguna` · campo: `garantias`
 
 > "En España es habitual pedir garantías extra a perfiles internacionales. Marca las que podrías asumir:"
 
@@ -389,7 +411,7 @@
 |---|---|---|
 | Sí, gracias | `gracias` | → `despedida_preparacion` |
 
-- **PATCH a Airtable** con todo lo capturado hasta aquí.
+- **update en Supabase** con todo lo capturado hasta aquí.
 - Etiqueta CRM: `lead-en-preparacion`
 
 ---
@@ -406,7 +428,7 @@
 
 ---
 
-#### `p12_presupuesto` · `botones` · Airtable: `presupuestoMensual`
+#### `p12_presupuesto` · `botones` · campo: `presupuestoMensual`
 
 > "¿Cuál es tu presupuesto mensual máximo para el alquiler? Como referencia: un piso familiar adecuado suele partir de 700–800 €, suministros aparte."
 
@@ -421,7 +443,7 @@
 
 ---
 
-#### `p13_banco` · `botones` · Airtable: `cuentaBancaria`
+#### `p13_banco` · `botones` · campo: `cuentaBancaria`
 
 > "¿Ya tienes cuenta bancaria operativa en España?"
 
@@ -432,7 +454,7 @@
 
 ---
 
-#### `p14_servicio` · `botones` · Airtable: `comprendeHonorarios` (+ `comprendeServicio` automático)
+#### `p14_servicio` · `botones` · campo: `comprendeHonorarios` (+ `comprendeServicio` automático)
 
 > "¿Entiendes que somos un servicio de consultoría y búsqueda personalizada, con honorarios propios, aparte del alquiler y la fianza?"
 
@@ -446,7 +468,7 @@
 
 ---
 
-#### `p14_explicacion` · `botones` · **sin campo Airtable** *(solo si eligió "pide-explicacion")*
+#### `p14_explicacion` · `botones` · **sin campo en `leads`** *(solo si eligió "pide-explicacion")*
 
 > "Claro, con gusto te explico. Somos una agencia de relocalización: nuestro trabajo es encontrar la vivienda adecuada para ti, gestionar la comunicación con propietarios, preparar tu candidatura y acompañarte en todo el proceso. Cobramos honorarios por ese servicio —separados del alquiler y la fianza—, igual que cualquier profesional. ¿Seguimos?"
 
@@ -456,7 +478,7 @@
 
 ---
 
-#### `transicion_nivel2` · `botones` · **sin campo Airtable**
+#### `transicion_nivel2` · `botones` · **sin campo en `leads`**
 
 > "¡Estupendo! Si tienes un par de minutos más, con unas preguntas extra el equipo podrá afinar tu Plan Estratégico. ¿Te animas?"
 
@@ -471,7 +493,7 @@
 
 ---
 
-#### `p16_accesibilidad` · `botones` · Airtable: `necesidadesEspeciales`
+#### `p16_accesibilidad` · `botones` · campo: `necesidadesEspeciales`
 
 > "¿Algún miembro del hogar tiene necesidades especiales o alguna discapacidad? (Lo veremos en detalle más adelante.)"
 
@@ -484,7 +506,7 @@
 
 ---
 
-#### `p17_licencia` · `botones` · Airtable: `tipoLicencia`
+#### `p17_licencia` · `botones` · campo: `tipoLicencia`
 
 > "¿Tienes licencia de conducir?"
 
@@ -499,7 +521,7 @@
 
 ---
 
-#### `p17b_canje` · `botones` · **sin campo Airtable** *(solo si eligió "origen")*
+#### `p17b_canje` · `botones` · **sin campo en `leads`** *(solo si eligió "origen")*
 
 > "Si tu país tiene convenio con España, puedes canjear tu licencia. Te orientamos sobre los requisitos."
 
@@ -515,7 +537,7 @@
 
 #### **Rama "ya vive en España"** (`origenResidencia === 'en_espana'`)
 
-##### `p18a_ciudad` · `input` · Airtable: `ciudadActual`
+##### `p18a_ciudad` · `input` · campo: `ciudadActual`
 
 > "¿En qué ciudad o provincia vives actualmente?"
 
@@ -524,7 +546,7 @@
 
 ---
 
-##### `p19a_tiempo` · `botones` · Airtable: `tiempoEnEspana`
+##### `p19a_tiempo` · `botones` · campo: `tiempoEnEspana`
 
 > "¿Cuánto tiempo llevas viviendo en España?"
 
@@ -538,7 +560,7 @@
 
 ---
 
-##### `p20a_objetivo` · `botones` · Airtable: `objetivoBusqueda`
+##### `p20a_objetivo` · `botones` · campo: `objetivoBusqueda`
 
 > "¿Estás buscando vivienda en Galicia, o ya tienes dónde vivir y buscas orientación para integrarte?"
 
@@ -559,7 +581,7 @@
 
 ---
 
-#### `p21_tipo_inmueble` · `botones` · Airtable: `tipoInmueble`
+#### `p21_tipo_inmueble` · `botones` · campo: `tipoInmueble`
 
 > "¿Qué tipo de vivienda buscas?"
 
@@ -574,7 +596,7 @@
 
 ---
 
-#### `p22_habitaciones` · `botones` · Airtable: `habitacionesMinimas` *(no aplica a estudio)*
+#### `p22_habitaciones` · `botones` · campo: `habitacionesMinimas` *(no aplica a estudio)*
 
 > "¿Cuántas habitaciones mínimas necesitas?"
 
@@ -589,7 +611,7 @@
 
 ---
 
-#### `p23_amueblado` · `botones` · Airtable: `amueblado`
+#### `p23_amueblado` · `botones` · campo: `amueblado`
 
 > "¿Prefieres la vivienda amueblada?"
 
@@ -603,7 +625,7 @@
 
 ---
 
-#### `p24_imprescindibles` · `botones` · **multiselect** · exclusivo: `no` · Airtable: `imprescindibles`
+#### `p24_imprescindibles` · `botones` · **multiselect** · exclusivo: `no` · campo: `imprescindibles`
 
 > "¿Hay algo que sea imprescindible para la vivienda?"
 
@@ -619,7 +641,7 @@
 
 ---
 
-#### `p24b_comodidades` · `botones` · **multiselect** · exclusivo: `ninguna` · Airtable: `comodidades`
+#### `p24b_comodidades` · `botones` · **multiselect** · exclusivo: `ninguna` · campo: `comodidades`
 
 > "¿Hay alguna comodidad que sea imprescindible para tu día a día?"
 
@@ -639,7 +661,7 @@
 
 ---
 
-#### `p26_profesion` · `input` · Airtable: `profesion`
+#### `p26_profesion` · `input` · campo: `profesion`
 
 > "Para completar tu perfil, ¿a qué te dedicas o cuál es tu profesión?"
 
@@ -650,7 +672,7 @@
 
 ---
 
-#### `p27_estudios` · `botones` · Airtable: `nivelEstudios`
+#### `p27_estudios` · `botones` · campo: `nivelEstudios`
 
 > "¿Cuál es tu nivel de estudios?"
 
@@ -670,7 +692,7 @@
 
 ---
 
-#### `atribucion` · `botones` · Airtable: `comoNosConociste` · **`guardar_lead_completo` ← SEGUNDO GUARDADO**
+#### `atribucion` · `botones` · campo: `comoNosConociste` · **`guardar_lead_completo` ← SEGUNDO GUARDADO**
 
 > "Una última, muy rápida, que nos ayuda a mejorar: ¿cómo nos conociste?"
 
@@ -683,7 +705,7 @@
 | Recomendación | `recomendacion` |
 | Otro | `otro` |
 
-- **PATCH a Airtable** con todos los campos del flujo completo.
+- **update en Supabase** con todos los campos del flujo completo.
 - → `despedida`
 
 ---
