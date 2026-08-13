@@ -142,7 +142,7 @@ export function AgendaPublica() {
               borderRadius: '999px',
               backgroundColor: 'var(--dz-accent)',
               color: '#1A1410',
-              outlineColor: 'var(--dz-accent)',
+              outlineColor: 'var(--dz-ink)',
               boxShadow: 'var(--dz-shadow-md)',
             }}
           >

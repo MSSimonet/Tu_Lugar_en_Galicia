@@ -6,12 +6,19 @@ import { Button } from '@/components/ui/Button'
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
 const inputBase =
-  'w-full rounded border px-4 py-3 [font-size:var(--text-sm)] placeholder:opacity-50 focus:outline-none focus:ring-1 transition-colors'
+  'w-full rounded border px-4 py-3 [font-size:var(--text-sm)] '
+  // El placeholder NO se deja al alfa por defecto: Tailwind v4 aplica
+  // color-mix(currentcolor 50%) en su preflight, y ese 50% sobre --dz-ink mide 3,88:1,
+  // por debajo del 4,5:1 que WCAG 1.4.3 exige para texto. Antes era peor: `placeholder:opacity-50`
+  // multiplicaba OTRO 0,5 y lo dejaba en 1,82:1 — y en estos formularios el placeholder es lo
+  // unico que explica que escribir. Con --dz-muted mide 5,31:1 en claro y 5,84:1 en oscuro.
+  + 'placeholder:[color:var(--dz-muted)] '
+  + 'focus:outline-none focus:ring-1 transition-colors'
 
 const inputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-dz-ui)',
   borderRadius: 'var(--dz-radius-input)',
-  borderColor: 'var(--dz-borde)',
+  borderColor: 'var(--dz-borde-input)',
   backgroundColor: 'var(--dz-luz)',
   color: 'var(--dz-ink)',
 }

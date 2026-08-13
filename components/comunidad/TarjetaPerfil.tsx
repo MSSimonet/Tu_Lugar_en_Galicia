@@ -137,7 +137,7 @@ export function TarjetaPerfil({ perfil, enListado = false }: TarjetaPerfilProps)
                 borderRadius: '8px',
                 backgroundColor: 'var(--dz-accent)',
                 color: '#1A1410',
-                outlineColor: 'var(--dz-accent)',
+                outlineColor: 'var(--dz-ink)',
               }}
             >
               Escribir por WhatsApp
@@ -155,7 +155,7 @@ export function TarjetaPerfil({ perfil, enListado = false }: TarjetaPerfilProps)
               borderRadius: '8px',
               backgroundColor: 'var(--dz-accent)',
               color: '#1A1410',
-              outlineColor: 'var(--dz-accent)',
+              outlineColor: 'var(--dz-ink)',
               cursor: estadoContacto === 'cargando' ? 'default' : 'pointer',
               opacity: estadoContacto === 'cargando' ? 0.7 : 1,
             }}
@@ -177,7 +177,7 @@ export function TarjetaPerfil({ perfil, enListado = false }: TarjetaPerfilProps)
             backgroundColor: 'transparent',
             border: '1px solid var(--dz-borde)',
             color: 'var(--dz-ink)',
-            outlineColor: 'var(--dz-accent)',
+            outlineColor: 'var(--dz-ink)',
           }}
         >
           Enviar mensaje privado

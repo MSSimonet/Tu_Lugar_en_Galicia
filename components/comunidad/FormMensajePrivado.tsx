@@ -10,12 +10,16 @@ interface FormMensajePrivadoProps {
 type Estado = 'idle' | 'enviando' | 'enviado' | 'error'
 
 const inputBase =
-  'w-full rounded border px-3 py-2 [font-size:var(--text-xs)] placeholder:opacity-50 focus:outline-none focus:ring-1 transition-colors'
+  'w-full rounded border px-3 py-2 [font-size:var(--text-xs)] '
+  // Mismo motivo que en los otros formularios: el alfa por defecto del placeholder que aplica
+  // Tailwind v4 en su preflight se queda en 3,88:1, por debajo del 4,5:1 de WCAG 1.4.3.
+  + 'placeholder:[color:var(--dz-muted)] '
+  + 'focus:outline-none focus:ring-1 transition-colors'
 
 const inputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-dz-ui)',
   borderRadius: '8px',
-  borderColor: 'var(--dz-borde)',
+  borderColor: 'var(--dz-borde-input)',
   backgroundColor: 'var(--dz-luz)',
   color: 'var(--dz-ink)',
 }
@@ -174,7 +178,7 @@ export function FormMensajePrivado({ destinatarioId }: FormMensajePrivadoProps) 
           borderRadius: '8px',
           backgroundColor: 'var(--dz-accent)',
           color: '#1A1410',
-          outlineColor: 'var(--dz-accent)',
+          outlineColor: 'var(--dz-ink)',
         }}
       >
         {estado === 'enviando' ? 'Enviando…' : 'Enviar mensaje'}

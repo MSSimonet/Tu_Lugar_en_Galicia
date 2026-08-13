@@ -3,7 +3,7 @@
 // ─── Shared field styles ───────────────────────────────────────────────────────
 
 export const inputBase =
-  'w-full border border-[var(--dz-borde)] bg-[var(--color-blanco)] ' +
+  'w-full border border-[var(--dz-borde-input)] bg-[var(--color-blanco)] ' +
   'rounded-[var(--dz-radius-input)] px-[var(--space-4)] py-[var(--space-3)] ' +
   'font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--dz-ink)] ' +
   'outline-none focus:ring-2 focus:ring-[var(--color-laton)] focus:border-transparent ' +
