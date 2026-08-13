@@ -24,11 +24,14 @@ export function Eyebrow({ children, className = "", tone = "oscuro" }: EyebrowPr
         }
       : tone === "hero"
       ? {
-          // --dz-accent-text y no --dz-accent: desde que el Hero sigue el tema
-          // (--dz-fondo-marco, blanco en claro) el acento crudo daba 2.51:1
-          // sobre blanco. --dz-accent-text ya está definido para invertir:
-          // #9C5F19 en claro y el acento crudo en oscuro (rediseño 2026-07-26).
-          color: "var(--dz-accent-text)",
+          // --dz-accent-text-tinte y no --dz-accent-text: el fondo de abajo lleva una
+          // capa del propio acento, así que no es el fondo limpio contra el que está
+          // calibrado --dz-accent-text. Resuelve a #F5EBDD y ahí --dz-accent-text daba
+          // 4.38:1, por debajo del 4.5:1 de WCAG 1.4.3 (defecto preexistente, medido el
+          // 2026-08-13). La variante tintada da 5.30:1 sin tocar el tinte.
+          // El acento crudo tampoco sirve acá: daba 2.51:1 desde que el Hero sigue el
+          // tema (--dz-fondo-marco, claro en modo claro).
+          color: "var(--dz-accent-text-tinte)",
           // El fondo tintado con el propio acento funciona en los dos modos; el
           // rgba(255,255,255,0.06) anterior era invisible sobre un marco claro.
           background: "color-mix(in srgb, var(--dz-accent) 10%, transparent)",

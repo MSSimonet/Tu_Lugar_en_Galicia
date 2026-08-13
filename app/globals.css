@@ -627,6 +627,15 @@ details > dd {
                                  #F0F0F0; era 4.74:1 sobre #F7F5F0) — en dark usa
                                  --dz-accent directo (7.75:1). Margen de 0.03: medir
                                  antes de tocar este token o el fondo. */
+  /* Variante para texto que va sobre un fondo TINTADO con el propio acento, no sobre el
+     fondo limpio. --dz-accent-text está calibrado contra --dz-papel; en cuanto el fondo
+     lleva una capa del acento se oscurece y se come el margen. Caso concreto: la píldora
+     Eyebrow tone="hero", cuyo fondo es color-mix(--dz-accent 10%) y resuelve a #F5EBDD —
+     ahí --dz-accent-text caía a 4.38:1 y perforaba AA. Este token da 5.30:1 sobre ese
+     mismo fondo, con margen real (0.80) en vez de raspar el umbral bajando el tinte.
+     En oscuro NO hace falta: el acento crudo sobre el tinte oscuro ya da 6.00:1, así que
+     el override de .dark lo devuelve a --dz-accent. */
+  --dz-accent-text-tinte: #8A5415;
   --dz-accent-ink:   #16140F; /* texto sobre botón --dz-accent — AA 7.35:1 */
 
   /* Bookend fijo — hero, marcador y CTA final comparten este fondo oscuro */
@@ -933,6 +942,7 @@ details > dd {
   --dz-borde: #292825;
   --dz-borde-input: #6F6B60; /* 3.30:1 sobre --dz-luz oscuro — ver el comentario en :root */
   --dz-accent-text: var(--dz-accent); /* el acento crudo ya es AA sobre fondo oscuro — 7.75:1 */
+  --dz-accent-text-tinte: var(--dz-accent); /* sobre el tinte oscuro da 6.00:1 — no necesita oscurecerse */
 
   /* Dos capas de fondo — el marco queda un escalón MÁS CLARO que la página, así
      Hero/Nav/Footer se despegan de un fondo más profundo en vez de fundirse.
