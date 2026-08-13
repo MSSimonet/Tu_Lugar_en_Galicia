@@ -1055,6 +1055,26 @@ Confirmar que `POST /api/webhooks/calcom` actualiza Supabase y dispara mail a Si
 ### 8. Fixes de seguridad medios (🟡) y auditoría global restante
 M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, performance (Lighthouse en producción, C6 nunca verificado), QA funcional end-to-end (§5.4) — la auditoría global de esta sesión cubrió solo la fase de seguridad.
 
+### 9. Deuda técnica de tokens (2026-08-13) — anotada, **no hacer ahora**
+
+Dos limpiezas que salieron de la migración de color a `#F0F0F0` (commits `cce3a18` y `c630be1`). Ninguna es urgente ni rompe nada hoy: son trampas para quien lea el archivo después.
+
+**a) Renombrar `--color-sobre-laton`.** El nombre miente: ya **no se usa nunca sobre `--color-laton`**. Ese caso se movió a `--dz-accent-ink` en `cce3a18`, porque claro sobre ámbar daba 3.44:1 y fallaba AA. Hoy el token solo pinta texto sobre `--color-estado-ok` (4.70:1) y `--color-estado-error` (6.03:1), los dos en `HabilitarAgendaButton`. Un nombre honesto sería algo como `--color-sobre-estado`. Son 1 definición + 1 consumidor, pero es un rename de token: conviene hacerlo solo, sin mezclarlo con cambios de color.
+
+**b) Barrer los tokens muertos de dos sistemas de diseño dormidos.** Medido por grep el 2026-08-13, contando solo usos fuera de `app/globals.css`:
+
+| Sistema | Tokens definidos | Usos reales | Estado |
+|---|---|---|---|
+| `--mar-*` (Mar) | 14 | **0** | muerto — el propio archivo lo documenta como dormido |
+| `--po-*` (Pedra e Ouro) | 23 | **0** | muerto — lo reemplazó Diseño Deslumbrante (`0906e47`) |
+| `--au-*` (Apps Útiles) | 31 | **32** | 🟢 **VIVO — no tocar** |
+
+Son 37 declaraciones muertas en un `globals.css` de 1112 líneas. Es el mismo tipo de hallazgo que los 31 `--color-*` sin consumidores del gate pre-merge (§ "Descartes"): **declaraciones muertas, no rotura**. Nada se ve mal por esto.
+
+> ⚠️ Antes de borrar, repetir el grep: `--au-*` tiene casi el mismo aspecto que los otros dos y **sí está en uso**. La diferencia no se ve leyendo el bloque de tokens, solo contando consumidores.
+
+El aviso del hook de diseño sobre `--mar-spring` (`cubic-bezier(0.34, 1.56, 0.64, 1)`, easing de rebote) sale de acá: es real como valor, pero **cero animaciones lo consumen**. Se resuelve borrando el token, no cambiándole la curva.
+
 ---
 
 ## 8 — Variables de entorno — estado completo
