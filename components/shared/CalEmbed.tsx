@@ -127,7 +127,9 @@ export function CalEmbed({ calLink = CALCOM_URL, className = '' }: CalEmbedProps
           className="mt-[var(--space-2)] inline-flex items-center gap-2 rounded-[var(--radius-pill)] font-[family-name:var(--font-dz-ui)] font-bold uppercase tracking-[var(--tracking-ui)] transition-colors duration-150"
           style={{
             background: 'var(--color-laton)',
-            color: 'var(--color-blanco)',
+            // Tinta oscura y no --color-blanco: claro sobre ámbar daba 3.37:1 y fallaba
+            // AA — el mismo fallo para el que ya existía --dz-accent-ink. Ahora 5.34:1.
+            color: 'var(--dz-accent-ink)',
             padding: '0.75rem 1.75rem',
             fontSize: 'var(--text-sm)',
           }}

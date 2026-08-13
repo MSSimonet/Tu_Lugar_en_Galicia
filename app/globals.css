@@ -37,7 +37,17 @@
   --color-coral: #B8492F; /* oscurecido para AA: 5.09:1 sobre blanco (antes 3.46:1, fallaba) */
 
   /* Base */
-  --color-blanco: #FFFCF7;
+  /* Era #FFFCF7 hasta 2026-08-13. Ese casi-blanco es lo que pintaba el <body>, así que
+     el fondo real de todo el sitio seguía siendo casi blanco aunque el commit 936ac59
+     hubiera sacado el blanco de la familia --dz-*: aquella verificación contaba
+     elementos con rgb(255,255,255) exacto y #FFFCF7 no cae en ese filtro.
+     Ahora iguala a --dz-luz. No necesita quedar distinguible de --dz-luz: la única
+     superficie --color-blanco que se apoya en otra superficie clara es la píldora de
+     ClimaActual, y su contenedor es --dz-papel (#F7F5F0), que no cambia — la píldora
+     conserva su separación de 1.05:1 y su borde, igual que antes.
+     Medido sobre este fondo: 14.92:1 --color-granito · 16.15:1 --dz-ink ·
+     5.08:1 --dz-muted · 3.06:1 --dz-borde-input · 4.57:1 --color-coral. */
+  --color-blanco: #F0F0F0;
 
   /* Zona de header — permanece oscura en ambos modos (retinte Deslumbrante) */
   /* Oscuro fijo, con override propio en .dark. El comentario anterior decía
@@ -55,9 +65,20 @@
   --color-laton-borde:   #7A5230; /* mezcla acento/fondo oscuro para bordes estructurales */
   --color-nav-muted:     #A8A8A8; /* texto inactivo en nav oscuro */
   --color-header-active: #F0EDE6; /* texto activo/resaltado en nav oscuro */
-  --color-sobre-laton:   #ffffff; /* OJO: además de texto, se usa como FONDO claro
-                                     (useGinaEditor "Cancelar", HabilitarAgendaButton).
-                                     No repintarlo en oscuro: rompería esos dos. */
+  /* SOLO TEXTO, sobre fondos de estado que NO invierten con el tema.
+     Era #ffffff y el comentario anterior decía que se usaba "además de texto, como FONDO
+     claro (useGinaEditor 'Cancelar', HabilitarAgendaButton)". Medido el 2026-08-13, eso
+     era medio falso y el token hacía dos trabajos opuestos: en useGinaEditor era FONDO
+     (oscurecerlo ayuda) y en HabilitarAgendaButton era TEXTO (oscurecerlo perjudica).
+     Se deshizo esa sobrecarga: el "Cancelar" de Gina pasó a --color-blanco, que sí
+     invierte con el tema — antes quedaba #ffffff fijo con texto --dz-ink, o sea 1.15:1
+     en oscuro, texto invisible.
+     Hoy este token solo pinta texto sobre --color-estado-ok y --color-estado-error,
+     ambos fijos: 4.70:1 y 6.16:1. El caso sobre --color-laton se fue a --dz-accent-ink
+     (5.34:1) porque blanco sobre ámbar daba 3.44:1, el mismo fallo que ya documentaba
+     --dz-accent-ink. Ojo con el nombre: ya NO se usa sobre --color-laton.
+     No darle override en oscuro: sus dos fondos son fijos en ambos temas. */
+  --color-sobre-laton:   #F5F5F5;
   /* Texto sobre los botones acento de la capa chrome. Fijo en ambos temas —
      mismo criterio y mismo valor que --dz-accent-ink, que ya resolvía bien este
      problema en los CTA --dz-*. Nace para que el CTA "Hablar con Gina" y los
@@ -568,13 +589,27 @@ details > dd {
    ══════════════════════════════════════════════════════════════════════════ */
 @theme {
   /* Inversores — claro por defecto, override bajo .dark */
-  --dz-ink:      #16140F; /* texto principal — AA 16.89:1 sobre dz-papel */
-  --dz-papel:    #F7F5F0; /* fondo de sección */
-  --dz-luz:      #F7F5F0; /* fondo de tarjeta/superficie. Era #FFFFFF hasta 2026-08-11:
-                             se sacó el blanco absoluto de todas las vistas y se adoptó el
-                             mismo valor que --dz-papel. Contraste medido sobre este fondo:
-                             16.89:1 --dz-ink, 5.31:1 --dz-muted, 4.74:1 --dz-accent-text. */
-  --dz-muted:    #6B6558; /* texto secundario — AA 5.31:1 sobre dz-papel */
+  --dz-ink:      #16140F; /* texto principal — AA 16.15:1 sobre dz-papel */
+  --dz-papel:    #F0F0F0; /* fondo de sección. Acompaña a --dz-luz y --color-blanco en la
+                             migración a #F0F0F0 del 2026-08-13: los tres valían lo mismo
+                             antes (#F7F5F0) y mover solo --dz-luz habría dejado las
+                             tarjetas 1.05:1 más oscuras que la sección que las contiene,
+                             separándolas en vez de fundirlas. Se mantiene la relación
+                             previa: sección y superficie comparten valor.
+                             Medido: 16.15:1 --dz-ink · 5.08:1 --dz-muted ·
+                             4.53:1 --dz-accent-text · 3.06:1 --dz-borde-input. */
+  --dz-luz:      #F0F0F0; /* fondo de tarjeta/superficie. #FFFFFF hasta 2026-08-11, luego
+                             #F7F5F0 (mismo valor que --dz-papel), y #F0F0F0 desde
+                             2026-08-13. Contraste medido sobre este fondo:
+                             16.15:1 --dz-ink, 5.08:1 --dz-muted, 3.06:1 --dz-borde-input,
+                             4.53:1 --dz-accent-text.
+                             OJO con --dz-accent-text: 4.53:1 deja apenas 0.03 sobre el
+                             4.5:1 de WCAG 1.4.3. Es un margen fino ACEPTADO a conciencia,
+                             no un descuido — pero significa que cualquier retoque futuro
+                             de --dz-accent-text o de este fondo perfora AA. Medir antes.
+                             --dz-papel acompañó el cambio y vale lo mismo, así que la
+                             tarjeta se sigue fundiendo con su sección, como antes. */
+  --dz-muted:    #6B6558; /* texto secundario — AA 5.08:1 sobre dz-papel */
   --dz-borde:    #DCDAD5;
   /* Borde de campos de formulario. Misma familia cálida que --dz-borde (r>g>b), solo
      empujado hasta que se vea. No es una preferencia estética: --dz-borde sobre --dz-luz
@@ -588,7 +623,10 @@ details > dd {
   /* Fijos — no invierten con el tema, igual filosofía que --po-ouro */
   --dz-accent:       #E0932E; /* acento único de marca */
   --dz-accent-hover: #C27A1F;
-  --dz-accent-text:  #9C5F19; /* texto AA sobre dz-papel (4.74:1) — en dark usa --dz-accent directo (7.75:1) */
+  --dz-accent-text:  #9C5F19; /* texto AA sobre dz-papel (4.53:1 desde que dz-papel es
+                                 #F0F0F0; era 4.74:1 sobre #F7F5F0) — en dark usa
+                                 --dz-accent directo (7.75:1). Margen de 0.03: medir
+                                 antes de tocar este token o el fondo. */
   --dz-accent-ink:   #16140F; /* texto sobre botón --dz-accent — AA 7.35:1 */
 
   /* Bookend fijo — hero, marcador y CTA final comparten este fondo oscuro */
