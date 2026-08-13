@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, type FormEvent } from 'react'
 
 import type { LeadData } from '@/lib/leads'
+import { useValidacionHibrida } from '@/lib/forms/useValidacionHibrida'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -253,7 +254,17 @@ function borrarBorrador() {
 
 export function useFormulario() {
   const [form, setForm] = useState<FormState>(INITIAL_STATE)
-  const [errors, setErrors] = useState<FormErrors>({})
+  // Validación híbrida: callada hasta el primer envío, reactiva onBlur después. Ver
+  // lib/forms/useValidacionHibrida.ts. `validate` cierra sobre `form`, así que se le pasa
+  // envuelto para que el hook siempre valide contra el estado del render actual.
+  const {
+    errores: errors,
+    huboIntentoFallido,
+    validarParaEnviar,
+    validarCampo,
+    limpiarError,
+    limpiarTodo,
+  } = useValidacionHibrida<FormErrors>(() => validate(form))
   const [status, setStatus] = useState<FormStatus>('idle')
   const formRef = useRef<HTMLFormElement>(null)
   // Hasta que no se restauró el borrador no se guarda nada, para que el estado
@@ -293,7 +304,7 @@ export function useFormulario() {
 
   function set<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
-    if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }))
+    limpiarError(key)
   }
 
   function setHayMenores(v: 'si' | 'no') {
@@ -302,7 +313,7 @@ export function useFormulario() {
     } else {
       setForm((prev) => ({ ...prev, hayMenores: 'si' }))
     }
-    if (errors.hayMenores) setErrors((prev) => ({ ...prev, hayMenores: undefined }))
+    limpiarError('hayMenores')
   }
 
   function setMascotas(v: 'si' | 'no') {
@@ -318,7 +329,7 @@ export function useFormulario() {
     } else {
       setForm((prev) => ({ ...prev, mascotas: 'si' }))
     }
-    if (errors.mascotas) setErrors((prev) => ({ ...prev, mascotas: undefined }))
+    limpiarError('mascotas')
   }
 
   function setOrigenResidencia(v: 'en_espana' | 'fuera') {
@@ -330,7 +341,7 @@ export function useFormulario() {
         ? { paisResidencia: '' }
         : { ciudadActual: '', tiempoEnEspana: '' as FormState['tiempoEnEspana'], objetivoBusqueda: '' as FormState['objetivoBusqueda'] }),
     }))
-    if (errors.origenResidencia) setErrors((prev) => ({ ...prev, origenResidencia: undefined }))
+    limpiarError('origenResidencia')
   }
 
   function setObjetivoBusqueda(v: 'busca-vivienda' | 'integrarse') {
@@ -347,7 +358,7 @@ export function useFormulario() {
           }
         : {}),
     }))
-    if (errors.objetivoBusqueda) setErrors((prev) => ({ ...prev, objetivoBusqueda: undefined }))
+    limpiarError('objetivoBusqueda')
   }
 
   function setTipoInmueble(v: 'habitacion' | 'estudio' | 'piso' | 'casa' | 'co-living') {
@@ -356,13 +367,13 @@ export function useFormulario() {
       tipoInmueble: v,
       habitacionesMinimas: v === 'estudio' ? '' as FormState['habitacionesMinimas'] : prev.habitacionesMinimas,
     }))
-    if (errors.tipoInmueble) setErrors((prev) => ({ ...prev, tipoInmueble: undefined }))
+    limpiarError('tipoInmueble')
   }
 
   function toggleGarantia(val: LeadData['garantias'][number]) {
     const next = toggleExclusivo(form.garantias, val, 'ninguna' as LeadData['garantias'][number])
     setForm((prev) => ({ ...prev, garantias: next }))
-    if (errors.garantias) setErrors((prev) => ({ ...prev, garantias: undefined }))
+    limpiarError('garantias')
   }
 
   function toggleMascotaTipo(val: 'perro' | 'gato' | 'otro') {
@@ -377,7 +388,7 @@ export function useFormulario() {
       cantidadPerros: val === 'perro' && yaEstaba ? '' as FormState['cantidadPerros'] : prev.cantidadPerros,
       cantidadGatos: val === 'gato' && yaEstaba ? '' as FormState['cantidadGatos'] : prev.cantidadGatos,
     }))
-    if (errors.mascotaTipo) setErrors((prev) => ({ ...prev, mascotaTipo: undefined }))
+    limpiarError('mascotaTipo')
   }
 
   function toggleImprescindible(val: FormState['imprescindibles'][number]) {
@@ -393,11 +404,16 @@ export function useFormulario() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
-    const validationErrors = validate(form)
+    // validarParaEnviar además ENCIENDE el modo reactivo: a partir del primer envío
+    // fallido, cada campo que la persona abandone se revalida solo (ver validarCampo).
+    const validationErrors = validarParaEnviar()
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
       const firstKey = Object.keys(validationErrors)[0]
       const el = document.getElementById(firstKey) ?? document.getElementById(`${firstKey}-error`)
+      // Foco además del scroll: el scroll solo mueve la vista, y quien navega con teclado
+      // o lector de pantalla se queda donde estaba sin enterarse de que el envío falló
+      // (mismo hueco que se corrigió en el formulario de Comunidad).
+      if (el instanceof HTMLElement && typeof el.focus === 'function') el.focus({ preventScroll: true })
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
@@ -498,6 +514,7 @@ export function useFormulario() {
         // Consulta enviada: el borrador ya no tiene sentido y no debe quedar
         // guardado (además de PII, reaparecería en la próxima visita).
         borrarBorrador()
+        limpiarTodo()
         setStatus('success')
       } else if (res.status === 503) {
         setStatus('partial')
@@ -513,6 +530,10 @@ export function useFormulario() {
     form,
     errors,
     status,
+    /** onBlur de cada campo. Silencioso hasta el primer envío fallido. */
+    validarCampo,
+    /** Por si algún componente necesita saber si el formulario ya está en modo reactivo. */
+    huboIntentoFallido,
     set,
     setHayMenores,
     setMascotas,

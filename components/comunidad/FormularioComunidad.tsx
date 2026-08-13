@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, type FormEvent } from 'react'
+import { useValidacionHibrida } from '@/lib/forms/useValidacionHibrida'
 import Link from 'next/link'
 import { ACTIVIDADES, type Actividad, type ComunidadRegistroInput } from '@/lib/comunidad/types'
 
@@ -67,7 +68,6 @@ export function FormularioComunidad() {
   const [rgpd, setRgpd] = useState(false)
 
   const [status, setStatus] = useState<Status>('idle')
-  const [errors, setErrors] = useState<FormErrors>({})
   const [errorUbicacion, setErrorUbicacion] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -117,15 +117,21 @@ export function FormularioComunidad() {
     setDisponibilidad(prev =>
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     )
+    // Se limpia al tocar y no al salir del grupo: en un grupo de casillas, "salir" no es un
+    // gesto que la persona haga a propósito, y dejar el error en rojo mientras ya está
+    // marcando opciones es ruido.
+    limpiarError('disponibilidad')
   }
 
   function handleCalle1Change(value: string) {
     setCalle1(value)
+    limpiarError('calle1')
     if (errorUbicacion) setErrorUbicacion('')
   }
 
   function handleCalle2Change(value: string) {
     setCalle2(value)
+    limpiarError('calle2')
     if (errorUbicacion) setErrorUbicacion('')
   }
 
@@ -183,18 +189,25 @@ export function FormularioComunidad() {
     return next
   }
 
+  // Validación híbrida: callada hasta el primer envío, reactiva onBlur después.
+  // Ver lib/forms/useValidacionHibrida.ts. Va DESPUÉS de validate() a propósito: aunque las
+  // declaraciones de función se elevan, leerla antes de su definición oculta de qué estado
+  // depende.
+  const { errores: errors, validarParaEnviar, validarCampo, limpiarError } =
+    useValidacionHibrida<FormErrors>(validate)
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setErrorUbicacion('')
     setErrorMsg('')
 
-    const validation = validate()
+    // validarParaEnviar además ENCIENDE el modo reactivo: desde el primer envío fallido,
+    // cada campo que se abandone se revalida solo.
+    const validation = validarParaEnviar()
     if (Object.keys(validation).length > 0) {
-      setErrors(validation)
       moverFocoAlPrimerError(validation)
       return
     }
-    setErrors({})
     setStatus('loading')
 
     const body: ComunidadRegistroInput = {
@@ -299,7 +312,8 @@ export function FormularioComunidad() {
           required
           autoComplete="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={e => { setEmail(e.target.value); limpiarError('email') }}
+            onBlur={() => validarCampo('email')}
           className={inputBase}
           style={errors.email ? inputErrorStyle : inputStyle}
           placeholder="maria@ejemplo.com"
@@ -342,6 +356,7 @@ export function FormularioComunidad() {
               type="text"
               value={calle1}
               onChange={e => handleCalle1Change(e.target.value)}
+            onBlur={() => validarCampo('calle1')}
               className={inputBase}
               style={errors.calle1 || errorUbicacion ? inputErrorStyle : inputStyle}
               placeholder="Rúa do Príncipe"
@@ -361,6 +376,7 @@ export function FormularioComunidad() {
               type="text"
               value={calle2}
               onChange={e => handleCalle2Change(e.target.value)}
+            onBlur={() => validarCampo('calle2')}
               className={inputBase}
               style={errors.calle2 || errorUbicacion ? inputErrorStyle : inputStyle}
               placeholder="Rúa Urzáiz"
@@ -384,7 +400,8 @@ export function FormularioComunidad() {
             id="ciudad"
             required
             value={ciudad}
-            onChange={e => setCiudad(e.target.value)}
+            onChange={e => { setCiudad(e.target.value); limpiarError('ciudad') }}
+            onBlur={() => validarCampo('ciudad')}
             className={inputBase}
             style={errors.ciudad ? inputErrorStyle : inputStyle}
             aria-describedby={errors.ciudad ? 'ciudad-error' : undefined}
@@ -412,7 +429,8 @@ export function FormularioComunidad() {
             required
             autoComplete="name"
             value={nombre}
-            onChange={e => setNombre(e.target.value)}
+            onChange={e => { setNombre(e.target.value); limpiarError('nombre') }}
+            onBlur={() => validarCampo('nombre')}
             className={inputBase}
             style={errors.nombre ? inputErrorStyle : inputStyle}
             placeholder="Marta"
@@ -608,7 +626,7 @@ export function FormularioComunidad() {
             type="checkbox"
             required
             checked={rgpd}
-            onChange={e => setRgpd(e.target.checked)}
+            onChange={e => { setRgpd(e.target.checked); limpiarError('rgpd') }}
             className="h-4 w-4 cursor-pointer"
             style={{ accentColor: 'var(--dz-accent)' }}
             aria-describedby={errors.rgpd ? 'rgpd-error' : undefined}

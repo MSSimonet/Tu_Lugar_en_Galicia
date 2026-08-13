@@ -25,6 +25,11 @@ export function FormularioDiagnostico() {
     form,
     errors,
     status,
+    // Validación híbrida (lib/forms/useValidacionHibrida.ts): se engancha al onBlur de los
+    // campos de escritura y de los <select>. Los grupos de radio/checkbox no lo llevan: su
+    // error ya se limpia al elegir una opción, y "abandonar" un grupo de radios no es un
+    // gesto que signifique nada para quien lo usa.
+    validarCampo,
     set,
     setHayMenores,
     setMascotas,
@@ -139,6 +144,7 @@ export function FormularioDiagnostico() {
               type="text"
               value={form.nombreCompleto}
               onChange={(e) => set('nombreCompleto', e.target.value)}
+              onBlur={() => validarCampo('nombreCompleto')}
               className={`${inputBase} ${errors.nombreCompleto ? inputError : ''}`}
               autoComplete="name"
               required
@@ -153,6 +159,7 @@ export function FormularioDiagnostico() {
               type="email"
               value={form.email}
               onChange={(e) => set('email', e.target.value)}
+              onBlur={() => validarCampo('email')}
               className={`${inputBase} ${errors.email ? inputError : ''}`}
               autoComplete="email"
               required
@@ -167,6 +174,7 @@ export function FormularioDiagnostico() {
               type="tel"
               value={form.telefono}
               onChange={(e) => set('telefono', e.target.value)}
+              onBlur={() => validarCampo('telefono')}
               placeholder="+54 9 11 1234-5678"
               className={`${inputBase} ${errors.telefono ? inputError : ''}`}
               autoComplete="tel"
@@ -203,6 +211,7 @@ export function FormularioDiagnostico() {
                 type="text"
                 value={form.paisResidencia}
                 onChange={(e) => set('paisResidencia', e.target.value)}
+                onBlur={() => validarCampo('paisResidencia')}
                 className={`${inputBase} ${errors.paisResidencia ? inputError : ''}`}
                 autoComplete="country-name"
                 required
@@ -244,6 +253,7 @@ export function FormularioDiagnostico() {
               id="documentacion"
               value={form.documentacion}
               onChange={(e) => set('documentacion', e.target.value as LeadData['documentacion'])}
+              onBlur={() => validarCampo('documentacion')}
               className={`${inputBase} ${errors.documentacion ? inputError : ''}`}
               aria-describedby={errors.documentacion ? 'documentacion-error' : undefined}
             >
@@ -270,6 +280,7 @@ export function FormularioDiagnostico() {
               id="situacionLaboral"
               value={form.situacionLaboral}
               onChange={(e) => set('situacionLaboral', e.target.value as LeadData['situacionLaboral'])}
+              onBlur={() => validarCampo('situacionLaboral')}
               className={`${inputBase} ${errors.situacionLaboral ? inputError : ''}`}
               aria-describedby={errors.situacionLaboral ? 'situacionLaboral-error' : undefined}
             >
@@ -297,6 +308,7 @@ export function FormularioDiagnostico() {
               id="ingresosMensuales"
               value={form.ingresosMensuales}
               onChange={(e) => set('ingresosMensuales', e.target.value)}
+              onBlur={() => validarCampo('ingresosMensuales')}
               className={`${inputBase} ${errors.ingresosMensuales ? inputError : ''}`}
               aria-describedby={errors.ingresosMensuales ? 'ingresosMensuales-error' : undefined}
             >
@@ -430,6 +442,7 @@ export function FormularioDiagnostico() {
               id="tipoLicencia"
               value={form.tipoLicencia}
               onChange={(e) => set('tipoLicencia', e.target.value as FormState['tipoLicencia'])}
+              onBlur={() => validarCampo('tipoLicencia')}
               className={`${inputBase} ${errors.tipoLicencia ? inputError : ''}`}
               aria-describedby={errors.tipoLicencia ? 'tipoLicencia-error' : undefined}
             >
@@ -453,6 +466,7 @@ export function FormularioDiagnostico() {
                   type="text"
                   value={form.ciudadActual}
                   onChange={(e) => set('ciudadActual', e.target.value)}
+                  onBlur={() => validarCampo('ciudadActual')}
                   className={`${inputBase} ${errors.ciudadActual ? inputError : ''}`}
                   required
                   aria-required="true"
@@ -510,6 +524,7 @@ export function FormularioDiagnostico() {
               type="text"
               value={form.profesion}
               onChange={(e) => set('profesion', e.target.value)}
+              onBlur={() => validarCampo('profesion')}
               placeholder="Ej: Ingeniera, docente, enfermero..."
               className={`${inputBase} ${errors.profesion ? inputError : ''}`}
               aria-describedby={errors.profesion ? 'profesion-error' : undefined}
@@ -526,6 +541,7 @@ export function FormularioDiagnostico() {
               id="nivelEstudios"
               value={form.nivelEstudios}
               onChange={(e) => set('nivelEstudios', e.target.value as FormState['nivelEstudios'])}
+              onBlur={() => validarCampo('nivelEstudios')}
               className={`${inputBase} ${errors.nivelEstudios ? inputError : ''}`}
               aria-describedby={errors.nivelEstudios ? 'nivelEstudios-error' : undefined}
             >
@@ -551,6 +567,7 @@ export function FormularioDiagnostico() {
               id="fechaLlegada"
               value={form.fechaLlegada}
               onChange={(e) => set('fechaLlegada', e.target.value)}
+              onBlur={() => validarCampo('fechaLlegada')}
               className={`${inputBase} ${errors.fechaLlegada ? inputError : ''}`}
               aria-describedby={errors.fechaLlegada ? 'fechaLlegada-error' : undefined}
             >
@@ -585,6 +602,7 @@ export function FormularioDiagnostico() {
               id="comoNosConociste"
               value={form.comoNosConociste}
               onChange={(e) => set('comoNosConociste', e.target.value as typeof form.comoNosConociste)}
+              onBlur={() => validarCampo('comoNosConociste')}
               className={inputBase}
             >
               <option value="">Selecciona una opción</option>
@@ -607,6 +625,7 @@ export function FormularioDiagnostico() {
                 aria-required="true"
                 checked={form.comprendeServicio}
                 onChange={(e) => set('comprendeServicio', e.target.checked)}
+                onBlur={() => validarCampo('comprendeServicio')}
                 className="accent-[var(--color-laton)] w-4 h-4 mt-[2px] cursor-pointer flex-shrink-0"
                 aria-describedby={errors.comprendeServicio ? 'comprendeServicio-error' : undefined}
               />
@@ -632,6 +651,7 @@ export function FormularioDiagnostico() {
                 aria-required="true"
                 checked={form.consentimientoRGPD}
                 onChange={(e) => set('consentimientoRGPD', e.target.checked)}
+                onBlur={() => validarCampo('consentimientoRGPD')}
                 className="accent-[var(--color-laton)] w-4 h-4 mt-[2px] cursor-pointer flex-shrink-0"
                 aria-describedby={errors.consentimientoRGPD ? 'consentimientoRGPD-error' : undefined}
               />

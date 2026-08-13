@@ -2,8 +2,10 @@
 
 import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
+import { useValidacionHibrida } from '@/lib/forms/useValidacionHibrida'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
+type ErroresContacto = Partial<Record<'nombre' | 'email' | 'mensaje' | 'rgpd', string>>
 
 const inputBase =
   'w-full rounded border px-4 py-3 [font-size:var(--text-sm)] placeholder:opacity-50 focus:outline-none focus:ring-1 transition-colors'
@@ -16,6 +18,12 @@ const inputStyle: React.CSSProperties = {
   color: 'var(--dz-ink)',
 }
 
+// Mismos tres que ya usa el formulario de Comunidad, para que un error se vea igual en
+// las dos páginas: borde coral en el campo y el mensaje justo debajo, no arriba del todo.
+const inputErrorStyle: React.CSSProperties = { ...inputStyle, borderColor: 'var(--color-coral)' }
+const errorClass = 'mt-1 [font-size:var(--text-xs)]'
+const errorStyle: React.CSSProperties = { fontFamily: 'var(--font-dz-ui)', color: 'var(--color-coral)' }
+
 export function FormularioContacto() {
   const [nombre,   setNombre]   = useState('')
   const [email,    setEmail]    = useState('')
@@ -25,12 +33,40 @@ export function FormularioContacto() {
   const [status,   setStatus]   = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
+  /**
+   * Este formulario NO tenía validación por campo: sólo comprobaba el RGPD y confiaba en los
+   * `required` del HTML — que con `noValidate` en el <form> el navegador ni siquiera aplica.
+   * Resultado: un envío con el nombre o el mensaje vacíos salía igual y lo rechazaba el
+   * servidor, devolviendo un error genérico arriba del todo sin decir qué campo faltaba.
+   */
+  function validar(): ErroresContacto {
+    const e: ErroresContacto = {}
+    if (!nombre.trim()) e.nombre = 'Necesitamos tu nombre para poder responderte.'
+    if (!email.trim()) e.email = 'Necesitamos tu email para poder responderte.'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      e.email = 'Ese email no parece tener el formato correcto (ej: nombre@correo.com).'
+    if (!mensaje.trim()) e.mensaje = 'Cuéntanos brevemente en qué podemos ayudarte.'
+    if (!rgpd) e.rgpd = 'Debes aceptar la política de privacidad para continuar.'
+    return e
+  }
+
+  // Validación híbrida: callada hasta el primer envío, reactiva onBlur después.
+  // Ver lib/forms/useValidacionHibrida.ts.
+  const { errores, validarParaEnviar, validarCampo, limpiarError } =
+    useValidacionHibrida<ErroresContacto>(validar)
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (!rgpd) {
-      setErrorMsg('Debes aceptar la política de privacidad para continuar.')
+
+    const encontrados = validarParaEnviar()
+    if (Object.keys(encontrados).length > 0) {
+      const primero = (['nombre', 'email', 'mensaje', 'rgpd'] as const).find((c) => encontrados[c])
+      const destino = primero ? document.getElementById(primero) : null
+      destino?.focus()
+      destino?.scrollIntoView({ block: 'center', behavior: 'smooth' })
       return
     }
+
     setStatus('loading')
     setErrorMsg('')
 
@@ -109,11 +145,16 @@ export function FormularioContacto() {
             required
             autoComplete="name"
             value={nombre}
-            onChange={e => setNombre(e.target.value)}
+            onChange={e => { setNombre(e.target.value); limpiarError('nombre') }}
+            onBlur={() => validarCampo('nombre')}
             className={inputBase}
-            style={inputStyle}
+            style={errores.nombre ? inputErrorStyle : inputStyle}
             placeholder="María García"
+            aria-describedby={errores.nombre ? 'nombre-error' : undefined}
           />
+          {errores.nombre && (
+            <p id="nombre-error" className={errorClass} style={errorStyle} role="alert">{errores.nombre}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -130,11 +171,16 @@ export function FormularioContacto() {
             required
             autoComplete="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={e => { setEmail(e.target.value); limpiarError('email') }}
+            onBlur={() => validarCampo('email')}
             className={inputBase}
-            style={inputStyle}
+            style={errores.email ? inputErrorStyle : inputStyle}
             placeholder="maria@ejemplo.com"
+            aria-describedby={errores.email ? 'email-error' : undefined}
           />
+          {errores.email && (
+            <p id="email-error" className={errorClass} style={errorStyle} role="alert">{errores.email}</p>
+          )}
         </div>
       </div>
 
@@ -172,11 +218,16 @@ export function FormularioContacto() {
           required
           rows={5}
           value={mensaje}
-          onChange={e => setMensaje(e.target.value)}
+          onChange={e => { setMensaje(e.target.value); limpiarError('mensaje') }}
+          onBlur={() => validarCampo('mensaje')}
           className={`${inputBase} resize-y`}
-          style={inputStyle}
+          style={errores.mensaje ? inputErrorStyle : inputStyle}
           placeholder="Cuéntanos tu situación, ciudad de destino, cuándo planeas llegar…"
+          aria-describedby={errores.mensaje ? 'mensaje-error' : undefined}
         />
+        {errores.mensaje && (
+          <p id="mensaje-error" className={errorClass} style={errorStyle} role="alert">{errores.mensaje}</p>
+        )}
       </div>
 
       <div className="flex items-start gap-3">
@@ -185,9 +236,11 @@ export function FormularioContacto() {
           type="checkbox"
           required
           checked={rgpd}
-          onChange={e => setRgpd(e.target.checked)}
+          onChange={e => { setRgpd(e.target.checked); limpiarError('rgpd') }}
+          onBlur={() => validarCampo('rgpd')}
           className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer"
           style={{ accentColor: 'var(--dz-accent)' }}
+          aria-describedby={errores.rgpd ? 'rgpd-error' : undefined}
         />
         <label
           htmlFor="rgpd"
@@ -206,6 +259,9 @@ export function FormularioContacto() {
           . Mis datos serán tratados únicamente para responder a esta consulta.
         </label>
       </div>
+      {errores.rgpd && (
+        <p id="rgpd-error" className={errorClass} style={errorStyle} role="alert">{errores.rgpd}</p>
+      )}
 
       <button
         type="submit"
