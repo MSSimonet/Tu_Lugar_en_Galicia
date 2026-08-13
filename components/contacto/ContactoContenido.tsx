@@ -38,8 +38,10 @@ export function ContactoContenido() {
         </motion.div>
       </section>
 
-      {/* Formulario */}
-      <section className="py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
+      {/* Formulario. El id es un ancla real: cuando el calendario de Cal.com falla,
+          su mensaje de respaldo manda acá con /contacto#formulario en vez de dejar a
+          la persona en lo alto de la página buscando dónde escribir. */}
+      <section id="formulario" className="scroll-mt-24 py-[var(--dz-section-y)] px-[var(--space-6)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
         <motion.div
           className="mx-auto max-w-2xl"
           variants={fadeUp}
