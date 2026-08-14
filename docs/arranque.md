@@ -1055,25 +1055,35 @@ Confirmar que `POST /api/webhooks/calcom` actualiza Supabase y dispara mail a Si
 ### 8. Fixes de seguridad medios (🟡) y auditoría global restante
 M1-M4 (ver §5.2). Después: limpieza de código muerto/assets sin usar, performance (Lighthouse en producción, C6 nunca verificado), QA funcional end-to-end (§5.4) — la auditoría global de esta sesión cubrió solo la fase de seguridad.
 
-### 9. Deuda técnica de tokens (2026-08-13) — anotada, **no hacer ahora**
+### 9. Tokens muertos — barridos el 2026-08-13. Queda un rename pendiente
 
-Dos limpiezas que salieron de la migración de color a `#F0F0F0` (commits `cce3a18` y `c630be1`). Ninguna es urgente ni rompe nada hoy: son trampas para quien lea el archivo después.
+**a) Renombrar `--color-sobre-laton` — 🔴 PENDIENTE, no hacer sin pedirlo.** El nombre miente: ya **no se usa nunca sobre `--color-laton`**. Ese caso se movió a `--dz-accent-ink` en `cce3a18`, porque claro sobre ámbar daba 3.44:1 y fallaba AA. Hoy el token solo pinta texto sobre `--color-estado-ok` (4.70:1) y `--color-estado-error` (6.03:1), los dos en `HabilitarAgendaButton`. Un nombre honesto sería algo como `--color-sobre-estado`. Son 1 definición + 1 consumidor, pero es un rename de token: conviene hacerlo solo, sin mezclarlo con cambios de color.
 
-**a) Renombrar `--color-sobre-laton`.** El nombre miente: ya **no se usa nunca sobre `--color-laton`**. Ese caso se movió a `--dz-accent-ink` en `cce3a18`, porque claro sobre ámbar daba 3.44:1 y fallaba AA. Hoy el token solo pinta texto sobre `--color-estado-ok` (4.70:1) y `--color-estado-error` (6.03:1), los dos en `HabilitarAgendaButton`. Un nombre honesto sería algo como `--color-sobre-estado`. Son 1 definición + 1 consumidor, pero es un rename de token: conviene hacerlo solo, sin mezclarlo con cambios de color.
+**b) Barrido de sistemas de diseño dormidos — ✅ HECHO.** Se eliminaron **tres** sistemas completos. `globals.css` bajó de **1112 a 1021 líneas**.
 
-**b) Barrer los tokens muertos de dos sistemas de diseño dormidos.** Medido por grep el 2026-08-13, contando solo usos fuera de `app/globals.css`:
+| Sistema | Tokens | Estado |
+|---|---|---|
+| `--mar-*` (Mar Abierto) | 11 | ✅ borrado |
+| `--po-*` (Pedra e Ouro) | 23 | ✅ borrado, junto con sus 2 reglas CSS |
+| `--ae-*` (Atlántico Editorial) | 11 | ✅ borrado |
+| `--au-*` (Apps Útiles) | 31 | 🟢 **VIVO — no tocar**, 32 usos |
 
-| Sistema | Tokens definidos | Usos reales | Estado |
-|---|---|---|---|
-| `--mar-*` (Mar) | 14 | **0** | muerto — el propio archivo lo documenta como dormido |
-| `--po-*` (Pedra e Ouro) | 23 | **0** | muerto — lo reemplazó Diseño Deslumbrante (`0906e47`) |
-| `--au-*` (Apps Útiles) | 31 | **32** | 🟢 **VIVO — no tocar** |
+#### Dos correcciones a lo que decía esta sección antes
 
-Son 37 declaraciones muertas en un `globals.css` de 1112 líneas. Es el mismo tipo de hallazgo que los 31 `--color-*` sin consumidores del gate pre-merge (§ "Descartes"): **declaraciones muertas, no rotura**. Nada se ve mal por esto.
+La versión anterior afirmaba que eran **dos** sistemas y **37 tokens**. Las dos cifras estaban mal, y el porqué vale más que el dato:
 
-> ⚠️ Antes de borrar, repetir el grep: `--au-*` tiene casi el mismo aspecto que los otros dos y **sí está en uso**. La diferencia no se ve leyendo el bloque de tokens, solo contando consumidores.
+1. **Faltaba `--ae-*` (Atlántico Editorial), 11 tokens.** No lo había mirado: la nota se escribió a partir del aviso de un hook sobre `--mar-spring`, no de una auditoría del archivo.
+2. **Decía que `--po-*` tenía 0 usos, y era falso.** Se midió con `grep var(--po-` **fuera** de `globals.css`, y ahí efectivamente da cero. Pero dos reglas del propio archivo —`.po-faq-details[open]` y `.po-faq-summary:hover`— sí los consumían. O sea que la nota cayó en la trampa que ella misma advertía.
 
-El aviso del hook de diseño sobre `--mar-spring` (`cubic-bezier(0.34, 1.56, 0.64, 1)`, easing de rebote) sale de acá: es real como valor, pero **cero animaciones lo consumen**. Se resuelve borrando el token, no cambiándole la curva.
+#### La lección que sí conviene retener
+
+Al ir a borrar, esas dos reglas parecían mantener vivos `--po-ouro` y `--po-areia`, así que en un primer pase se conservaron. Verificando contra el DOM resultó que **el selector no matchea nada**: `FAQAccordionPedraEOuro` dejó de ser un acordeón de `<details>` y hoy es un wrapper fino sobre el `Accordion` de Radix. Medido en `/faq`: 23 acordeones renderizados, **cero elementos `<details>`, cero clases `po-faq-*`**.
+
+> ⚠️ **Que un token tenga una referencia no alcanza para declararlo vivo. Hay que comprobar que esa referencia se ejecute.** Un selector CSS puede sobrevivir años al marcado que lo justificaba, sin que nada falle ni se vea mal. El grep dice "hay un consumidor"; solo el DOM dice "ese consumidor existe".
+
+Y la trampa de nombres sigue en pie para la próxima poda: **`--au-*` (vivo) y `--ae-*` (muerto) se diferencian en una letra.** La diferencia no se ve leyendo el bloque de tokens, solo contando consumidores.
+
+De paso: el aviso del hook de diseño sobre easing de rebote (`cubic-bezier(0.34, 1.56, 0.64, 1)`) desapareció solo — era `--mar-spring`, y cero animaciones lo consumían.
 
 ---
 

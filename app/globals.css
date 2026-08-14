@@ -501,85 +501,24 @@ details > dd {
   }
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   ATLÁNTICO EDITORIAL — Sistema de diseño (rama design/exploration)
-   Tokens aislados con prefijo --ae-* para no colisionar con otros sistemas
-   ══════════════════════════════════════════════════════════════════════════ */
-@theme {
-  --ae-papel:        #F8F5EF; /* papel cálido — canvas editorial */
-  --ae-tinta:        #0F172A; /* tinta atlántica — texto/fondo hero */
-  --ae-oceano:       #1E3A5F; /* azul profundo — secciones secundarias */
-  --ae-ambar:        #B45309; /* ámbar editorial — acento/CTA */
-  --ae-ambar-hover:  #92400E; /* ámbar oscuro — hover CTA */
-  --ae-niebla:       #EEF2F7; /* neblina azulada — superficie clara */
-  --ae-muted:        #64748B; /* texto secundario sobre papel */
-  --ae-borde:        #CBD5E1; /* borde sutil */
-  --ae-oro:          #D97706; /* oro editorial — detalles decorativos */
+/* Acá vivían ATLÁNTICO EDITORIAL (--ae-*, 11 tokens) y MAR ABIERTO (--mar-*, 11).
+   Eliminados el 2026-08-13: eran dos sistemas de diseño de la rama design/exploration
+   que nunca llegaron a producción, con CERO referencias en todo el repo — ni en
+   componentes, ni en reglas de este archivo, ni entre ellos.
+   Los reemplazó DESLUMBRANTE (--dz-*), que es el vigente. Si hiciera falta recuperarlos,
+   están en el historial. Ninguna fuente quedó huérfana al borrarlos: --font-jost lo
+   sigue consumiendo --font-dz-display. */
 
-  --font-ae-display: var(--font-jost), 'Montserrat', system-ui, sans-serif;
-  /* DM Sans ya no se descarga (auditoría 2026-07-25, I6): este sistema está
-     dormido y el token tiene cero usos en componentes. */
-  --font-ae-ui:      'Inter', system-ui, sans-serif;
-}
-
-/* ══════════════════════════════════════════════════════════════════════════
-   MAR ABIERTO — Sistema de diseño (rama design/exploration)
-   Tokens aislados con prefijo --mar-* para no colisionar con el sistema base
-   ══════════════════════════════════════════════════════════════════════════ */
-@theme {
-  --mar-canvas:      #E4EDEA;
-  --mar-ink:         #0C1F1A;
-  --mar-teal:        #0D9488;
-  --mar-teal-hover:  #0B7A70;
-  --mar-teal-light:  #2DD4BF;
-  --mar-niebla:      #F0F7F5;
-  --mar-muted:       #5E7A74;
-  --mar-border:      #C5D8D4;
-
-  /* Syne y Nunito Sans ya no se descargan (auditoría 2026-07-25, I6): este
-     sistema está dormido y ambos tokens tienen cero usos en componentes. */
-  --font-mar-display: 'Georgia', serif;
-  --font-mar-ui:      'Inter', system-ui, sans-serif;
-
-  --mar-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* ══════════════════════════════════════════════════════════════════════════
-   PEDRA E OURO — Sistema de diseño (rama design/exploration)
-   Tokens aislados con prefijo --po-*
-   ══════════════════════════════════════════════════════════════════════════ */
-@theme {
-  --po-pedra:       #3D3530; /* pedra escura — texto principal (invierte en dark) */
-  --po-ouro:        #C89B3C; /* ouro artesanal — acento principal, fijo */
-  --po-ouro-hover:  #A67C25; /* ouro profundo — hover, fijo */
-  --po-ouro-text:   #8A6220; /* ouro oscurecido — texto AA sobre areia/luz (4.68:1); en dark usa --po-ouro (5.98:1) */
-  --po-ouro-ink:    #1A1410; /* texto sobre fondo --po-ouro (botón dorado) — 7.14:1, fijo. Antes
-                                 hardcodeado como #1A1410 en 7+ archivos, ahora un solo token. */
-  --po-terra:       #8B6E4E; /* terra media — secciones secundarias, fijo */
-  --po-areia:       #F2EDE4; /* areia — canvas claro (invierte en dark) */
-  --po-luz:         #FBF8F2; /* luz — superficie muy clara (invierte en dark) */
-  --po-muted:       #6E625A; /* texto secundario sobre areia — AA 5.06:1 (invierte en dark) */
-  --po-borde:       #DDD5C8; /* borde cálido (invierte en dark) */
-
-  /* Bookends siempre oscuros — igual filosofía que --color-header-bg/--color-footer-bg:
-     no invierten con el tema, dan continuidad visual arriba (hero) y abajo (CTA) de la página. */
-  --po-hero-bg:     #2C2420;
-  --po-hero-text:   #F5EFE4;
-  --po-hero-muted:  rgba(245, 239, 228, 0.68);
-
-  --font-po-display: var(--font-playfair), 'Georgia', serif;
-  --font-po-ui:      var(--font-lato), 'Helvetica Neue', system-ui, sans-serif;
-
-  /* Radius/sombra — aditivos, namespace --po-* a propósito: no tocan --radius-card/
-     --radius-pill genéricos (los usan CalEmbed.tsx y FormularioDiagnostico.tsx, fuera
-     de este pase de diseño). Tarjetas más suaves + elevación real en hover. */
-  --po-radius-card: 12px;
-  /* Sombra con tinte cálido (--po-hero-bg, fijo, no invierte) en vez de negro puro —
-     coherente en claro y oscuro sin necesitar overrides bajo .dark. */
-  --po-shadow-sm: 0 1px 3px color-mix(in srgb, var(--po-hero-bg) 12%, transparent);
-  --po-shadow-md: 0 4px 12px color-mix(in srgb, var(--po-hero-bg) 18%, transparent);
-  --po-shadow-lg: 0 12px 32px color-mix(in srgb, var(--po-hero-bg) 24%, transparent);
-}
+/* PEDRA E OURO (--po-*, 23 tokens) también se eliminó el 2026-08-13, junto con las dos
+   reglas .po-faq-details[open] y .po-faq-summary:hover que lo consumían.
+   Esas reglas parecían mantener vivos --po-ouro y --po-areia, y por eso en un primer
+   pase se conservaron. Pero estilaban el acordeón viejo basado en <details>, y
+   FAQAccordionPedraEOuro hace rato que es un wrapper fino sobre el Accordion de Radix:
+   verificado contra el DOM de /faq, hay 23 acordeones renderizados, CERO elementos
+   <details> y CERO elementos con clase po-faq-*. Reglas que no matchean nada.
+   La lección para la próxima poda: que un token tenga una referencia no basta. Hay que
+   comprobar que ESA referencia se ejecute — un selector puede sobrevivir años después
+   del marcado que lo justificaba. */
 
 /* ══════════════════════════════════════════════════════════════════════════
    DESLUMBRANTE — Sistema de diseño VIGENTE (reemplaza a Pedra e Ouro, que
@@ -912,28 +851,11 @@ details > dd {
   .mkd-skeleton-pulse { animation: none; }
 }
 
-/* Estados hover/open del acordeón FAQAccordionPedraEOuro */
-.po-faq-details[open] {
-  border-color: color-mix(in srgb, var(--po-ouro) 40%, transparent) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-.po-faq-summary:hover {
-  background-color: var(--po-areia);
-}
-
 /* ── Dark mode — override de variables CSS ───────────────────────────────────
    Reutiliza valores existentes de la paleta swapeando fondo/texto.
    El header usa --color-header-bg (siempre oscuro, override abajo).
    ─────────────────────────────────────────────────────────────────────────── */
 .dark {
-  /* Pedra e Ouro — dark overrides */
-  --po-areia:     #2A2420;
-  --po-luz:       #332C27;
-  --po-pedra:     #F0E8DC;
-  --po-muted:     #A8998C;
-  --po-borde:     #4A3F38;
-  --po-ouro-text: #C89B3C; /* claro sobre fondo oscuro — 5.98:1 AA */
-
   /* Deslumbrante — dark overrides */
   --dz-papel: #0E0D0B;
   --dz-luz:   #1B1913;
@@ -961,20 +883,6 @@ details > dd {
 
   /* Marco de la Polaroid: apenas más oscuro que en claro, no invertido. */
   --dz-polaroid-marco: #DCDAD5; /* = --dz-borde (claro) */
-
-  /* Atlántico Editorial — dark overrides */
-  --ae-papel:   #0F172A;
-  --ae-tinta:   #F1F5F9;
-  --ae-niebla:  #1E293B;
-  --ae-muted:   #94A3B8;
-  --ae-borde:   #334155;
-
-  /* Mar Abierto — dark overrides */
-  --mar-canvas:  #0C1F1A;
-  --mar-ink:     #E8F5F2;
-  --mar-niebla:  #0F2B24;
-  --mar-muted:   #7FB8AF;
-  --mar-border:  #1A3A32;
 
   /* Fondos — grafito cálido */
   --color-blanco:  #141210;
