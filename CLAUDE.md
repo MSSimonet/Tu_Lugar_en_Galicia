@@ -176,11 +176,45 @@ El 2026-06-28 se realizó la primera auditoría total del proyecto (código, seg
 
 Auditoría completa de los 11 endpoints `/api/*` **que existían en esa fecha**: secretos, auth/autorización, validación de inputs, rate limiting, CORS/headers, dependencias, webhooks, manejo de errores.
 
-> ⚠️ **Corregido el 2026-08-11 — esta línea decía "los 11 endpoints" a secas y se leía como el
-> tamaño actual de la API.** Hoy son **32** rutas (`find app/api -name route.ts | wc -l`). O sea
-> que esta auditoría cubrió **11 de 32**: las **21** restantes —todo el CRM de admin, todo
-> Comunidad, y los endpoints de Instagram— nunca pasaron por ella. No tratar esta sección como
-> si certificara la superficie completa de la API.
+> ⚠️ **Corregido el 2026-08-16 — la corrección del 2026-08-11 arregló el conteo pero introdujo
+> un error de clasificación.** Decía que las restantes eran "todo el CRM de admin, todo Comunidad,
+> y los endpoints de Instagram". **"Todo el CRM de admin" es falso:** 4 rutas de `admin/` sí se
+> auditaron ese día, y una de ellas —`admin/recordatorio-silvana`— figura corregida en el hallazgo
+> **C2 de la tabla que está tres párrafos más abajo**. La etiqueta contradecía a su propia tabla.
+>
+> Números verificados el 2026-08-16 contra el árbol real (`git ls-tree` sobre `3b840b8`, último
+> commit del 2026-07-04), no contra etiquetas: **33 rutas hoy · 11 auditadas · 22 sin auditar**.
+> Cero borrados en `app/api` desde el 2026-07-04 (`git log --diff-filter=D`), así que las 11
+> auditadas siguen existiendo todas. El salto de 21 a 22 es una sola ruta: `comunidad/foto`,
+> agregada en `d09c017` el 2026-08-12.
+>
+> ⚠️ Un conteo se pudre solo. Las listas de abajo no — usar esas, y si se re-verifica, dejar
+> asentado el comando y la fecha.
+
+**Las 11 auditadas el 2026-07-04** (era el árbol completo de `app/api` ese día):
+
+`admin/expirar-codigos` · `admin/habilitar-agenda/[recordId]` · `admin/recordatorio-silvana` ·
+`admin/resumen-diario` · `clima/[ciudad]` · `contacto` · `gina` · `lead` · `marcador` ·
+`plan/[recordId]/pdf` · `webhooks/calcom`
+
+**Las 22 sin auditar** (todas creadas después de esa fecha):
+
+| Grupo | n | Rutas |
+|---|---|---|
+| CRM admin (post-auditoría) | 8 | `admin/campos-custom`, `admin/leads/[id]`, `admin/leads/[id]/campos-custom`, `admin/leads/[id]/etapa`, `admin/leads/[id]/notas`, `admin/leads/[id]/notas/[notaId]`, `admin/pipeline/etapas`, `admin/pipeline/etapas/[id]` |
+| Comunidad | 8 | `comunidad/registro`, `comunidad/confirmar`, `comunidad/foto`, `comunidad/[id]/contacto`, `comunidad/mensaje`, `comunidad/mensaje/confirmar`, `comunidad/gestionar/aplicar`, `comunidad/gestionar/solicitar` |
+| Instagram | 5 | `admin/instagram/autorizar`, `admin/instagram/callback`, `admin/instagram/conectar`, `admin/instagram/refrescar-token`, `instagram/posts` |
+| **Auth** | 1 | **`auth/[...nextauth]`** — no entraba en ninguno de los tres grupos que listaba la versión anterior de esta nota, y es la autenticación de todo `/admin`. Ver M4 sobre el *fail-open* de `next-auth` ya parcheado en `bc67141` |
+
+> 🔴 **Prioridad — `auth/[...nextauth]` está pendiente de revisión de SEGURIDAD, no solo de
+> documentación.** No es un ajuste de conteo: es la ruta de autenticación del panel `/admin` —M4
+> documenta que el *fail-open* de `next-auth` pegaba en `/admin/**`, y bajo `app/api/admin/` hay
+> **16** rutas— y nunca pasó por una auditoría. Se cayó del mapa porque las tres etiquetas
+> de la nota anterior no la cubrían, no porque alguien la evaluara y la descartara. El parche de
+> `bc67141` (M4) fue un bump de dependencia por CVE — **no** una revisión de esta ruta. Revisarla
+> antes que cualquier otro grupo de los de arriba.
+
+No tratar esta sección como si certificara la superficie completa de la API.
 
 | ID | Severidad | Estado |
 |---|---|---|
