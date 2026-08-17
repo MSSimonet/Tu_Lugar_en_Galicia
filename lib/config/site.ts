@@ -1,5 +1,6 @@
 // URL del calendario de Cal.com para agendar videollamadas.
-// Reemplazar con la URL real del calendario de Silvana en Cal.com.
+// URL real y verificada el 2026-08-01 (HTTP 200, título "Reunión | Tu Lugar en Galicia").
+// Ver A08 en CLAUDE.md §9 — ya no es un placeholder.
 export const CALCOM_URL = "https://cal.com/tu-lugar-en-galicia/reunion"
 
 // Nombre del sitio (usado en metadata, footer, etc.)
