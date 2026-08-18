@@ -22,7 +22,9 @@ export default defineConfig({
         test: {
           name: 'unit',
           environment: 'node',
-          include: ['lib/**/*.test.ts'],
+          // middleware.test.ts vive en la raíz porque prueba middleware.ts (raíz); el resto
+          // de los tests unitarios viven en lib/.
+          include: ['lib/**/*.test.ts', 'middleware.test.ts'],
         },
         resolve: {
           // Necesario y no heredable: el proyecto de Storybook resuelve `@/` por su propio

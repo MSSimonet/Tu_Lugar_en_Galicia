@@ -109,6 +109,47 @@ export async function middleware(req: NextRequest) {
   )
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
 
+  // Canonicalización de rutas de admin percent-encoded, ANTES del gate de sesión (hallazgo F1).
+  //
+  // req.nextUrl.pathname llega SIN decodificar: NextURL usa el parser WHATWG, que no decodifica
+  // %xx (verificado en node_modules/next/dist/server/web/next-url.js — su único `get pathname()`
+  // no tiene un solo decodeURIComponent, y no existe accessor decodificado en la API pública).
+  // Por eso el `startsWith('/admin/')` del gate de más abajo no reconocía `/%61dmin/inbox` como
+  // ruta de admin: el gate no disparaba, el request pasaba de largo, y el router de Next —que SÍ
+  // decodifica para resolver la ruta— terminaba sirviendo un 500 en Vercel por el desajuste entre
+  // la URL codificada y la ruta ya decodificada. Confirmado en producción: el 500 traía
+  // `Referrer-Policy: strict-origin-when-cross-origin` (no `no-referrer`), o sea que el middleware
+  // había tratado el path como NO-admin.
+  //
+  // Si al decodificar el path cambia y cae en el área de admin, redirigimos a la forma canónica.
+  // Ese segundo request entra como `/admin/...` normal y pasa por el mismo gate que cualquier otro
+  // —sin duplicar la lógica de sesión— y el render nunca ve una URL codificada. Cubre los tres
+  // casos: `/%61dmin/inbox` sin sesión → canónica → gate → login; con sesión → canónica → render;
+  // y `/%61dmin/login` → `/admin/login` → render (sin loop ni 500). No hay bucle: la forma canónica
+  // ya decodificada cumple `decoded === pathname`, así que no vuelve a entrar acá.
+  //
+  // decodeURIComponent puede lanzar con secuencias malformadas (`%ZZ`, `%` suelto): fail-safe, se
+  // trata como no-admin (se queda con el path crudo). Next tampoco puede resolver esa ruta a una
+  // página real —usa el mismo decode que lanza—, así que no hay dato que exponer.
+  let decodedPathname = pathname
+  try {
+    decodedPathname = decodeURIComponent(pathname)
+  } catch {
+    decodedPathname = pathname
+  }
+  const decodedEsAdmin = decodedPathname === '/admin' || decodedPathname.startsWith('/admin/')
+  if (decodedPathname !== pathname && decodedEsAdmin) {
+    const canonicalUrl = new URL(req.url)
+    canonicalUrl.pathname = decodedPathname
+    const canonicalRedirect = NextResponse.redirect(canonicalUrl)
+    canonicalRedirect.headers.set('Content-Security-Policy', csp)
+    canonicalRedirect.headers.set('X-Content-Type-Options', 'nosniff')
+    canonicalRedirect.headers.set('X-Frame-Options', 'DENY')
+    canonicalRedirect.headers.set('Referrer-Policy', 'no-referrer')
+    canonicalRedirect.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+    return canonicalRedirect
+  }
+
   // Gate de sesión NextAuth para /admin/* (páginas HTML que abre Silvana en el
   // navegador). NO cubre /api/admin/ ni /api/webhooks/ — esos siguen con su
   // propio Bearer secret (lib/admin/auth.ts), pensado para llamadas de cron o
