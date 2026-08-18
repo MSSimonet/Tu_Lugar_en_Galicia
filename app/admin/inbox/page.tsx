@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { listarLeadsInbox } from '@/lib/admin/inboxRepo'
 import { AdminHeader } from '@/components/admin/ui/AdminPrimitives'
 import { LeadCard } from '@/components/admin/inbox/LeadCard'
+import { requireAdminSession } from '@/lib/admin/requireAdminSession'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -9,6 +10,8 @@ export const metadata: Metadata = {
 }
 
 export default async function InboxPage() {
+  await requireAdminSession()
+
   const leads = await listarLeadsInbox()
 
   return (
