@@ -9,6 +9,7 @@ import { AdminHeader, Card, KpiCard } from '@/components/admin/ui/AdminPrimitive
 import { EvolucionMensualChart } from '@/components/admin/dashboard/EvolucionMensualChart'
 import { SegmentacionOrigenChart } from '@/components/admin/dashboard/SegmentacionOrigenChart'
 import { CiudadesChart } from '@/components/admin/dashboard/CiudadesChart'
+import { requireAdminSession } from '@/lib/admin/requireAdminSession'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -16,6 +17,8 @@ export const metadata: Metadata = {
 }
 
 export default async function DashboardPage() {
+  await requireAdminSession()
+
   const [kpis, evolucion, segmentacion, ciudades] = await Promise.all([
     getKpisDelMes(),
     getEvolucionMensual(),
