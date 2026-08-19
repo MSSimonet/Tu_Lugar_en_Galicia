@@ -305,6 +305,31 @@ details > dd {
   }
 }
 
+/* ── Cierre del Hero con video contra el cuerpo de la página ─────────────── */
+/* Sólo lo usa /comunidad, que es el único Hero con video (ver PageHero.tsx).
+
+   EN CLARO ES UNA LÍNEA, no un fundido. El fundido de 120px iba de transparente a
+   --dz-fondo-pagina, y con video detrás eso significa disolver un vídeo oscuro
+   contra un fondo claro (#F0F0EB): 120px de niebla justo en la frontera. En las
+   otras cuatro páginas de Hero ese mismo fundido es casi invisible porque va de
+   --dz-fondo-marco a --dz-fondo-pagina, que en claro se separan 1,049:1 — el
+   propio comentario de --dz-fondo-marco lo dice: "casi no tiene nada que fundir".
+   O sea que quitar la disolución acá no rompe la familia: la acerca, porque deja
+   a las cinco páginas cerrando con un corte y no con niebla.
+
+   EN OSCURO SE QUEDA EL FUNDIDO. Ahí --dz-fondo-pagina es #0F1512 y el vídeo ya
+   viene oscurecido por el scrim, así que el degradado no se ve: no hay disolución
+   que quitar, y una línea clara sí se notaría como un elemento nuevo. */
+.dz-hero-video-cierre {
+  height: 1px;
+  background: var(--dz-borde);
+}
+
+.dark .dz-hero-video-cierre {
+  height: var(--dz-hero-fundido);
+  background: linear-gradient(to bottom, transparent 0, var(--dz-fondo-pagina) 100%);
+}
+
 /* ── Hero eyebrow — letter-spacing responsive ──────────────────────────── */
 /* Desktop: tracking amplio para dar presencia de badge */
 /* --eyebrow-tracking: leído por components/ui/Eyebrow.tsx (con fallback propio) —

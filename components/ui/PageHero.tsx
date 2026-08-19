@@ -192,13 +192,10 @@ export function PageHero({
         <source src={video.src} type="video/mp4" />
       </video>
       <div className="absolute inset-0" style={{ background: SCRIM_VIDEO }} />
-      <div
-        className="absolute inset-x-0 bottom-0"
-        style={{
-          height: 'var(--dz-hero-fundido)',
-          background: 'linear-gradient(to bottom, transparent 0, var(--dz-fondo-pagina) 100%)',
-        }}
-      />
+      {/* Cierre contra el cuerpo: línea en claro, fundido en oscuro. El alto y el
+          fondo salen de .dz-hero-video-cierre en globals.css, donde está el porqué
+          de que los dos temas no se resuelvan igual. */}
+      <div className="dz-hero-video-cierre absolute inset-x-0 bottom-0" />
     </div>
   ) : null
 
