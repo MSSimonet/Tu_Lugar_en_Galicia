@@ -18,7 +18,9 @@ const inputBase =
   // multiplicaba OTRO 0,5 y lo dejaba en 1,82:1 — y en estos formularios el placeholder es lo
   // unico que explica que escribir. Con --dz-muted mide 5,31:1 en claro y 5,84:1 en oscuro.
   + 'placeholder:[color:var(--dz-muted)] '
-  + 'focus:outline-none focus:ring-1 transition-colors'
+  // Sin `transition-colors` a propósito: si no, el borde coral de error no se pinta nunca.
+  // El porqué, con las medidas, está en components/contacto/FormularioContacto.tsx.
+  + 'focus:outline-none focus:ring-1'
 
 const inputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-dz-ui)',
@@ -324,6 +326,7 @@ export function FormularioComunidad() {
           className={inputBase}
           style={errors.email ? inputErrorStyle : inputStyle}
           placeholder="maria@ejemplo.com"
+          aria-invalid={errors.email ? true : undefined}
           aria-describedby={errors.email ? 'email-error' : undefined}
         />
         {errors.email && (
@@ -367,6 +370,7 @@ export function FormularioComunidad() {
               className={inputBase}
               style={errors.calle1 || errorUbicacion ? inputErrorStyle : inputStyle}
               placeholder="Rúa do Príncipe"
+              aria-invalid={errors.calle1 ? true : undefined}
               aria-describedby={errors.calle1 ? 'calle1-error' : undefined}
             />
             {errors.calle1 && (
@@ -387,6 +391,7 @@ export function FormularioComunidad() {
               className={inputBase}
               style={errors.calle2 || errorUbicacion ? inputErrorStyle : inputStyle}
               placeholder="Rúa Urzáiz"
+              aria-invalid={errors.calle2 ? true : undefined}
               aria-describedby={errors.calle2 ? 'calle2-error' : undefined}
             />
             {errors.calle2 && (
@@ -411,6 +416,7 @@ export function FormularioComunidad() {
             onBlur={() => validarCampo('ciudad')}
             className={inputBase}
             style={errors.ciudad ? inputErrorStyle : inputStyle}
+            aria-invalid={errors.ciudad ? true : undefined}
             aria-describedby={errors.ciudad ? 'ciudad-error' : undefined}
           >
             <option value="" disabled>Selecciona una ciudad</option>
@@ -441,6 +447,7 @@ export function FormularioComunidad() {
             className={inputBase}
             style={errors.nombre ? inputErrorStyle : inputStyle}
             placeholder="Marta"
+            aria-invalid={errors.nombre ? true : undefined}
             aria-describedby={errors.nombre ? 'nombre-error' : undefined}
           />
           {errors.nombre && (
@@ -518,12 +525,23 @@ export function FormularioComunidad() {
           </p>
         </div>
 
-        {/* aria-describedby en el FIELDSET y no en cada checkbox: el error es del grupo
-            ("selecciona al menos una"), no de una casilla concreta. Puesto en cada input, un
-            lector de pantalla repetiría el mismo error tres veces, una por opción.
-            Era el único de los cinco errores del formulario sin `id` y sin nadie que lo
-            referenciara: se anunciaba por su role="alert" al aparecer, pero después quedaba
-            huérfano — al tabular hasta las casillas no había forma de volver a oírlo. */}
+        {/* Los dos atributos van en sitios distintos, y a propósito:
+
+            · aria-describedby en el FIELDSET. El error es del grupo ("selecciona al menos
+              una"), no de una casilla concreta. Puesto en cada input, un lector de pantalla
+              releería el mensaje entero tres veces, una por opción. Era el único de los
+              cinco errores del formulario sin `id` y sin nadie que lo referenciara: se
+              anunciaba por su role="alert" al aparecer, pero después quedaba huérfano — al
+              tabular hasta las casillas no había forma de volver a oírlo.
+
+            · aria-invalid en CADA CASILLA, no en el fieldset. Un <fieldset> mapea a
+              role="group", y ARIA no admite aria-invalid en ese rol (sí en role="radiogroup",
+              que es otra cosa): ahí el atributo lo ignora el lector de pantalla. En un
+              checkbox sí está soportado. No contradice al punto anterior — aria-invalid se
+              anuncia como un estado corto ("no válido") al entrar en cada opción, no
+              releyendo el mensaje, así que repetirlo por casilla no molesta como sí lo haría
+              con describedby. Mismo criterio que CheckboxGroup en
+              components/conocernos/form-fields.tsx. */}
         <fieldset
           className="flex flex-col gap-2"
           aria-describedby={errors.disponibilidad ? 'disponibilidad-error' : undefined}
@@ -543,6 +561,7 @@ export function FormularioComunidad() {
                   type="checkbox"
                   checked={disponibilidad.includes(actividad.id)}
                   onChange={() => toggleActividad(actividad.id)}
+                  aria-invalid={errors.disponibilidad ? true : undefined}
                   className="h-4 w-4 shrink-0 cursor-pointer"
                   style={{ accentColor: 'var(--dz-accent)' }}
                 />
@@ -636,6 +655,7 @@ export function FormularioComunidad() {
             onChange={e => { setRgpd(e.target.checked); limpiarError('rgpd') }}
             className="h-4 w-4 cursor-pointer"
             style={{ accentColor: 'var(--dz-accent)' }}
+            aria-invalid={errors.rgpd ? true : undefined}
             aria-describedby={errors.rgpd ? 'rgpd-error' : undefined}
           />
         </label>
