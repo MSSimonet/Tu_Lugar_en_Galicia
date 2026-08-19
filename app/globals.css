@@ -76,9 +76,10 @@
      Hoy este token solo pinta texto sobre --color-estado-ok y --color-estado-error,
      ambos fijos: 4.70:1 y 6.16:1. El caso sobre --color-laton se fue a --dz-accent-ink
      (5.34:1) porque blanco sobre ámbar daba 3.44:1, el mismo fallo que ya documentaba
-     --dz-accent-ink. Ojo con el nombre: ya NO se usa sobre --color-laton.
+     --dz-accent-ink. Renombrado de --color-sobre-laton (2026-08-18): el nombre viejo
+     mentía — ya no va sobre --color-laton, sino como texto sobre los fondos de estado.
      No darle override en oscuro: sus dos fondos son fijos en ambos temas. */
-  --color-sobre-laton:   #F5F5F5;
+  --color-texto-sobre-estado: #F5F5F5;
   /* Texto sobre los botones acento de la capa chrome. Fijo en ambos temas —
      mismo criterio y mismo valor que --dz-accent-ink, que ya resolvía bien este
      problema en los CTA --dz-*. Nace para que el CTA "Hablar con Gina" y los

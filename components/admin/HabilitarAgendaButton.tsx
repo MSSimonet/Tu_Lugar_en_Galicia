@@ -76,14 +76,14 @@ export function HabilitarAgendaButton({ recordId, token, codigoExistente }: Prop
       estado === 'error'   ? 'var(--color-estado-error)' :
                              'var(--color-granito)',
     // Un color por estado, porque los cuatro fondos son distintos y ninguno solo
-    // pasaba AA contra todos. Antes era --color-sobre-laton fijo para los cuatro:
+    // pasaba AA contra todos. Antes era --color-texto-sobre-estado fijo para los cuatro:
     // fallaba sobre --color-laton (3.44:1) y, peor, el estado de reposo quedaba en
     // 1.19:1 en tema oscuro — --color-granito invierte con el tema y el texto no,
     // así que era blanco sobre un fondo claro.
     color:
-      estado === 'done'    ? 'var(--color-sobre-laton)' : // 4.70:1 sobre estado-ok
-      estado === 'warning' ? 'var(--dz-accent-ink)' :     // 5.34:1 sobre laton (blanco daba 3.44:1)
-      estado === 'error'   ? 'var(--color-sobre-laton)' : // 6.03:1 sobre estado-error
+      estado === 'done'    ? 'var(--color-texto-sobre-estado)' : // 4.70:1 sobre estado-ok
+      estado === 'warning' ? 'var(--dz-accent-ink)' :            // 5.34:1 sobre laton (blanco daba 3.44:1)
+      estado === 'error'   ? 'var(--color-texto-sobre-estado)' : // 6.03:1 sobre estado-error
                              'var(--color-blanco)',       // invierte con granito: 14.92:1 claro / 15.74:1 oscuro
   }
 
