@@ -178,9 +178,9 @@ export function useGinaEditor({
           style={{
             borderColor: 'var(--color-laton)',
             color: 'var(--dz-ink)',
-            // --color-blanco y no --color-sobre-laton: este fondo tiene encima --dz-ink,
+            // --color-blanco y no --color-texto-sobre-estado: este fondo tiene encima --dz-ink,
             // que invierte con el tema, así que el fondo también tiene que invertir.
-            // --color-sobre-laton es fijo (#F5F5F5) y en oscuro dejaba el texto en
+            // --color-texto-sobre-estado es fijo (#F5F5F5) y en oscuro dejaba el texto en
             // 1.15:1 — el botón "Cancelar" era ilegible. Ahora 16.15:1 en claro y
             // 16.27:1 en oscuro; el borde --color-laton da 3.02:1 y 5.43:1.
             backgroundColor: 'var(--color-blanco)',

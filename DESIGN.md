@@ -83,7 +83,7 @@ sus valores hacia el mismo ámbar, sin tocar `Header.tsx`/`Footer.tsx`:
 | `--laton-ink` | `#16140F` | Texto sobre los botones acento de la capa chrome — fijo, no invierte |
 | `--color-laton-oscuro` | `#9C5F19` | Hover |
 | `--color-laton-borde` | `#7A5230` | Bordes estructurales del header |
-| `--color-nav-muted` / `--color-header-active` / `--color-sobre-laton` / `--color-footer-border` | sin cambios | Neutros ya seguros, no necesitaban retinte |
+| `--color-nav-muted` / `--color-header-active` / `--color-texto-sobre-estado` / `--color-footer-border` | sin cambios | Neutros ya seguros, no necesitaban retinte |
 
 #### Excepción: la BANDA del header ya no es siempre oscura (nav flotante, 2026-08-03)
 
@@ -284,8 +284,9 @@ claro/oscuro, solo el contenido de página lo hace. Ver tabla de retinte en §2.
 
 - **NO-TOCAR:** la lógica de conversación (`lib/gina/**`, `app/api/gina/**`) está protegida —
   solo forma/color/animación del widget son editables
-- Hereda automáticamente `--color-laton`/`--color-sobre-laton` (capa chrome) en los botones que
-  ya usaban esos tokens — sin cambios de código necesarios
+- Hereda automáticamente `--color-laton` (capa chrome) en los botones que ya usaban ese token —
+  sin cambios de código necesarios. (El botón "Cancelar" del editor de Gina se movió a
+  `--color-blanco` porque invierte con el tema; ya no usa el token de texto sobre estado.)
 - Trigger: `CustomEvent('gina:open')`, mismo mecanismo en Header, Hero y CTA final
 
 ### FAQAccordion
