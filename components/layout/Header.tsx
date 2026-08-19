@@ -19,6 +19,13 @@ import { Sun, Moon } from 'lucide-react'
 // toca --color-header-bg, que además de acá lo consumen Footer (vía
 // --color-footer-bg), GinaWidget y VistaEnVivo.
 
+declare global {
+  interface Window {
+    /** Lo instala el script de tema de app/layout.tsx — ver el comentario de ese archivo. */
+    __tlgAplicarTema?: (dark: boolean) => void
+  }
+}
+
 const navLinks = [
   { label: 'Inicio',         href: '/'              },
   { label: 'Cómo funciona',  href: '/como-funciona' },
@@ -77,9 +84,20 @@ export function Header() {
   // .dark en <html> y persiste en localStorage, y el script de app/layout.tsx lo
   // relee antes de hidratar (respetando prefers-color-scheme si no hay elección
   // guardada). No hace falta ningún ThemeProvider.
+  //
+  // Lo que NO puede hacer es conmutar la clase por su cuenta: hay que pasar por
+  // __tlgAplicarTema, que apaga las transiciones mientras dura el cambio. Al
+  // togglear la clase a pelo, Chromium deja congelado el valor computado de toda
+  // propiedad transicionada que dependa de un token de tema — la banda del header
+  // se quedaba clara con el texto del nav ya en su color oscuro (1,14:1), y el
+  // panel de Gina claro sobre claro. El porqué completo está en app/layout.tsx.
   const toggleTheme = () => {
-    const newIsDark = document.documentElement.classList.toggle('dark')
+    const newIsDark = !document.documentElement.classList.contains('dark')
     localStorage.setItem('tlg-theme', newIsDark ? 'dark' : 'light')
+    // El fallback deja el comportamiento anterior (con el congelado), no un botón
+    // muerto, si el script de tema no llegó a ejecutarse.
+    if (window.__tlgAplicarTema) window.__tlgAplicarTema(newIsDark)
+    else document.documentElement.classList.toggle('dark', newIsDark)
     setIsDark(newIsDark)
   }
 

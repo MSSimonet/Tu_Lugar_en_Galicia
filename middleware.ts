@@ -7,7 +7,7 @@ import { getToken } from 'next-auth/jwt'
 // Si se edita el texto de alguno de estos scripts, recalcular su hash o el
 // navegador lo bloqueará silenciosamente (violación CSP en consola).
 const INLINE_SCRIPT_HASHES = [
-  "'sha256-wha9mgRhIs6XGqBOTvvg6RFVdW/NpoonZ/vgwLvFFSc='", // app/layout.tsx — script de tema
+  "'sha256-edYg9fl05ovKB+T26P9DMd3yq6CIIJHZWwUg9FA7RTI='", // app/layout.tsx — script de tema
   "'sha256-D6OU0n76o3oia0DoRGnz4iTMPdRK/g6+BrT3Hgt0ckM='", // app/page.tsx — localBusinessSchema
   "'sha256-6h87612lImx4Fr21J9FjdmL2CAW9sx7nW11lyuFOLsg='", // app/como-funciona/page.tsx — serviceSchema
   "'sha256-1ufvVU5bMgI8WxxGfjT0d6fy4F+nOdBtDMvLySZU3nA='", // app/faq/page.tsx — faqSchema

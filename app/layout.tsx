@@ -118,9 +118,28 @@ export default async function RootLayout({
             reaccionaba hasta recargar la página (auditoría 2026-07-25, M3). La
             preferencia guardada se relee dentro del handler, así una elección
             explícita del usuario siempre gana sobre la del sistema.
+
+            El cambio de tema va SIEMPRE por `t()`, que apaga las transiciones
+            mientras conmuta la clase. No es cosmético: si una propiedad
+            transicionada toma su valor de una custom property que cambia en
+            <html>, Chromium arranca la CSSTransition, no vuelve a resolver el
+            var() y la deja en estado `running` para siempre — el valor computado
+            queda clavado en el tema anterior. Medido en el preview del
+            2026-08-19: 32 elementos congelados al togglear, entre ellos la banda
+            del header (texto del nav a 1,14:1) y el panel de Gina, que se queda
+            claro sobre claro. Un elemento idéntico SIN transición sigue el
+            cambio sin problema; ese contraste es el que identifica la causa.
+            Apagar las transiciones durante la conmutación evita que la
+            transición llegue a existir, y se restauran acto seguido: el swap de
+            tema es instantáneo, todo lo demás sigue animando igual.
+
+            `window.__tlgAplicarTema` existe para que el botón del Header entre
+            por esta misma puerta en vez de togglear la clase por su cuenta.
+            Ver components/layout/Header.tsx.
+
             OJO: si se edita este texto hay que recalcular su hash SHA-256 en
             middleware.ts o el CSP lo bloquea. */}
-        <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `(function(){var m=window.matchMedia('(prefers-color-scheme: dark)');var a=function(){var s=localStorage.getItem('tlg-theme');document.documentElement.classList.toggle('dark',s?s==='dark':m.matches)};a();m.addEventListener('change',a);})();` }} />
+        <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `(function(){var m=window.matchMedia('(prefers-color-scheme: dark)');var t=function(d){var s=document.createElement('style');s.appendChild(document.createTextNode('*,*::before,*::after{transition:none !important}'));document.head.appendChild(s);void document.body.offsetHeight;document.documentElement.classList.toggle('dark',d);void document.body.offsetHeight;s.remove()};window.__tlgAplicarTema=t;var a=function(){var s=localStorage.getItem('tlg-theme');t(s?s==='dark':m.matches)};a();m.addEventListener('change',a);})();` }} />
         <MotionProvider>
           <ScrollToTop />
           {!isAdminRoute && <Header />}
