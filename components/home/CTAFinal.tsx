@@ -32,8 +32,8 @@ export function CTAFinal() {
           {/* --dz-accent-text y no --dz-accent: el acento crudo es un color de
               SUPERFICIE, no de texto — sobre el fondo de página daba 2,19:1 y
               fallaba en los tres anchos (medido 2026-07-31). El token de texto
-              ya resuelve los dos temas solo: #9C5F19 en claro y el acento crudo
-              en oscuro, donde sí es AA (globals.css:770). */}
+              ya resuelve los dos temas solo: #945A18 en claro y el acento crudo
+              en oscuro, donde sí es AA. */}
           <span style={{ color: 'var(--dz-accent-text)' }}>Galicia</span>?
         </h2>
 

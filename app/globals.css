@@ -536,16 +536,16 @@ details > dd {
                              separándolas en vez de fundirlas. Se mantiene la relación
                              previa: sección y superficie comparten valor.
                              Medido: 16.15:1 --dz-ink · 5.08:1 --dz-muted ·
-                             4.53:1 --dz-accent-text · 3.06:1 --dz-borde-input. */
+                             4.93:1 --dz-accent-text · 3.06:1 --dz-borde-input. */
   --dz-luz:      #F0F0F0; /* fondo de tarjeta/superficie. #FFFFFF hasta 2026-08-11, luego
                              #F7F5F0 (mismo valor que --dz-papel), y #F0F0F0 desde
                              2026-08-13. Contraste medido sobre este fondo:
                              16.15:1 --dz-ink, 5.08:1 --dz-muted, 3.06:1 --dz-borde-input,
-                             4.53:1 --dz-accent-text.
-                             OJO con --dz-accent-text: 4.53:1 deja apenas 0.03 sobre el
-                             4.5:1 de WCAG 1.4.3. Es un margen fino ACEPTADO a conciencia,
-                             no un descuido — pero significa que cualquier retoque futuro
-                             de --dz-accent-text o de este fondo perfora AA. Medir antes.
+                             4.93:1 --dz-accent-text.
+                             --dz-accent-text se oscureció a #945A18 (2026-08-18) para dejar
+                             ~0.42 sobre el 4.5:1 de WCAG 1.4.3, en vez de los 0.02-0.03 que
+                             raspaba antes (#9C5F19). Sigue siendo un token calibrado por
+                             contraste: medir antes de tocarlo a él o a este fondo.
                              --dz-papel acompañó el cambio y vale lo mismo, así que la
                              tarjeta se sigue fundiendo con su sección, como antes. */
   --dz-muted:    #6B6558; /* texto secundario — AA 5.08:1 sobre dz-papel */
@@ -562,10 +562,13 @@ details > dd {
   /* Fijos — no invierten con el tema, igual filosofía que --po-ouro */
   --dz-accent:       #E0932E; /* acento único de marca */
   --dz-accent-hover: #C27A1F;
-  --dz-accent-text:  #9C5F19; /* texto AA sobre dz-papel (4.53:1 desde que dz-papel es
-                                 #F0F0F0; era 4.74:1 sobre #F7F5F0) — en dark usa
-                                 --dz-accent directo (7.75:1). Margen de 0.03: medir
-                                 antes de tocar este token o el fondo. */
+  --dz-accent-text:  #945A18; /* texto AA sobre dz-papel. Oscurecido de #9C5F19 (2026-08-18)
+                                 para despejar margen real: sobre #F0F0F0 pasa de 4.53:1 a
+                                 4.93:1, y sobre el off-white apenas tintado #F0F0EB (secciones
+                                 faq/comunidad/apps) de 4.52:1 a 4.92:1 — ~0.42 sobre el 4.5:1
+                                 de WCAG en vez de 0.02-0.03. En dark usa --dz-accent directo
+                                 (7.75:1), sin cambios. Matiz casi intacto: mismo ámbar apenas
+                                 más oscuro, el canal azul casi no se toca (25→24). */
   /* Variante para texto que va sobre un fondo TINTADO con el propio acento, no sobre el
      fondo limpio. --dz-accent-text está calibrado contra --dz-papel; en cuanto el fondo
      lleva una capa del acento se oscurece y se come el margen. Caso concreto: la píldora
@@ -739,14 +742,14 @@ details > dd {
      en #F7F5F0 y las tarjetas de acordeón se volvieron planas contra el fondo. Apuntar a
      --dz-fondo-pagina recupera la separación reusando el sistema de dos capas que ya existe,
      en vez de devolverle el blanco a las tarjetas. Medido sobre #F0F0EB: 16.10:1 --au-heading,
-     5.06:1 --au-hero-body, 4.52:1 --au-accent-text. Los tres AA.
+     5.06:1 --au-hero-body, 4.92:1 --au-accent-text (era 4.52:1 con #9C5F19). Los tres AA.
      Solo se toca la definición CLARA: en oscuro --dz-papel (#0E0D0B) y --dz-luz (#1B1913) ya
      son distintos entre sí, así que ahí nunca hubo aplanamiento. */
   --au-bg:              var(--dz-fondo-pagina);
   --au-header-bg:       var(--dz-luz);
   --au-card:            var(--dz-luz);
   --au-accent:          #E0932E; /* retinte Deslumbrante (= --dz-accent) — acento y bordes activos, fijo en ambos temas */
-  --au-accent-text:     #9C5F19; /* = --dz-accent-text — AA sobre fondo claro */
+  --au-accent-text:     #945A18; /* = --dz-accent-text (oscurecido 2026-08-18) — AA sobre fondo claro, 4.92:1 sobre el tintado */
   --au-hero-heading:    var(--dz-ink);
   --au-heading:         var(--dz-ink);
   --au-hero-body:       var(--dz-muted);
