@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorized } from '@/lib/admin/auth'
 import { getLeadsConCitaProxima, type LeadRecord } from '@/lib/admin/leadsRepo'
-import { generateAdminToken } from '@/lib/admin/tokens'
+import { generateScopedToken } from '@/lib/admin/tokens'
 import { sendEmail, escapeHtml } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
 
@@ -176,7 +176,7 @@ function buildEmail(records: LeadRecord[], siteUrl: string): string {
   })
 
   const cartas = records.map(r => {
-    const token      = generateAdminToken(r.id)
+    const token      = generateScopedToken('admin', r.id)
     const profileUrl = `${siteUrl}/admin/lead/${r.id}?token=${encodeURIComponent(token)}`
     return buildRecordatorio(r, profileUrl)
   }).join('\n')

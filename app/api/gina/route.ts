@@ -21,7 +21,7 @@ import type { TranscripcionEntry } from '@/lib/gina/transcripcion'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { getRealIp } from '@/lib/utils/ip'
-import { generateAdminToken, verifyAdminToken } from '@/lib/admin/tokens'
+import { generateScopedToken, verifyScopedToken } from '@/lib/admin/tokens'
 import { armarPlan } from '@/lib/plan/armador'
 import { generarPlanPdf } from '@/lib/plan/generarPdf'
 import { sendEmail, buildPlanEmail, buildPlanEmailFallidoAlerta } from '@/lib/admin/email'
@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
     let firmaValida = false
     if (typeof sesion.leadIdSig === 'string') {
       try {
-        verifyAdminToken(sesion.leadId, sesion.leadIdSig)
+        verifyScopedToken('gina-sesion', sesion.leadId, sesion.leadIdSig)
         firmaValida = true
       } catch {
         firmaValida = false
@@ -218,7 +218,7 @@ export async function POST(req: NextRequest) {
       sesionParaDevolver = {
         ...sesionActualizada,
         leadId,
-        leadIdSig: generateAdminToken(leadId),
+        leadIdSig: generateScopedToken('gina-sesion', leadId),
       }
     } else {
       console.error('[gina] nivel1 falló tras 3 intentos — el guardado completo hará insert como fallback')
