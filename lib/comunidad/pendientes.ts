@@ -27,7 +27,7 @@ import { crearSobre, abrirSobre } from './sobreFirmado'
 import type { UpsertPerfilInput } from './perfil'
 
 /**
- * Igualado al TTL de `verifyAdminToken` (24 h, lib/admin/tokens.ts:3) a propósito: si el
+ * Igualado al TTL de los tokens (24 h, lib/admin/tokens.ts:3) a propósito: si el
  * payload viviera más que la firma, quedarían registros pendientes imposibles de confirmar
  * ocupando lugar; si viviera menos, un link todavía válido fallaría sin explicación. Que
  * expiren juntos deja un solo estado final posible.

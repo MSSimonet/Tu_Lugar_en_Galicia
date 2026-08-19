@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { verifyAdminToken } from '@/lib/admin/tokens'
+import { verifyScopedToken } from '@/lib/admin/tokens'
 import { getRecord } from '@/lib/admin/leadsRepo'
 import { HabilitarAgendaButton } from '@/components/admin/HabilitarAgendaButton'
 import { isValidUuid } from '@/lib/utils/validation'
@@ -211,7 +211,7 @@ export default async function AdminLeadPage({ params, searchParams }: PageProps)
   }
 
   try {
-    verifyAdminToken(recordId, token)
+    verifyScopedToken('admin', recordId, token)
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Token inválido'
     return <ErrorPage mensaje={msg === 'El enlace expiró (24 h)' ? 'El enlace expiró. Generá uno nuevo desde el resumen diario.' : 'Token inválido o malformado.'} />

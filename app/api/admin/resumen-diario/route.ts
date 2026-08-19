@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorized } from '@/lib/admin/auth'
 import { listRecordsPorCalificacion, patchRecord, type LeadRecord } from '@/lib/admin/leadsRepo'
-import { generateAdminToken } from '@/lib/admin/tokens'
+import { generateScopedToken } from '@/lib/admin/tokens'
 import { sendEmail } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
 
@@ -99,7 +99,7 @@ function buildCard(record: LeadRecord, siteUrl: string): string {
   const dias    = diasDesde(record.createdTime)
   const uc      = urgColor(dias)
   const summary = buildSummary(f)
-  const token   = generateAdminToken(record.id)
+  const token   = generateScopedToken('admin', record.id)
   const profileUrl = `${siteUrl}/admin/lead/${record.id}?token=${encodeURIComponent(token)}`
   const pdfUrl  = `${siteUrl}/api/plan/${record.id}/pdf?token=${encodeURIComponent(token)}`
 
@@ -168,7 +168,7 @@ function buildSeguimientoCard(record: LeadRecord, siteUrl: string): string {
   const f          = record.fields
   const nombre     = str(f.nombreCompleto)
   const email      = str(f.email)
-  const token      = generateAdminToken(record.id)
+  const token      = generateScopedToken('admin', record.id)
   const profileUrl = `${siteUrl}/admin/lead/${record.id}?token=${encodeURIComponent(token)}`
   const pdfUrl     = `${siteUrl}/api/plan/${record.id}/pdf?token=${encodeURIComponent(token)}`
   const fechaHab   = typeof f.fechaHabilitacion === 'string' ? f.fechaHabilitacion : record.createdTime

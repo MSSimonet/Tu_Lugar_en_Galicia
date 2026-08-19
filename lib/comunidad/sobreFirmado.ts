@@ -35,7 +35,7 @@
 
 import { randomUUID } from 'crypto'
 import { Redis } from '@upstash/redis'
-import { generateAdminToken, verifyAdminToken } from '@/lib/admin/tokens'
+import { generateLegacyToken, verifyLegacyToken } from '@/lib/admin/tokens'
 
 /** Los flujos que usan sobres. Agregar uno acá es agregar un dominio, no un módulo. */
 export type DominioSobre = 'pendiente' | 'gestion' | 'mensaje'
@@ -44,7 +44,7 @@ export type ResultadoSobre<T> =
   | { ok: true; payload: T }
   /** Firma que no valida, o token malformado. */
   | { ok: false; motivo: 'invalido' }
-  /** Firma correcta pero emitida hace más de 24 h (el TTL fijo de verifyAdminToken). */
+  /** Firma correcta pero emitida hace más de 24 h (el TTL fijo de los tokens en lib/admin/tokens). */
   | { ok: false; motivo: 'expirado' }
   /** Firma válida y vigente, pero el payload ya no está: se consumió, o venció en Redis. */
   | { ok: false; motivo: 'usado' }
@@ -68,7 +68,7 @@ function getRedis(): Redis | null {
  * Devuelve null si falta la config de Upstash — el llamador decide qué status responder.
  *
  * Sobre el TTL: lo elige cada flujo, pero nunca conviene que supere las 24 h de
- * `verifyAdminToken`. Si el payload viviera más que la firma quedarían sobres imposibles de
+ * las 24 h de los tokens. Si el payload viviera más que la firma quedarían sobres imposibles de
  * abrir ocupando lugar; más corto sí es válido, y es lo que hacen los flujos sensibles.
  */
 export async function crearSobre<T>(
@@ -82,7 +82,7 @@ export async function crearSobre<T>(
   const id = randomUUID()
   await redis.set(claveDe(dominio, id), payload, { ex: ttlSegundos })
 
-  return { id, token: generateAdminToken(sujetoDe(dominio, id)) }
+  return { id, token: generateLegacyToken(sujetoDe(dominio, id)) }
 }
 
 /**
@@ -103,7 +103,7 @@ export async function abrirSobre<T>(
   opciones: { consumir: boolean },
 ): Promise<ResultadoSobre<T>> {
   try {
-    verifyAdminToken(sujetoDe(dominio, id), token)
+    verifyLegacyToken(sujetoDe(dominio, id), token)
   } catch (err) {
     const expirado = err instanceof Error && err.message.includes('expiró')
     return { ok: false, motivo: expirado ? 'expirado' : 'invalido' }

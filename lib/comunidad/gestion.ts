@@ -13,7 +13,7 @@
  *       acto es crear la fila; acá la persona carga la página, mira lo que tiene, y recién
  *       después decide. Con `consumir: true` el enlace moriría antes de servir.
  *
- *   (2) TTL de 1 HORA, no 24. `verifyAdminToken` tiene su ventana fija en 24 h y no se toca
+ *   (2) TTL de 1 HORA, no 24. Los tokens de lib/admin/tokens tienen su ventana fija en 24 h y no se toca
  *       (la usan admin y Gina); el control real es el TTL de Redis. Es una página desde la que
  *       se puede publicar un teléfono o borrar una cuenta: cuanto menos viva el enlace, mejor.
  *

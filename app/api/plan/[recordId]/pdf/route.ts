@@ -4,7 +4,7 @@ import { Redis } from '@upstash/redis'
 import { getLead } from '@/lib/leads'
 import { armarPlan } from '@/lib/plan/armador'
 import { generarPlanPdf } from '@/lib/plan/generarPdf'
-import { verifyAdminToken } from '@/lib/admin/tokens'
+import { verifyScopedToken } from '@/lib/admin/tokens'
 import { getRealIp } from '@/lib/utils/ip'
 import { isValidUuid } from '@/lib/utils/validation'
 
@@ -40,7 +40,7 @@ export async function GET(
 
   const token = req.nextUrl.searchParams.get('token') ?? ''
   try {
-    verifyAdminToken(recordId, token)
+    verifyScopedToken('admin', recordId, token)
   } catch {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
@@ -85,7 +85,12 @@ export async function GET(
     return NextResponse.json({ error: 'Error al generar el PDF' }, { status: 500 })
   }
 
-  const slug = lead.nombreCompleto.trim().replace(/\s+/g, '-').toLowerCase()
+  // El nombre lo escribe el usuario: se limpia a [a-z0-9-] para que no viaje ningún separador
+  // de ruta ni comilla dentro del filename del adjunto (F2, mismo patrón que app/api/gina).
+  // `|| 'cliente'` cubre el nombre que queda vacío tras el filtrado (p. ej. alfabeto no latino).
+  const slug =
+    lead.nombreCompleto.trim().replace(/\s+/g, '-').toLowerCase().replace(/[^a-z0-9-]/g, '') ||
+    'cliente'
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/pdf',

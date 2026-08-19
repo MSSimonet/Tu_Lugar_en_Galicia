@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
-import { verifyAdminToken } from '@/lib/admin/tokens'
+import { verifyScopedToken } from '@/lib/admin/tokens'
 import { generateAgendaCode } from '@/lib/admin/codes'
 import { getRecord, patchRecord } from '@/lib/admin/leadsRepo'
 import { sendEmail, buildAgendaEmail } from '@/lib/admin/email'
@@ -54,12 +54,12 @@ export async function POST(
   }
 
   try {
-    verifyAdminToken(recordId, token)
-  } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Token inválido' },
-      { status: 401 },
-    )
+    verifyScopedToken('admin', recordId, token)
+  } catch {
+    // Genérico a propósito (F3): no devolver el motivo del fallo del token al cliente —
+    // igual que la ruta hermana app/api/plan/[recordId]/pdf. El detalle no aporta nada
+    // accionable (el HMAC es infalsificable) y se guarda solo server-side si hace falta.
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 
   // Leer el registro en Supabase

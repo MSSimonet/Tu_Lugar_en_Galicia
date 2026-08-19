@@ -46,7 +46,7 @@ vi.mock('@upstash/redis', () => ({
 
 // Importado despues del mock a proposito (vi.mock se eleva igual, pero deja explicito el orden).
 import { crearPendiente, consumirPendiente } from './pendientes'
-import { generateAdminToken } from '@/lib/admin/tokens'
+import { generateScopedToken } from '@/lib/admin/tokens'
 
 const PERFIL: UpsertPerfilInput = {
   email: 'alguien@ejemplo.test',
@@ -142,15 +142,15 @@ describe('consumirPendiente — firmas que deben rechazarse', () => {
     })
   })
 
-  it('SEPARACION DE DOMINIO: rechaza un token firmado sobre el uuid pelado', async () => {
+  it('SEPARACION DE DOMINIO: rechaza el token del flujo de admin sobre el mismo uuid', async () => {
     const creado = await crearPendiente(PERFIL)
 
-    // Este es exactamente el token que emitiria el flujo de admin para un recordId igual a
-    // este uuid: mismo INTERNAL_API_SECRET, misma funcion, pero sin el prefijo de dominio.
-    // Los leads viven en Supabase, asi que sus ids TAMBIEN son uuid — sin el prefijo, los dos
-    // universos de tokens serian intercambiables. Si este test se pone verde con `ok: true`,
-    // se rompio la separacion.
-    const tokenDeOtroDominio = generateAdminToken(creado!.id)
+    // Este es exactamente el token que emite el flujo de admin (ambito 'admin') para un recordId
+    // igual a este uuid: mismo INTERNAL_API_SECRET, pero otro ambito y sin el prefijo de dominio
+    // del sobre. Los leads viven en Supabase, asi que sus ids TAMBIEN son uuid — sin la
+    // separacion de ambito/dominio los dos universos de tokens serian intercambiables. Si este
+    // test se pone verde con `ok: true`, se rompio la separacion.
+    const tokenDeOtroDominio = generateScopedToken('admin', creado!.id)
 
     expect(await consumirPendiente(creado!.id, tokenDeOtroDominio)).toEqual({
       ok: false,

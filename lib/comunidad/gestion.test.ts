@@ -41,7 +41,7 @@ vi.mock('@upstash/redis', () => ({
 
 import { crearSesionGestion, leerSesionGestion, cerrarSesionGestion } from './gestion'
 import { crearPendiente } from './pendientes'
-import { generateAdminToken } from '@/lib/admin/tokens'
+import { generateScopedToken } from '@/lib/admin/tokens'
 
 const EMAIL = 'vecina@ejemplo.test'
 
@@ -152,9 +152,9 @@ describe('separación de dominio entre flujos', () => {
     })
   })
 
-  it('un token firmado sobre el uuid pelado (forma de admin) tampoco sirve', async () => {
+  it('el token del flujo de admin (otro ambito) tampoco sirve', async () => {
     const sesion = await crearSesionGestion(EMAIL)
-    const tokenDeAdmin = generateAdminToken(sesion!.id)
+    const tokenDeAdmin = generateScopedToken('admin', sesion!.id)
 
     expect(await leerSesionGestion(sesion!.id, tokenDeAdmin)).toEqual({
       ok: false,
