@@ -15,7 +15,16 @@ const inputBase =
   // multiplicaba OTRO 0,5 y lo dejaba en 1,82:1 — y en estos formularios el placeholder es lo
   // unico que explica que escribir. Con --dz-muted mide 5,31:1 en claro y 5,84:1 en oscuro.
   + 'placeholder:[color:var(--dz-muted)] '
-  + 'focus:outline-none focus:ring-1 transition-colors'
+  // Sin `transition-colors`: con ella, el borde coral del estado de error NUNCA llegaba a
+  // pintarse. Chromium congela el valor computado de una propiedad transicionada cuando el
+  // valor nuevo es un var() — aquí `border-color: var(--color-coral)` de inputErrorStyle —,
+  // así que el campo se quedaba con el borde neutro y del error solo se veía el mensaje.
+  // Medido el 2026-08-19 sobre el DOM: con transición el borde queda en rgb(141,137,127)
+  // (que es --dz-borde-input) aunque el style inline ya diga var(--color-coral); sin
+  // transición da rgb(184,73,47), el coral correcto. Con un color literal en vez de var()
+  // también funciona, lo que aísla al var() como el desencadenante. Es el mismo mecanismo
+  // que congelaba la banda del header al cambiar de tema (ver app/layout.tsx).
+  + 'focus:outline-none focus:ring-1'
 
 const inputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-dz-ui)',
@@ -157,6 +166,7 @@ export function FormularioContacto() {
             className={inputBase}
             style={errores.nombre ? inputErrorStyle : inputStyle}
             placeholder="María García"
+            aria-invalid={errores.nombre ? true : undefined}
             aria-describedby={errores.nombre ? 'nombre-error' : undefined}
           />
           {errores.nombre && (
@@ -183,6 +193,7 @@ export function FormularioContacto() {
             className={inputBase}
             style={errores.email ? inputErrorStyle : inputStyle}
             placeholder="maria@ejemplo.com"
+            aria-invalid={errores.email ? true : undefined}
             aria-describedby={errores.email ? 'email-error' : undefined}
           />
           {errores.email && (
@@ -230,6 +241,7 @@ export function FormularioContacto() {
           className={`${inputBase} resize-y`}
           style={errores.mensaje ? inputErrorStyle : inputStyle}
           placeholder="Cuéntanos tu situación, ciudad de destino, cuándo planeas llegar…"
+          aria-invalid={errores.mensaje ? true : undefined}
           aria-describedby={errores.mensaje ? 'mensaje-error' : undefined}
         />
         {errores.mensaje && (
@@ -247,6 +259,7 @@ export function FormularioContacto() {
           onBlur={() => validarCampo('rgpd')}
           className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer"
           style={{ accentColor: 'var(--dz-accent)' }}
+          aria-invalid={errores.rgpd ? true : undefined}
           aria-describedby={errores.rgpd ? 'rgpd-error' : undefined}
         />
         <label

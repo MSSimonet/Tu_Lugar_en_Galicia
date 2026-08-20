@@ -1,7 +1,7 @@
 'use client'
 
 import type { FormState, FormErrors } from './useFormulario'
-import { RadioGroup, CheckboxGroup, labelClass, errorClass, sectionTitleClass, sectionClass } from './form-fields'
+import { RadioGroup, CheckboxGroup, labelClass, sectionTitleClass, sectionClass } from './form-fields'
 
 type Props = {
   form: Pick<FormState, 'adultos' | 'hayMenores' | 'ninos' | 'adolescentes' | 'mascotas' | 'mascotaTipo' | 'cantidadPerros' | 'cantidadGatos' | 'mascotaPeso'>
@@ -137,7 +137,12 @@ export function SeccionFamilia({ form, errors, set, setHayMenores, setMascotas, 
                     Tipo de mascota (puedes marcar varias)
                     <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
                   </legend>
+                  {/* El error se le pasa al componente en vez de pintarlo aquí fuera: así
+                      sale con id y el grupo lo referencia por aria-describedby, como los
+                      otros 20. Suelto aquí, el <p> quedaba sin id y sin nadie que lo
+                      apuntara. El aspecto no cambia — es el mismo errorClass. */}
                   <CheckboxGroup
+                    name="mascotaTipo"
                     options={[
                       { value: 'perro' as const, label: 'Perro' },
                       { value: 'gato' as const, label: 'Gato' },
@@ -145,9 +150,9 @@ export function SeccionFamilia({ form, errors, set, setHayMenores, setMascotas, 
                     ]}
                     selected={form.mascotaTipo}
                     onToggle={toggleMascotaTipo}
+                    error={errors.mascotaTipo}
                     labelId="rg-mascotaTipo"
                   />
-                  {errors.mascotaTipo && <p className={errorClass} role="alert">{errors.mascotaTipo}</p>}
                 </fieldset>
               </div>
 

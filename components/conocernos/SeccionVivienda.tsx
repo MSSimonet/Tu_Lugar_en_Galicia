@@ -2,7 +2,7 @@
 
 import type { LeadData } from '@/lib/leads'
 import type { FormState, FormErrors } from './useFormulario'
-import { RadioGroup, CheckboxGroup, labelClass, errorClass, inputBase, inputError, sectionTitleClass, sectionClass } from './form-fields'
+import { RadioGroup, CheckboxGroup, labelClass, errorClass, inputBase, inputBorde, inputError, sectionTitleClass, sectionClass } from './form-fields'
 
 type Props = {
   form: Pick<FormState, 'ciudadDestino' | 'tipoInmueble' | 'habitacionesMinimas' | 'presupuestoMensual' | 'amueblado' | 'imprescindibles' | 'comodidades'>
@@ -31,7 +31,8 @@ export function SeccionVivienda({ form, errors, set, setTipoInmueble, toggleImpr
             id="ciudadDestino"
             value={form.ciudadDestino}
             onChange={(e) => set('ciudadDestino', e.target.value as LeadData['ciudadDestino'])}
-            className={`${inputBase} ${errors.ciudadDestino ? inputError : ''}`}
+            className={`${inputBase} ${errors.ciudadDestino ? inputError : inputBorde}`}
+            aria-invalid={errors.ciudadDestino ? true : undefined}
             aria-describedby={errors.ciudadDestino ? 'ciudadDestino-error' : undefined}
           >
             <option value="" disabled>Selecciona una ciudad</option>
@@ -83,7 +84,8 @@ export function SeccionVivienda({ form, errors, set, setTipoInmueble, toggleImpr
                 id="tipoInmueble"
                 value={form.tipoInmueble}
                 onChange={(e) => setTipoInmueble(e.target.value as 'habitacion' | 'estudio' | 'piso' | 'casa' | 'co-living')}
-                className={`${inputBase} ${errors.tipoInmueble ? inputError : ''}`}
+                className={`${inputBase} ${errors.tipoInmueble ? inputError : inputBorde}`}
+                aria-invalid={errors.tipoInmueble ? true : undefined}
                 aria-describedby={errors.tipoInmueble ? 'tipoInmueble-error' : undefined}
               >
                 <option value="" disabled>Selecciona una opción</option>
@@ -152,6 +154,7 @@ export function SeccionVivienda({ form, errors, set, setTipoInmueble, toggleImpr
                   ¿Hay algo imprescindible para la vivienda? (opcional)
                 </legend>
                 <CheckboxGroup
+                  name="imprescindibles"
                   options={[
                     { value: 'ascensor' as const, label: 'Ascensor' },
                     { value: 'garaje' as const, label: 'Plaza de garaje' },
@@ -174,6 +177,7 @@ export function SeccionVivienda({ form, errors, set, setTipoInmueble, toggleImpr
                   ¿Alguna comodidad del entorno es importante para ti? (opcional)
                 </legend>
                 <CheckboxGroup
+                  name="comodidades"
                   options={[
                     { value: 'transporte' as const, label: 'Cerca del transporte público' },
                     { value: 'zona-tranquila' as const, label: 'Zona tranquila / residencial' },
