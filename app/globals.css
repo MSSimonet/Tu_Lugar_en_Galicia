@@ -286,23 +286,99 @@ details > dd {
 
 /* ── Hero lateral gradient ───────────────────────────────────────────────── */
 /* Desktop: esfumado de izquierda a derecha (100deg) */
+/* Aligerado el 2026-08-19. Antes: 0,84 → 0,72 (30%) → 0,28 (64%) → 0 (88%).
+   Ese arranque tan alto velaba la mitad izquierda del video, que es justo donde
+   está la costa. Ahora arranca en 0,55 y se mantiene plano hasta el 62% antes de
+   abrirse: la izquierda se aclara y, a la vez, el texto queda MÁS cubierto en su
+   extremo derecho, que es donde de verdad estaba el problema.
+
+   Medido sobre los fotogramas reales de /videos/hero-lanzada.mp4 componiendo cada
+   uno con el degradado (incluido el filter saturate/brightness del <video>), peor
+   fotograma y peor píxel de cada caja de texto:
+
+                              antes    ahora
+     titular 61px bold (3:1)   1,82  →  2,55
+     subtítulo 16,8px (4,5:1)  3,38  →  4,56   ← pasa a cumplir
+     eyebrow 12px bold (4,5:1) 5,39  →  4,82
+     enlace 13px (4,5:1)       3,21  →  2,16   ← resuelto aparte, ver abajo
+     SCROLL 12px (4,5:1)       1,00  →  1,00
+     luminancia mediana        0,0675 → 0,0753  (12% más de video visible)
+
+   (Cifras medidas sobre las cajas reales leídas del DOM con el degradado ya
+   aplicado. Un barrido anterior, con cajas aproximadas a mano, daba 2,81 y 4,78
+   para titular y subtítulo; las buenas son éstas.)
+
+   El enlace y su texto de entrada quedaron resueltos aparte, subiéndolos de
+   --dz-hero-inicio-muted a --dz-hero-inicio-text: pasaron de 2,32 y 2,10 a 6,09 y
+   5,49 (ver el comentario en components/home/HeroPedraEOuro.tsx). Ahí el fondo es
+   oscuro y estable, así que aclarar el texto alcanzaba.
+
+   ⚠️ LO QUE SIGUE SIN CUMPLIR, y conviene saberlo antes de tocar nada más acá:
+
+     · el TITULAR, 2,55:1 contra el 3:1 de texto grande. Ya incumplía antes (1,82)
+       y el color no lo arregla: está en #F3EFE4, prácticamente lo más claro
+       disponible. Se extiende hasta el 68% del eje del degradado, donde éste ya se
+       apagó y el video tiene cielo claro. Las palancas son subir el degradado en
+       ese tramo —a costa de tapar más video— o acortar la caja del titular.
+
+     · el "SCROLL" del borde derecho, 1,00:1. Acá el color está DESCARTADO POR
+       MEDICIÓN, no por criterio: el video debajo barre de luminancia 0,016 a 0,411
+       según el fotograma, así que el mejor color posible (blanco puro) da 2,28:1 y
+       el negro puro 1,32:1. Ninguno llega. Está al 91% del ancho, fuera del
+       alcance de cualquier degradado que no tape el video entero. Salidas reales:
+       pastilla translúcida detrás —la misma que hace que el eyebrow sí cumpla con
+       4,82— o moverlo a zona cubierta.
+
+   La métrica es el peor píxel de la caja del texto, que es estricta: cuenta
+   píxeles de la caja donde no hay trazo de letra. Sirve para comparar antes y
+   después, que es para lo que se usó. */
 .hero-lateral-gradient {
   background: linear-gradient(
     100deg,
-    rgba(11, 16, 18, 0.84) 0%,
-    rgba(11, 16, 18, 0.72) 30%,
-    rgba(11, 16, 18, 0.28) 64%,
-    rgba(11, 16, 18, 0) 88%
+    rgba(11, 16, 18, 0.55) 0%,
+    rgba(11, 16, 18, 0.55) 62%,
+    rgba(11, 16, 18, 0.26) 80%,
+    rgba(11, 16, 18, 0) 95%
   );
 }
 
-/* Móvil: doble scrim — cubre la zona del texto (arriba) y la zona de stats (abajo) */
+/* Móvil: doble scrim — cubre la zona del texto (arriba) y la zona de stats (abajo).
+   NO se aligeró junto con el de escritorio, a propósito: acá no hay margen ninguno.
+   Medido el 2026-08-19 con el mismo método, los CUATRO textos ya están por debajo
+   de AA con el scrim actual —eyebrow 4,31 · titular 2,89 · subtítulo 3,33 · enlace
+   3,53— así que cualquier bajada de opacidad los empeora sin excepción. Aclararlo
+   pide antes resolver el color del texto, igual que en escritorio. */
 @media (max-width: 767px) {
   .hero-lateral-gradient {
     background:
       linear-gradient(to bottom, rgba(11, 16, 18, 0.76) 0%, rgba(11, 16, 18, 0) 46%),
       linear-gradient(to top,    rgba(11, 16, 18, 0.88) 0%, rgba(11, 16, 18, 0.60) 38%, rgba(11, 16, 18, 0.18) 68%, rgba(11, 16, 18, 0) 100%);
   }
+}
+
+/* ── Cierre del Hero con video contra el cuerpo de la página ─────────────── */
+/* Sólo lo usa /comunidad, que es el único Hero con video (ver PageHero.tsx).
+
+   EN CLARO ES UNA LÍNEA, no un fundido. El fundido de 120px iba de transparente a
+   --dz-fondo-pagina, y con video detrás eso significa disolver un vídeo oscuro
+   contra un fondo claro (#F0F0EB): 120px de niebla justo en la frontera. En las
+   otras cuatro páginas de Hero ese mismo fundido es casi invisible porque va de
+   --dz-fondo-marco a --dz-fondo-pagina, que en claro se separan 1,049:1 — el
+   propio comentario de --dz-fondo-marco lo dice: "casi no tiene nada que fundir".
+   O sea que quitar la disolución acá no rompe la familia: la acerca, porque deja
+   a las cinco páginas cerrando con un corte y no con niebla.
+
+   EN OSCURO SE QUEDA EL FUNDIDO. Ahí --dz-fondo-pagina es #0F1512 y el vídeo ya
+   viene oscurecido por el scrim, así que el degradado no se ve: no hay disolución
+   que quitar, y una línea clara sí se notaría como un elemento nuevo. */
+.dz-hero-video-cierre {
+  height: 1px;
+  background: var(--dz-borde);
+}
+
+.dark .dz-hero-video-cierre {
+  height: var(--dz-hero-fundido);
+  background: linear-gradient(to bottom, transparent 0, var(--dz-fondo-pagina) 100%);
 }
 
 /* ── Hero eyebrow — letter-spacing responsive ──────────────────────────── */

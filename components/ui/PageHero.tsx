@@ -89,18 +89,46 @@ const SOBRE_VIDEO = {
   shadow: '0 2px 12px rgba(0,0,0,0.7)',
 } as const
 
-/** Scrim del Hero con video. Los tres tramos están elegidos por contraste medido,
- *  no a ojo: el tramo más claro es el 0,66 del centro, y ahí el peor caso posible
- *  —un fotograma blanco puro— compone rgb(98,98,98), que contra el titular
- *  #F3EFE4 da 5,36:1, por encima del 4,5:1 de AA. Cualquier fotograma más oscuro
- *  que blanco sólo mejora ese número, así que la legibilidad no depende de qué
- *  esté pasando en el video. Los extremos suben a 0,80/0,86 porque son las
- *  franjas donde el texto puede quedar más cerca del borde. */
+/** Scrim del Hero con video. Aligerado el 2026-08-19: antes iba 0,80 arriba →
+ *  0,66 en el centro → 0,86 abajo, y ese doble oscurecimiento en los extremos
+ *  velaba el video entero. Medido sobre los fotogramas reales de
+ *  /videos/hero_comunidad.mp4 —único que usa esta rama— la luminancia mediana del
+ *  hero compuesto era 0,0185: prácticamente negro. El video ya venía oscuro por su
+ *  cuenta (mediana 0,08–0,21 bajo el texto, con sólo un 0–8% de píxeles claros),
+ *  así que el scrim estaba oscureciendo lo que ya estaba oscuro.
+ *
+ *  Ahora: 0,64 desde el 20% hacia abajo, y una rampa que despeja la franja
+ *  superior hasta 0,10. Luminancia mediana 0,0322 — un 74% más de video visible que
+ *  el original — con los tres textos por encima de AA en el peor fotograma y el peor
+ *  píxel de su caja, medido sobre 60 fotogramas compuestos con el scrim:
+ *
+ *    eyebrow 12px bold (4,5:1)  →  4,64
+ *    titular 57px bold (3:1)    →  5,16
+ *    subtítulo 20px (4,5:1)     →  4,71
+ *
+ *  ESTO ES EL SUELO, no un valor elegido con holgura. La meseta gobierna a los tres
+ *  textos y 0,62 ya no llega: da eyebrow 4,46 y subtítulo 4,40. Ojo con cómo se mide
+ *  eso — con 30 fotogramas 0,62 parecía pasar (4,56 y 4,54) y sólo al subir a 60
+ *  apareció el fotograma que lo tumba. Si alguien vuelve a bajarlo, que muestree
+ *  denso o se llevará el mismo engaño.
+ *
+ *  QUIÉN MANDA ACÁ ES EL EYEBROW, no el titular: es el único texto pequeño y está
+ *  en el 23–29% de la altura, justo debajo de donde termina la rampa. Por eso la
+ *  rampa cierra en el 20% y no más abajo — estirarla al 22% ya lo deja en 4,16.
+ *  La CIMA, en cambio, no toca ningún texto (no hay nada por encima del 23%), así
+ *  que bajarla de 0,30 a 0,10 sale casi gratis: cuesta 0,05 de contraste en el
+ *  eyebrow. Lo que no da es mucho video: la franja superior es poca área, y bajar
+ *  sólo la cima mueve la luminancia de 0,0294 a 0,0300. El video se gana en la
+ *  meseta, y la meseta ya está en su suelo.
+ *
+ *  OJO si otra página empieza a usar `video`: estos números valen para el texto de
+ *  /comunidad sobre ESE video. La franja superior ya no está protegida, así que
+ *  contenido que llegue más arriba hay que volver a medirlo. */
 const SCRIM_VIDEO = [
   'linear-gradient(to bottom,',
-  'rgba(11,16,18,0.80) 0%,',
-  'rgba(11,16,18,0.66) 50%,',
-  'rgba(11,16,18,0.86) 100%)',
+  'rgba(11,16,18,0.10) 0%,',
+  'rgba(11,16,18,0.64) 20%,',
+  'rgba(11,16,18,0.64) 100%)',
 ].join(' ')
 
 /** Hero único de las páginas interiores. Es dueño de la caja (padding vertical,
@@ -192,13 +220,10 @@ export function PageHero({
         <source src={video.src} type="video/mp4" />
       </video>
       <div className="absolute inset-0" style={{ background: SCRIM_VIDEO }} />
-      <div
-        className="absolute inset-x-0 bottom-0"
-        style={{
-          height: 'var(--dz-hero-fundido)',
-          background: 'linear-gradient(to bottom, transparent 0, var(--dz-fondo-pagina) 100%)',
-        }}
-      />
+      {/* Cierre contra el cuerpo: línea en claro, fundido en oscuro. El alto y el
+          fondo salen de .dz-hero-video-cierre en globals.css, donde está el porqué
+          de que los dos temas no se resuelvan igual. */}
+      <div className="dz-hero-video-cierre absolute inset-x-0 bottom-0" />
     </div>
   ) : null
 

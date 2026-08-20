@@ -16,24 +16,41 @@ import { useFlightWithWake, apoyoEnFrontera, DIVIDER_MARGEN_LATERAL, DIVIDER_WOB
 // cualquier viewport. Fijar una duración propia es justo lo que producía 82,9
 // px/s contra 74,7 entre divisores (auditoría 2026-07-25, C1).
 //
-// Imagen: public/images/apps-divider-v3.png — foto del usuario (escritorio,
-// tablet y móvil) con el fondo removido. OJO: la v1 venía sobre fondo BLANCO y la
-// v2 sobre fondo NEGRO, así que el recorte no es el mismo trabajo. Se hizo con
-// flood fill desde los bordes y no con umbral de luminancia: el arte tiene sombras
-// propias y un umbral plano las habría agujereado.
+// Imagen: public/images/apps_divider.png — misma ilustración del usuario
+// (escritorio, tablet y móvil) que la v3, recortada de nuevo desde el master a
+// resolución completa (3128×1376 en vez de 616×271) y cuantizada a paleta de 128
+// colores: 17,3 kB contra los 31,4 kB del PNG que reemplaza, un 45% menos, sin
+// diferencia visible ni siquiera a 520px de ancho (el divisor se pinta a 100).
 //
-// COLOR (v3): reencajado en el ámbar de la familia, #E8A848 — el mismo que domina
-// el 95% de gente-divider-v2.png (Comunidad) y el 85% de maletas-divider-v6.png.
-// La v2 conservaba el color original del arte, un dorado mostaza cuyo tono dominante
-// medía #A87828: al lado de los otros cuatro divisores se leía como otro material,
-// no como el mismo objeto en otra sección.
+// PNG y no WebP a pesar de que WebP pesaba parecido (14,7 kB): el optimizador de
+// next/image convierte a JPEG cuando la fuente es WebP y el cliente no acepta
+// WebP en su Accept — y JPEG NO TIENE CANAL ALFA, así que el divisor saldría
+// sobre un rectángulo opaco. Comprobado sirviendo las dos fuentes con y sin
+// `image/webp` en el Accept: la fuente WebP devuelve image/jpeg, y un PNG
+// hermano (gente-divider-v2.png) devuelve image/png con la transparencia intacta.
+// Con la fuente en PNG no se pierde nada: a quien acepta WebP, next/image le
+// sirve WebP igual (3,4 kB en el ancho que usa esta página).
 //
-// El reencaje NO es un teñido plano. La ilustración tiene volumen —biseles, reflejos,
-// la sombra bajo cada pantalla— y pintarla de un color liso la habría dejado chata.
-// Se conservó la luminancia relativa de cada pixel y se desplazó la escala para que
-// el dominante caiga exactamente en #E8A848; el resto se acomodó alrededor a la
-// misma distancia que tenía. Medido después: dominante #E8A848 (34%), con los
-// reflejos repartidos en #F8B848 y #F8C858.
+// RECORTE: flood fill desde los bordes, no umbral de luminancia. El arte tiene
+// sombras propias y zonas oscuras interiores —la línea fina dentro del monitor,
+// los biseles, la sombra bajo cada pantalla— que un umbral plano habría
+// agujereado. Además el sujeto TOCA los bordes (el monitor por la izquierda, el
+// teclado por abajo), así que el relleno solo arranca en píxeles de borde que ya
+// son fondo. El borde del recorte lleva alfa parcial con descontaminación de
+// color —color = (mezcla − fondo·(1−α)) / α— porque el master viene sobre negro
+// y sin eso el corte dejaría una orla oscura al componerse sobre fondo claro.
+//
+// COLOR: el dorado mostaza CRUDO del arte, tal como viene el master. No se le
+// aplica ningún ajuste — el pipeline es recorte y ya, sin paso de color.
+//
+// ESTO SE APARTA DE LOS OTROS CUATRO DIVISORES A PROPÓSITO, y conviene saberlo
+// antes de "arreglarlo". Los hermanos miden #EDA549 (gente), #EDA34A (maletas),
+// #EDA448 (brújula) y #E9A859 (q-somos), o sea la banda ámbar de la familia; éste
+// mide #A77A25 de dominante y #B68732 de promedio sobre los píxeles opacos, que es
+// bastante más oscuro y apagado. La versión anterior sí lo reencajaba en esa banda
+// (caía en #E7A84A) y se quitó por decisión de Marcelo del 2026-08-19: quiere el
+// color original de la imagen. Si alguien vuelve a verlo "fuera de sistema", que
+// pregunte antes de tocar: es una elección, no un olvido.
 //
 // `gira: false`: se traslada sin rotar. Los tres dispositivos tienen orientación
 // legible —pantallas hacia el espectador—, así que girarlos 180° en cada extremo
@@ -46,7 +63,12 @@ import { useFlightWithWake, apoyoEnFrontera, DIVIDER_MARGEN_LATERAL, DIVIDER_WOB
 // separa algún día, el divisor acompaña a su página.
 
 const ICON_HEIGHT = 44; // mismo alto que gente, q-somos y maletas
-const ICON_WIDTH = Math.round((ICON_HEIGHT * 616) / 271); // aspecto nativo de apps-divider-v3.png
+// 618/271 = 2,2804, el aspecto REAL del recorte nuevo. La v3 era 616/271 =
+// 2,2731: 0,3% de diferencia, que a este alto NO mueve el ancho renderizado —
+// round(44·618/271) = 100 y round(44·616/271) = 100, el mismo entero. O sea que
+// el divisor ocupa exactamente la misma caja que antes y no hay nada que
+// reencajar en el layout.
+const ICON_WIDTH = Math.round((ICON_HEIGHT * 618) / 271); // aspecto nativo de apps_divider.png
 // Alto mínimo del contenedor sin recortar el ícono en los extremos del wobble.
 const CONTAINER_HEIGHT = ICON_HEIGHT + 2 * DIVIDER_WOBBLE_AMPLITUDE;
 
@@ -91,7 +113,7 @@ export function AppsDivider({ direction = "ltr" }: AppsDividerProps) {
       >
         {prefersReducedMotion ? (
           <div className="absolute top-1/2 left-1/2" style={{ transform: "translate(-50%, -50%)" }}>
-            <Image src="/images/apps-divider-v3.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
+            <Image src="/images/apps_divider.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
           </div>
         ) : (
           <>
@@ -102,7 +124,7 @@ export function AppsDivider({ direction = "ltr" }: AppsDividerProps) {
               style={{ left: 0, top: "calc(50% - 1.133px)", height: "2.266px", width: 0 }}
             />
             <div ref={iconRef} className="absolute" style={{ left: 0, top: `calc(50% - ${ICON_HEIGHT / 2}px)` }}>
-              <Image src="/images/apps-divider-v3.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
+              <Image src="/images/apps_divider.png" alt="" width={ICON_WIDTH} height={ICON_HEIGHT} />
             </div>
           </>
         )}
