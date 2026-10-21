@@ -211,19 +211,33 @@ Fuentes de referencia: `/docs/gina-flujo.md` y `/docs/gina-barandas.md`.
 
 ---
 
-## Feed de Instagram (Behold)
+## Feed de Instagram (Graph API + Supabase)
+
+> **Corregido el 2026-08-11.** Esta sección describía una integración con **Behold.so** que
+> nunca llegó a producción y hace tiempo quedó descartada. `NEXT_PUBLIC_BEHOLD_WIDGET_ID` no
+> tiene **una sola referencia** en el código. El feed real ya está implementado con la
+> **Instagram Graph API** (`graph.facebook.com` v22.0) vía "Inicio de sesión con Facebook", y
+> los tokens se guardan en **Supabase** (tabla `instagram_tokens`, migraciones 0008 y 0009).
 
 **Hablar con Silvana antes de activar.**
 
-Pasos para activar el feed dinámico de Instagram en la home:
+Lo que ya está construido: `lib/instagram/graph.ts` (cliente OAuth + lectura de `/media`),
+`lib/instagram/tokenRepo.ts` (persistencia), `lib/instagram/posts.ts` y el Server Component
+`components/home/FeedInstagram.tsx`. Mientras no haya cuenta conectada, `getUltimosPosts()`
+devuelve `[]` y el Home muestra el placeholder "Próximamente" — no se rompe nada.
 
-1. Silvana entra a behold.so con su cuenta de Instagram Business
-2. Crea un widget → copia el `BEHOLD_WIDGET_ID`
-3. Añadir en `.env.local` y en Vercel: `NEXT_PUBLIC_BEHOLD_WIDGET_ID=xxxxx`
-4. `FeedInstagram.tsx` ya tiene el TODO preparado — cambio de 10 minutos una vez que se tiene el token
+Pasos reales para activarlo:
 
-**Requisito:** cuenta de Instagram debe ser tipo Business o Creator (no personal).
-**Costo:** Behold.so tiene plan gratuito para 1 widget.
+1. Silvana conecta su cuenta desde `/api/admin/instagram/conectar` (requiere sesión de admin).
+   La cuenta de Instagram tiene que ser **Business o Creator** y estar **vinculada a una Página
+   de Facebook**: la Graph API la lee a través de la Página, no hay conexión directa.
+2. Tras la primera conexión, leer el `ig_user_id` de la fila creada en `instagram_tokens` y
+   cargarlo en Vercel como `INSTAGRAM_EXPECTED_IG_USER_ID`. **Hasta que esa variable exista, la
+   segunda capa de IG-01 está inactiva** (ver auditoría 2026-08-08).
+3. `INSTAGRAM_APP_ID` e `INSTAGRAM_APP_SECRET` están presentes en `.env.local`. **No se verificó
+   que existan también en Vercel** — confirmarlo antes de dar el feed por activable en producción.
+
+**Costo:** ninguno — es la API de Meta, no un servicio de terceros de pago.
 
 ---
 

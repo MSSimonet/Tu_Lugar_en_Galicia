@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import type { Map as LeafletMap, MarkerClusterGroup, PopupEvent } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
-import { getSupabaseBrowserClient } from '@/lib/comunidad/supabaseBrowser'
-import type { ComunidadPerfilPublico } from '@/lib/comunidad/types'
+import type { ComunidadPerfilUbicado } from '@/lib/comunidad/types'
+import type { EstadoPerfiles } from '@/lib/comunidad/usePerfilesPublicos'
 import { TarjetaPerfil } from './TarjetaPerfil'
 
 // Íconos por defecto de Leaflet — copiados a /public/leaflet/ y referenciados como rutas
@@ -31,17 +31,29 @@ const GALICIA_BOUNDS: [[number, number], [number, number]] = [
 ]
 const GALICIA_MIN_ZOOM = 8
 
-// Un color por ciudad, elegido para máxima distinción entre sí (5 hues separados en la
-// rueda de color) y coherentes en saturación/peso con la paleta Deslumbrante — ninguno
-// domina sobre los demás. Cada perfil se asigna a la ciudad más cercana por distancia — la
-// tabla `comunidad` no guarda la ciudad, solo lat/lng geocodificados en el alta (ver
+// Un pin por ciudad. Cada perfil se asigna a la ciudad más cercana por distancia — la tabla
+// `comunidad` no guarda la ciudad, solo lat/lng geocodificados en el alta (ver
 // lib/comunidad/nominatim.ts).
-const CIUDAD_COLORES: Record<string, string> = {
-  'A Coruña': '#C0392B', // rojo teja
-  Vigo: '#2E5A8C', // azul petróleo
-  Pontevedra: '#E0932E', // dorado — dz-accent
-  'Santiago de Compostela': '#6B4A8C', // violeta
-  Lugo: '#4A7856', // verde bosque
+//
+// Son las chinchetas que dejó Marcelo, una por color. Reemplazan al SVG de gota que se
+// dibujaba acá: el color ya no se elige en código, viene en la propia imagen.
+//
+// SOBRE LOS ARCHIVOS — lo que hubo que hacerles antes de poder usarlos:
+//   · Los .png originales NO eran transparentes. El damero de "fondo transparente" estaba
+//     PINTADO en los píxeles: los cinco medían 100% opacos, con alpha 255 en las 4 esquinas.
+//     Se quitó con flood fill desde los bordes y no con umbral global de color, porque la
+//     aguja es metálica y sus reflejos caen en el mismo rango de gris claro que el damero —
+//     un umbral la habría agujereado. Misma lección que el recorte de apps-divider (7f3a486).
+//   · Pesaban ~5 MB cada uno (2048x2048, salvo Vigo a 347x347). Recortados al contenido y
+//     exportados a WebP a 44x60 (2x exacto de los 30px de pantalla, para retina) quedan en
+//     ~1,7 KB cada uno: los cinco juntos pesan 8,5 KB contra los 25 MB de los originales.
+//     Los .png fuente NO se versionan.
+const CIUDAD_PINES: Record<string, string> = {
+  'A Coruña': '/images/pin_coruna.webp', // azul
+  Vigo: '/images/pin_vigo.webp', // rojo
+  Pontevedra: '/images/pin_pontevedra.webp', // amarillo
+  'Santiago de Compostela': '/images/pin_santiago.webp', // verde
+  Lugo: '/images/pin_lugo.webp', // rosa
 }
 
 const CIUDAD_CENTROS: { nombre: string; lat: number; lng: number }[] = [
@@ -52,7 +64,24 @@ const CIUDAD_CENTROS: { nombre: string; lat: number; lng: number }[] = [
   { nombre: 'Lugo', lat: 43.0097, lng: -7.5567 },
 ]
 
-function colorPorCiudadMasCercana(lat: number, lng: number): string {
+// Tamaño en pantalla, igual al del SVG que reemplaza. El archivo se exporta al doble
+// (44x60) y el navegador lo baja: así se ve nítido también en pantallas retina.
+const PIN_ANCHO = 22
+const PIN_ALTO = 30
+
+// La punta de la aguja es lo que apunta a la coordenada, y en esta chincheta NO está en el
+// centro de abajo sino en la esquina INFERIOR IZQUIERDA — el dibujo es diagonal. Medido sobre
+// los cinco archivos ya recortados: el píxel opaco más bajo cae en x≈0,5% y y≈99,9%.
+// Anclarlo al centro, como pedía el SVG anterior, correría cada pin ~11px al este.
+const PIN_ANCLA: [number, number] = [0, PIN_ALTO]
+
+// El popup abre por encima de la bolita, no de la aguja. El centro de la bolita está en
+// (60,6%, 27,4%) del recorte —centroide de los píxeles saturados, la aguja gris no cuenta—,
+// o sea (13, 8) en pantalla; relativo al ancla eso es (+13, -22), y se sube un poco más para
+// despegarlo del borde superior.
+const PIN_ANCLA_POPUP: [number, number] = [13, -28]
+
+function pinPorCiudadMasCercana(lat: number, lng: number): string {
   let masCercana = CIUDAD_CENTROS[0]
   let distanciaMinima = Infinity
   for (const ciudad of CIUDAD_CENTROS) {
@@ -62,17 +91,25 @@ function colorPorCiudadMasCercana(lat: number, lng: number): string {
       masCercana = ciudad
     }
   }
-  return CIUDAD_COLORES[masCercana.nombre]
+  return CIUDAD_PINES[masCercana.nombre]
 }
 
-type EstadoMapa = 'cargando' | 'listo' | 'error'
+export interface MapaComunidadProps {
+  /** Solo perfiles con pin. El filtro y la consulta viven en `usePerfilesPublicos`. */
+  perfiles: ComunidadPerfilUbicado[]
+  estado: EstadoPerfiles
+}
 
-export function MapaComunidad() {
+export function MapaComunidad({ perfiles, estado }: MapaComunidadProps) {
   const contenedorRef = useRef<HTMLDivElement>(null)
   const mapaRef = useRef<LeafletMap | null>(null)
-  const [estado, setEstado] = useState<EstadoMapa>('cargando')
 
   useEffect(() => {
+    // Se espera a tener los perfiles antes de montar Leaflet: montarlo vacío y volver a
+    // montarlo al llegar los datos significaría construir y destruir el mapa dos veces en
+    // cada visita, con su parpadeo correspondiente.
+    if (estado !== 'listo') return
+
     let activo = true
     const raicesPopup: Root[] = []
 
@@ -138,47 +175,31 @@ export function MapaComunidad() {
 
       const grupoClusters: MarkerClusterGroup = L.markerClusterGroup()
 
-      try {
-        const supabase = getSupabaseBrowserClient()
-        // Lista explícita de columnas — nunca 'email' (clave primaria de la tabla). El mapa
-        // público no debe recibir ni exponer el email de nadie (docs/comunidad-de-acogida.md §4).
-        const { data, error } = await supabase
-          .from('comunidad')
-          .select('id,nombre,foto_url,lat,lng,disponibilidad,contacto,updated_at')
-
-        if (error) throw new Error(error.message)
-        const perfiles = (data ?? []) as ComunidadPerfilPublico[]
-
-        perfiles.forEach((perfil) => {
-          const color = colorPorCiudadMasCercana(perfil.lat, perfil.lng)
-          const icono = L.divIcon({
-            className: '',
-            html: `<span style="display:block;width:16px;height:16px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.4);"></span>`,
-            iconSize: [16, 16],
-            iconAnchor: [8, 8],
-            popupAnchor: [0, -8],
-          })
-          // `alt` es opción de Marker (no de Icon) — reemplaza el "Marker" genérico
-          // por un nombre accesible real (A3-5).
-          const marcador = L.marker([perfil.lat, perfil.lng], {
-            icon: icono,
-            alt: perfil.nombre ? `Familia ${perfil.nombre} en el mapa` : 'Familia en el mapa de comunidad',
-          })
-          const contenedorPopup = document.createElement('div')
-          const raiz = createRoot(contenedorPopup)
-          raicesPopup.push(raiz)
-          raiz.render(<TarjetaPerfil perfil={perfil} />)
-          marcador.bindPopup(contenedorPopup, { minWidth: 260, maxWidth: 300 })
-          grupoClusters.addLayer(marcador)
+      perfiles.forEach((perfil) => {
+        // L.icon y no L.divIcon: ahora el pin ES una imagen, así que se usa el tipo de ícono
+        // que Leaflet tiene para eso. De paso, el navegador cachea los cinco archivos y no
+        // hay que serializar markup por cada marcador.
+        const icono = L.icon({
+          iconUrl: pinPorCiudadMasCercana(perfil.lat, perfil.lng),
+          iconSize: [PIN_ANCHO, PIN_ALTO],
+          iconAnchor: PIN_ANCLA,
+          popupAnchor: PIN_ANCLA_POPUP,
         })
+        // `alt` es opción de Marker (no de Icon) — reemplaza el "Marker" genérico
+        // por un nombre accesible real (A3-5).
+        const marcador = L.marker([perfil.lat, perfil.lng], {
+          icon: icono,
+          alt: perfil.nombre ? `Familia ${perfil.nombre} en el mapa` : 'Familia en el mapa de comunidad',
+        })
+        const contenedorPopup = document.createElement('div')
+        const raiz = createRoot(contenedorPopup)
+        raicesPopup.push(raiz)
+        raiz.render(<TarjetaPerfil perfil={perfil} />)
+        marcador.bindPopup(contenedorPopup, { minWidth: 260, maxWidth: 300 })
+        grupoClusters.addLayer(marcador)
+      })
 
-        mapa.addLayer(grupoClusters)
-        if (!activo) return
-        setEstado('listo')
-      } catch (err) {
-        console.error('[MapaComunidad] Error cargando perfiles:', err instanceof Error ? err.message : 'error desconocido')
-        if (activo) setEstado('error')
-      }
+      mapa.addLayer(grupoClusters)
     }
 
     iniciarMapa()
@@ -193,14 +214,34 @@ export function MapaComunidad() {
       mapaRef.current?.remove()
       mapaRef.current = null
     }
-  }, [])
+  }, [perfiles, estado])
 
   return (
     <div className="relative h-full w-full">
       <div
         ref={contenedorRef}
         className="h-full w-full"
-        style={{ backgroundColor: 'var(--dz-papel)' }}
+        style={{
+          backgroundColor: 'var(--dz-papel)',
+          // `isolation: isolate` crea un contexto de apilamiento y encierra ahí dentro TODOS
+          // los z-index internos de Leaflet. Sin esto, el mapa tapa el header al hacer scroll.
+          //
+          // El motivo, medido (2026-08-09): el CSS de Leaflet asigna 200-700 a los panes y
+          // 1000 a los controles (.leaflet-top/.leaflet-bottom), y el header sticky vale 50.
+          // El contenedor del mapa es `position: relative` con `z-index: auto`, que NO crea
+          // contexto de apilamiento, y ningún ancestro lo creaba tampoco — se comprobó la
+          // cadena entera hasta <main>. Así que esos 1000 competían contra el 50 del header
+          // en el contexto raíz, y ganaban.
+          //
+          // Se ve sobre todo en móvil: ahí el mapa ocupa todo el ancho y su borde izquierdo
+          // —donde vive el control de zoom— queda justo debajo del header. En escritorio el
+          // mapa es de 720px centrado y el control cae más adentro, así que pasa desapercibido.
+          //
+          // `isolation` en vez de `z-index: 0`: dice la intención ("los z-index de este
+          // subárbol son asunto suyo") y no agrega un número que alguien tenga que mantener
+          // sincronizado con el del header.
+          isolation: 'isolate',
+        }}
         aria-label="Mapa de familias en Galicia"
       />
 

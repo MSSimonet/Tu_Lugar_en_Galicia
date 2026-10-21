@@ -48,6 +48,8 @@ export function GinaWidget() {
 
   const botonCerrarRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
+  /** Quién tenía el foco antes de abrir, para devolvérselo al cerrar (§5.13). */
+  const disparadorRef = useRef<HTMLElement | null>(null)
 
   // ── Apertura mediante evento global (permite abrirlo desde cualquier componente) ──
 
@@ -58,11 +60,37 @@ export function GinaWidget() {
   }, [])
 
   // ── Gestión de foco al abrir/cerrar ──
-
+  //
+  // Al abrir, el foco entra al diálogo. Al cerrar, VUELVE a quien lo abrió.
+  //
+  // Sin esa vuelta, el foco se quedaba sobre el botón de cerrar — que en ese mismo momento
+  // pasa a estar dentro de un contenedor `inert` + `aria-hidden`. Para quien navega por
+  // teclado, cerrar el widget dejaba el foco en el limbo y el siguiente Tab arrancaba desde
+  // un lugar impredecible. El patrón ARIA de diálogo exige devolverlo (medido 2026-08-09:
+  // `volvioAlTrigger: false`).
   useEffect(() => {
     if (abierto) {
-      setTimeout(() => botonCerrarRef.current?.focus(), 100)
+      // `document.activeElement` en el momento de abrir es el elemento que lo disparó —sea el
+      // botón del Hero, el del Header, o el que dispare el evento global `gina:open`—, así que
+      // no hace falta que cada llamador se acuerde de pasar una referencia.
+      disparadorRef.current = document.activeElement as HTMLElement | null
+      const t = setTimeout(() => botonCerrarRef.current?.focus(), 100)
+      return () => clearTimeout(t)
     }
+
+    // Se devuelve el foco solo si nadie más lo reclamó.
+    //
+    // El caso de `<body>` NO es un detalle: al cerrar, el contenedor recibe `inert` y el
+    // navegador desenfoca su contenido en el acto, así que para cuando corre este efecto el
+    // foco YA cayó en body — nunca sigue "dentro del diálogo". Comprobar solo `contains()`
+    // hacía que la restauración no se disparara jamás (medido: `volvioAlTrigger: false`).
+    //
+    // Si en cambio la persona movió el foco a otro control real, `activeElement` es ese
+    // control y no se toca: robárselo de vuelta sería peor que no hacer nada.
+    const activo = document.activeElement
+    const nadieLoReclamo = !activo || activo === document.body || dialogRef.current?.contains(activo)
+    if (nadieLoReclamo) disparadorRef.current?.focus()
+    disparadorRef.current = null
   }, [abierto])
 
   // ── Persistencia en localStorage ──────────────────────────────────────────
@@ -138,7 +166,11 @@ export function GinaWidget() {
         id={dialogId}
         role="dialog"
         aria-label="Asistente Gina — Tu Lugar en Galicia"
-        aria-modal="true"
+        // Solo mientras está abierto. Declararlo con el panel cerrado es incorrecto —
+        // `aria-modal` describe un diálogo activo— y aunque Chrome no lo penaliza (medido: con
+        // el widget cerrado la página entera sigue en el árbol de accesibilidad), hay lectores
+        // de pantalla que restringen el cursor virtual por este atributo. Cuesta un ternario.
+        aria-modal={abierto ? 'true' : undefined}
         aria-hidden={!abierto}
         inert={!abierto}
         onKeyDown={onKeyDown}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isAuthorized } from '@/lib/admin/auth'
-import { listRecordsPorCalificacion, patchRecord, type AirtableRecord } from '@/lib/admin/leadsRepo'
-import { generateAdminToken } from '@/lib/admin/tokens'
+import { listRecordsPorCalificacion, patchRecord, type LeadRecord } from '@/lib/admin/leadsRepo'
+import { generateScopedToken } from '@/lib/admin/tokens'
 import { sendEmail } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
 
@@ -88,7 +88,7 @@ function buildSummary(fields: Record<string, unknown>): string {
 
 // ── Tarjeta de lead (secciones principales) ───────────────────────────────────
 
-function buildCard(record: AirtableRecord, siteUrl: string): string {
+function buildCard(record: LeadRecord, siteUrl: string): string {
   const f       = record.fields
   const nombre  = str(f.nombreCompleto)
   const email   = str(f.email)
@@ -99,7 +99,7 @@ function buildCard(record: AirtableRecord, siteUrl: string): string {
   const dias    = diasDesde(record.createdTime)
   const uc      = urgColor(dias)
   const summary = buildSummary(f)
-  const token   = generateAdminToken(record.id)
+  const token   = generateScopedToken('admin', record.id)
   const profileUrl = `${siteUrl}/admin/lead/${record.id}?token=${encodeURIComponent(token)}`
   const pdfUrl  = `${siteUrl}/api/plan/${record.id}/pdf?token=${encodeURIComponent(token)}`
 
@@ -164,11 +164,11 @@ function buildCard(record: AirtableRecord, siteUrl: string): string {
 
 // ── Tarjeta de seguimiento (código expirado) ──────────────────────────────────
 
-function buildSeguimientoCard(record: AirtableRecord, siteUrl: string): string {
+function buildSeguimientoCard(record: LeadRecord, siteUrl: string): string {
   const f          = record.fields
   const nombre     = str(f.nombreCompleto)
   const email      = str(f.email)
-  const token      = generateAdminToken(record.id)
+  const token      = generateScopedToken('admin', record.id)
   const profileUrl = `${siteUrl}/admin/lead/${record.id}?token=${encodeURIComponent(token)}`
   const pdfUrl     = `${siteUrl}/api/plan/${record.id}/pdf?token=${encodeURIComponent(token)}`
   const fechaHab   = typeof f.fechaHabilitacion === 'string' ? f.fechaHabilitacion : record.createdTime
@@ -236,9 +236,9 @@ function buildSectionHeader(title: string, count: number, bg: string): string {
 // ── Template HTML completo ────────────────────────────────────────────────────
 
 function buildEmail(
-  potencial:    AirtableRecord[],
-  enDesarrollo: AirtableRecord[],
-  seguimiento:  AirtableRecord[],
+  potencial:    LeadRecord[],
+  enDesarrollo: LeadRecord[],
+  seguimiento:  LeadRecord[],
   noCalifica:   number,
   siteUrl:      string,
 ): string {
@@ -351,7 +351,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://tu-lugar-en-galicia.vercel.app'
 
-  let records: AirtableRecord[]
+  let records: LeadRecord[]
   try {
     records = await listRecordsPorCalificacion(['potencial', 'potencial-alto', 'en-desarrollo'])
   } catch (err) {
@@ -361,7 +361,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   // ── 1. Expirar códigos vencidos (>7 días) antes de construir el mail ─────────
   const ahora       = Date.now()
-  const seguimiento: AirtableRecord[] = []
+  const seguimiento: LeadRecord[] = []
 
   const toExpire = records.filter(r => {
     const codigo = r.fields.codigoAgenda
@@ -385,8 +385,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   )
 
   // ── 2. Agrupar por calificación ───────────────────────────────────────────────
-  const potencial:    AirtableRecord[] = []
-  const enDesarrollo: AirtableRecord[] = []
+  const potencial:    LeadRecord[] = []
+  const enDesarrollo: LeadRecord[] = []
   let noCalifica = 0
 
   for (const record of records) {
@@ -396,7 +396,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     else                                noCalifica++
   }
 
-  const sortByAge = (a: AirtableRecord, b: AirtableRecord) =>
+  const sortByAge = (a: LeadRecord, b: LeadRecord) =>
     new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime()
   potencial.sort(sortByAge)
   enDesarrollo.sort(sortByAge)

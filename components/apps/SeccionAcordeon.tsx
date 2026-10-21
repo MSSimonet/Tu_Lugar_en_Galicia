@@ -15,7 +15,9 @@ export function SeccionAcordeon({ label, apps, abiertaPorDefecto = false }: Prop
       open={abiertaPorDefecto}
     >
       <summary
-        className="flex cursor-pointer list-none items-center justify-between gap-3 px-[18px] py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2"
+        // hover: el encabezado era clicable pero no lo parecía — no cambiaba nada al pasar el
+        // mouse. `transition-brand` es la transición estándar del proyecto (app/globals.css).
+        className="transition-brand flex cursor-pointer list-none items-center justify-between gap-3 px-[18px] py-3.5 hover:[background-color:var(--au-header-bg)] focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{ outlineColor: 'var(--au-accent)' }}
       >
         <span className="flex items-center gap-2.5">

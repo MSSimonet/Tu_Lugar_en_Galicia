@@ -160,6 +160,65 @@ export const PAGE_METADATA: Record<string, PageMetadata> = {
     keywords: ['política de privacidad', 'RGPD', 'protección de datos'],
     canonical: `${SITE_URL}/politica-de-privacidad`,
   },
+  // ── Las 4 de marketing que hasta 2026-08-09 declaraban un Metadata suelto ──
+  //
+  // OJO CON LOS TÍTULOS: getNextMetadata() emite `title.absolute`, que NO pasa por el
+  // template '%s | Tu Lugar en Galicia' de app/layout.tsx. Los de abajo son los títulos
+  // COMPLETOS tal como ya se renderizaban, no los cortos que había en cada página. Escribir
+  // solo la parte corta acá habría cambiado en silencio el título de 4 páginas publicadas.
+  ciudadesIndice: {
+    title: 'Ciudades de Galicia | Tu Lugar en Galicia',
+    description:
+      'Vigo, A Coruña, Santiago de Compostela, Pontevedra y Lugo. Descubre la ciudad de Galicia que mejor se adapta a tu vida.',
+    keywords: [
+      'ciudades de galicia',
+      'dónde vivir en galicia',
+      'comparar ciudades galicia',
+      'mudarse a galicia',
+      'mejores ciudades galicia familias',
+    ],
+    canonical: `${SITE_URL}/ciudades`,
+  },
+  contacto: {
+    title: 'Contáctanos | Tu Lugar en Galicia',
+    description: 'Escríbenos directamente. Te respondemos en 24 horas hábiles.',
+    keywords: [
+      'contacto tu lugar en galicia',
+      'contactar relocation galicia',
+      'escribir a tu lugar en galicia',
+      'consulta alquiler galicia',
+    ],
+    canonical: `${SITE_URL}/contacto`,
+  },
+  comunidad: {
+    title: 'Formando comunidad | Tu Lugar en Galicia',
+    description:
+      'Únete a la comunidad de Galicia: ofrece un café, una caminata o simplemente escuchar a quien acaba de llegar.',
+    keywords: [
+      'comunidad emigrantes galicia',
+      'conocer gente en galicia',
+      'red de apoyo emigrantes españa',
+      'acogida familias galicia',
+      'voluntariado acogida galicia',
+    ],
+    canonical: `${SITE_URL}/comunidad`,
+  },
+  // El título dice "Encuentra a tu gente en Galicia" y no "Formando comunidad" por decisión
+  // de la auditoría 2026-07-25 (I8): dos URLs con el mismo título confunden en resultados de
+  // búsqueda, y este coincide con el H1 real de la página. No unificarlo con el de arriba.
+  comunidadMapa: {
+    title: 'Encuentra a tu gente en Galicia | Tu Lugar en Galicia',
+    description:
+      'Encuentra a otras familias y vecinos en Galicia dispuestos a tomar un café, salir a caminar o simplemente escucharte. Mira quién está cerca de ti.',
+    keywords: [
+      'mapa comunidad galicia',
+      'familias emigrantes galicia',
+      'vecinos que ayudan galicia',
+      'encontrar gente cerca galicia',
+      'comunidad latinoamericana galicia',
+    ],
+    canonical: `${SITE_URL}/comunidad/mapa`,
+  },
   appsUtiles: {
     title: 'Apps útiles para vivir en Galicia | Tu Lugar en Galicia',
     description:

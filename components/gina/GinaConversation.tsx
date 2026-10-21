@@ -32,6 +32,22 @@ function resolverTextoUsuario(respuesta: string | string[], opciones?: Opcion[])
   return labelPorValue[respuesta] ?? respuesta
 }
 
+/**
+ * Qué se dice cuando el servidor responde 429.
+ *
+ * No es "algo salió mal": no se rompió nada, solo se agotó el presupuesto de peticiones por IP
+ * de los últimos 10 minutos (ver el bloque del rate limit en app/api/gina/route.ts). La
+ * diferencia importa porque el mensaje genérico terminaba en "¿Puedes intentarlo de nuevo?", y
+ * cada reintento gasta otra petición del mismo presupuesto agotado: el consejo empeoraba la
+ * situación que decía resolver.
+ *
+ * Lo de "tus respuestas están guardadas" es verdad comprobada, no un consuelo: GinaWidget
+ * persiste sesión y mensajes en localStorage con TTL de 24 h y al reabrir restaura la
+ * conversación con "Retomamos donde lo dejaste" (lib/gina/sessionStorage.ts).
+ */
+const TEXTO_DEMASIADO_RAPIDO =
+  'Hemos ido demasiado rápido y necesito unos minutos para ponerme al día. Tus respuestas están guardadas: vuelve a abrir el chat en un rato y seguimos donde lo dejamos.'
+
 const TYPING_DELAY_MIN_MS = 500
 const TYPING_DELAY_MAX_MS = 1200
 const TYPING_CHARS_PER_MS = 8
@@ -97,6 +113,14 @@ export function GinaConversation({
           body: JSON.stringify({ sesion: sesionVirtual, respuesta: '' }),
         })
 
+        // Mismo trato que en procesarRespuesta. Acá importa más todavía: este catch solo
+        // logueaba, así que un fallo en un paso virtual no mostraba NADA — la conversación
+        // quedaba muda, sin la pregunta siguiente y sin explicación.
+        if (res.status === 429) {
+          setMensajes((prev) => [...prev, { id: generarId(), de: 'gina', texto: TEXTO_DEMASIADO_RAPIDO }])
+          setInputDeshabilitado(true)
+          return
+        }
         if (!res.ok) throw new Error(`Error ${res.status}`)
 
         const data = (await res.json()) as {
@@ -165,6 +189,16 @@ export function GinaConversation({
         })
 
         if (!res.ok) {
+          // 429 aparte del resto: no es una rotura, es "vuelve en un rato", y la conversación
+          // en pantalla sigue siendo válida. Tratarlo como error genérico llevaba a decirle a
+          // la persona "inténtalo de nuevo", que es el peor consejo posible acá — cada
+          // reintento consume otra petición del mismo presupuesto agotado y alarga la espera.
+          // Se corta el input a propósito, en vez de invitar a insistir.
+          if (res.status === 429) {
+            setMensajes((prev) => [...prev, { id: generarId(), de: 'gina', texto: TEXTO_DEMASIADO_RAPIDO }])
+            setInputDeshabilitado(true)
+            return
+          }
           throw new Error(`Error ${res.status}`)
         }
 

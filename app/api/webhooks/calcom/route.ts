@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { findLeadByEmail, patchRecord } from '@/lib/admin/leadsRepo'
-import { generateAdminToken } from '@/lib/admin/tokens'
+import { generateScopedToken } from '@/lib/admin/tokens'
 import { sendEmail, escapeHtml, buildEmailShell } from '@/lib/admin/email'
 import { TIMEZONE } from '@/lib/config/site'
 
@@ -222,7 +222,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     )
 
     if (silvanaEmail) {
-      const token      = generateAdminToken(record.id)
+      const token      = generateScopedToken('admin', record.id)
       const profileUrl = `${SITE_URL}/admin/lead/${record.id}?token=${encodeURIComponent(token)}`
       tasks.push(
         sendEmail({

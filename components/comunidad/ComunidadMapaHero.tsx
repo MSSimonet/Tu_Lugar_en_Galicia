@@ -13,7 +13,7 @@ export function ComunidadMapaHero() {
         initial="hidden"
         animate="visible"
       >
-        <motion.div variants={fadeUp} className="mb-[var(--space-5)]">
+        <motion.div variants={fadeUp} className="mb-[var(--space-4)]">
           <Eyebrow tone="hero">Formando comunidad</Eyebrow>
         </motion.div>
         <motion.h1

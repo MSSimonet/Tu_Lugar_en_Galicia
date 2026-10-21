@@ -11,6 +11,7 @@ import {
   RadioGroup,
   CheckboxGroup,
   inputBase,
+  inputBorde,
   inputError,
   labelClass,
   errorClass,
@@ -25,6 +26,11 @@ export function FormularioDiagnostico() {
     form,
     errors,
     status,
+    // Validación híbrida (lib/forms/useValidacionHibrida.ts): se engancha al onBlur de los
+    // campos de escritura y de los <select>. Los grupos de radio/checkbox no lo llevan: su
+    // error ya se limpia al elegir una opción, y "abandonar" un grupo de radios no es un
+    // gesto que signifique nada para quien lo usa.
+    validarCampo,
     set,
     setHayMenores,
     setMascotas,
@@ -139,10 +145,12 @@ export function FormularioDiagnostico() {
               type="text"
               value={form.nombreCompleto}
               onChange={(e) => set('nombreCompleto', e.target.value)}
-              className={`${inputBase} ${errors.nombreCompleto ? inputError : ''}`}
+              onBlur={() => validarCampo('nombreCompleto')}
+              className={`${inputBase} ${errors.nombreCompleto ? inputError : inputBorde}`}
               autoComplete="name"
               required
               aria-required="true"
+              aria-invalid={errors.nombreCompleto ? true : undefined}
               aria-describedby={errors.nombreCompleto ? 'nombreCompleto-error' : undefined}
             />
           </FieldWrapper>
@@ -153,10 +161,12 @@ export function FormularioDiagnostico() {
               type="email"
               value={form.email}
               onChange={(e) => set('email', e.target.value)}
-              className={`${inputBase} ${errors.email ? inputError : ''}`}
+              onBlur={() => validarCampo('email')}
+              className={`${inputBase} ${errors.email ? inputError : inputBorde}`}
               autoComplete="email"
               required
               aria-required="true"
+              aria-invalid={errors.email ? true : undefined}
               aria-describedby={errors.email ? 'email-error' : undefined}
             />
           </FieldWrapper>
@@ -167,11 +177,13 @@ export function FormularioDiagnostico() {
               type="tel"
               value={form.telefono}
               onChange={(e) => set('telefono', e.target.value)}
+              onBlur={() => validarCampo('telefono')}
               placeholder="+54 9 11 1234-5678"
-              className={`${inputBase} ${errors.telefono ? inputError : ''}`}
+              className={`${inputBase} ${errors.telefono ? inputError : inputBorde}`}
               autoComplete="tel"
               required
               aria-required="true"
+              aria-invalid={errors.telefono ? true : undefined}
               aria-describedby={errors.telefono ? 'telefono-error' : undefined}
             />
           </FieldWrapper>
@@ -203,10 +215,12 @@ export function FormularioDiagnostico() {
                 type="text"
                 value={form.paisResidencia}
                 onChange={(e) => set('paisResidencia', e.target.value)}
-                className={`${inputBase} ${errors.paisResidencia ? inputError : ''}`}
+                onBlur={() => validarCampo('paisResidencia')}
+                className={`${inputBase} ${errors.paisResidencia ? inputError : inputBorde}`}
                 autoComplete="country-name"
                 required
                 aria-required="true"
+                aria-invalid={errors.paisResidencia ? true : undefined}
                 aria-describedby={errors.paisResidencia ? 'paisResidencia-error' : undefined}
               />
             </FieldWrapper>
@@ -244,7 +258,9 @@ export function FormularioDiagnostico() {
               id="documentacion"
               value={form.documentacion}
               onChange={(e) => set('documentacion', e.target.value as LeadData['documentacion'])}
-              className={`${inputBase} ${errors.documentacion ? inputError : ''}`}
+              onBlur={() => validarCampo('documentacion')}
+              className={`${inputBase} ${errors.documentacion ? inputError : inputBorde}`}
+              aria-invalid={errors.documentacion ? true : undefined}
               aria-describedby={errors.documentacion ? 'documentacion-error' : undefined}
             >
               <option value="" disabled>Selecciona una opción</option>
@@ -270,7 +286,9 @@ export function FormularioDiagnostico() {
               id="situacionLaboral"
               value={form.situacionLaboral}
               onChange={(e) => set('situacionLaboral', e.target.value as LeadData['situacionLaboral'])}
-              className={`${inputBase} ${errors.situacionLaboral ? inputError : ''}`}
+              onBlur={() => validarCampo('situacionLaboral')}
+              className={`${inputBase} ${errors.situacionLaboral ? inputError : inputBorde}`}
+              aria-invalid={errors.situacionLaboral ? true : undefined}
               aria-describedby={errors.situacionLaboral ? 'situacionLaboral-error' : undefined}
             >
               <option value="" disabled>Selecciona una opción</option>
@@ -297,7 +315,9 @@ export function FormularioDiagnostico() {
               id="ingresosMensuales"
               value={form.ingresosMensuales}
               onChange={(e) => set('ingresosMensuales', e.target.value)}
-              className={`${inputBase} ${errors.ingresosMensuales ? inputError : ''}`}
+              onBlur={() => validarCampo('ingresosMensuales')}
+              className={`${inputBase} ${errors.ingresosMensuales ? inputError : inputBorde}`}
+              aria-invalid={errors.ingresosMensuales ? true : undefined}
               aria-describedby={errors.ingresosMensuales ? 'ingresosMensuales-error' : undefined}
             >
               <option value="" disabled>Selecciona una opción</option>
@@ -320,6 +340,7 @@ export function FormularioDiagnostico() {
                 <span className="[color:var(--color-coral)] ml-1" aria-hidden="true">*</span>
               </legend>
               <CheckboxGroup
+                name="garantias"
                 options={[
                   { value: 'garantia-adicional' as const, label: 'Aportes de meses de garantía adicional (6–12)' },
                   { value: 'aval-bancario' as const, label: 'Aval bancario' },
@@ -430,7 +451,9 @@ export function FormularioDiagnostico() {
               id="tipoLicencia"
               value={form.tipoLicencia}
               onChange={(e) => set('tipoLicencia', e.target.value as FormState['tipoLicencia'])}
-              className={`${inputBase} ${errors.tipoLicencia ? inputError : ''}`}
+              onBlur={() => validarCampo('tipoLicencia')}
+              className={`${inputBase} ${errors.tipoLicencia ? inputError : inputBorde}`}
+              aria-invalid={errors.tipoLicencia ? true : undefined}
               aria-describedby={errors.tipoLicencia ? 'tipoLicencia-error' : undefined}
             >
               <option value="" disabled>Selecciona una opción</option>
@@ -453,9 +476,11 @@ export function FormularioDiagnostico() {
                   type="text"
                   value={form.ciudadActual}
                   onChange={(e) => set('ciudadActual', e.target.value)}
-                  className={`${inputBase} ${errors.ciudadActual ? inputError : ''}`}
+                  onBlur={() => validarCampo('ciudadActual')}
+                  className={`${inputBase} ${errors.ciudadActual ? inputError : inputBorde}`}
                   required
                   aria-required="true"
+                  aria-invalid={errors.ciudadActual ? true : undefined}
                   aria-describedby={errors.ciudadActual ? 'ciudadActual-error' : undefined}
                 />
               </FieldWrapper>
@@ -510,8 +535,10 @@ export function FormularioDiagnostico() {
               type="text"
               value={form.profesion}
               onChange={(e) => set('profesion', e.target.value)}
+              onBlur={() => validarCampo('profesion')}
               placeholder="Ej: Ingeniera, docente, enfermero..."
-              className={`${inputBase} ${errors.profesion ? inputError : ''}`}
+              className={`${inputBase} ${errors.profesion ? inputError : inputBorde}`}
+              aria-invalid={errors.profesion ? true : undefined}
               aria-describedby={errors.profesion ? 'profesion-error' : undefined}
             />
           </FieldWrapper>
@@ -526,7 +553,9 @@ export function FormularioDiagnostico() {
               id="nivelEstudios"
               value={form.nivelEstudios}
               onChange={(e) => set('nivelEstudios', e.target.value as FormState['nivelEstudios'])}
-              className={`${inputBase} ${errors.nivelEstudios ? inputError : ''}`}
+              onBlur={() => validarCampo('nivelEstudios')}
+              className={`${inputBase} ${errors.nivelEstudios ? inputError : inputBorde}`}
+              aria-invalid={errors.nivelEstudios ? true : undefined}
               aria-describedby={errors.nivelEstudios ? 'nivelEstudios-error' : undefined}
             >
               <option value="" disabled>Selecciona una opción</option>
@@ -551,7 +580,9 @@ export function FormularioDiagnostico() {
               id="fechaLlegada"
               value={form.fechaLlegada}
               onChange={(e) => set('fechaLlegada', e.target.value)}
-              className={`${inputBase} ${errors.fechaLlegada ? inputError : ''}`}
+              onBlur={() => validarCampo('fechaLlegada')}
+              className={`${inputBase} ${errors.fechaLlegada ? inputError : inputBorde}`}
+              aria-invalid={errors.fechaLlegada ? true : undefined}
               aria-describedby={errors.fechaLlegada ? 'fechaLlegada-error' : undefined}
             >
               <option value="" disabled>Selecciona una opción</option>
@@ -585,7 +616,8 @@ export function FormularioDiagnostico() {
               id="comoNosConociste"
               value={form.comoNosConociste}
               onChange={(e) => set('comoNosConociste', e.target.value as typeof form.comoNosConociste)}
-              className={inputBase}
+              onBlur={() => validarCampo('comoNosConociste')}
+              className={`${inputBase} ${inputBorde}`}
             >
               <option value="">Selecciona una opción</option>
               <option value="instagram">Instagram</option>
@@ -607,7 +639,9 @@ export function FormularioDiagnostico() {
                 aria-required="true"
                 checked={form.comprendeServicio}
                 onChange={(e) => set('comprendeServicio', e.target.checked)}
+                onBlur={() => validarCampo('comprendeServicio')}
                 className="accent-[var(--color-laton)] w-4 h-4 mt-[2px] cursor-pointer flex-shrink-0"
+                aria-invalid={errors.comprendeServicio ? true : undefined}
                 aria-describedby={errors.comprendeServicio ? 'comprendeServicio-error' : undefined}
               />
               <span className="font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--dz-muted)] leading-[var(--leading-cuerpo)]">
@@ -632,7 +666,9 @@ export function FormularioDiagnostico() {
                 aria-required="true"
                 checked={form.consentimientoRGPD}
                 onChange={(e) => set('consentimientoRGPD', e.target.checked)}
+                onBlur={() => validarCampo('consentimientoRGPD')}
                 className="accent-[var(--color-laton)] w-4 h-4 mt-[2px] cursor-pointer flex-shrink-0"
+                aria-invalid={errors.consentimientoRGPD ? true : undefined}
                 aria-describedby={errors.consentimientoRGPD ? 'consentimientoRGPD-error' : undefined}
               />
               <span className="font-[family-name:var(--font-dz-ui)] [font-size:var(--text-sm)] [color:var(--dz-muted)] leading-[var(--leading-cuerpo)]">

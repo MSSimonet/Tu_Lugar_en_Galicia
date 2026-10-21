@@ -224,7 +224,7 @@ export function Testimonios() {
             7×7px y era casi imposible de acertar en móvil (auditoría 2026-07-25,
             I7). El indicador visual va en un <span> interno para no engordar el
             punto. */}
-        <div className="mt-[var(--space-5)] flex justify-center">
+        <div className="mt-[var(--space-6)] flex justify-center">
           {testimonios.map((t, i) => (
             <button
               key={t.nombre}

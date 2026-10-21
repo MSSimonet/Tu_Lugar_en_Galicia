@@ -196,19 +196,32 @@ export function HeroPedraEOuro() {
             Queremos conocerte
           </Button>
 
-          {/* Enlace al formulario */}
+          {/* Enlace al formulario.
+
+              Va en --dz-hero-inicio-text y NO en --dz-hero-inicio-muted, que es lo
+              que tenía: el muted (#9C9484) no llega a AA sobre este video. Medido
+              el 2026-08-19 componiendo 12 fotogramas reales con el degradado ya
+              aligerado de esta ronda, peor píxel de cada caja: la entrada
+              "¿Prefieres escribirlo?" daba 2,32 y el enlace 2,10, contra el 4,5:1
+              que pide WCAG para texto normal (13px). Con --dz-hero-inicio-text
+              (#F3EFE4) pasan a 6,09 y 5,49.
+
+              El fondo bajo esta línea es oscuro y estable —luminancia 0,017 a 0,117
+              en los 12 fotogramas—, así que aclarar el texto alcanza y no hace
+              falta ni scrim local ni sombra. La jerarquía la sigue marcando el
+              tamaño (0,82rem contra los 17px del subtítulo), no el color. */}
           <p
             style={{
               fontFamily: "var(--font-dz-ui)",
               fontSize: "0.82rem",
-              color: "var(--dz-hero-inicio-muted)",
+              color: "var(--dz-hero-inicio-text)",
             }}
           >
             ¿Prefieres escribirlo?{" "}
             <Link
               href="/conocernos"
               style={{
-                color: "var(--dz-hero-inicio-muted)",
+                color: "var(--dz-hero-inicio-text)",
                 textDecoration: "underline",
                 textUnderlineOffset: "3px",
               }}
@@ -219,7 +232,20 @@ export function HeroPedraEOuro() {
         </div>
       </div>
 
-      {/* Scroll-cue decorativo — pura indicación visual, no interactivo */}
+      {/* Scroll-cue decorativo — pura indicación visual, no interactivo.
+
+          SE QUEDA EN --dz-hero-inicio-muted a propósito, y no por olvido: acá el
+          color NO puede arreglar el contraste. Está al 91% del ancho, fuera del
+          alcance del degradado, y el video debajo barre de luminancia 0,016 a
+          0,411 según el fotograma —de roca oscura a arena al sol—, así que
+          cualquier color queda cerca de algún fondo. Medido sobre 12 fotogramas
+          reales: el mejor caso posible es blanco puro y da 2,28:1; negro puro da
+          1,32:1. Ninguno llega al 4,5:1. Cambiarle el color no arregla nada y
+          además rompe que combine con la línea de debajo.
+          Si algún día tiene que cumplir, las salidas son otras: una pastilla
+          translúcida detrás (como la que ya lleva el eyebrow, que por eso sí
+          cumple con 4,82) o moverlo a una zona cubierta. Las dos son decisiones
+          de diseño, no un cambio de token. */}
       <div
         aria-hidden="true"
         className="absolute z-10 hidden flex-col items-center gap-2 md:flex"

@@ -22,7 +22,13 @@
  * FAIL-CLOSED si faltan las variables de Upstash, igual que los otros endpoints (A03). El
  * trade-off es real y está elegido: sin Upstash nadie entra al panel, incluida Silvana. Se
  * prefiere una caída de disponibilidad del panel interno antes que perder el límite justo
- * cuando un atacante podría haber provocado la caída.
+ * cuando un atacante podría haber provocado la caída. Desde la auditoría 2026-08-17 el
+ * timeout del limiter también falla cerrado (ver más abajo) — antes no.
+ *
+ * ESTE LIMITE ES POR ORIGEN, y no alcanza solo. La clave sale de getRealIp(), que desde el
+ * hallazgo F2 usa el X-Forwarded-For que Vercel sanea en vez del CF-Connecting-IP que mandaba
+ * el cliente. Aun así, un ataque distribuido diluye cualquier límite por IP, así que el
+ * contador POR CUENTA vive aparte, en lib/admin/loginAttempts.ts, y lo aplica authorize().
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -67,7 +73,15 @@ export async function POST(req: NextRequest): Promise<Response> {
     return rechazo(req, 503, 'RateLimitUnavailable')
   }
 
-  const { success } = await ratelimit.limit(getRealIp(req))
+  // @upstash/ratelimit trae un timeout por defecto de 5 s que resuelve `success: true`
+  // (marcando `reason: 'timeout'`): ante un Upstash lento, el límite se caía solo y dejaba
+  // pasar. Se chequea el motivo para que ese caso también falle cerrado, como el de las
+  // variables faltantes de acá arriba.
+  const { success, reason } = await ratelimit.limit(getRealIp(req))
+  if (reason === 'timeout') {
+    console.error('[admin-login] timeout de Upstash — se rechaza el intento (fail-closed)')
+    return rechazo(req, 503, 'RateLimitUnavailable')
+  }
   if (!success) {
     return rechazo(req, 429, 'RateLimited')
   }

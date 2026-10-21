@@ -37,7 +37,17 @@
   --color-coral: #B8492F; /* oscurecido para AA: 5.09:1 sobre blanco (antes 3.46:1, fallaba) */
 
   /* Base */
-  --color-blanco: #FFFCF7;
+  /* Era #FFFCF7 hasta 2026-08-13. Ese casi-blanco es lo que pintaba el <body>, así que
+     el fondo real de todo el sitio seguía siendo casi blanco aunque el commit 936ac59
+     hubiera sacado el blanco de la familia --dz-*: aquella verificación contaba
+     elementos con rgb(255,255,255) exacto y #FFFCF7 no cae en ese filtro.
+     Ahora iguala a --dz-luz. No necesita quedar distinguible de --dz-luz: la única
+     superficie --color-blanco que se apoya en otra superficie clara es la píldora de
+     ClimaActual, y su contenedor es --dz-papel (#F7F5F0), que no cambia — la píldora
+     conserva su separación de 1.05:1 y su borde, igual que antes.
+     Medido sobre este fondo: 14.92:1 --color-granito · 16.15:1 --dz-ink ·
+     5.08:1 --dz-muted · 3.06:1 --dz-borde-input · 4.57:1 --color-coral. */
+  --color-blanco: #F0F0F0;
 
   /* Zona de header — permanece oscura en ambos modos (retinte Deslumbrante) */
   /* Oscuro fijo, con override propio en .dark. El comentario anterior decía
@@ -55,9 +65,21 @@
   --color-laton-borde:   #7A5230; /* mezcla acento/fondo oscuro para bordes estructurales */
   --color-nav-muted:     #A8A8A8; /* texto inactivo en nav oscuro */
   --color-header-active: #F0EDE6; /* texto activo/resaltado en nav oscuro */
-  --color-sobre-laton:   #ffffff; /* OJO: además de texto, se usa como FONDO claro
-                                     (useGinaEditor "Cancelar", HabilitarAgendaButton).
-                                     No repintarlo en oscuro: rompería esos dos. */
+  /* SOLO TEXTO, sobre fondos de estado que NO invierten con el tema.
+     Era #ffffff y el comentario anterior decía que se usaba "además de texto, como FONDO
+     claro (useGinaEditor 'Cancelar', HabilitarAgendaButton)". Medido el 2026-08-13, eso
+     era medio falso y el token hacía dos trabajos opuestos: en useGinaEditor era FONDO
+     (oscurecerlo ayuda) y en HabilitarAgendaButton era TEXTO (oscurecerlo perjudica).
+     Se deshizo esa sobrecarga: el "Cancelar" de Gina pasó a --color-blanco, que sí
+     invierte con el tema — antes quedaba #ffffff fijo con texto --dz-ink, o sea 1.15:1
+     en oscuro, texto invisible.
+     Hoy este token solo pinta texto sobre --color-estado-ok y --color-estado-error,
+     ambos fijos: 4.70:1 y 6.16:1. El caso sobre --color-laton se fue a --dz-accent-ink
+     (5.34:1) porque blanco sobre ámbar daba 3.44:1, el mismo fallo que ya documentaba
+     --dz-accent-ink. Renombrado de --color-sobre-laton (2026-08-18): el nombre viejo
+     mentía — ya no va sobre --color-laton, sino como texto sobre los fondos de estado.
+     No darle override en oscuro: sus dos fondos son fijos en ambos temas. */
+  --color-texto-sobre-estado: #F5F5F5;
   /* Texto sobre los botones acento de la capa chrome. Fijo en ambos temas —
      mismo criterio y mismo valor que --dz-accent-ink, que ya resolvía bien este
      problema en los CTA --dz-*. Nace para que el CTA "Hablar con Gina" y los
@@ -264,23 +286,99 @@ details > dd {
 
 /* ── Hero lateral gradient ───────────────────────────────────────────────── */
 /* Desktop: esfumado de izquierda a derecha (100deg) */
+/* Aligerado el 2026-08-19. Antes: 0,84 → 0,72 (30%) → 0,28 (64%) → 0 (88%).
+   Ese arranque tan alto velaba la mitad izquierda del video, que es justo donde
+   está la costa. Ahora arranca en 0,55 y se mantiene plano hasta el 62% antes de
+   abrirse: la izquierda se aclara y, a la vez, el texto queda MÁS cubierto en su
+   extremo derecho, que es donde de verdad estaba el problema.
+
+   Medido sobre los fotogramas reales de /videos/hero-lanzada.mp4 componiendo cada
+   uno con el degradado (incluido el filter saturate/brightness del <video>), peor
+   fotograma y peor píxel de cada caja de texto:
+
+                              antes    ahora
+     titular 61px bold (3:1)   1,82  →  2,55
+     subtítulo 16,8px (4,5:1)  3,38  →  4,56   ← pasa a cumplir
+     eyebrow 12px bold (4,5:1) 5,39  →  4,82
+     enlace 13px (4,5:1)       3,21  →  2,16   ← resuelto aparte, ver abajo
+     SCROLL 12px (4,5:1)       1,00  →  1,00
+     luminancia mediana        0,0675 → 0,0753  (12% más de video visible)
+
+   (Cifras medidas sobre las cajas reales leídas del DOM con el degradado ya
+   aplicado. Un barrido anterior, con cajas aproximadas a mano, daba 2,81 y 4,78
+   para titular y subtítulo; las buenas son éstas.)
+
+   El enlace y su texto de entrada quedaron resueltos aparte, subiéndolos de
+   --dz-hero-inicio-muted a --dz-hero-inicio-text: pasaron de 2,32 y 2,10 a 6,09 y
+   5,49 (ver el comentario en components/home/HeroPedraEOuro.tsx). Ahí el fondo es
+   oscuro y estable, así que aclarar el texto alcanzaba.
+
+   ⚠️ LO QUE SIGUE SIN CUMPLIR, y conviene saberlo antes de tocar nada más acá:
+
+     · el TITULAR, 2,55:1 contra el 3:1 de texto grande. Ya incumplía antes (1,82)
+       y el color no lo arregla: está en #F3EFE4, prácticamente lo más claro
+       disponible. Se extiende hasta el 68% del eje del degradado, donde éste ya se
+       apagó y el video tiene cielo claro. Las palancas son subir el degradado en
+       ese tramo —a costa de tapar más video— o acortar la caja del titular.
+
+     · el "SCROLL" del borde derecho, 1,00:1. Acá el color está DESCARTADO POR
+       MEDICIÓN, no por criterio: el video debajo barre de luminancia 0,016 a 0,411
+       según el fotograma, así que el mejor color posible (blanco puro) da 2,28:1 y
+       el negro puro 1,32:1. Ninguno llega. Está al 91% del ancho, fuera del
+       alcance de cualquier degradado que no tape el video entero. Salidas reales:
+       pastilla translúcida detrás —la misma que hace que el eyebrow sí cumpla con
+       4,82— o moverlo a zona cubierta.
+
+   La métrica es el peor píxel de la caja del texto, que es estricta: cuenta
+   píxeles de la caja donde no hay trazo de letra. Sirve para comparar antes y
+   después, que es para lo que se usó. */
 .hero-lateral-gradient {
   background: linear-gradient(
     100deg,
-    rgba(11, 16, 18, 0.84) 0%,
-    rgba(11, 16, 18, 0.72) 30%,
-    rgba(11, 16, 18, 0.28) 64%,
-    rgba(11, 16, 18, 0) 88%
+    rgba(11, 16, 18, 0.55) 0%,
+    rgba(11, 16, 18, 0.55) 62%,
+    rgba(11, 16, 18, 0.26) 80%,
+    rgba(11, 16, 18, 0) 95%
   );
 }
 
-/* Móvil: doble scrim — cubre la zona del texto (arriba) y la zona de stats (abajo) */
+/* Móvil: doble scrim — cubre la zona del texto (arriba) y la zona de stats (abajo).
+   NO se aligeró junto con el de escritorio, a propósito: acá no hay margen ninguno.
+   Medido el 2026-08-19 con el mismo método, los CUATRO textos ya están por debajo
+   de AA con el scrim actual —eyebrow 4,31 · titular 2,89 · subtítulo 3,33 · enlace
+   3,53— así que cualquier bajada de opacidad los empeora sin excepción. Aclararlo
+   pide antes resolver el color del texto, igual que en escritorio. */
 @media (max-width: 767px) {
   .hero-lateral-gradient {
     background:
       linear-gradient(to bottom, rgba(11, 16, 18, 0.76) 0%, rgba(11, 16, 18, 0) 46%),
       linear-gradient(to top,    rgba(11, 16, 18, 0.88) 0%, rgba(11, 16, 18, 0.60) 38%, rgba(11, 16, 18, 0.18) 68%, rgba(11, 16, 18, 0) 100%);
   }
+}
+
+/* ── Cierre del Hero con video contra el cuerpo de la página ─────────────── */
+/* Sólo lo usa /comunidad, que es el único Hero con video (ver PageHero.tsx).
+
+   EN CLARO ES UNA LÍNEA, no un fundido. El fundido de 120px iba de transparente a
+   --dz-fondo-pagina, y con video detrás eso significa disolver un vídeo oscuro
+   contra un fondo claro (#F0F0EB): 120px de niebla justo en la frontera. En las
+   otras cuatro páginas de Hero ese mismo fundido es casi invisible porque va de
+   --dz-fondo-marco a --dz-fondo-pagina, que en claro se separan 1,049:1 — el
+   propio comentario de --dz-fondo-marco lo dice: "casi no tiene nada que fundir".
+   O sea que quitar la disolución acá no rompe la familia: la acerca, porque deja
+   a las cinco páginas cerrando con un corte y no con niebla.
+
+   EN OSCURO SE QUEDA EL FUNDIDO. Ahí --dz-fondo-pagina es #0F1512 y el vídeo ya
+   viene oscurecido por el scrim, así que el degradado no se ve: no hay disolución
+   que quitar, y una línea clara sí se notaría como un elemento nuevo. */
+.dz-hero-video-cierre {
+  height: 1px;
+  background: var(--dz-borde);
+}
+
+.dark .dz-hero-video-cierre {
+  height: var(--dz-hero-fundido);
+  background: linear-gradient(to bottom, transparent 0, var(--dz-fondo-pagina) 100%);
 }
 
 /* ── Hero eyebrow — letter-spacing responsive ──────────────────────────── */
@@ -480,85 +578,24 @@ details > dd {
   }
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   ATLÁNTICO EDITORIAL — Sistema de diseño (rama design/exploration)
-   Tokens aislados con prefijo --ae-* para no colisionar con otros sistemas
-   ══════════════════════════════════════════════════════════════════════════ */
-@theme {
-  --ae-papel:        #F8F5EF; /* papel cálido — canvas editorial */
-  --ae-tinta:        #0F172A; /* tinta atlántica — texto/fondo hero */
-  --ae-oceano:       #1E3A5F; /* azul profundo — secciones secundarias */
-  --ae-ambar:        #B45309; /* ámbar editorial — acento/CTA */
-  --ae-ambar-hover:  #92400E; /* ámbar oscuro — hover CTA */
-  --ae-niebla:       #EEF2F7; /* neblina azulada — superficie clara */
-  --ae-muted:        #64748B; /* texto secundario sobre papel */
-  --ae-borde:        #CBD5E1; /* borde sutil */
-  --ae-oro:          #D97706; /* oro editorial — detalles decorativos */
+/* Acá vivían ATLÁNTICO EDITORIAL (--ae-*, 11 tokens) y MAR ABIERTO (--mar-*, 11).
+   Eliminados el 2026-08-13: eran dos sistemas de diseño de la rama design/exploration
+   que nunca llegaron a producción, con CERO referencias en todo el repo — ni en
+   componentes, ni en reglas de este archivo, ni entre ellos.
+   Los reemplazó DESLUMBRANTE (--dz-*), que es el vigente. Si hiciera falta recuperarlos,
+   están en el historial. Ninguna fuente quedó huérfana al borrarlos: --font-jost lo
+   sigue consumiendo --font-dz-display. */
 
-  --font-ae-display: var(--font-jost), 'Montserrat', system-ui, sans-serif;
-  /* DM Sans ya no se descarga (auditoría 2026-07-25, I6): este sistema está
-     dormido y el token tiene cero usos en componentes. */
-  --font-ae-ui:      'Inter', system-ui, sans-serif;
-}
-
-/* ══════════════════════════════════════════════════════════════════════════
-   MAR ABIERTO — Sistema de diseño (rama design/exploration)
-   Tokens aislados con prefijo --mar-* para no colisionar con el sistema base
-   ══════════════════════════════════════════════════════════════════════════ */
-@theme {
-  --mar-canvas:      #E4EDEA;
-  --mar-ink:         #0C1F1A;
-  --mar-teal:        #0D9488;
-  --mar-teal-hover:  #0B7A70;
-  --mar-teal-light:  #2DD4BF;
-  --mar-niebla:      #F0F7F5;
-  --mar-muted:       #5E7A74;
-  --mar-border:      #C5D8D4;
-
-  /* Syne y Nunito Sans ya no se descargan (auditoría 2026-07-25, I6): este
-     sistema está dormido y ambos tokens tienen cero usos en componentes. */
-  --font-mar-display: 'Georgia', serif;
-  --font-mar-ui:      'Inter', system-ui, sans-serif;
-
-  --mar-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* ══════════════════════════════════════════════════════════════════════════
-   PEDRA E OURO — Sistema de diseño (rama design/exploration)
-   Tokens aislados con prefijo --po-*
-   ══════════════════════════════════════════════════════════════════════════ */
-@theme {
-  --po-pedra:       #3D3530; /* pedra escura — texto principal (invierte en dark) */
-  --po-ouro:        #C89B3C; /* ouro artesanal — acento principal, fijo */
-  --po-ouro-hover:  #A67C25; /* ouro profundo — hover, fijo */
-  --po-ouro-text:   #8A6220; /* ouro oscurecido — texto AA sobre areia/luz (4.68:1); en dark usa --po-ouro (5.98:1) */
-  --po-ouro-ink:    #1A1410; /* texto sobre fondo --po-ouro (botón dorado) — 7.14:1, fijo. Antes
-                                 hardcodeado como #1A1410 en 7+ archivos, ahora un solo token. */
-  --po-terra:       #8B6E4E; /* terra media — secciones secundarias, fijo */
-  --po-areia:       #F2EDE4; /* areia — canvas claro (invierte en dark) */
-  --po-luz:         #FBF8F2; /* luz — superficie muy clara (invierte en dark) */
-  --po-muted:       #6E625A; /* texto secundario sobre areia — AA 5.06:1 (invierte en dark) */
-  --po-borde:       #DDD5C8; /* borde cálido (invierte en dark) */
-
-  /* Bookends siempre oscuros — igual filosofía que --color-header-bg/--color-footer-bg:
-     no invierten con el tema, dan continuidad visual arriba (hero) y abajo (CTA) de la página. */
-  --po-hero-bg:     #2C2420;
-  --po-hero-text:   #F5EFE4;
-  --po-hero-muted:  rgba(245, 239, 228, 0.68);
-
-  --font-po-display: var(--font-playfair), 'Georgia', serif;
-  --font-po-ui:      var(--font-lato), 'Helvetica Neue', system-ui, sans-serif;
-
-  /* Radius/sombra — aditivos, namespace --po-* a propósito: no tocan --radius-card/
-     --radius-pill genéricos (los usan CalEmbed.tsx y FormularioDiagnostico.tsx, fuera
-     de este pase de diseño). Tarjetas más suaves + elevación real en hover. */
-  --po-radius-card: 12px;
-  /* Sombra con tinte cálido (--po-hero-bg, fijo, no invierte) en vez de negro puro —
-     coherente en claro y oscuro sin necesitar overrides bajo .dark. */
-  --po-shadow-sm: 0 1px 3px color-mix(in srgb, var(--po-hero-bg) 12%, transparent);
-  --po-shadow-md: 0 4px 12px color-mix(in srgb, var(--po-hero-bg) 18%, transparent);
-  --po-shadow-lg: 0 12px 32px color-mix(in srgb, var(--po-hero-bg) 24%, transparent);
-}
+/* PEDRA E OURO (--po-*, 23 tokens) también se eliminó el 2026-08-13, junto con las dos
+   reglas .po-faq-details[open] y .po-faq-summary:hover que lo consumían.
+   Esas reglas parecían mantener vivos --po-ouro y --po-areia, y por eso en un primer
+   pase se conservaron. Pero estilaban el acordeón viejo basado en <details>, y
+   FAQAccordionPedraEOuro hace rato que es un wrapper fino sobre el Accordion de Radix:
+   verificado contra el DOM de /faq, hay 23 acordeones renderizados, CERO elementos
+   <details> y CERO elementos con clase po-faq-*. Reglas que no matchean nada.
+   La lección para la próxima poda: que un token tenga una referencia no basta. Hay que
+   comprobar que ESA referencia se ejecute — un selector puede sobrevivir años después
+   del marcado que lo justificaba. */
 
 /* ══════════════════════════════════════════════════════════════════════════
    DESLUMBRANTE — Sistema de diseño VIGENTE (reemplaza a Pedra e Ouro, que
@@ -568,16 +605,56 @@ details > dd {
    ══════════════════════════════════════════════════════════════════════════ */
 @theme {
   /* Inversores — claro por defecto, override bajo .dark */
-  --dz-ink:      #16140F; /* texto principal — AA 16.89:1 sobre dz-papel */
-  --dz-papel:    #F7F5F0; /* fondo de sección */
-  --dz-luz:      #FFFFFF; /* fondo de tarjeta/superficie */
-  --dz-muted:    #6B6558; /* texto secundario — AA 5.31:1 sobre dz-papel */
+  --dz-ink:      #16140F; /* texto principal — AA 16.15:1 sobre dz-papel */
+  --dz-papel:    #F0F0F0; /* fondo de sección. Acompaña a --dz-luz y --color-blanco en la
+                             migración a #F0F0F0 del 2026-08-13: los tres valían lo mismo
+                             antes (#F7F5F0) y mover solo --dz-luz habría dejado las
+                             tarjetas 1.05:1 más oscuras que la sección que las contiene,
+                             separándolas en vez de fundirlas. Se mantiene la relación
+                             previa: sección y superficie comparten valor.
+                             Medido: 16.15:1 --dz-ink · 5.08:1 --dz-muted ·
+                             4.93:1 --dz-accent-text · 3.06:1 --dz-borde-input. */
+  --dz-luz:      #F0F0F0; /* fondo de tarjeta/superficie. #FFFFFF hasta 2026-08-11, luego
+                             #F7F5F0 (mismo valor que --dz-papel), y #F0F0F0 desde
+                             2026-08-13. Contraste medido sobre este fondo:
+                             16.15:1 --dz-ink, 5.08:1 --dz-muted, 3.06:1 --dz-borde-input,
+                             4.93:1 --dz-accent-text.
+                             --dz-accent-text se oscureció a #945A18 (2026-08-18) para dejar
+                             ~0.42 sobre el 4.5:1 de WCAG 1.4.3, en vez de los 0.02-0.03 que
+                             raspaba antes (#9C5F19). Sigue siendo un token calibrado por
+                             contraste: medir antes de tocarlo a él o a este fondo.
+                             --dz-papel acompañó el cambio y vale lo mismo, así que la
+                             tarjeta se sigue fundiendo con su sección, como antes. */
+  --dz-muted:    #6B6558; /* texto secundario — AA 5.08:1 sobre dz-papel */
   --dz-borde:    #DCDAD5;
+  /* Borde de campos de formulario. Misma familia cálida que --dz-borde (r>g>b), solo
+     empujado hasta que se vea. No es una preferencia estética: --dz-borde sobre --dz-luz
+     mide 1.28:1 en claro y 1.19:1 en oscuro, o sea que el recuadro del input es
+     prácticamente invisible y no llega al 3:1 que pide WCAG 1.4.11 para el borde de un
+     control. Este token mide 3.20:1 en claro y 3.30:1 en oscuro — visible sin volverse
+     un marco pesado. --dz-borde se queda como está: separa tarjetas y filas, donde un
+     borde tenue es lo correcto. */
+  --dz-borde-input: #8D897F;
 
   /* Fijos — no invierten con el tema, igual filosofía que --po-ouro */
   --dz-accent:       #E0932E; /* acento único de marca */
   --dz-accent-hover: #C27A1F;
-  --dz-accent-text:  #9C5F19; /* texto AA sobre dz-papel (4.74:1) — en dark usa --dz-accent directo (7.75:1) */
+  --dz-accent-text:  #945A18; /* texto AA sobre dz-papel. Oscurecido de #9C5F19 (2026-08-18)
+                                 para despejar margen real: sobre #F0F0F0 pasa de 4.53:1 a
+                                 4.93:1, y sobre el off-white apenas tintado #F0F0EB (secciones
+                                 faq/comunidad/apps) de 4.52:1 a 4.92:1 — ~0.42 sobre el 4.5:1
+                                 de WCAG en vez de 0.02-0.03. En dark usa --dz-accent directo
+                                 (7.75:1), sin cambios. Matiz casi intacto: mismo ámbar apenas
+                                 más oscuro, el canal azul casi no se toca (25→24). */
+  /* Variante para texto que va sobre un fondo TINTADO con el propio acento, no sobre el
+     fondo limpio. --dz-accent-text está calibrado contra --dz-papel; en cuanto el fondo
+     lleva una capa del acento se oscurece y se come el margen. Caso concreto: la píldora
+     Eyebrow tone="hero", cuyo fondo es color-mix(--dz-accent 10%) y resuelve a #F5EBDD —
+     ahí --dz-accent-text caía a 4.38:1 y perforaba AA. Este token da 5.30:1 sobre ese
+     mismo fondo, con margen real (0.80) en vez de raspar el umbral bajando el tinte.
+     En oscuro NO hace falta: el acento crudo sobre el tinte oscuro ya da 6.00:1, así que
+     el override de .dark lo devuelve a --dz-accent. */
+  --dz-accent-text-tinte: #8A5415;
   --dz-accent-ink:   #16140F; /* texto sobre botón --dz-accent — AA 7.35:1 */
 
   /* Bookend fijo — hero, marcador y CTA final comparten este fondo oscuro */
@@ -603,12 +680,18 @@ details > dd {
   --dz-fondo-pagina: #F0F0EB; /* = #F7F5F0 + 3% var(--color-atlantico), resuelto a hex.
      Bajo de 5% a 3%: a 5% (#ECEDE8) el fondo dejaba --dz-accent-text en 4.39:1,
      por debajo de AA para texto normal (medido en navegador, no estimado). */
-  --dz-fondo-marco:  #FFFFFF;
+  --dz-fondo-marco:  #F7F5F0; /* Era #FFFFFF hasta 2026-08-11 (fuera el blanco absoluto).
+     CONSECUENCIA ASUMIDA Y DECIDIDA: las dos capas de fondo se separaban 1.143:1 con el blanco
+     y ahora se separan 1.049:1, o sea que el marco y la página quedan casi del mismo color y
+     --dz-hero-fundido de abajo casi no tiene nada que fundir. Se aceptó a cambio de sacar el
+     blanco puro de todas las vistas. Si algún día se quiere recuperar la separación, la palanca
+     es oscurecer --dz-fondo-pagina, NO volver el marco a blanco — pero ojo con el techo de
+     --dz-accent-text, que a #ECEDE8 ya cae a 4.39:1 y perfora AA. */
 
   /* El Hero deja de ser un "bookend fijo oscuro" y pasa a seguir el tema, así
      que sus textos ya no pueden ser claros fijos: invierten con el modo.
-     Valores medidos sobre --dz-fondo-marco (#FFFFFF en claro): 18.4:1 el
-     titular, 5.79:1 el secundario. */
+     Valores medidos sobre --dz-fondo-marco: con el blanco de antes daban 18.4:1 el titular y
+     5.79:1 el secundario; sobre el #F7F5F0 actual dan 16.89:1 y 5.31:1. Los dos siguen AA. */
   --dz-hero-bg:    var(--dz-fondo-marco);
   --dz-hero-text:  #16140F;
   --dz-hero-muted: #6B6558;
@@ -620,7 +703,8 @@ details > dd {
 
      120px sobre un Hero de 296–480px de alto: la franja es lo bastante larga
      para que el ojo no encuentre dónde empieza. El salto de color que disuelve
-     ya era pequeño de por sí —#FFFFFF a #F0F0EB en claro, #1B1913 a #0F1512 en
+     ya era pequeño de por sí —hoy #F7F5F0 a #F0F0EB en claro (antes #FFFFFF, o sea que ahora
+     es aún más chico: ver la nota de --dz-fondo-marco), #1B1913 a #0F1512 en
      oscuro—, así que repartirlo en 120px lo vuelve apenas perceptible, que es el
      efecto pedido. Es la única palanca: subirlo suaviza más, bajarlo endurece. */
   --dz-hero-fundido: 120px;
@@ -730,11 +814,19 @@ details > dd {
      mecanismo no-destructivo que --au-accent ya usaba desde sesión 1. Cero cambios en los
      componentes de components/apps/** — todos consumen --au-* por variable, así que repuntar
      la definición acá alcanza para todo el árbol. */
-  --au-bg:              var(--dz-papel);
+  /* Capa de PÁGINA, no de superficie. Apuntaba a --dz-papel, que funcionaba mientras --dz-luz
+     (fondo de las tarjetas) era blanco puro. Al sacar el blanco (2026-08-11) los dos quedaron
+     en #F7F5F0 y las tarjetas de acordeón se volvieron planas contra el fondo. Apuntar a
+     --dz-fondo-pagina recupera la separación reusando el sistema de dos capas que ya existe,
+     en vez de devolverle el blanco a las tarjetas. Medido sobre #F0F0EB: 16.10:1 --au-heading,
+     5.06:1 --au-hero-body, 4.92:1 --au-accent-text (era 4.52:1 con #9C5F19). Los tres AA.
+     Solo se toca la definición CLARA: en oscuro --dz-papel (#0E0D0B) y --dz-luz (#1B1913) ya
+     son distintos entre sí, así que ahí nunca hubo aplanamiento. */
+  --au-bg:              var(--dz-fondo-pagina);
   --au-header-bg:       var(--dz-luz);
   --au-card:            var(--dz-luz);
   --au-accent:          #E0932E; /* retinte Deslumbrante (= --dz-accent) — acento y bordes activos, fijo en ambos temas */
-  --au-accent-text:     #9C5F19; /* = --dz-accent-text — AA sobre fondo claro */
+  --au-accent-text:     #945A18; /* = --dz-accent-text (oscurecido 2026-08-18) — AA sobre fondo claro, 4.92:1 sobre el tintado */
   --au-hero-heading:    var(--dz-ink);
   --au-heading:         var(--dz-ink);
   --au-hero-body:       var(--dz-muted);
@@ -839,35 +931,20 @@ details > dd {
   .mkd-skeleton-pulse { animation: none; }
 }
 
-/* Estados hover/open del acordeón FAQAccordionPedraEOuro */
-.po-faq-details[open] {
-  border-color: color-mix(in srgb, var(--po-ouro) 40%, transparent) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-.po-faq-summary:hover {
-  background-color: var(--po-areia);
-}
-
 /* ── Dark mode — override de variables CSS ───────────────────────────────────
    Reutiliza valores existentes de la paleta swapeando fondo/texto.
    El header usa --color-header-bg (siempre oscuro, override abajo).
    ─────────────────────────────────────────────────────────────────────────── */
 .dark {
-  /* Pedra e Ouro — dark overrides */
-  --po-areia:     #2A2420;
-  --po-luz:       #332C27;
-  --po-pedra:     #F0E8DC;
-  --po-muted:     #A8998C;
-  --po-borde:     #4A3F38;
-  --po-ouro-text: #C89B3C; /* claro sobre fondo oscuro — 5.98:1 AA */
-
   /* Deslumbrante — dark overrides */
   --dz-papel: #0E0D0B;
   --dz-luz:   #1B1913;
   --dz-ink:   #F3EFE4;
   --dz-muted: #9C9484;
   --dz-borde: #292825;
+  --dz-borde-input: #6F6B60; /* 3.30:1 sobre --dz-luz oscuro — ver el comentario en :root */
   --dz-accent-text: var(--dz-accent); /* el acento crudo ya es AA sobre fondo oscuro — 7.75:1 */
+  --dz-accent-text-tinte: var(--dz-accent); /* sobre el tinte oscuro da 6.00:1 — no necesita oscurecerse */
 
   /* Dos capas de fondo — el marco queda un escalón MÁS CLARO que la página, así
      Hero/Nav/Footer se despegan de un fondo más profundo en vez de fundirse.
@@ -886,20 +963,6 @@ details > dd {
 
   /* Marco de la Polaroid: apenas más oscuro que en claro, no invertido. */
   --dz-polaroid-marco: #DCDAD5; /* = --dz-borde (claro) */
-
-  /* Atlántico Editorial — dark overrides */
-  --ae-papel:   #0F172A;
-  --ae-tinta:   #F1F5F9;
-  --ae-niebla:  #1E293B;
-  --ae-muted:   #94A3B8;
-  --ae-borde:   #334155;
-
-  /* Mar Abierto — dark overrides */
-  --mar-canvas:  #0C1F1A;
-  --mar-ink:     #E8F5F2;
-  --mar-niebla:  #0F2B24;
-  --mar-muted:   #7FB8AF;
-  --mar-border:  #1A3A32;
 
   /* Fondos — grafito cálido */
   --color-blanco:  #141210;

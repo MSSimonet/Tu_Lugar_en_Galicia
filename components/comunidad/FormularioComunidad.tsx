@@ -1,21 +1,33 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRef, useState, type FormEvent } from 'react'
+import { useValidacionHibrida } from '@/lib/forms/useValidacionHibrida'
 import Link from 'next/link'
 import { ACTIVIDADES, type Actividad, type ComunidadRegistroInput } from '@/lib/comunidad/types'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
+type EstadoFoto = 'idle' | 'subiendo' | 'listo'
 
 const CIUDADES = ['Vigo', 'A Coruña', 'Santiago de Compostela', 'Pontevedra', 'Lugo']
 
 const inputBase =
-  'w-full rounded border px-4 py-3 [font-size:var(--text-sm)] placeholder:opacity-50 focus:outline-none focus:ring-1 transition-colors'
+  'w-full rounded border px-4 py-3 [font-size:var(--text-sm)] '
+  // El placeholder NO se deja al alfa por defecto: Tailwind v4 aplica
+  // color-mix(currentcolor 50%) en su preflight, y ese 50% sobre --dz-ink mide 3,88:1,
+  // por debajo del 4,5:1 que WCAG 1.4.3 exige para texto. Antes era peor: `placeholder:opacity-50`
+  // multiplicaba OTRO 0,5 y lo dejaba en 1,82:1 — y en estos formularios el placeholder es lo
+  // unico que explica que escribir. Con --dz-muted mide 5,31:1 en claro y 5,84:1 en oscuro.
+  + 'placeholder:[color:var(--dz-muted)] '
+  // Sin `transition-colors` a propósito: si no, el borde coral de error no se pinta nunca.
+  // El porqué, con las medidas, está en components/contacto/FormularioContacto.tsx.
+  + 'focus:outline-none focus:ring-1'
 
 const inputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-dz-ui)',
   borderRadius: 'var(--dz-radius-input)',
-  borderColor: 'var(--dz-borde)',
+  // --dz-borde-input y no --dz-borde: el segundo mide 1.28:1 en claro y 1.19:1 en oscuro
+  // sobre este mismo fondo, o sea que el recuadro del campo no se veía. Ver globals.css.
+  borderColor: 'var(--dz-borde-input)',
   backgroundColor: 'var(--dz-luz)',
   color: 'var(--dz-ink)',
 }
@@ -51,8 +63,6 @@ interface FormErrors {
 }
 
 export function FormularioComunidad() {
-  const router = useRouter()
-
   const [email, setEmail] = useState('')
   const [calle1, setCalle1] = useState('')
   const [calle2, setCalle2] = useState('')
@@ -61,63 +71,164 @@ export function FormularioComunidad() {
   const [fotoUrl, setFotoUrl] = useState('')
   const [disponibilidad, setDisponibilidad] = useState<Actividad[]>([])
   const [contacto, setContacto] = useState('')
+  // Arranca en false a propósito: el opt-in es explícito (PII-01). Nadie publica su teléfono
+  // por no haber mirado una casilla ya marcada.
+  const [mostrarContacto, setMostrarContacto] = useState(false)
   const [rgpd, setRgpd] = useState(false)
 
   const [status, setStatus] = useState<Status>('idle')
-  const [errors, setErrors] = useState<FormErrors>({})
   const [errorUbicacion, setErrorUbicacion] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
+
+  const [estadoFoto, setEstadoFoto] = useState<EstadoFoto>('idle')
+  const [errorFoto, setErrorFoto] = useState('')
+  const inputFotoRef = useRef<HTMLInputElement>(null)
+
+  // La foto se sube en cuanto se elige, no al enviar el formulario. Así el error de una imagen
+  // rechazada (formato, tamaño) aparece al lado del campo y no después de mandar todo lo demás,
+  // que es donde más molesta.
+  async function subirFoto(archivo: File | undefined) {
+    if (!archivo) return
+    setErrorFoto('')
+    setEstadoFoto('subiendo')
+
+    const datos = new FormData()
+    datos.append('foto', archivo)
+
+    try {
+      const res = await fetch('/api/comunidad/foto', { method: 'POST', body: datos })
+      const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string }
+      if (!res.ok || !data.url) {
+        setErrorFoto(data.error ?? 'No pudimos subir la imagen. Intenta de nuevo.')
+        setEstadoFoto('idle')
+        // Se limpia el input para que volver a elegir el MISMO archivo dispare un change nuevo:
+        // si no, el navegador considera que el valor no cambió y no vuelve a intentarlo.
+        if (inputFotoRef.current) inputFotoRef.current.value = ''
+        return
+      }
+      setFotoUrl(data.url)
+      setEstadoFoto('listo')
+    } catch {
+      setErrorFoto('Error de conexión al subir la imagen.')
+      setEstadoFoto('idle')
+      if (inputFotoRef.current) inputFotoRef.current.value = ''
+    }
+  }
+
+  function quitarFoto() {
+    setFotoUrl('')
+    setEstadoFoto('idle')
+    setErrorFoto('')
+    if (inputFotoRef.current) inputFotoRef.current.value = ''
+  }
 
   function toggleActividad(id: Actividad) {
     setDisponibilidad(prev =>
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     )
+    // Se limpia al tocar y no al salir del grupo: en un grupo de casillas, "salir" no es un
+    // gesto que la persona haga a propósito, y dejar el error en rojo mientras ya está
+    // marcando opciones es ruido.
+    limpiarError('disponibilidad')
   }
 
   function handleCalle1Change(value: string) {
     setCalle1(value)
+    limpiarError('calle1')
     if (errorUbicacion) setErrorUbicacion('')
   }
 
   function handleCalle2Change(value: string) {
     setCalle2(value)
+    limpiarError('calle2')
     if (errorUbicacion) setErrorUbicacion('')
+  }
+
+  /**
+   * Orden visual de los campos. NO es el orden de las claves de FormErrors: ese es el orden
+   * en que `validate()` las escribe, y con `Object.keys` bastaría reordenar una línea de
+   * validación para que el foco saltara al campo equivocado. Acá el orden está atado a cómo
+   * se ve el formulario, que es lo que la persona espera.
+   */
+  const ORDEN_DE_CAMPOS: (keyof FormErrors)[] = [
+    'email', 'calle1', 'calle2', 'ciudad', 'nombre', 'disponibilidad', 'rgpd',
+  ]
+
+  /**
+   * Lleva el foco al primer campo con error tras un envío fallido.
+   *
+   * Sin esto el foco se quedaba en el `<body>` (medido: `document.activeElement` = BODY): se
+   * pintaban cinco errores más abajo y quien navega con teclado o lector de pantalla no
+   * recibía ninguna señal de que el envío no salió. Desde su punto de vista, pulsar "Enviar"
+   * no hacía nada.
+   *
+   * El `role="alert"` de cada mensaje no alcanza para este caso: anuncia el texto del error,
+   * pero no deja el cursor donde hay que corregir, así que había que recorrer el formulario a
+   * ciegas para encontrarlo.
+   */
+  function moverFocoAlPrimerError(errores: FormErrors) {
+    const primero = ORDEN_DE_CAMPOS.find((campo) => errores[campo])
+    if (!primero) return
+    // 'disponibilidad' no es un input: el error es del grupo, así que el foco va al primer
+    // checkbox del fieldset, que es el control real que hay que tocar para resolverlo.
+    const id = primero === 'disponibilidad' ? `actividad-${ACTIVIDADES[0].id}` : primero
+    const destino = document.getElementById(id)
+    if (!destino) return
+    destino.focus()
+    // `block: 'center'` y no el default: el mensaje de error vive DEBAJO del campo, así que
+    // dejarlo pegado al borde superior del viewport lo escondería justo a él.
+    destino.scrollIntoView({ block: 'center', behavior: prefiereMenosMovimiento() ? 'auto' : 'smooth' })
+  }
+
+  function prefiereMenosMovimiento(): boolean {
+    return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   }
 
   function validate(): FormErrors {
     const next: FormErrors = {}
     if (!email.trim()) next.email = 'Indica tu email.'
     if (!nombre.trim()) next.nombre = 'Indica tu nombre o alias.'
-    if (!calle1.trim()) next.calle1 = 'Indica la primera calle.'
-    if (!calle2.trim()) next.calle2 = 'Indica la segunda calle.'
+    // Las calles son opcionales, pero van de a dos: con una sola no hay intersección que
+    // ubicar. Solo se reclama la que falta cuando la otra ya está escrita.
+    if (calle1.trim() && !calle2.trim()) next.calle2 = 'Indica también la segunda calle, o deja las dos vacías.'
+    if (calle2.trim() && !calle1.trim()) next.calle1 = 'Indica también la primera calle, o deja las dos vacías.'
     if (!ciudad) next.ciudad = 'Selecciona una ciudad.'
     if (disponibilidad.length === 0) next.disponibilidad = 'Selecciona al menos una opción.'
     if (!rgpd) next.rgpd = 'Debes aceptar la política de privacidad para continuar.'
     return next
   }
 
+  // Validación híbrida: callada hasta el primer envío, reactiva onBlur después.
+  // Ver lib/forms/useValidacionHibrida.ts. Va DESPUÉS de validate() a propósito: aunque las
+  // declaraciones de función se elevan, leerla antes de su definición oculta de qué estado
+  // depende.
+  const { errores: errors, validarParaEnviar, validarCampo, limpiarError } =
+    useValidacionHibrida<FormErrors>(validate)
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setErrorUbicacion('')
     setErrorMsg('')
 
-    const validation = validate()
+    // validarParaEnviar además ENCIENDE el modo reactivo: desde el primer envío fallido,
+    // cada campo que se abandone se revalida solo.
+    const validation = validarParaEnviar()
     if (Object.keys(validation).length > 0) {
-      setErrors(validation)
+      moverFocoAlPrimerError(validation)
       return
     }
-    setErrors({})
     setStatus('loading')
 
     const body: ComunidadRegistroInput = {
       email,
       nombre,
       fotoUrl: fotoUrl.trim() || undefined,
-      calle1,
-      calle2,
+      calle1: calle1.trim() || undefined,
+      calle2: calle2.trim() || undefined,
       ciudad,
       disponibilidad,
       contacto: contacto.trim() || undefined,
+      mostrarContacto,
       rgpd,
     }
 
@@ -129,8 +240,9 @@ export function FormularioComunidad() {
       })
 
       if (res.ok) {
+        // Ya no se redirige al mapa: el perfil todavía no existe. El alta se completa
+        // recién cuando la persona abre el enlace del correo (§5.6 de docs/arranque.md).
         setStatus('success')
-        router.push('/comunidad/mapa')
         return
       }
 
@@ -150,7 +262,40 @@ export function FormularioComunidad() {
     }
   }
 
-  const isBusy = status === 'loading' || status === 'success'
+  // El formulario se reemplaza entero: dejarlo visible invitaría a reenviarlo pensando que
+  // no funcionó, y cada reenvío es otro correo. Lo único que falta ahora está en la casilla.
+  if (status === 'success') {
+    return (
+      <div
+        className="flex flex-col gap-4 p-6"
+        style={{
+          borderRadius: 'var(--dz-radius-card)',
+          backgroundColor: 'var(--dz-papel)',
+          border: '1px solid var(--dz-borde)',
+          boxShadow: 'var(--dz-shadow-sm)',
+        }}
+        role="status"
+      >
+        <h2
+          style={{
+            fontFamily: 'var(--font-dz-display)',
+            fontWeight: 700,
+            fontSize: 'var(--text-lg)',
+            color: 'var(--dz-ink)',
+          }}
+        >
+          Revisa tu correo
+        </h2>
+        <p className="leading-[var(--leading-cuerpo)]" style={{ ...helperStyle, fontSize: 'var(--text-sm)' }}>
+          Te enviamos un enlace a <strong style={{ color: 'var(--dz-ink)' }}>{email.trim()}</strong>.
+          Ábrelo y tu perfil aparece en el mapa.
+        </p>
+        <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
+          El enlace vale 24 horas. Si no lo ves, mira en la carpeta de spam.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-10">
@@ -176,10 +321,12 @@ export function FormularioComunidad() {
           required
           autoComplete="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={e => { setEmail(e.target.value); limpiarError('email') }}
+            onBlur={() => validarCampo('email')}
           className={inputBase}
           style={errors.email ? inputErrorStyle : inputStyle}
           placeholder="maria@ejemplo.com"
+          aria-invalid={errors.email ? true : undefined}
           aria-describedby={errors.email ? 'email-error' : undefined}
         />
         {errors.email && (
@@ -199,26 +346,31 @@ export function FormularioComunidad() {
             Tu ubicación, con privacidad
           </h2>
           <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
-            No te pedimos tu dirección exacta ni el número de tu casa. Con el cruce de estas dos
-            calles creamos un círculo de privacidad de unos 200 metros alrededor de tu zona —
-            así apareces en el mapa sin revelar dónde vives exactamente.
+            No te pedimos tu dirección exacta ni el número de tu casa. Con el cruce de dos calles
+            creamos un círculo de privacidad de unos 200 metros alrededor de tu zona — así
+            apareces en el mapa sin revelar dónde vives exactamente.
+          </p>
+          <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
+            Si prefieres no indicarlas, déjalas vacías: tu perfil aparece igual en la lista de la
+            comunidad, sin marca en el mapa, y quien quiera puede escribirte lo mismo.
           </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <label htmlFor="calle1" className={labelClass} style={labelStyle}>
-              Primera calle{requiredMark}
+              Primera calle <span className="font-normal opacity-60">(opcional)</span>
             </label>
             <input
               id="calle1"
               type="text"
-              required
               value={calle1}
               onChange={e => handleCalle1Change(e.target.value)}
+            onBlur={() => validarCampo('calle1')}
               className={inputBase}
               style={errors.calle1 || errorUbicacion ? inputErrorStyle : inputStyle}
               placeholder="Rúa do Príncipe"
+              aria-invalid={errors.calle1 ? true : undefined}
               aria-describedby={errors.calle1 ? 'calle1-error' : undefined}
             />
             {errors.calle1 && (
@@ -228,17 +380,18 @@ export function FormularioComunidad() {
 
           <div className="flex flex-col gap-2">
             <label htmlFor="calle2" className={labelClass} style={labelStyle}>
-              Segunda calle{requiredMark}
+              Segunda calle <span className="font-normal opacity-60">(opcional)</span>
             </label>
             <input
               id="calle2"
               type="text"
-              required
               value={calle2}
               onChange={e => handleCalle2Change(e.target.value)}
+            onBlur={() => validarCampo('calle2')}
               className={inputBase}
               style={errors.calle2 || errorUbicacion ? inputErrorStyle : inputStyle}
               placeholder="Rúa Urzáiz"
+              aria-invalid={errors.calle2 ? true : undefined}
               aria-describedby={errors.calle2 ? 'calle2-error' : undefined}
             />
             {errors.calle2 && (
@@ -259,9 +412,11 @@ export function FormularioComunidad() {
             id="ciudad"
             required
             value={ciudad}
-            onChange={e => setCiudad(e.target.value)}
+            onChange={e => { setCiudad(e.target.value); limpiarError('ciudad') }}
+            onBlur={() => validarCampo('ciudad')}
             className={inputBase}
             style={errors.ciudad ? inputErrorStyle : inputStyle}
+            aria-invalid={errors.ciudad ? true : undefined}
             aria-describedby={errors.ciudad ? 'ciudad-error' : undefined}
           >
             <option value="" disabled>Selecciona una ciudad</option>
@@ -287,10 +442,12 @@ export function FormularioComunidad() {
             required
             autoComplete="name"
             value={nombre}
-            onChange={e => setNombre(e.target.value)}
+            onChange={e => { setNombre(e.target.value); limpiarError('nombre') }}
+            onBlur={() => validarCampo('nombre')}
             className={inputBase}
             style={errors.nombre ? inputErrorStyle : inputStyle}
             placeholder="Marta"
+            aria-invalid={errors.nombre ? true : undefined}
             aria-describedby={errors.nombre ? 'nombre-error' : undefined}
           />
           {errors.nombre && (
@@ -299,26 +456,96 @@ export function FormularioComunidad() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label htmlFor="fotoUrl" className={labelClass} style={labelStyle}>
+          <span className={labelClass} style={labelStyle}>
             Foto <span className="font-normal opacity-60">(opcional)</span>
-          </label>
-          <input
-            id="fotoUrl"
-            type="url"
-            value={fotoUrl}
-            onChange={e => setFotoUrl(e.target.value)}
-            className={inputBase}
-            style={inputStyle}
-            placeholder="https://..."
-          />
+          </span>
+          <div className="flex flex-wrap items-center gap-3">
+            {/* El <input type="file"> nativo no se puede estilar y su texto ("Sin archivos
+                seleccionados") no se puede traducir ni cambiar. Se oculta de la vista —no de
+                los lectores de pantalla, que siguen viendo un campo de archivo con su label— y
+                el <label> hace de botón. Es la misma técnica que usa el checkbox de RGPD de
+                más abajo para agrandar su área de click. */}
+            <input
+              id="foto"
+              ref={inputFotoRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={e => subirFoto(e.target.files?.[0])}
+              className="sr-only"
+            />
+            <label
+              htmlFor="foto"
+              className="inline-flex cursor-pointer items-center px-5 py-3 font-semibold [font-size:var(--text-sm)] transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2"
+              style={{
+                fontFamily: 'var(--font-dz-ui)',
+                borderRadius: 'var(--dz-radius-input)',
+                border: '1px solid var(--dz-borde)',
+                backgroundColor: 'var(--dz-luz)',
+                color: 'var(--dz-ink)',
+                opacity: estadoFoto === 'subiendo' ? 0.6 : 1,
+              }}
+            >
+              {fotoUrl ? 'Cambiar foto' : 'Elegir una foto'}
+            </label>
+
+            {estadoFoto === 'subiendo' && (
+              <span style={helperStyle} aria-live="polite">Subiendo…</span>
+            )}
+            {estadoFoto === 'listo' && fotoUrl && (
+              <span className="flex items-center gap-3" aria-live="polite">
+                {/* eslint-disable-next-line @next/next/no-img-element -- previsualización de un archivo recién subido, fuera del pipeline de <Image>. */}
+                <img
+                  src={fotoUrl}
+                  alt="Vista previa de tu foto"
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 rounded-full object-cover"
+                  style={{ border: '1px solid var(--dz-borde)' }}
+                />
+                <button
+                  type="button"
+                  onClick={quitarFoto}
+                  className="underline underline-offset-2 [font-size:var(--text-xs)]"
+                  style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-accent-text)', cursor: 'pointer' }}
+                >
+                  Quitar
+                </button>
+              </span>
+            )}
+          </div>
+
+          {errorFoto && (
+            <p className={errorClass} style={errorStyle} role="alert">{errorFoto}</p>
+          )}
+
           <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
-            Pega el enlace a una foto tuya que ya esté publicada en internet (por ejemplo, tu
-            foto de perfil en redes sociales). Todavía no tenemos un sistema para subir
-            archivos directamente.
+            JPG, PNG o WebP, hasta 4 MB. Le borramos los datos ocultos que traen las fotos del
+            móvil —entre ellos el GPS del lugar donde se tomó— antes de guardarla. La revisamos
+            a mano antes de publicarla, así que tarda un poco en aparecer en tu perfil.
           </p>
         </div>
 
-        <fieldset className="flex flex-col gap-2">
+        {/* Los dos atributos van en sitios distintos, y a propósito:
+
+            · aria-describedby en el FIELDSET. El error es del grupo ("selecciona al menos
+              una"), no de una casilla concreta. Puesto en cada input, un lector de pantalla
+              releería el mensaje entero tres veces, una por opción. Era el único de los
+              cinco errores del formulario sin `id` y sin nadie que lo referenciara: se
+              anunciaba por su role="alert" al aparecer, pero después quedaba huérfano — al
+              tabular hasta las casillas no había forma de volver a oírlo.
+
+            · aria-invalid en CADA CASILLA, no en el fieldset. Un <fieldset> mapea a
+              role="group", y ARIA no admite aria-invalid en ese rol (sí en role="radiogroup",
+              que es otra cosa): ahí el atributo lo ignora el lector de pantalla. En un
+              checkbox sí está soportado. No contradice al punto anterior — aria-invalid se
+              anuncia como un estado corto ("no válido") al entrar en cada opción, no
+              releyendo el mensaje, así que repetirlo por casilla no molesta como sí lo haría
+              con describedby. Mismo criterio que CheckboxGroup en
+              components/conocernos/form-fields.tsx. */}
+        <fieldset
+          className="flex flex-col gap-2"
+          aria-describedby={errors.disponibilidad ? 'disponibilidad-error' : undefined}
+        >
           <legend className={labelClass} style={labelStyle}>
             ¿Cómo te gustaría ayudar?{requiredMark}
           </legend>
@@ -334,6 +561,7 @@ export function FormularioComunidad() {
                   type="checkbox"
                   checked={disponibilidad.includes(actividad.id)}
                   onChange={() => toggleActividad(actividad.id)}
+                  aria-invalid={errors.disponibilidad ? true : undefined}
                   className="h-4 w-4 shrink-0 cursor-pointer"
                   style={{ accentColor: 'var(--dz-accent)' }}
                 />
@@ -344,7 +572,9 @@ export function FormularioComunidad() {
             ))}
           </div>
           {errors.disponibilidad && (
-            <p className={errorClass} style={errorStyle} role="alert">{errors.disponibilidad}</p>
+            <p id="disponibilidad-error" className={errorClass} style={errorStyle} role="alert">
+              {errors.disponibilidad}
+            </p>
           )}
         </fieldset>
       </div>
@@ -364,9 +594,43 @@ export function FormularioComunidad() {
           style={inputStyle}
           placeholder="+34 600 123 456"
         />
+        {/* Historial de este texto, para no volver atrás sin querer:
+            (1) decía que dejar el campo vacío era lo que evitaba exponer el número — falso
+                desde la migración 0010 (PII-01), corregido en 3a13a97;
+            (2) decía "escríbenos y lo activamos" — cierto hasta que existió la casilla de
+                abajo, que es la que decide la visibilidad. */}
         <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
-          Si lo dejas en blanco, quienes te vean en el mapa igual podrán escribirte: en vez de
-          un enlace directo verán un botón para enviarte un mensaje privado, sin exponer tu número.
+          Quien te vea podrá escribirte aunque no dejes tu número: verá un botón para enviarte
+          un mensaje privado, que te llega por email.
+        </p>
+
+        <label
+          htmlFor="mostrarContacto"
+          className="flex items-center gap-3 cursor-pointer mt-1"
+        >
+          <input
+            id="mostrarContacto"
+            type="checkbox"
+            checked={mostrarContacto}
+            onChange={e => setMostrarContacto(e.target.checked)}
+            className="h-4 w-4 shrink-0 cursor-pointer"
+            style={{ accentColor: 'var(--dz-accent)' }}
+          />
+          <span style={{ fontFamily: 'var(--font-dz-ui)', fontSize: 'var(--text-sm)', color: 'var(--dz-ink)' }}>
+            Mostrar mi teléfono en mi perfil del mapa
+          </span>
+        </label>
+        <p className="leading-[var(--leading-cuerpo)]" style={helperStyle}>
+          Si no la marcas, tu número no se muestra a nadie. Puedes cambiarlo cuando quieras
+          desde{' '}
+          <Link
+            href="/comunidad/gestionar"
+            className="underline underline-offset-2"
+            style={{ color: 'var(--dz-accent-text)' }}
+          >
+            gestionar tu perfil
+          </Link>
+          .
         </p>
       </div>
 
@@ -388,9 +652,10 @@ export function FormularioComunidad() {
             type="checkbox"
             required
             checked={rgpd}
-            onChange={e => setRgpd(e.target.checked)}
+            onChange={e => { setRgpd(e.target.checked); limpiarError('rgpd') }}
             className="h-4 w-4 cursor-pointer"
             style={{ accentColor: 'var(--dz-accent)' }}
+            aria-invalid={errors.rgpd ? true : undefined}
             aria-describedby={errors.rgpd ? 'rgpd-error' : undefined}
           />
         </label>
@@ -420,18 +685,18 @@ export function FormularioComunidad() {
 
       <button
         type="submit"
-        disabled={isBusy}
+        disabled={status === 'loading'}
         className="self-start inline-flex items-center justify-center px-8 py-4 font-bold [font-size:var(--text-sm)] tracking-[0.10em] uppercase disabled:opacity-60 disabled:cursor-not-allowed transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{
           fontFamily: 'var(--font-dz-ui)',
           borderRadius: '999px',
           backgroundColor: 'var(--dz-accent)',
           color: '#1A1410',
-          outlineColor: 'var(--dz-accent)',
+          outlineColor: 'var(--dz-ink)',
           boxShadow: 'var(--dz-shadow-md)',
         }}
       >
-        {status === 'loading' ? 'Enviando…' : status === 'success' ? 'Redirigiendo…' : 'Unirme al mapa de la comunidad'}
+        {status === 'loading' ? 'Enviando…' : 'Unirme al mapa de la comunidad'}
       </button>
     </form>
   )

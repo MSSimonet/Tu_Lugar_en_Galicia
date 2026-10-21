@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { listarEtapas, listarLeadsParaKanban } from '@/lib/admin/pipelineRepo'
 import { AdminHeader } from '@/components/admin/ui/AdminPrimitives'
 import { KanbanBoard } from '@/components/admin/kanban/KanbanBoard'
+import { requireAdminSession } from '@/lib/admin/requireAdminSession'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -9,6 +10,8 @@ export const metadata: Metadata = {
 }
 
 export default async function KanbanPage() {
+  await requireAdminSession()
+
   const [etapas, leads] = await Promise.all([
     listarEtapas(),
     listarLeadsParaKanban(),

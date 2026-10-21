@@ -7,7 +7,7 @@ import { getToken } from 'next-auth/jwt'
 // Si se edita el texto de alguno de estos scripts, recalcular su hash o el
 // navegador lo bloqueará silenciosamente (violación CSP en consola).
 const INLINE_SCRIPT_HASHES = [
-  "'sha256-wha9mgRhIs6XGqBOTvvg6RFVdW/NpoonZ/vgwLvFFSc='", // app/layout.tsx — script de tema
+  "'sha256-edYg9fl05ovKB+T26P9DMd3yq6CIIJHZWwUg9FA7RTI='", // app/layout.tsx — script de tema
   "'sha256-D6OU0n76o3oia0DoRGnz4iTMPdRK/g6+BrT3Hgt0ckM='", // app/page.tsx — localBusinessSchema
   "'sha256-6h87612lImx4Fr21J9FjdmL2CAW9sx7nW11lyuFOLsg='", // app/como-funciona/page.tsx — serviceSchema
   "'sha256-1ufvVU5bMgI8WxxGfjT0d6fy4F+nOdBtDMvLySZU3nA='", // app/faq/page.tsx — faqSchema
@@ -58,9 +58,15 @@ export async function middleware(req: NextRequest) {
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     // https://*.tile.openstreetmap.org: tiles del mapa de Comunidad de Acogida (Leaflet.js).
+    // https://*.supabase.co: las fotos de perfil de Comunidad, que desde B2 se suben a
+    //   Supabase Storage y se sirven desde ahí. Es el host de nuestro propio proyecto, no un
+    //   tercero abierto, y el bucket solo acepta escritura de la service_role (migración 0012).
+    //   Ojo con el dato al pasar: mientras la foto era una URL pegada a mano ("tu foto de
+    //   perfil en redes sociales"), esta directiva ya la estaba bloqueando — ninguna de esas
+    //   fotos llegó nunca a verse. Pasar a archivo subido arregla eso de paso.
     // placehold.co salió de la lista (auditoría 2026-07-25, C3): ya no queda
     // ninguna imagen servida por ese host, así que deja de estar permitido.
-    "img-src 'self' data: blob: https://*.tile.openstreetmap.org",
+    "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.supabase.co",
     "media-src 'self'",
     "frame-src https://app.cal.com https://cal.com",
     // https://*.supabase.co: el mapa de Comunidad de Acogida consume Supabase directo desde
@@ -102,6 +108,47 @@ export async function middleware(req: NextRequest) {
     isSensitiveRoute ? 'no-referrer' : 'strict-origin-when-cross-origin',
   )
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+
+  // Canonicalización de rutas de admin percent-encoded, ANTES del gate de sesión (hallazgo F1).
+  //
+  // req.nextUrl.pathname llega SIN decodificar: NextURL usa el parser WHATWG, que no decodifica
+  // %xx (verificado en node_modules/next/dist/server/web/next-url.js — su único `get pathname()`
+  // no tiene un solo decodeURIComponent, y no existe accessor decodificado en la API pública).
+  // Por eso el `startsWith('/admin/')` del gate de más abajo no reconocía `/%61dmin/inbox` como
+  // ruta de admin: el gate no disparaba, el request pasaba de largo, y el router de Next —que SÍ
+  // decodifica para resolver la ruta— terminaba sirviendo un 500 en Vercel por el desajuste entre
+  // la URL codificada y la ruta ya decodificada. Confirmado en producción: el 500 traía
+  // `Referrer-Policy: strict-origin-when-cross-origin` (no `no-referrer`), o sea que el middleware
+  // había tratado el path como NO-admin.
+  //
+  // Si al decodificar el path cambia y cae en el área de admin, redirigimos a la forma canónica.
+  // Ese segundo request entra como `/admin/...` normal y pasa por el mismo gate que cualquier otro
+  // —sin duplicar la lógica de sesión— y el render nunca ve una URL codificada. Cubre los tres
+  // casos: `/%61dmin/inbox` sin sesión → canónica → gate → login; con sesión → canónica → render;
+  // y `/%61dmin/login` → `/admin/login` → render (sin loop ni 500). No hay bucle: la forma canónica
+  // ya decodificada cumple `decoded === pathname`, así que no vuelve a entrar acá.
+  //
+  // decodeURIComponent puede lanzar con secuencias malformadas (`%ZZ`, `%` suelto): fail-safe, se
+  // trata como no-admin (se queda con el path crudo). Next tampoco puede resolver esa ruta a una
+  // página real —usa el mismo decode que lanza—, así que no hay dato que exponer.
+  let decodedPathname = pathname
+  try {
+    decodedPathname = decodeURIComponent(pathname)
+  } catch {
+    decodedPathname = pathname
+  }
+  const decodedEsAdmin = decodedPathname === '/admin' || decodedPathname.startsWith('/admin/')
+  if (decodedPathname !== pathname && decodedEsAdmin) {
+    const canonicalUrl = new URL(req.url)
+    canonicalUrl.pathname = decodedPathname
+    const canonicalRedirect = NextResponse.redirect(canonicalUrl)
+    canonicalRedirect.headers.set('Content-Security-Policy', csp)
+    canonicalRedirect.headers.set('X-Content-Type-Options', 'nosniff')
+    canonicalRedirect.headers.set('X-Frame-Options', 'DENY')
+    canonicalRedirect.headers.set('Referrer-Policy', 'no-referrer')
+    canonicalRedirect.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+    return canonicalRedirect
+  }
 
   // Gate de sesión NextAuth para /admin/* (páginas HTML que abre Silvana en el
   // navegador). NO cubre /api/admin/ ni /api/webhooks/ — esos siguen con su

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { getFicha360 } from '@/lib/admin/inboxRepo'
 import { listarDefinicionesCamposCustom } from '@/lib/admin/camposCustomRepo'
 import { isValidUuid } from '@/lib/utils/validation'
+import { requireAdminSession } from '@/lib/admin/requireAdminSession'
 import {
   Badge, Card, FieldRow, ErrorPage,
   getCalificacionStyle, formatValue, formatFecha,
@@ -24,6 +25,8 @@ interface PageProps {
 }
 
 export default async function FichaLeadPage({ params }: PageProps) {
+  await requireAdminSession()
+
   const { id } = await params
 
   if (!isValidUuid(id)) {

@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
+import { SITE_URL } from '@/lib/config/site'
 import { LegalHero } from '@/components/legal/LegalHero'
 import { LegalSection } from '@/components/legal/LegalSection'
 
 export const metadata: Metadata = {
   title: 'Política de Cookies',
   description: 'Política de cookies de Tu Lugar en Galicia, agencia de relocation especializada en Galicia.',
+  alternates: { canonical: `${SITE_URL}/politica-de-cookies` },
 }
 
 export default function PoliticaDeCookiesPage() {
@@ -14,7 +16,7 @@ export default function PoliticaDeCookiesPage() {
 
       <article className="mx-auto max-w-3xl px-[var(--space-6)] py-[var(--space-16)]" style={{ backgroundColor: 'var(--dz-luz)' }}>
         <div
-          className="flex flex-col gap-[var(--space-10)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)]"
+          className="flex flex-col gap-[var(--space-12)] [font-size:var(--text-sm)] leading-[var(--leading-cuerpo)]"
           style={{ fontFamily: 'var(--font-dz-ui)', color: 'var(--dz-ink)' }}
         >
 

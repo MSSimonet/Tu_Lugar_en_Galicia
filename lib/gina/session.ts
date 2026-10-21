@@ -27,7 +27,7 @@ export type GinaSession = {
   completado: boolean
   /** id (uuid) del lead en Supabase creado en guardar_nivel1 — usado para update en guardados posteriores */
   leadId?: string
-  /** Firma HMAC de leadId (generateAdminToken) — evita que el cliente inyecte un leadId ajeno */
+  /** Firma HMAC de leadId (generateScopedToken, ámbito 'gina-sesion') — evita que el cliente inyecte un leadId ajeno */
   leadIdSig?: string
   /**
    * Buffer de mensajes del transcript aún no persistidos (Fase 2, ficha 360°).

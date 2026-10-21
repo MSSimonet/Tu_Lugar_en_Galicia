@@ -63,7 +63,31 @@ storybook-static
 # config de .claude/ (launch.json, settings.json, session-start.ps1,
 # pre-compact.ps1) SI son del proyecto — CLAUDE.md documenta el hook
 # SessionStart y sin ellos se rompe al clonar.
-.claude/skills/
+#
+# La forma es `skills/*` y no `skills/` A PROPOSITO: git no permite re-incluir nada
+# dentro de un directorio excluido entero, asi que con `skills/` la excepcion de abajo
+# no tendria efecto. Excluyendo el CONTENIDO (`/*`) la excepcion si funciona, y todo
+# lo demas (las 24 skills instaladas + design-references) sigue afuera igual.
+.claude/skills/*
+# Excepcion puntual: skill escrita para ESTE proyecto, no instalada. CLAUDE.md §6.1 y
+# §10 la exigen para todo el copy publicado, asi que tiene que sobrevivir a un clone —
+# si no, la regla vuelve a apuntar al vacio (hallazgo §5.7 de docs/arranque.md).
+!.claude/skills/voz-tu-lugar-en-galicia/
+!.claude/skills/motion-tu-lugar-en-galicia/
+
+# settings.local.json — allowlist de permisos de la maquina, NO config del proyecto (a
+# diferencia de settings.json, que si esta versionado a proposito, ver arriba).
+#
+# Se ignora por seguridad, no por prolijidad: el archivo guarda los comandos aprobados
+# TAL CUAL se ejecutaron, y varios de ellos eran curls a la API de Airtable con el
+# Personal Access Token escrito en la linea. Hoy hay un token en texto plano repetido
+# una docena de veces ahi dentro. Nunca llego a un commit (verificado con
+# `git log --all -S`), pero estaba untracked Y sin ignorar: un `git add -A` distraido lo
+# publicaba. Esto cierra esa via. El token igual hay que revocarlo en Airtable — un
+# credencial vivo de un servicio que el proyecto ya no usa no tiene por que seguir siendo
+# valido (hallazgo 2026-08-12).
+.claude/settings.local.json
+
 .agents/
 
 # Artefactos de Playwright MCP (logs y snapshots de sesiones de verificación)

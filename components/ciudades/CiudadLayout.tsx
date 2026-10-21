@@ -8,6 +8,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { FAQAccordionPedraEOuro } from '@/components/ciudades/FAQAccordionPedraEOuro'
 import { ClimaActual } from '@/components/ciudad/ClimaActual'
 import { VistaEnVivo } from '@/components/ciudad/VistaEnVivo'
+import { MOSTRAR_VISTA_EN_VIVO } from '@/lib/config/site'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { Button } from '@/components/ui/Button'
 import { SparkleIcon } from '@/components/ui/SparkleIcon'
@@ -296,13 +297,16 @@ export function CiudadLayout({
             </p>
           </motion.div>
 
-          {/* Vista en vivo Windy */}
-          <VistaEnVivo
-            lat={vistaEnVivo.lat}
-            lon={vistaEnVivo.lon}
-            nombreCiudad={nombre}
-            descripcionUbicacion={vistaEnVivo.descripcionUbicacion}
-          />
+          {/* Cámara en vivo — oculta tras MOSTRAR_VISTA_EN_VIVO (lib/config/site.ts).
+              El componente queda intacto; solo no se monta. */}
+          {MOSTRAR_VISTA_EN_VIVO && (
+            <VistaEnVivo
+              lat={vistaEnVivo.lat}
+              lon={vistaEnVivo.lon}
+              nombreCiudad={nombre}
+              descripcionUbicacion={vistaEnVivo.descripcionUbicacion}
+            />
+          )}
         </motion.div>
 
         {/* Fila 3: FAQ ancho completo */}
