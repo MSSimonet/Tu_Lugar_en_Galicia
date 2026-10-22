@@ -60,9 +60,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Servicio no disponible' }, { status: 503 })
   }
   const ip = getRealIp(req)
-  const { success } = await ratelimit.limit(ip)
-  if (!success) {
-    return NextResponse.json({ error: 'Demasiadas solicitudes. Inténtalo más tarde.' }, { status: 429 })
+  try {
+    const { success } = await ratelimit.limit(ip)
+    if (!success) {
+      return NextResponse.json({ error: 'Demasiadas solicitudes. Inténtalo más tarde.' }, { status: 429 })
+    }
+  } catch {
+    console.error('[comunidad/gestionar/solicitar] ratelimit error — dejando pasar la solicitud', { ts: Date.now() })
   }
 
   let body: unknown

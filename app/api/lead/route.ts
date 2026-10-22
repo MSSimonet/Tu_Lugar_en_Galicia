@@ -89,19 +89,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Servicio no disponible', 503)
     }
     const ip = getRealIp(request)
-    const { success, limit, remaining, reset } = await ratelimit.limit(ip)
-    if (!success) {
-      return NextResponse.json(
-        { error: 'Demasiadas solicitudes. Inténtalo más tarde.' },
-        {
-          status: 429,
-          headers: {
-            'X-RateLimit-Limit': String(limit),
-            'X-RateLimit-Remaining': String(remaining),
-            'X-RateLimit-Reset': String(reset),
-          },
-        }
-      )
+    try {
+      const { success, limit, remaining, reset } = await ratelimit.limit(ip)
+      if (!success) {
+        return NextResponse.json(
+          { error: 'Demasiadas solicitudes. Inténtalo más tarde.' },
+          {
+            status: 429,
+            headers: {
+              'X-RateLimit-Limit': String(limit),
+              'X-RateLimit-Remaining': String(remaining),
+              'X-RateLimit-Reset': String(reset),
+            },
+          }
+        )
+      }
+    } catch {
+      console.error('[lead] ratelimit error — dejando pasar la solicitud', { ts: Date.now() })
     }
 
     // 1. Parsear body JSON

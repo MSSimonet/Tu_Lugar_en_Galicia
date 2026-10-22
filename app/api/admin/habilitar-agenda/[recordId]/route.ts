@@ -27,9 +27,13 @@ export async function POST(
     return NextResponse.json({ error: 'Servicio no disponible' }, { status: 503 })
   }
   const ip = getRealIp(request)
-  const { success } = await ratelimit.limit(ip)
-  if (!success) {
-    return NextResponse.json({ error: 'Demasiadas solicitudes. Inténtalo más tarde.' }, { status: 429 })
+  try {
+    const { success } = await ratelimit.limit(ip)
+    if (!success) {
+      return NextResponse.json({ error: 'Demasiadas solicitudes. Inténtalo más tarde.' }, { status: 429 })
+    }
+  } catch {
+    console.error('[habilitar-agenda] ratelimit error — dejando pasar la solicitud', { ts: Date.now() })
   }
 
   const { recordId } = await params

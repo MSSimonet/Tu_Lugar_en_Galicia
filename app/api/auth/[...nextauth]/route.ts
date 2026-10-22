@@ -77,12 +77,18 @@ export async function POST(req: NextRequest): Promise<Response> {
   // (marcando `reason: 'timeout'`): ante un Upstash lento, el límite se caía solo y dejaba
   // pasar. Se chequea el motivo para que ese caso también falle cerrado, como el de las
   // variables faltantes de acá arriba.
-  const { success, reason } = await ratelimit.limit(getRealIp(req))
-  if (reason === 'timeout') {
+  let rl: Awaited<ReturnType<typeof ratelimit.limit>>
+  try {
+    rl = await ratelimit.limit(getRealIp(req))
+  } catch {
+    console.error('[admin-login] ratelimit error — rechazando el intento (fail-closed)', { ts: Date.now() })
+    return rechazo(req, 503, 'RateLimitUnavailable')
+  }
+  if (rl.reason === 'timeout') {
     console.error('[admin-login] timeout de Upstash — se rechaza el intento (fail-closed)')
     return rechazo(req, 503, 'RateLimitUnavailable')
   }
-  if (!success) {
+  if (!rl.success) {
     return rechazo(req, 429, 'RateLimited')
   }
 

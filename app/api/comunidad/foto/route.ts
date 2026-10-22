@@ -56,9 +56,13 @@ export async function POST(req: NextRequest) {
     console.error('[comunidad/foto] ratelimit no configurado — faltan variables de Upstash')
     return NextResponse.json({ error: 'Servicio no disponible' }, { status: 503 })
   }
-  const { success } = await ratelimit.limit(getRealIp(req))
-  if (!success) {
-    return NextResponse.json({ error: 'Demasiadas subidas. Inténtalo más tarde.' }, { status: 429 })
+  try {
+    const { success } = await ratelimit.limit(getRealIp(req))
+    if (!success) {
+      return NextResponse.json({ error: 'Demasiadas subidas. Inténtalo más tarde.' }, { status: 429 })
+    }
+  } catch {
+    console.error('[comunidad/foto] ratelimit error — dejando pasar la solicitud', { ts: Date.now() })
   }
 
   // 3. Tamaño declarado, antes de tocar el cuerpo. Es un filtro barato contra el caso obvio;
