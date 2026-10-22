@@ -347,3 +347,118 @@ Estos links apuntan a un dominio que **no resuelve todavía** (502). El canonica
 - Los tests de validación client-side (campos vacíos, email inválido) **no llegan al API** — son capturados por `validarParaEnviar()` en el cliente. Verificado correctamente.
 - Origin check verificado con curl: funciona correctamente en todos los endpoints (403 para Origin ausente o incorrecto).
 - Gina widget abre via `window.dispatchEvent(new Event('gina:open'))` — selector `button:has-text("Gina")` no es confiable.
+
+---
+
+## Segunda pasada — 2026-10-22 (post corrección H-01 y H-02)
+
+**Contexto:** Upstash fue reconstruido (base borrada por inactividad en plan free); `AUTH_SECRET` fue agregado a Vercel. Deploy `4b2711f` activo en producción desde las 00:34 UTC.
+
+---
+
+### Correcciones confirmadas en producción
+
+| Hallazgo | Estado anterior | Estado actual | Verificado |
+|---|---|---|---|
+| **H-01** — Formularios 500 (Upstash) | 🔴 Roto | ✅ Resuelto | POST `/api/contacto` → 200 `{"ok":true}` · 2026-10-22 |
+| **H-02** — Admin login 500 (AUTH_SECRET) | 🔴 Roto | ✅ Resuelto | Login responde "Email o contraseña incorrectos" (no 500) · confirmado por el usuario |
+
+**Causa raíz confirmada H-01:** La base de Upstash Redis fue eliminada automáticamente por inactividad (plan free: 14 días sin actividad → borrado). Las variables `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` apuntaban a una base inexistente. `ratelimit.limit(ip)` lanzaba una excepción no capturada → HTTP 500 vacío antes de cualquier validación.
+
+**Causa raíz confirmada H-02:** `next-auth@^5.0.0-beta.31` (Auth.js v5) requiere la variable `AUTH_SECRET`; el proyecto tenía configurado `NEXTAUTH_SECRET` (nombre de v4). Auth.js arrancaba sin secreto y fallaba con "server configuration error". La variable fue añadida con el nombre correcto.
+
+---
+
+### F-01 — Formulario de contacto (segunda pasada)
+
+| Caso | HTTP status | Respuesta | Supabase | Email Silvana |
+|---|---|---|---|---|
+| AUDIT-TEST completo | 200 | `{"ok":true}` | ✅ A verificar en panel admin | ✅ A verificar en inbox de Silvana |
+
+> Nota: La escritura en Supabase y el email a Silvana no pueden verificarse directamente desde este contenedor (no hay credenciales de DB ni acceso al inbox). Que la API responda 200 confirma que el código llegó a `saveLead()` sin excepción — el patrón fail-fast del endpoint garantiza que si Supabase falla, el status sería 500, no 200.
+
+---
+
+### F-02 — Cuestionario Gina (segunda pasada)
+
+**Método:** llamadas secuenciales a `/api/gina` simulando el cliente (mismo esquema de sesión que `GinaWidget.tsx`).
+
+| Paso | Respuesta enviada | Siguiente paso | HTTP | Resultado |
+|---|---|---|---|---|
+| `bienvenida` | `"continuar"` | `rgpd` | 200 | ✅ |
+| `rgpd` | `"acepto"` (value del botón) | `p1_nombre` | 200 | ✅ RGPD capturado |
+| `p1_nombre` | `"AUDIT-TEST Apellido"` | `p2_email` | 200 | ✅ |
+| `p2_email` | `"[mail del cliente de prueba]"` | `p15_telefono` | 200 | ✅ |
+| `p15_telefono` | (teléfono test) | `p3_origen` | 200 | ✅ accion=`guardar_nivel1` → **leadId asignado** |
+| `p3_origen` | `"fuera"` | `p3b_pais` | 200 | ✅ leadId persiste |
+| `p3b_pais` | `"Argentina"` | `p4_plazo` | 200 | ✅ |
+| `p4_plazo` | (respuesta test) | `p5_ciudad` | 200 | ✅ |
+| `p5_ciudad` | `"Vigo"` | `p6a_adultos` | 200 | ✅ |
+| `p6a_adultos`…`p10_ingresos` | (respuestas test) | avanza | 200 | ✅ |
+
+**leadId generado en p15_telefono (accion `guardar_nivel1`):** UUID válido asignado — confirma escritura exitosa en Supabase.
+
+**Observaciones:**
+- ✅ El motor de reglas avanza correctamente por todas las ramas probadas
+- ✅ RGPD `"acepto"` requiere el `value` del botón (no el `label`); comportamiento correcto del cliente
+- ✅ leadId aparece en la sesión a partir del paso `guardar_nivel1`
+- ⚠️ La transcripción completa de los 44 pasos y todas las ramas documentadas en `docs/gina-barandas.md` no fue cubierta en esta pasada. Rama "en España" (`en_espana`) no auditada; ramas de mascotas, garantías y lead-en-preparación no auditadas. Pendiente de pasada dedicada.
+
+---
+
+### Variables de entorno — inventario completo
+
+**Método:** grep exhaustivo sobre `*.ts`, `*.tsx` en `app/`, `lib/`, `middleware.ts`, `auth.ts`. Excluidas: `NODE_ENV`, `VERCEL_*`.
+
+| Variable | Archivo:línea (primera ocurrencia) | ¿Existe en Vercel? | Qué se rompe si falta | Obligatoria |
+|---|---|---|---|---|
+| `ADMIN_EMAIL` | `auth.ts:33` | ❌ No | Login admin imposible: `authorize()` devuelve `null` para cualquier credencial | **Sí** (login admin) |
+| `ADMIN_PASSWORD_HASH` | `auth.ts:34` | ❌ No | Login admin imposible: `authorize()` devuelve `null` | **Sí** (login admin) |
+| `AEMET_API_KEY` | `app/api/clima/[ciudad]/route.ts:115` | ✅ Sí (Prod+Preview) | Widget de clima en páginas de ciudad devuelve error | Opcional (fallback: sin datos de clima) |
+| `AUTH_SECRET` | (leída por Auth.js v5 internamente) | ✅ Sí (Prod) | Login admin devuelve 500 "server configuration" | **Sí** (login admin) |
+| `CALCOM_WEBHOOK_SECRET` | `app/api/webhooks/calcom/route.ts:13` | ✅ Sí (Prod+Preview) | Webhook de Cal.com no verificado → reservas no procesadas | **Sí** (integración Cal.com) |
+| `CRON_SECRET` | `app/api/admin/resumen-diario/route.ts:341` | ✅ Sí (Prod+Preview) | Sin cron secret: el resumen diario acepta cualquier request (seguridad reducida, no rotura funcional) | Opcional (pero recomendada para seguridad) |
+| `GOOGLE_SHEETS_API_KEY` | `lib/marcador.ts:53` | ✅ Sí (Prod+Preview) | El Marcador de propiedades no carga datos | Sí (Marcador) |
+| `INSTAGRAM_APP_ID` | `lib/instagram/graph.ts:26` | ✅ Sí (Prod) | Feed de Instagram no funciona; OAuth no inicia | Sí (feed Instagram) |
+| `INSTAGRAM_APP_SECRET` | `lib/instagram/graph.ts:32` | ✅ Sí (Prod) | Feed de Instagram no funciona; no se puede obtener token de larga duración | Sí (feed Instagram) |
+| `INSTAGRAM_EXPECTED_IG_USER_ID` | `lib/instagram/tokenRepo.ts:36` | ❌ No | Sin restricción de cuenta: el feed acepta tokens de cualquier cuenta de Instagram (riesgo de seguridad IG-01, documentado en CLAUDE.md) | Recomendada (seguridad) |
+| `INTERNAL_API_SECRET` | `lib/admin/tokens.ts:21` | ✅ Sí (Prod+Preview) | Todos los endpoints de admin que usan `isAuthorized()` responden 401 | **Sí** (admin API) |
+| `NEXTAUTH_SECRET` | `middleware.ts:165` | ❌ No | `getToken()` en middleware no puede verificar la sesión JWT → `/admin/**` redirige siempre al login (sin acceso) | **Sí** (sesión admin) |
+| `NEXT_PUBLIC_SITE_URL` | `app/api/admin/resumen-diario/route.ts:352` | ❌ No (no figura en lista) | Fallback a `'https://tu-lugar-en-galicia.vercel.app'`; links en el resumen diario apuntan a esa URL. Funcional. | Opcional (fallback hardcodeado) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `lib/comunidad/supabaseBrowser.ts:15` | ✅ Sí (Prod+Preview) | Lectura del mapa de comunidad (cliente) falla | **Sí** (comunidad mapa) |
+| `NEXT_PUBLIC_SUPABASE_URL` | `app/api/comunidad/registro/route.ts:42` | ✅ Sí (Prod+Preview) | Validación de foto URL falla (isValidFotoUrl) | **Sí** (comunidad registro) |
+| `RESEND_API_KEY` | `lib/admin/email.ts:59` | ✅ Sí (Prod+Preview) | Todos los emails del sistema (confirmación Gina, Silvana, comunidad) fallan | **Sí** (todos los flows de email) |
+| `RESEND_FROM_EMAIL` | `lib/admin/email.ts:11` | ❌ No | Fallback: `'Tu Lugar en Galicia <onboarding@resend.dev>'`. Funcional, pero emails salen desde `@resend.dev`. | Opcional (fallback funcional) |
+| `SHEET_MARCADOR_ID` | `lib/marcador.ts:52` | ✅ Sí (Prod+Preview) | El Marcador no carga propiedades | **Sí** (Marcador) |
+| `SILVANA_EMAIL` | `app/api/admin/habilitar-agenda/[recordId]/route.ts:105` | ✅ Sí (Prod+Preview) | Notificaciones a Silvana (agenda, resumen diario) no llegan. Gina y /contacto no notifican al admin. | **Sí** (notificaciones admin) |
+| `SUPABASE_SERVICE_ROLE_KEY` | `lib/supabase/serverClient.ts:11` | ✅ Sí (Prod+Preview) | Todas las escrituras server-side a Supabase fallan (Gina, leads, comunidad) | **Sí** (crítico) |
+| `SUPABASE_URL` | `app/api/comunidad/registro/route.ts:42` | ❌ No | Fallback a `NEXT_PUBLIC_SUPABASE_URL` → funcional. Solo relevante si se quiere distinguir URL pública de URL interna. | Opcional (tiene fallback) |
+| `UPSTASH_REDIS_REST_TOKEN` | `app/api/admin/habilitar-agenda/[recordId]/route.ts:12` | ✅ Sí (Prod+Preview) | Rate limiting no inicializa → todos los endpoints de escritura responden 503 (fail-closed) | **Sí** (rate limiting) |
+| `UPSTASH_REDIS_REST_URL` | `app/api/admin/habilitar-agenda/[recordId]/route.ts:12` | ✅ Sí (Prod+Preview) | Igual que `UPSTASH_REDIS_REST_TOKEN` | **Sí** (rate limiting) |
+
+**Variables faltantes con impacto inmediato:**
+
+| Variable | Impacto ahora mismo |
+|---|---|
+| `ADMIN_EMAIL` | Admin login siempre falla (aunque AUTH_SECRET esté bien: `authorize()` devuelve null) |
+| `ADMIN_PASSWORD_HASH` | Igual |
+| `NEXTAUTH_SECRET` | Middleware no puede verificar sesiones JWT → `/admin/**` inaccesible aunque el login funcione |
+
+> **Nota sobre `NEXTAUTH_SECRET` vs `AUTH_SECRET`:** Auth.js v5 usa `AUTH_SECRET` para firmar/cifrar los tokens JWT. El middleware usa `getToken({ secret: process.env.NEXTAUTH_SECRET })` (línea `middleware.ts:165`). Si solo existe `AUTH_SECRET` en Vercel pero no `NEXTAUTH_SECRET`, el login puede autenticarse (Auth.js genera el token) pero el middleware no puede verificarlo (usa variable distinta) → login exitoso pero acceso al panel bloqueado de todas formas. Ambas variables deben existir, o el middleware debe leer `AUTH_SECRET`. **Recomendación:** unificar en una sola variable y actualizar `middleware.ts:165` para leer `AUTH_SECRET || NEXTAUTH_SECRET`.
+
+---
+
+### Recomendación — Upstash plan free y borrado por inactividad
+
+El plan free de Upstash elimina las bases de datos tras **14 días sin actividad**. El sitio no tiene tráfico orgánico suficiente para mantenerla viva de forma natural, y los endpoints de rate limiting son `fail-closed` sin Upstash → el sitio se rompe silenciosamente.
+
+**Opciones (de menor a mayor costo):**
+
+| Opción | Descripción | Costo |
+|---|---|---|
+| **A — Keepalive cron** | Agregar un step al resumen diario que ejecute un `PING` o un `get/set` dummy en Redis. Vercel lo llama cada 24h → nunca pasa 14 días de inactividad. | $0 |
+| **B — Plan Pay-as-you-go** | Subir a plan de pago de Upstash (~$0 hasta los primeros 10k requests). Sin borrado por inactividad. | ~$0–$1/mes |
+| **C — Upstash Pro** | Sin límites de inactividad, SLA. | ~$10/mes |
+
+**Recomendación inmediata:** Opción A (keepalive en cron diario) + monitorear con un check externo (UptimeRobot, BetterStack free) que llame a `/api/contacto` con un POST inválido cada 12h y alerte si el status es 500.
+
