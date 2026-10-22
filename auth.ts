@@ -34,7 +34,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH
 
         // Fail-closed: si las variables de entorno no están configuradas,
-        // no se autentica a nadie — no se loguea el motivo con detalle.
+        // no se autentica a nadie.
         if (!adminEmail || !adminPasswordHash) {
           console.error('[auth] FALLO: env faltante (ADMIN_EMAIL o ADMIN_PASSWORD_HASH)')
           return null
@@ -43,10 +43,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const email = credentials?.email
         const password = credentials?.password
         if (typeof email !== 'string' || typeof password !== 'string') return null
-        if (email !== adminEmail) {
-          console.error('[auth] FALLO: email no coincide')
-          return null
-        }
+        if (email !== adminEmail) return null
 
         // Límite de intentos por CUENTA, además del rate limit por IP del route handler.
         // El de arriba se diluye con un ataque distribuido; este no, porque no depende de
@@ -57,22 +54,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Tampoco se distingue el motivo hacia afuera — bloqueado y contraseña incorrecta
         // devuelven lo mismo, para no confirmarle a un atacante que dio con la cuenta.
         try {
-          const segundos = await segundosDeBloqueo(email)
-          if (segundos > 0) {
-            console.error('[auth] FALLO: cuenta bloqueada')
-            return null
-          }
+          if ((await segundosDeBloqueo(email)) > 0) return null
 
           const isValid = await compare(password, adminPasswordHash)
           if (!isValid) {
-            console.error('[auth] FALLO: hash no coincide')
             await registrarFalloDeLogin(email)
             return null
           }
 
           await limpiarFallosDeLogin(email)
-        } catch (err) {
-          console.error('[auth] FALLO: excepcion en verificacion —', err instanceof Error ? err.message : 'desconocida')
+        } catch {
           return null
         }
 
