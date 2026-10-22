@@ -462,3 +462,84 @@ El plan free de Upstash elimina las bases de datos tras **14 días sin actividad
 
 **Recomendación inmediata:** Opción A (keepalive en cron diario) + monitorear con un check externo (UptimeRobot, BetterStack free) que llame a `/api/contacto` con un POST inválido cada 12h y alerte si el status es 500.
 
+---
+
+## Segunda pasada — 2026-10-22 (continuacion)
+
+### H-02 confirmado resuelto — Login admin
+
+Login exitoso en produccion. Causa raiz confirmada: faltaban `ADMIN_EMAIL` y `ADMIN_PASSWORD_HASH` en Vercel (no solo `AUTH_SECRET`). El primer hash se copio con un caracter erroneo; se regenero y verifico localmente con `bcryptjs.compare` en Git Bash. Variables cargadas: `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH`, `AUTH_SECRET`, `NEXTAUTH_SECRET` (mismo valor). Login OK desde el navegador.
+
+Commits relacionados de esta sesion:
+
+| Commit | Descripcion |
+|---|---|
+| `4b2711f` | fix: wrap ratelimit.limit en try/catch en 14 rutas (H-01) |
+| `645169b` | docs: segunda pasada 2026-10-22 — H-01/H-02 confirmados |
+| `112e17a` | fix(auth): logs de diagnostico temporales (revertido en `9b7895c`) |
+| `9b7895c` | fix(auth): revert logs, conserva solo guarda de env faltante |
+
+---
+
+### H-03 — Hallazgo nuevo: `/admin` devuelve 404 post-login
+
+**Severidad:** Media — solo afecta a la operadora (no es publico).
+
+**Causa:** `app/admin/login/page.tsx:14` redirige a `callbackUrl || '/admin'`. No existe `app/admin/page.tsx`. El App Router devuelve 404 para rutas sin `page.tsx`.
+
+**Fix propuesto (sin aplicar, pendiente aprobacion):**
+
+```tsx
+// app/admin/page.tsx — 4 lineas
+import { redirect } from 'next/navigation'
+export default function AdminPage() {
+  redirect('/admin/dashboard')
+}
+```
+
+Alternativa menor: cambiar el fallback de la linea 14 de `/admin` a `/admin/dashboard`. La pagina de redirect es mas robusta porque tambien resuelve accesos directos desde bookmarks.
+
+---
+
+### F-03 — Admin: segunda pasada (parcial)
+
+**Login via curl:** intento unico retorno HTTP 302 sin session cookie. Causa probable: encoding de form data en curl no URL-encodea los caracteres especiales de la contrasena; el CSRF se valida antes de llegar a `authorize()`, por lo que el contador de intentos fallidos (Upstash `login-fallos:*`) NO se incremento. Sin riesgo de bloqueo. Por instruccion, no se reintento.
+
+**Navegacion del panel (por analisis de codigo):**
+
+| Vista | Ruta | Auth requerida | Verificado |
+|---|---|---|---|
+| Dashboard | `/admin/dashboard` | `requireAdminSession()` | Por codigo — `getKpisDelMes()` retorna todos los leads del mes actual |
+| Inbox | `/admin/inbox` | `requireAdminSession()` | Por codigo — `listarLeadsInbox()` lista TODOS los leads sin filtro de fecha, estado ni etiqueta |
+| Kanban | `/admin/kanban` | `requireAdminSession()` | Por codigo — `listarLeadsParaKanban()` lista todos los leads del pipeline |
+| Ficha lead | `/admin/leads/[id]` | `requireAdminSession()` | Por codigo — muestra datos completos del lead, sin `HabilitarAgendaButton` |
+| Ficha email-linked | `/admin/lead/[recordId]?token=...` | Token HMAC-SHA256 (`verifyScopedToken`) | No accedida — requiere `INTERNAL_API_SECRET` (no disponible en contenedor) |
+
+**Dashboard KPI "Leads este mes: 2":** correcto. `getKpisDelMes()` filtra `created_at >= 2026-10-01T00:00:00Z`. Los 2 leads son los registros AUDIT-TEST creados durante esta auditoria (ver listado al final).
+
+**Registros AUDIT-TEST en inbox:** confirmado por codigo que `listarLeadsInbox()` no aplica ningun filtro — lista absolutamente todos los leads. Los AUDIT-TEST de hoy deben aparecer al tope (son los mas recientes y sin calificacion = `RANK_SIN_CALIFICAR = 4`, ordenados por `created_at DESC` dentro de ese rango).
+
+---
+
+### F-03 — Habilitar agenda (bloqueado)
+
+`HabilitarAgendaButton` existe solo en `/admin/lead/[recordId]?token=...` (version email-linked), no en `/admin/leads/[id]` (version session). Para generarlo se necesita `INTERNAL_API_SECRET` — no disponible en el contenedor.
+
+Para ejecutar F-03 manualmente desde el navegador de Silvana:
+1. Entrar a `/admin/inbox` → clic en un registro AUDIT-TEST
+2. La ficha (`/admin/leads/[id]`) no tiene el boton "Habilitar agenda" — es de la version email
+3. El boton solo aparece cuando Silvana recibe el email del resumen diario o del webhook de Cal.com y entra por ese enlace
+
+**Alternativa para el proximo ciclo de auditoria:** agregar `INTERNAL_API_SECRET` a las variables del contenedor, o exponer un endpoint de generacion de token protegido por sesion admin.
+
+---
+
+### F-02 — Segunda pasada: ramas "en Espana" y mascotas
+
+Pendiente de ejecutar (flujo Gina segunda pasada cubrio ruta principal hasta `p15_telefono`). Las ramas no testeadas son:
+
+- `p3_origen = 'en_espana'` → `p18a_ciudad`
+- `p7b_tipo` con mascotas → sub-pasos de cantidad y peso
+- `p11_garantias = 'ninguna'` + ingresos en `INGRESOS_RIESGO` → etiqueta `lead-en-preparacion` → `p11_lead_preparacion`
+- Rama completa hasta `accion: 'fin'` → envio del Plan Estrategico por email
+
