@@ -543,3 +543,164 @@ Pendiente de ejecutar (flujo Gina segunda pasada cubrio ruta principal hasta `p1
 - `p11_garantias = 'ninguna'` + ingresos en `INGRESOS_RIESGO` → etiqueta `lead-en-preparacion` → `p11_lead_preparacion`
 - Rama completa hasta `accion: 'fin'` → envio del Plan Estrategico por email
 
+---
+
+## Tercera pasada — 2026-10-22 / 2026-10-23 (flujos completos + UI)
+
+### H-03 CERRADO — `/admin` sin pagina (fix aplicado)
+
+- **Fix:** `app/admin/page.tsx` creado (4 lineas, `redirect('/admin/dashboard')`). Commit `35a2eb8` en `main`.
+- **CI:** Run #34 `success`. Vercel despliega automaticamente desde `main`.
+- **Playwright (03:21:11 UTC 2026-10-22):** `/admin` redirige correctamente a `/admin/dashboard`. Estado: cerrado y verificado.
+
+---
+
+### Manejo de errores de Resend (`lib/admin/email.ts:58`)
+
+`sendEmail()` lanza `Error('Resend error <status>: <body>')` si la respuesta HTTP no es 2xx. Timeout: 8 segundos.
+
+| Endpoint | Si Resend falla | Se informa al usuario? | Se informa a Silvana? | Severidad |
+|---|---|---|---|---|
+| `/api/gina` — Plan Estrategico | catch → log + alerta best-effort a Silvana | No (flujo termina normalmente) | Si, si `SILVANA_EMAIL` configurado | Alto |
+| `/api/gina` — si alerta a Silvana tambien falla | Solo queda `console.error` | No | No | Critico (silencioso) |
+| `/api/contacto` — notif. a Silvana | catch → log; cliente recibe `{ ok: true }` | No (lead ya guardado en CRM) | No | Medio |
+| `/api/admin/habilitar-agenda` — mail al cliente | catch → log; responde `{ ok:true, warning: '...' }` | Solo en respuesta JSON (no en UI) | No | Alto |
+| `/api/comunidad/registro` — mail de confirmacion | catch → log; HTTP 500 al cliente | Si ("No pudimos enviarte el correo...") | No | Medio |
+
+**Variables de entorno criticas:**
+
+| Variable | Ausencia | Impacto |
+|---|---|---|
+| `RESEND_API_KEY` | `sendEmail()` lanza antes de hacer fetch | Todos los flujos de email fallan |
+| `RESEND_FROM_EMAIL` | FROM cae al remitente por defecto de Resend | Funcional pero no deseable |
+| `SILVANA_EMAIL` | Alerta de fallo omitida en `/api/gina` | Fallo silencioso si Plan no llega |
+
+---
+
+### Nuevos hallazgos — H-04 a H-07
+
+| ID | Severidad | Descripcion | Estado |
+|---|---|---|---|
+| H-03 | Cerrado | `/admin` sin `page.tsx` → 404 post-login | Commit `35a2eb8`, CI verde, Playwright verificado |
+| H-04 | Alto | Perdida silenciosa del Plan Estrategico si Resend falla Y `SILVANA_EMAIL` no esta configurado (o el segundo envio tambien falla): la incidencia queda solo en `console.error`; el usuario ve el flujo terminado normalmente. Recomendacion: campo `plan_email_enviado: boolean | null` en tabla `leads`. | Abierto |
+| H-05 | Severidad pendiente | `RESEND_FROM_EMAIL` no configurado → FROM cae al remitente por defecto de Resend. Sin dominio verificado en Resend, los mails a destinatarios ajenos a la cuenta pueden estar fallando silenciosamente. Verificar en panel Resend antes de clasificar. | Abierto |
+| H-06 | Info | `LEADS-LIST` sin links `<a href>` a fichas individuales en `/admin/leads`; los leads SI son visibles en Inbox. Navegacion probablemente JS (onClick sin href), no es bug critico. | Abierto |
+| H-07 | Info | 2 recursos estaticos 404 en panel admin (no bloquean funcionalidad). | Abierto — identificar recurso |
+
+---
+
+### F-02 Gina — 4 flujos completos via API (2026-10-22)
+
+Corrida ejecutada contra `https://tu-lugar-en-galicia.vercel.app` con Playwright + Chromium headless.
+
+| Flujo | Hora UTC | Estado final |
+|---|---|---|
+| GinaFin (flujo completo) | 03:23:02 | completado=true, paso=despedida |
+| Rama Espana | 03:23:16 | paso=despedida |
+| Rama Mascotas | 03:23:30 | paso=despedida |
+| Lead-en-preparacion | 03:23:44 | etiqueta=lead-en-preparacion, paso=despedida_preparacion |
+
+Ramas verificadas:
+- **Espana:** `p3_origen → p4_plazo` (sin `p3b_pais`), luego `p17_licencia → p18a_ciudad` (paso especifico de Espana).
+- **Mascotas:** `p7_mascotas → p7b_tipo → p7c_cant_perros → p7b_peso → p8_documentacion`.
+- **Preparacion:** `p11_garantias(ninguna) → p11_lead_preparacion → despedida_preparacion`.
+
+Los flujos llegaron a `despedida` (`accion: 'fin'` en el servidor). Los emails de Plan Estrategico deberian haberse disparado desde Resend en ese momento. No verificable desde el contenedor (sin acceso a bandeja ni logs de Resend). Aplica H-04 / H-05.
+
+---
+
+### Admin pass — resultados Playwright (2026-10-22, 03:21 UTC)
+
+| Check | Resultado |
+|---|---|
+| Login exitoso | OK |
+| H-03 redirect `/admin` → `/admin/dashboard` | VERIFICADO |
+| Dashboard KPIs | OK — pagina cargada; conteo 0 leads del mes (pasada anterior a creacion de leads de Gina) |
+| Inbox | OK — AUDIT-TEST visible, ~26 registros |
+| Pipeline | OK — URL `/admin/pipeline` cargada |
+| Leads list | WARN — pagina carga pero sin links `<a href>` a fichas individuales (ver H-06) |
+| Console errors | 2 errores 404 (recurso estatico, no bloquea funcionalidad — ver H-07) |
+
+---
+
+### F-04 Comunidad — registro (2026-10-22, 03:23 UTC)
+
+| Check | Resultado |
+|---|---|
+| Landing `/comunidad` | OK — titulo "Formando comunidad | Tu Lugar en Galicia" |
+| Registro POST | OK — HTTP 200, `{"ok":true}` |
+| Email confirmacion | Disparado a direccion de test (no entrega real verificable desde contenedor) |
+| Token de confirmacion | En Redis 24h TTL — no recuperable desde contenedor |
+| Mapa leaflet | OK — contenedor visible, contenido presente |
+| Confirmacion end-to-end | No verificable sin token real (requiere bandeja de email) |
+
+---
+
+### F-03 — Como genera Silvana el codigo de agenda (pasos manuales)
+
+El codigo de agenda **solo se genera** desde la version email-linked de la ficha de lead.
+
+1. Silvana recibe en su bandeja el email "Nuevo lead — [Nombre]" que llega cuando Gina completa el cuestionario.
+2. Ese email contiene un boton "Ver ficha completa" que apunta a `/admin/lead/[recordId]?token=[token-hmac-24h]`.
+3. En ESA pagina (no en `/admin/leads/[id]`) aparece el boton "Habilitar agenda".
+4. Al hacer clic, el boton llama a `POST /api/admin/habilitar-agenda/[recordId]?token=[token]`.
+5. El endpoint genera codigo de 8 caracteres → guarda en Supabase → envia email al cliente con el codigo.
+6. El cliente recibe "Tu cita esta lista" con su codigo y lo usa para agendar en Cal.com.
+
+**Estado F-03:** pendiente de verificacion manual por Silvana desde el email "Nuevo lead" de la corrida actual.
+
+---
+
+### Tabla flujo-correos (horas de la corrida del 22/10)
+
+| Flujo | Hora UTC | Mail de prueba | Mail Silvana |
+|---|---|---|---|
+| F-02 Gina completo | 03:23:02 | Plan Estrategico PDF (si RESEND OK) | "Nuevo lead" (si `SILVANA_EMAIL`) |
+| F-02 Rama Espana | 03:23:16 | Plan PDF (si RESEND OK) | "Nuevo lead" |
+| F-02 Rama Mascotas | 03:23:30 | Plan PDF (si RESEND OK) | "Nuevo lead" |
+| F-02 Lead-en-preparacion | 03:23:44 | Nada (no llega a fin) | Nada |
+| F-04 Comunidad registro | 03:23:46 | "Confirma tu registro" (si RESEND OK) | Nada |
+| F-04 Comunidad confirmacion | — (requiere bandeja) | Nada (pagina de exito) | Nada |
+
+---
+
+### Corrida UI con Playwright (2026-10-23, 11:26 AR)
+
+Segunda verificacion de Gina y Comunidad haciendo clic en el navegador como usuario real (no llamadas directas a la API).
+
+**Gina UI — flujo completo:**
+
+| Paso | Resultado |
+|---|---|
+| bienvenida → rgpd → nombre → email → telefono | OK |
+| p3_origen "Vengo de fuera" → p3b_pais → p4_plazo → p5_ciudad | OK |
+| p6a_adultos → p6b_menores → p7_mascotas (No) | OK |
+| p8_documentacion → p9_laboral → p10_ingresos → p11_garantias | OK |
+| p12_presupuesto → p13_banco → p14_servicio → transicion_nivel2 | OK |
+| p16_accesibilidad → p17_licencia (Espanola) | OK |
+| p21_tipo_inmueble (flowEngine salta p18_check_origen y p20a_objetivo para ruta fuera+espanola) | OK — comportamiento correcto |
+| p22_habitaciones → p23_amueblado → p24_imprescindibles → p24b_comodidades | OK |
+| p26_profesion → p27_estudios → atribucion → despedida | OK — llego_a_fin=true |
+| Console errors | 0 |
+
+**Comunidad UI:**
+
+| Check | Resultado |
+|---|---|
+| Formulario visible | OK |
+| Fill campos + submit | OK |
+| Mensaje "Revisa tu correo" | OK — exito=true |
+| Console errors | 0 |
+
+**Diferencias UI vs API:**
+
+| Aspecto | API (pasada anterior) | UI (esta corrida) |
+|---|---|---|
+| Paso p20a_objetivo | Aparecia en el mapa de respuestas del script | NO aparece en la ruta fuera+espanola: `flowEngine.ts:173` lo salta, va directo a `p21_tipo_inmueble` |
+| Errores de consola | No medidos | 0 en ambos flujos |
+| Tiempo total | ~14 s (llamadas API directas) | ~74 s (interaccion real) |
+
+**Conclusion:** el flujo UI es consistente con el flujo API. La diferencia en p20a_objetivo no es una inconsistencia del producto — el script de API incluia el paso en el mapa pero el servidor lo omitia para esa ruta.
+
+21 capturas de pantalla disponibles en sesion de auditoria (no commiteadas al repo).
+
