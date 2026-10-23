@@ -704,3 +704,106 @@ Segunda verificacion de Gina y Comunidad haciendo clic en el navegador como usua
 
 21 capturas de pantalla disponibles en sesion de auditoria (no commiteadas al repo).
 
+---
+
+## Cierre — 2026-10-23
+
+### 1. Limpieza de datos de prueba
+
+Ejecutado via Playwright con un unico login al panel admin.
+
+| Resultado | Cantidad |
+|---|---|
+| Leads AUDIT-TEST borrados | 12 |
+| Fallidos | 0 |
+| No encontrados (ya eliminados) | 0 |
+
+Los 8 leads documentados en la lista de corridas v1/v2/v3 fueron borrados. Se encontraron ademas 4 leads AUDIT-TEST de sesiones previas no catalogadas, tambien borrados. Tabla `lead_notas_tareas`, `lead_actividad` y `lead_transcripcion` eliminadas en cascada (ON DELETE CASCADE activo en el esquema).
+
+El registro de Comunidad (email de test) no fue confirmado (el token expiraba en 24h); se considera eliminado por TTL de Redis. Si se confirmo manualmente, eliminarlo desde Supabase filtrando por email de test.
+
+---
+
+### 2. Fixes implementados — rama `audit/fixes-2026-10`
+
+#### 2a. `middleware.ts` — lectura de `AUTH_SECRET || NEXTAUTH_SECRET` (commit `064142c`)
+
+**Problema:** `getToken()` leía solo `NEXTAUTH_SECRET` (nombre de Auth.js v4). Auth.js v5 usa `AUTH_SECRET` por defecto; si Vercel tiene `AUTH_SECRET` pero no `NEXTAUTH_SECRET`, el gate de sesión nunca encontraba el token y redirigía siempre a login aunque el usuario ya estuviera autenticado.
+
+**Fix:** `secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET`
+
+---
+
+#### 2b. H-07 — 2 recursos 404 en panel admin
+
+**No reproducido.** En la sesion de cierre (2026-10-23), la navegacion por `/admin/dashboard`, `/admin/inbox` y `/admin/kanban` no genero ningun 404 de red ni error de consola. Los dos 404 de la pasada anterior posiblemente correspondian a artefactos de un build anterior ya reemplazado, o a una carga diferida que no se activo en esa navegacion. Se cierra como **no reproducible** y sin hallazgo activo.
+
+---
+
+#### 2c. H-06 — Links reales en tarjetas del Kanban (commit `c949833`)
+
+**Problema:** `KanbanCard.tsx` usaba `useRouter().push()` en el `onClick` del `div` contenedor. No habia ningun `<a href>` en el DOM: Ctrl+Click, apertura en pestana nueva y navegacion por teclado no funcionaban.
+
+**Fix:** Se elimino el `onClick` del `div`. El contenido de la tarjeta ahora queda envuelto en un `<Link href="/admin/leads/[id]">` que renderiza un `<a>` real. El `div` exterior conserva los `{...listeners}` y `{...attributes}` de `useDraggable` — el drag sigue funcionando igual; dnd-kit solo cancela el click si hubo desplazamiento del puntero.
+
+---
+
+#### 2d. Upstash keep-alive (commit `7a5cd78`)
+
+**Problema:** La base de datos Upstash Redis (free tier) se elimina automaticamente tras 30 dias sin actividad. La corrida de Gina en produccion genero 500 precisamente por eso.
+
+**Fix:** Endpoint `GET /api/admin/upstash-keepalive` (auth: `Bearer INTERNAL_API_SECRET`), que escribe una clave efimera con TTL de 7 dias. Workflow `.github/workflows/upstash-keepalive.yml` lo llama cada lunes a las 08:00 UTC usando el secreto `INTERNAL_API_SECRET` ya existente en GitHub. **No requiere secretos nuevos.**
+
+---
+
+### 3. Pendientes solo documentados (sin implementacion)
+
+#### H-04 — Perdida silenciosa del Plan Estrategico
+
+**Descripcion:** Si Resend rechaza el envio del Plan Y `SILVANA_EMAIL` no esta configurado (o el segundo intento de alerta tambien falla), la incidencia queda exclusivamente en `console.error`. El usuario ve el flujo terminado normalmente.
+
+**Solucion recomendada (requiere migracion de base de datos):**
+- Agregar campo `plan_email_enviado boolean DEFAULT NULL` a la tabla `leads`.
+- En `app/api/gina/route.ts`, setear `true` si el envio fue exitoso y `false` si fallo.
+- La ficha 360 en `/admin/leads/[id]` puede mostrar una advertencia visual si el valor es `false`.
+- **No implementado** porque requiere migracion de Supabase (ALTER TABLE), que queda fuera del alcance de esta auditoria.
+
+---
+
+#### H-05 — Remitente de emails (severidad pendiente)
+
+**Variable:** `RESEND_FROM_EMAIL`  
+**Comportamiento actual:** si la variable no esta configurada en Vercel, todos los emails salen con el FROM por defecto de Resend (`onboarding@resend.dev`). Sin dominio propio verificado en Resend, los mails enviados a destinatarios ajenos a la cuenta pueden ser rechazados o caer en spam silenciosamente.
+
+**Para resolver:**
+1. Verificar en el panel de Resend cuantos emails llegaron realmente a los destinatarios de las corridas de auditoria (confirma si la entrega esta fallando en silencio).
+2. Registrar y verificar el dominio `tulugarengalicia.com` en Resend una vez que el dominio este contratado (S10).
+3. Configurar `RESEND_FROM_EMAIL=Tu Lugar en Galicia <hola@tulugarengalicia.com>` en Vercel.
+
+**Severidad:** pendiente de confirmacion segun resultado del paso 1.
+
+---
+
+#### Variables de entorno faltantes o sub-configuradas
+
+| Variable | Donde se usa | Valor actual | Impacto si falta | Valor a configurar |
+|---|---|---|---|---|
+| `RESEND_FROM_EMAIL` | `lib/admin/email.ts:11` — FROM de todos los emails | No configurada | FROM cae a direccion de Resend (ver H-05) | `Tu Lugar en Galicia <hola@tulugarengalicia.com>` (una vez verificado el dominio) |
+| `NEXT_PUBLIC_SITE_URL` | `lib/admin/email.ts:14`, `app/api/admin/resumen-diario`, `app/api/admin/recordatorio-silvana`, `app/api/contacto` — links en emails | No configurada | Fallback hardcodeado a `https://tu-lugar-en-galicia.vercel.app`; links funcionan pero apuntan al subdominio Vercel, no al dominio definitivo | `https://tulugarengalicia.com` (una vez contratado S10) |
+| `INSTAGRAM_EXPECTED_IG_USER_ID` | `lib/instagram/tokenRepo.ts:36` — valida que la cuenta autorizada en el callback es la oficial | No configurada | Sin la variable, el callback acepta cualquier cuenta Instagram que autorice el OAuth; sin esta validacion, una cuenta equivocada podria sobrescribir el token | El User ID numerico de la cuenta de Instagram de Tu Lugar en Galicia (se obtiene del primer callback exitoso o desde la API de Meta) |
+| `SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_URL` | `lib/supabase/serverClient.ts:10` (server-side) y `lib/comunidad/supabaseBrowser.ts` (browser) | Debe estar configurada en Vercel (produccion funciona); falta en `.env.local` de desarrollo si no esta | Sin ella, todas las rutas de Supabase (leads, comunidad, CRM) fallan con "Supabase no configurado" | URL del proyecto Supabase (formato `https://<ref>.supabase.co`), obtenible en Supabase Dashboard → Settings → API |
+
+---
+
+### 4. Estado final de hallazgos
+
+| ID | Severidad | Estado | Commit / Accion |
+|---|---|---|---|
+| H-01 | Critico | Cerrado | Upstash vacia causaba 500s — corregido al configurar variables en Vercel |
+| H-02 | Critico | Cerrado | `AUTH_SECRET` vs `NEXTAUTH_SECRET` — `064142c` agrega fallback |
+| H-03 | Cerrado | Cerrado | `/admin/page.tsx` creado — commit `35a2eb8` |
+| H-04 | Alto | Abierto | Requiere migracion DB — documentado en §3, no implementado |
+| H-05 | Severidad pendiente | Abierto | Verificar entregas en panel Resend; dominio pendiente (S10) |
+| H-06 | Info | Cerrado | `KanbanCard` usa `<Link href>` — commit `c949833` |
+| H-07 | Info | Cerrado (no reproducido) | 0 errores 404 en sesion de cierre 2026-10-23 |
+
