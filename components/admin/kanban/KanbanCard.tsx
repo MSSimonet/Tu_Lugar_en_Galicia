@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { Badge, getCalificacionStyle, getCalificacionBarra } from '@/components/admin/ui/AdminPrimitives'
@@ -11,14 +11,12 @@ interface Props {
 }
 
 /**
- * Tarjeta arrastrable del Kanban. Mismo criterio visual que components/admin/inbox/LeadCard.tsx
- * (franja lateral por calificación + resumen humano), pero como div con useDraggable en vez de
- * Link — el click-sin-arrastrar navega a la ficha vía useRouter().push() en el propio onClick.
- * dnd-kit no dispara "click" en un pointerdown+pointerup sin desplazamiento, así que ambos
- * gestos conviven sin lógica extra de distancia acá (la restricción vive en el sensor del board).
+ * Tarjeta arrastrable del Kanban. El div exterior maneja el drag (useDraggable).
+ * El Link interior provee un <a href> real: Ctrl+Click, teclado y accesibilidad
+ * funcionan correctamente. dnd-kit solo cancela el click si hay desplazamiento,
+ * así que click sin arrastrar navega por el href del Link.
  */
 export function KanbanCard({ lead }: Props) {
-  const router = useRouter()
   const calStyle = getCalificacionStyle(lead.calificacion)
   const barra = getCalificacionBarra(lead.calificacion)
 
@@ -32,11 +30,10 @@ export function KanbanCard({ lead }: Props) {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      onClick={() => router.push(`/admin/leads/${lead.id}`)}
       style={{
         background: 'var(--color-blanco)', border: '1px solid var(--color-arena)',
         borderLeft: `4px solid ${barra}`, borderRadius: '8px',
-        padding: '14px 16px', cursor: 'grab', touchAction: 'none',
+        cursor: 'grab', touchAction: 'none',
         transform: CSS.Translate.toString(transform),
         opacity: isDragging ? 0.4 : 1,
         boxShadow: isDragging ? '0 8px 16px rgba(0,0,0,0.12)' : 'none',
@@ -44,21 +41,26 @@ export function KanbanCard({ lead }: Props) {
         position: 'relative',
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+      <Link
+        href={`/admin/leads/${lead.id}`}
+        style={{ display: 'block', padding: '14px 16px', textDecoration: 'none' }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+          <p style={{
+            margin: 0, fontSize: '14px', fontWeight: 500,
+            color: 'var(--color-granito)', fontFamily: 'var(--font-ui)',
+          }}>
+            {lead.nombreCompleto}
+          </p>
+          <Badge text={calStyle.label} bg={calStyle.bg} color={calStyle.color} />
+        </div>
         <p style={{
-          margin: 0, fontSize: '14px', fontWeight: 500,
-          color: 'var(--color-granito)', fontFamily: 'var(--font-ui)',
+          margin: 0, fontSize: '12px', color: 'var(--color-pizarra)',
+          fontFamily: 'var(--font-ui)', lineHeight: 1.4,
         }}>
-          {lead.nombreCompleto}
+          {lead.resumenHumano}
         </p>
-        <Badge text={calStyle.label} bg={calStyle.bg} color={calStyle.color} />
-      </div>
-      <p style={{
-        margin: 0, fontSize: '12px', color: 'var(--color-pizarra)',
-        fontFamily: 'var(--font-ui)', lineHeight: 1.4,
-      }}>
-        {lead.resumenHumano}
-      </p>
+      </Link>
     </div>
   )
 }
