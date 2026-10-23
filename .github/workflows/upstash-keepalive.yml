@@ -1,0 +1,16 @@
+name: Upstash keep-alive — ping semanal
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # lunes 08:00 UTC
+  workflow_dispatch:      # permite disparo manual desde GitHub UI
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Upstash Redis
+        run: |
+          curl -f -X GET \
+            -H "Authorization: Bearer ${{ secrets.INTERNAL_API_SECRET }}" \
+            https://tu-lugar-en-galicia.vercel.app/api/admin/upstash-keepalive
